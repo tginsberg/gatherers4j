@@ -24,10 +24,12 @@ jobs:
 
       # Because gradle 8.7 only supports Java 21, run the build with 21 and
       # use the 22 version as a toolchain
-      - name: Set up JDK 21 and Build
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
           cache: 'gradle'
+
+      - name: Build
         run: ./gradlew build --no-daemon
