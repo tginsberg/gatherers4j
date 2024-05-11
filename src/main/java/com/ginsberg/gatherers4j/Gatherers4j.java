@@ -16,9 +16,11 @@
 
 package com.ginsberg.gatherers4j;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Gatherer;
+import java.util.stream.Stream;
 
 public class Gatherers4j {
     /**
@@ -50,5 +52,17 @@ public class Gatherers4j {
     public static <IN, MAPPED> Gatherer<IN, ?, IN> distinctBy(final Function<IN, MAPPED> function) {
         Objects.requireNonNull(function, "Mapping function cannot be null"); // TODO: Where should this go?
         return new DistinctGatherer<>(function);
+    }
+
+    public static <IN> Gatherer<IN, Void, IN> interleave(final Stream<IN> other) {
+        return new InterleavingGatherer<>(other);
+    }
+
+    public static <FIRST,SECOND> Gatherer<FIRST, Void, Pair<FIRST,SECOND>> zip(final Stream<SECOND> other) {
+        return new ZipGatherer<>(other);
+    }
+
+    public static <IN> Gatherer<IN,?, List<IN>> zipWithNext() {
+        return new ZipWithNextGatherer<>();
     }
 }
