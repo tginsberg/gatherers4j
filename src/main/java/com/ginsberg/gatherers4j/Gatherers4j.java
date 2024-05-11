@@ -32,7 +32,7 @@ public class Gatherers4j {
      * <li>[A, B, A] => [A, B, A]
      * </ul>
      */
-    public static <IN> Gatherer<IN, ?, IN> dedupeConsecutive() {
+    public static <INPUT> Gatherer<INPUT, ?, INPUT> dedupeConsecutive() {
         return new DedupeConsecutiveGatherer<>(null);
     }
 
@@ -40,7 +40,7 @@ public class Gatherers4j {
      *
      * @param function A mapping function used to compare objects in the stream for equality.
      */
-    public static <IN> Gatherer<IN, ?, IN> dedupeConsecutiveBy(final Function<IN, Object> function) {
+    public static <INPUT> Gatherer<INPUT, ?, INPUT> dedupeConsecutiveBy(final Function<INPUT, Object> function) {
         Objects.requireNonNull(function, "Mapping function cannot be null");
         return new DedupeConsecutiveGatherer<>(function);
     }
@@ -49,20 +49,29 @@ public class Gatherers4j {
      * Filter a stream to only distinct elements as described by the given function.
      * @param function The mapping function
      */
-    public static <IN, MAPPED> Gatherer<IN, ?, IN> distinctBy(final Function<IN, MAPPED> function) {
+    public static <INPUT, OUTPUT> Gatherer<INPUT, ?, INPUT> distinctBy(final Function<INPUT, OUTPUT> function) {
         Objects.requireNonNull(function, "Mapping function cannot be null"); // TODO: Where should this go?
         return new DistinctGatherer<>(function);
     }
 
-    public static <IN> Gatherer<IN, Void, IN> interleave(final Stream<IN> other) {
+    public static <INPUT> Gatherer<INPUT, Void, INPUT> interleave(final Stream<INPUT> other) {
         return new InterleavingGatherer<>(other);
+    }
+
+    public static <INPUT,OUTPUT> Gatherer<INPUT, ?, IndexedValue<OUTPUT>> mapWithIndex(final Function<INPUT,OUTPUT> mappingFunction) {
+        Objects.requireNonNull(mappingFunction, "Mapping function cannot be null");
+        return new IndexingGatherer<>(mappingFunction);
+    }
+
+    public static <INPUT> Gatherer<INPUT, ?, IndexedValue<INPUT>> withIndex() {
+        return new IndexingGatherer<>(Function.identity());
     }
 
     public static <FIRST,SECOND> Gatherer<FIRST, Void, Pair<FIRST,SECOND>> zip(final Stream<SECOND> other) {
         return new ZipGatherer<>(other);
     }
 
-    public static <IN> Gatherer<IN,?, List<IN>> zipWithNext() {
+    public static <INPUT> Gatherer<INPUT,?, List<INPUT>> zipWithNext() {
         return new ZipWithNextGatherer<>();
     }
 }
