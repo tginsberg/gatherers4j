@@ -54,6 +54,18 @@ public class Gatherers4j {
         return new DistinctGatherer<>(function);
     }
 
+    /**
+     * Drop the first {@code count} elements from the input stream. If the stream has fewer than {@code count}
+     * elements, an empty Stream is produced. If the input stream has more than {@code count} elements,
+     * anything after {@code count} elements will comprise the output stream.
+     *
+     * @param count A non-negative number of elements to drop from the stream.
+     * @return DroppingGatherer
+     */
+    public static <INPUT> DroppingGatherer<INPUT> drop(final long count) {
+        return new DroppingGatherer<>(count);
+    }
+
     public static <INPUT> Gatherer<INPUT, Void, INPUT> interleave(final Stream<INPUT> other) {
         return new InterleavingGatherer<>(other);
     }
@@ -61,6 +73,18 @@ public class Gatherers4j {
     public static <INPUT,OUTPUT> Gatherer<INPUT, ?, IndexedValue<OUTPUT>> mapWithIndex(final Function<INPUT,OUTPUT> mappingFunction) {
         Objects.requireNonNull(mappingFunction, "Mapping function cannot be null");
         return new IndexingGatherer<>(mappingFunction);
+    }
+
+    /**
+     * Limit the input stream to the first {@code count} elements. If the input stream has more than {@code count}
+     * elements, anything more than {@code count} are discarded. If input the stream has fewer than {@code count}
+     * elements, an empty output Stream is produced.
+     *
+     * @param count A non-negative number of elements to limit the stream to.
+     * @return TakingGatherer
+     */
+    public static <INPUT> TakingGatherer<INPUT> take(final long count) {
+        return new TakingGatherer<>(count);
     }
 
     public static <INPUT> Gatherer<INPUT, ?, IndexedValue<INPUT>> withIndex() {
