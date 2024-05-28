@@ -44,6 +44,17 @@ Stream
 // ["A", "B", "C", "D", "A", "B", "C"]
 ```
 
+**Limit the stream to the `last` _n_ elements:**
+
+```java
+Stream
+    .of("A", "B", "C", "D", "E", "F", "G")
+    .gather(Gatherers4j.last(3))
+    .toList();
+
+// ["E", "F", "G"]
+```
+
 # Contributing
 
 Guidance forthcoming.

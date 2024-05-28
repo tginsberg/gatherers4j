@@ -23,6 +23,7 @@ import java.util.stream.Gatherer;
 import java.util.stream.Stream;
 
 public class Gatherers4j {
+
     /**
      * <p>Given a stream of objects, filter the objects such that any consecutively appearing
      * after the first one are dropped.
@@ -68,6 +69,15 @@ public class Gatherers4j {
 
     public static <INPUT> Gatherer<INPUT, Void, INPUT> interleave(final Stream<INPUT> other) {
         return new InterleavingGatherer<>(other);
+    }
+
+    /**
+     * Remove all but the last {@code count} elements from the stream.
+     *
+     * @param count A non-negative integer, the number of elements to return
+     */
+    public static <INPUT> LastGatherer<INPUT> last(final int count) {
+        return new LastGatherer<>(count);
     }
 
     public static <INPUT,OUTPUT> Gatherer<INPUT, ?, IndexedValue<OUTPUT>> mapWithIndex(final Function<INPUT,OUTPUT> mappingFunction) {
