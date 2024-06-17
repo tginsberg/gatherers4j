@@ -21,6 +21,11 @@ import java.util.function.Supplier;
 import java.util.stream.Gatherer;
 
 public class ZipWithNextGatherer<INPUT> implements Gatherer<INPUT, ZipWithNextGatherer.State<INPUT>, List<INPUT>> {
+
+    ZipWithNextGatherer() {
+        super();
+    }
+
     @Override
     public Supplier<State<INPUT>> initializer() {
         return State::new;

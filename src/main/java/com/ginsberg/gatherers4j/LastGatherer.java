@@ -27,7 +27,7 @@ public class LastGatherer<INPUT> implements Gatherer<INPUT, LastGatherer.State<I
 
     private final int lastCount;
 
-    public LastGatherer(int lastCount) {
+    LastGatherer(int lastCount) {
         if (lastCount < 0) {
             throw new IllegalArgumentException("Last count must not be negative");
         }
