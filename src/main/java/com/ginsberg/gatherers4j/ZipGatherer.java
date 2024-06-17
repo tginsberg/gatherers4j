@@ -35,6 +35,5 @@ public class ZipGatherer<FIRST, SECOND> implements Gatherer<FIRST, Void, Pair<FI
                 .tryAdvance(
                     it -> downstream.push(new Pair<>(element, it))
                 ) && !downstream.isRejecting();
-
     }
 }

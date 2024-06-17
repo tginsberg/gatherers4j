@@ -38,7 +38,6 @@ public class Gatherers4j {
     }
 
     /**
-     *
      * @param function A mapping function used to compare objects in the stream for equality.
      */
     public static <INPUT> Gatherer<INPUT, ?, INPUT> dedupeConsecutiveBy(final Function<INPUT, Object> function) {
@@ -48,23 +47,12 @@ public class Gatherers4j {
 
     /**
      * Filter a stream to only distinct elements as described by the given function.
+     *
      * @param function The mapping function
      */
     public static <INPUT, OUTPUT> Gatherer<INPUT, ?, INPUT> distinctBy(final Function<INPUT, OUTPUT> function) {
         Objects.requireNonNull(function, "Mapping function cannot be null"); // TODO: Where should this go?
         return new DistinctGatherer<>(function);
-    }
-
-    /**
-     * Drop the first {@code count} elements from the input stream. If the stream has fewer than {@code count}
-     * elements, an empty Stream is produced. If the input stream has more than {@code count} elements,
-     * anything after {@code count} elements will comprise the output stream.
-     *
-     * @param count A non-negative number of elements to drop from the stream.
-     * @return DroppingGatherer
-     */
-    public static <INPUT> DroppingGatherer<INPUT> drop(final long count) {
-        return new DroppingGatherer<>(count);
     }
 
     public static <INPUT> Gatherer<INPUT, Void, INPUT> interleave(final Stream<INPUT> other) {
@@ -80,32 +68,20 @@ public class Gatherers4j {
         return new LastGatherer<>(count);
     }
 
-    public static <INPUT,OUTPUT> Gatherer<INPUT, ?, IndexedValue<OUTPUT>> mapWithIndex(final Function<INPUT,OUTPUT> mappingFunction) {
+    public static <INPUT, OUTPUT> Gatherer<INPUT, ?, IndexedValue<OUTPUT>> mapWithIndex(final Function<INPUT, OUTPUT> mappingFunction) {
         Objects.requireNonNull(mappingFunction, "Mapping function cannot be null");
         return new IndexingGatherer<>(mappingFunction);
-    }
-
-    /**
-     * Limit the input stream to the first {@code count} elements. If the input stream has more than {@code count}
-     * elements, anything more than {@code count} are discarded. If input the stream has fewer than {@code count}
-     * elements, an empty output Stream is produced.
-     *
-     * @param count A non-negative number of elements to limit the stream to.
-     * @return TakingGatherer
-     */
-    public static <INPUT> TakingGatherer<INPUT> take(final long count) {
-        return new TakingGatherer<>(count);
     }
 
     public static <INPUT> Gatherer<INPUT, ?, IndexedValue<INPUT>> withIndex() {
         return new IndexingGatherer<>(Function.identity());
     }
 
-    public static <FIRST,SECOND> Gatherer<FIRST, Void, Pair<FIRST,SECOND>> zip(final Stream<SECOND> other) {
+    public static <FIRST, SECOND> Gatherer<FIRST, Void, Pair<FIRST, SECOND>> zip(final Stream<SECOND> other) {
         return new ZipGatherer<>(other);
     }
 
-    public static <INPUT> Gatherer<INPUT,?, List<INPUT>> zipWithNext() {
+    public static <INPUT> Gatherer<INPUT, ?, List<INPUT>> zipWithNext() {
         return new ZipWithNextGatherer<>();
     }
 }

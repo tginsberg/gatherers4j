@@ -11,28 +11,6 @@ TBD, once I start publishing snapshots to Maven Central.
 (Example, TODO clean this up)
 
 
-**Dropping elements from the start of a Stream:**
-
-```java
-Stream
-    .of("A", "B", "C", "D", "E", "F", "G")
-    .gather(Gatherers4j.drop(3))
-    .toList();
-
-// ["D", "E", "F", "G"]
-```
-
-**Limiting the size of the Stream:**
-
-```java
-Stream
-    .of("A", "B", "C", "D", "E", "F", "G")
-    .gather(Gatherers4j.take(3))
-    .toList();
-
-// ["A", "B", "C"]
-```
-
 **Removing consecutive duplicate elements:**
 
 ```java
