@@ -16,6 +16,7 @@
 
 package com.ginsberg.gatherers4j;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -23,6 +24,28 @@ import java.util.stream.Gatherer;
 import java.util.stream.Stream;
 
 public class Gatherers4j {
+
+    /**
+     * Create a Stream that is the running average of <code>Stream&lt;BigDecimal&gt;</code>
+     *
+     * @return AveragingBigDecimalGatherer
+     */
+    public static AveragingBigDecimalGatherer<BigDecimal> averageBigDecimals() {
+        return new AveragingBigDecimalGatherer<>(Function.identity());
+    }
+
+    /**
+     * Create a Stream that is the running average of <code>BigDecimal</code> objects as mapped by
+     * the given function. This is useful when paired with the <code>withOriginal</code> function.
+     *
+     * @param mappingFunction A non-null function to map the <code>INPUT</code> type to <code>BigDecimal</code>
+     * @return AveragingBigDecimalGatherer
+     */
+    public static <INPUT> AveragingBigDecimalGatherer<INPUT> averageBigDecimalsBy(
+            final Function<INPUT, BigDecimal> mappingFunction
+    ) {
+        return new AveragingBigDecimalGatherer<>(mappingFunction);
+    }
 
     /**
      * <p>Given a stream of objects, filter the objects such that any consecutively appearing

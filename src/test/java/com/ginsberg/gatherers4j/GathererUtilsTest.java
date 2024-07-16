@@ -19,7 +19,8 @@ package com.ginsberg.gatherers4j;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
+import static org.assertj.core.api.Assertions.*;
 
 
 class GathererUtilsTest {
@@ -54,4 +55,19 @@ class GathererUtilsTest {
         }
     }
 
+    @SuppressWarnings("DataFlowIssue")
+    @Nested
+    class MustNotBeNull {
+        @Test
+        void whenNull() {
+            assertThatThrownBy(() -> mustNotBeNull(null, "123"))
+                    .isExactlyInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("123");
+        }
+
+        @Test
+        void whenNotNull() {
+            assertThatNoException().isThrownBy(() -> mustNotBeNull("NonNull", "123"));
+        }
+    }
 }

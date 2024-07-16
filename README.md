@@ -10,6 +10,28 @@ TBD, once I start publishing snapshots to Maven Central.
 
 (Example, TODO clean this up)
 
+**Running Average**
+
+```java
+Stream
+    .of(new BigDecimal("1.0"), new BigDecimal("2.0"), new BigDecimal("10.0"))
+    .gather(Gatherers4j.averageBigDecimals())
+    .toList();
+
+// [1, 1.5, 4.3333333333333333]
+```
+
+**Trailing Average**
+
+```java
+Stream
+    .of(new BigDecimal("1.0"), new BigDecimal("2.0"), new BigDecimal("10.0"), new BigDecimal("20.0"), new BigDecimal("30.0"))
+    .gather(Gatherers4j.averageBigDecimals().trailing(2))
+    .toList();
+
+// [1.5, 6, 15, 25]
+```
+
 
 **Removing consecutive duplicate elements:**
 

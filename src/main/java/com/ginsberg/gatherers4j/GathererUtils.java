@@ -16,12 +16,19 @@
 package com.ginsberg.gatherers4j;
 
 public class GathererUtils {
-    public static boolean safeEquals(Object left, Object right) {
+
+    public static boolean safeEquals(final Object left, final Object right) {
         if (left == null && right == null) {
             return true;
         } else if (left == null || right == null) {
             return false;
         }
         return left.equals(right);
+    }
+
+    public static void mustNotBeNull(final Object subject, final String message) {
+        if (subject == null) {
+            throw new IllegalArgumentException(message);
+        }
     }
 }
