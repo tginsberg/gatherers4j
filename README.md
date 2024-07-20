@@ -9,23 +9,25 @@ TBD, once I start publishing snapshots to Maven Central.
 # Gatherers In This Library
 
 
-| Function                   | Purpose                                                                                                             |
-|----------------------------|---------------------------------------------------------------------------------------------------------------------|
-| `averageBigDecimals()`     | Create a running or trailing average of `BigDecimal` values. See below for options.                                 |
-| `averageBigDecimalsBy(fn)` | Create a running avergage of `BigDecimal` values mapped out of some different object via `fn`                       |
-| `dedupeConsecutive()`      | Remove conescutive duplicates from a stream |
-| `dedupeConsecutiveBy(fn)`  | Remove consecutive duplicates from a stream as returned by `fn`                                                     |
-| `distinctBy(fn)`           | Emit only distinct elements from the stream, as measured by `fn`                                                    |
-| `interleave(stream)`       | Creates a stream of alternating objects from the input stream and the argument stream                               |
-| `last(n)`                  | Constrain the stream to the last `n` values                                                                         |
-| `withIndex()`              | Maps all elements of the stream as-is, along with their 0-based index.                                              |
-| `zipWith(stream)`          | Creates a stream of `Pair` objects whose values come from the input stream and argument stream                      |
-| `zipWithNext()`            | Creates a stream of `List` objects via a sliding window of width 2 and stepping 1                                   |                          |
+| Function                   | Purpose                                                                                                                                                              |
+|----------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `averageBigDecimals()`     | Create a running or trailing average of `BigDecimal` values. See below for options.<br/> See [specific advice on averaging](#averaging-bigdecimal-objects)           |
+| `averageBigDecimalsBy(fn)` | Create a running avergage of `BigDecimal` values mapped out of some different object via `fn`.<br/>See [specific advice on averaging](#averaging-bigdecimal-objects) |
+| `dedupeConsecutive()`      | Remove conescutive duplicates from a stream                                                                                                                          |
+| `dedupeConsecutiveBy(fn)`  | Remove consecutive duplicates from a stream as returned by `fn`                                                                                                      |
+| `distinctBy(fn)`           | Emit only distinct elements from the stream, as measured by `fn`                                                                                                     |
+| `interleave(stream)`       | Creates a stream of alternating objects from the input stream and the argument stream                                                                                |
+| `last(n)`                  | Constrain the stream to the last `n` values                                                                                                                          |
+| `withIndex()`              | Maps all elements of the stream as-is, along with their 0-based index.                                                                                               |
+| `zipWith(stream)`          | Creates a stream of `Pair` objects whose values come from the input stream and argument stream                                                                       |
+| `zipWithNext()`            | Creates a stream of `List` objects via a sliding window of width 2 and stepping 1                                                                                    |                          |
 
 
 # Use Cases
 
-#### Running average
+#### Running average of `Stream<BigDecimal>`
+
+For more options, please see the [specific advice on averaging](#averaging-bigdecimal-objects).
 
 ```java
 Stream
@@ -37,7 +39,9 @@ Stream
 // [1, 1.5, 4.3333333333333333]
 ```
 
-#### Moving average
+#### Moving average of `Stream<BigDecimal>`
+
+For more options, please see the [specific advice on averaging](#averaging-bigdecimal-objects)
 
 ```java
 Stream
@@ -155,6 +159,57 @@ Stream
 // [["A", "B"], ["B", "C"], ["C", "D"], ["D", "E"]]
 ```
 
+## Averaging `BigDecimal` objects
+
+Functions on `AveragingBigDecimalGatherer` which modify the output.
+
+| Function                         | Purpose                                                                                                                                                                                     |
+|----------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `simpleMovingAverage(window)`    | Instead of a cumulative average, calculate a moving average over a trailing `window`                                                                                                        |
+| `includePartialValues`           | When calculating a moving average, include partially calculated values when less than `window` number of values are availabe.<br/>The default is to only include fully calculated averages. |
+| `treatNullAsZero()`              | When an element in the `Stream<BigDecimal>` is `null` treat it as `BigDecimal.ZERO` instead of skipping it in the calculation.                                                              |
+| `treatNullAs(BigDecimal)`        | When an element in the `Stream<BigDecimal>` is `null` treat it as the `BigDecimal` value given instead of skipping it in the calculation.                                                   |
+| `withMathContext(MathContext)`   | Switch the `MathContext` for all calculations to the non-null `MathContext` given. The default is `MathContext.DECIMAL64`.                                                                  |
+| `withRoundingMode(RoundingMode)` | Switch the `RoundingMode` for all calcullations to the non-null `RoundingMode` given. The default is `RoundingMode.HALF_UP`.                                                                |
+| `withOriginal()`                 | Include the original value (either a `BigDecimal` or some other object type if using `averageBigDecimalsBy()`) with the calculated average.                                                 |
+
+### Example of `averageBigDecimals()`
+
+This example creates a stream of `double`, converts each value to a `BigDecmial`, and takes a `simpleMovingAverage` over 10 trailing values.
+It will `includePartialValues` and sets the `RoundingMode` and `MathContext` to the values given. Additionally, nulls 
+are treated as zeros, and the calculated average is returned along with the original value.
+
+```java
+someStreamOfBigDecimal()
+    .gather(Gatherers4j
+        .averageBigDecimals()
+        .simpleMovingAverage(10)
+        .includePartialValues()
+        .withRoundingMode(RoundingMode.HALF_EVEN)
+        .withMathContext(MathContext.DECIMAL32)
+        .treatNullAsZero()
+        .withOriginal()
+    )
+    .toList();
+
+// Example output:
+[
+  WithOriginal[original=0.8462487, calculated=0.8462487], 
+  WithOriginal[original=0.8923297, calculated=0.8692890], 
+  WithOriginal[original=0.2556937, calculated=0.6647573], 
+  WithOriginal[original=0.2901778, calculated=0.5711125], 
+  WithOriginal[original=0.4945578, calculated=0.5558016], 
+  WithOriginal[original=0.3173066, calculated=0.5160525], 
+  WithOriginal[original=0.6377766, calculated=0.5334417], 
+  WithOriginal[original=0.1729199, calculated=0.4883765], 
+  WithOriginal[original=0.7408201, calculated=0.5164258], 
+  WithOriginal[original=0.7169926, calculated=0.5364825], 
+  WithOriginal[original=0.5174489, calculated=0.5036025], 
+  WithOriginal[original=0.5895662, calculated=0.4733262], 
+  WithOriginal[original=0.4458275, calculated=0.4923396], 
+  // etc...
+]
+```
 
 # Project Philosophy
 
