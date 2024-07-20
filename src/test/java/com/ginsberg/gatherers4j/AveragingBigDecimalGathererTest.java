@@ -185,7 +185,7 @@ class AveragingBigDecimalGathererTest {
     }
 
     @Test
-    void trailingAverageOfBigDecimals() {
+    void simpleMovingAverageAverageOfBigDecimals() {
         // Arrange
         final Stream<BigDecimal> input = Stream.of(
                 new BigDecimal("1.0"),
@@ -197,7 +197,7 @@ class AveragingBigDecimalGathererTest {
 
         // Act
         final List<BigDecimal> output = input
-                .gather(Gatherers4j.averageBigDecimals().trailing(2))
+                .gather(Gatherers4j.averageBigDecimals().simpleMovingAverage(2))
                 .toList();
 
         // Assert
@@ -212,7 +212,7 @@ class AveragingBigDecimalGathererTest {
     }
 
     @Test
-    void trailingAverageOfBigDecimalsWithPartials() {
+    void simpleMovingAverageAverageOfBigDecimalsWithPartials() {
         // Arrange
         final Stream<BigDecimal> input = Stream.of(
                 new BigDecimal("1.0"),
@@ -224,7 +224,7 @@ class AveragingBigDecimalGathererTest {
 
         // Act
         final List<BigDecimal> output = input
-                .gather(Gatherers4j.averageBigDecimals().trailing(2).includePartialTailingValues())
+                .gather(Gatherers4j.averageBigDecimals().simpleMovingAverage(2).includePartialValues())
                 .toList();
 
         // Assert
@@ -355,16 +355,16 @@ class AveragingBigDecimalGathererTest {
     }
 
     @Test
-    void trailingInvalidRangeZero() {
+    void simpleMovingAverageInvalidRangeZero() {
         assertThatThrownBy(() ->
-                Stream.of(BigDecimal.ONE).gather(Gatherers4j.averageBigDecimals().trailing(0))
+                Stream.of(BigDecimal.ONE).gather(Gatherers4j.averageBigDecimals().simpleMovingAverage(0))
         ).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    void trailingInvalidRangeNegative() {
+    void simpleMovingAverageInvalidRangeNegative() {
         assertThatThrownBy(() ->
-                Stream.of(BigDecimal.ONE).gather(Gatherers4j.averageBigDecimals().trailing(-1))
+                Stream.of(BigDecimal.ONE).gather(Gatherers4j.averageBigDecimals().simpleMovingAverage(-1))
         ).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 

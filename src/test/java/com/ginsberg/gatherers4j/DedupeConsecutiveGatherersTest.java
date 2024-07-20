@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class DedupeConsecutiveGatherersTest {
 
@@ -89,5 +90,16 @@ class DedupeConsecutiveGatherersTest {
                 new TestConsecutive(4, "B"),
                 new TestConsecutive(6, "C")
         );
+    }
+
+
+    @Test
+    void dedupeConsecutiveByWithNullMappingFunction() {
+        // Arrange
+        final Stream<String> input = Stream.of("A");
+
+        // Act/Assert
+        assertThatThrownBy(() -> input.gather(Gatherers4j.dedupeConsecutiveBy(null)).toList())
+                .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 }

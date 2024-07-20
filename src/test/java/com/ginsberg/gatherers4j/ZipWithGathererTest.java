@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ZipGathererTest {
+class ZipWithGathererTest {
 
     @Test
     void zipGatherer() {
@@ -33,7 +33,7 @@ class ZipGathererTest {
 
         // Act
         final List<Pair<String, Integer>> output = left
-                .gather(Gatherers4j.zip(right))
+                .gather(Gatherers4j.zipWith(right))
                 .toList();
 
         // Assert
@@ -53,7 +53,7 @@ class ZipGathererTest {
 
         // Act
         final List<Pair<String, Integer>> output = left
-                .gather(Gatherers4j.zip(right))
+                .gather(Gatherers4j.zipWith(right))
                 .toList();
 
         // Assert
@@ -68,7 +68,7 @@ class ZipGathererTest {
 
         // Act
         final List<Pair<String, Integer>> output = left
-                .gather(Gatherers4j.zip(right))
+                .gather(Gatherers4j.zipWith(right))
                 .toList();
 
         // Assert
