@@ -15,19 +15,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Used by gradle toolchain to actually build
       - name: Set up JDK 22
         uses: actions/setup-java@v4
         with:
           java-version: '22'
-          distribution: 'temurin'
-
-      # Because gradle 8.7 only supports Java 21, run the build with 21 and
-      # use the 22 version as a toolchain
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
           distribution: 'temurin'
           cache: 'gradle'
 
