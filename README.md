@@ -76,7 +76,7 @@ Stream
         new Person("Emma", "Ginsberg"),
         new Person("Todd", "Smith")
     )
-    .gather(Gatherers4j.dedupeConsecutiveBy(Person::firstName))
+    .gather(Gatherers4j.dedupeConsecutiveBy(Person::lastName))
     .toList();
 
 // [Person("Todd", "Ginsberg"), Person("Todd", "Smith")]
