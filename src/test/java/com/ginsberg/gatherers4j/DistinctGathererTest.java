@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class DistinctGathererTest {
 
@@ -51,5 +52,15 @@ class DistinctGathererTest {
 
         // Assert
         assertThat(output).containsExactly(null, "a");
+    }
+
+    @Test
+    void distinctByWithNullMappingFunction() {
+        // Arrange
+        final Stream<String> input = Stream.of("A");
+
+        // Act/Assert
+        assertThatThrownBy(() -> input.gather(Gatherers4j.distinctBy(null)).toList())
+                .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 }

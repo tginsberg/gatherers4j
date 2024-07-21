@@ -16,17 +16,13 @@
 
 package com.ginsberg.gatherers4j;
 
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Gatherer;
 
-public class IndexingGatherer<INPUT, OUTPUT>
-        implements Gatherer<INPUT, IndexingGatherer.State, IndexedValue<OUTPUT>> {
+public class IndexingGatherer<INPUT>
+        implements Gatherer<INPUT, IndexingGatherer.State, IndexedValue<INPUT>> {
 
-    private final Function<INPUT, OUTPUT> mappingFunction;
-
-    IndexingGatherer(final Function<INPUT, OUTPUT> function) {
-        this.mappingFunction = function;
+    IndexingGatherer() {
     }
 
     @Override
@@ -35,9 +31,9 @@ public class IndexingGatherer<INPUT, OUTPUT>
     }
 
     @Override
-    public Integrator<IndexingGatherer.State, INPUT, IndexedValue<OUTPUT>> integrator() {
+    public Integrator<IndexingGatherer.State, INPUT, IndexedValue<INPUT>> integrator() {
         return (state, element, downstream) -> downstream
-                .push(new IndexedValue<>(state.index++, mappingFunction.apply(element)));
+                .push(new IndexedValue<>(state.index++, element));
     }
 
     public static class State {

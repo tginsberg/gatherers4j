@@ -33,7 +33,7 @@ public class AveragingBigDecimalGatherer<INPUT>
     private RoundingMode roundingMode = RoundingMode.HALF_UP;
     private MathContext mathContext = MathContext.DECIMAL64;
     private BigDecimal nullReplacement;
-    private int trailingCount = 1;
+    private int windowSize = 1;
     private boolean includePartialValues;
 
     AveragingBigDecimalGatherer(final Function<INPUT, BigDecimal> mappingFunction) {
@@ -43,7 +43,7 @@ public class AveragingBigDecimalGatherer<INPUT>
 
     @Override
     public Supplier<State> initializer() {
-        return trailingCount == 1 ? State::new : () -> new TrailingState(trailingCount);
+        return windowSize == 1 ? State::new : () -> new TrailingState(windowSize);
     }
 
     @Override
@@ -60,40 +60,73 @@ public class AveragingBigDecimalGatherer<INPUT>
         };
     }
 
-    public AveragingBigDecimalGatherer<INPUT> trailing(int count) {
-        if (count <= 0) {
-            throw new IllegalArgumentException("Trailing count must be positive");
+    /**
+     * Construct a moving average, with a window of size <code>window</code>.
+     *
+     * @param window The size of the window to average values over, must be a positive number.
+     */
+    public AveragingBigDecimalGatherer<INPUT> simpleMovingAverage(int window) {
+        if (window <= 0) {
+            throw new IllegalArgumentException("Moving window size must be positive");
         }
-        trailingCount = count;
+        windowSize = window;
         return this;
     }
 
-    public AveragingBigDecimalGatherer<INPUT> includePartialTailingValues() {
+    /**
+     * When creating a moving average and the full size of the window has not yet been reached, the
+     * gatherer should emit averages for what it has.
+     * For example, if the trailing average is over 10 values, but the stream has only emitted two
+     * values, the gatherer should average the two values and emit the answer. The default is to not
+     * emit anything until the full size of the window has been seen.
+     */
+    public AveragingBigDecimalGatherer<INPUT> includePartialValues() {
         includePartialValues = true;
         return this;
     }
 
+    /**
+     * When encountering a <code>null</code> value in a stream, treat it as `BigDecimal.ZERO` instead.
+     */
     public AveragingBigDecimalGatherer<INPUT> treatNullAsZero() {
         return treatNullAs(BigDecimal.ZERO);
     }
 
+    /**
+     * When encountering a <code>null</code> value in a stream, treat it as the given `rule` value instead.
+     *
+     * @param rule The value to replace null with
+     */
     public AveragingBigDecimalGatherer<INPUT> treatNullAs(final BigDecimal rule) {
         this.nullReplacement = rule;
         return this;
     }
 
+    /**
+     * Replace the <code>MathContext</code> used for all mathematical operations in this class.
+     *
+     * @param mathContext A non-null <code>MathContext</code>
+     */
     public AveragingBigDecimalGatherer<INPUT> withMathContext(final MathContext mathContext) {
         mustNotBeNull(mathContext, "MathContext must not be null");
         this.mathContext = mathContext;
         return this;
     }
 
+    /**
+     * Replace the <code>RoundingMode</code> used for all mathematical operations in this class.
+     *
+     * @param roundingMode A non-null <code>RoundingMode</code>
+     */
     public AveragingBigDecimalGatherer<INPUT> withRoundingMode(final RoundingMode roundingMode) {
         mustNotBeNull(roundingMode, "RoundingMode must not be null");
         this.roundingMode = roundingMode;
         return this;
     }
 
+    /**
+     * Include the original input value from the stream in addition to the calculated average.
+     */
     public WithOriginalGatherer<INPUT, State, BigDecimal> withOriginal() {
         return new WithOriginalGatherer<>(this);
     }

@@ -16,7 +16,6 @@
 
 package com.ginsberg.gatherers4j;
 
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -26,105 +25,42 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class IndexingGathererTest {
 
-    @Nested
-    class MapWithIndex {
-        @Test
-        void mapObjectWithIndex() {
-            // Arrange
-            final Stream<String> input = Stream.of("A", "B", "C");
+    @Test
+    void objectWithIndex() {
+        // Arrange
+        final Stream<String> input = Stream.of("A", "B", "C");
 
-            // Act
-            final List<IndexedValue<String>> output = input
-                    .gather(Gatherers4j.mapWithIndex(String::toLowerCase))
-                    .toList();
+        // Act
+        final List<IndexedValue<String>> output = input
+                .gather(Gatherers4j.withIndex())
+                .toList();
 
-            // Assert
-            assertThat(output)
-                    .containsExactly(
-                            new IndexedValue<>(0, "a"),
-                            new IndexedValue<>(1, "b"),
-                            new IndexedValue<>(2, "c")
-                    );
-        }
-
-        @Test
-        void mapIntegerWithIndex() {
-            // Arrange
-            final Stream<Integer> input = Stream.of(1, 2, 3);
-
-            // Act
-            final List<IndexedValue<Integer>> output = input
-                    .gather(Gatherers4j.mapWithIndex(it -> it * it))
-                    .toList();
-
-            // Assert
-            assertThat(output)
-                    .containsExactly(
-                            new IndexedValue<>(0, 1),
-                            new IndexedValue<>(1, 4),
-                            new IndexedValue<>(2, 9)
-                    );
-        }
-
-        @Test
-        void mapIntegerToStringWithIndex() {
-            // Arrange
-            final Stream<Integer> input = Stream.of(1, 2, 3);
-
-            // Act
-            final List<IndexedValue<String>> output = input
-                    .gather(Gatherers4j.mapWithIndex(it -> String.valueOf(it * it)))
-                    .toList();
-
-            // Assert
-            assertThat(output)
-                    .containsExactly(
-                            new IndexedValue<>(0, "1"),
-                            new IndexedValue<>(1, "4"),
-                            new IndexedValue<>(2, "9")
-                    );
-        }
+        // Assert
+        assertThat(output)
+                .containsExactly(
+                        new IndexedValue<>(0, "A"),
+                        new IndexedValue<>(1, "B"),
+                        new IndexedValue<>(2, "C")
+                );
     }
 
-    @Nested
-    class WithIndex {
-        @Test
-        void objectWithIndex() {
-            // Arrange
-            final Stream<String> input = Stream.of("A", "B", "C");
+    @Test
+    void integerWithIndex() {
+        // Arrange
+        final Stream<Integer> input = Stream.of(1, 2, 3);
 
-            // Act
-            final List<IndexedValue<String>> output = input
-                    .gather(Gatherers4j.withIndex())
-                    .toList();
+        // Act
+        final List<IndexedValue<Integer>> output = input
+                .gather(Gatherers4j.withIndex())
+                .toList();
 
-            // Assert
-            assertThat(output)
-                    .containsExactly(
-                            new IndexedValue<>(0, "A"),
-                            new IndexedValue<>(1, "B"),
-                            new IndexedValue<>(2, "C")
-                    );
-        }
-
-        @Test
-        void integerWithIndex() {
-            // Arrange
-            final Stream<Integer> input = Stream.of(1, 2, 3);
-
-            // Act
-            final List<IndexedValue<Integer>> output = input
-                    .gather(Gatherers4j.withIndex())
-                    .toList();
-
-            // Assert
-            assertThat(output)
-                    .containsExactly(
-                            new IndexedValue<>(0, 1),
-                            new IndexedValue<>(1, 2),
-                            new IndexedValue<>(2, 3)
-                    );
-        }
+        // Assert
+        assertThat(output)
+                .containsExactly(
+                        new IndexedValue<>(0, 1),
+                        new IndexedValue<>(1, 2),
+                        new IndexedValue<>(2, 3)
+                );
     }
 
 }

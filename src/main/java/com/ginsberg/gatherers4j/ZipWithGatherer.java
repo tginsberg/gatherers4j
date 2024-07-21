@@ -21,10 +21,10 @@ import java.util.Spliterator;
 import java.util.stream.Gatherer;
 import java.util.stream.Stream;
 
-public class ZipGatherer<FIRST, SECOND> implements Gatherer<FIRST, Void, Pair<FIRST, SECOND>> {
+public class ZipWithGatherer<FIRST, SECOND> implements Gatherer<FIRST, Void, Pair<FIRST, SECOND>> {
     private final Spliterator<SECOND> otherSpliterator;
 
-    ZipGatherer(final Stream<SECOND> other) {
+    ZipWithGatherer(final Stream<SECOND> other) {
         Objects.requireNonNull(other, "Other stream must not be null");
         otherSpliterator = other.spliterator();
     }
