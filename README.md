@@ -4,7 +4,23 @@ A library of useful [Stream Gatherers](https://openjdk.org/jeps/473) (custom int
 
 # Installing
 
-TBD, once I start publishing snapshots to Maven Central.
+
+
+*Maven*
+
+```xml
+<dependency>
+    <groupId>com.ginsberg</groupId>
+    <artifactId>gatherers4j</artifactId>
+    <version>0.0.1</version>
+</dependency>
+```
+
+*Gradle*
+
+```groovy
+implementation("com.ginsberg:gatherers4j:0.0.1")
+```
 
 # Gatherers In This Library
 

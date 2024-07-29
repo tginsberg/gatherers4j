@@ -10,7 +10,7 @@ plugins {
 
 description = "An extra set of helpful Stream Gatherers for Java"
 group = "com.ginsberg"
-version = "0.0.1"
+version = "0.0.2-SNAPSHOT"
 
 @Suppress("PropertyName")
 val ENABLE_PREVIEW = "--enable-preview"
