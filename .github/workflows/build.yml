@@ -15,21 +15,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Used by gradle toolchain to actually build
       - name: Set up JDK 22
         uses: actions/setup-java@v4
         with:
           java-version: '22'
           distribution: 'temurin'
-
-      # Because gradle 8.7 only supports Java 21, run the build with 21 and
-      # use the 22 version as a toolchain
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
           cache: 'gradle'
 
-      - name: Build
-        run: ./gradlew build --no-daemon
+      - name: Build and Publish
+        run: ./gradlew build publish --no-daemon
+        env:
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          SONATYPE_TOKEN: ${{ secrets.SONATYPE_TOKEN }}
+          SONATYPE_SIGNING_KEY: ${{ secrets.SONATYPE_SIGNING_KEY }}
+          SONATYPE_SIGNING_PASSPHRASE: ${{ secrets.SONATYPE_SIGNING_PASSPHRASE }}
