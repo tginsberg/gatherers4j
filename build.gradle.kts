@@ -1,8 +1,11 @@
+import java.net.URI
+
 plugins {
     id("com.adarshr.test-logger") version "4.0.0"
     id("jacoco")
     id("java-library")
     id("maven-publish")
+    id("signing")
 }
 
 description = "An extra set of helpful Stream Gatherers for Java"
@@ -73,6 +76,21 @@ publishing {
             }
         }
     }
+    repositories {
+        maven {
+            url = if(version.toString().endsWith("-SNAPSHOT")) URI("https://oss.sonatype.org/content/repositories/snapshots/")
+                  else URI("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+            credentials {
+                username = System.getenv("SONATYPE_USERNAME")
+                password = System.getenv("SONATYPE_TOKEN")
+            }
+        }
+    }
+}
+
+signing {
+    useInMemoryPgpKeys(System.getenv("SONATYPE_SIGNING_KEY"), System.getenv("SONATYPE_SIGNING_PASSPHRASE"))
+    sign(publishing.publications["gatherers4j"])
 }
 
 tasks {

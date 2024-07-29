@@ -22,5 +22,10 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
 
-      - name: Build
-        run: ./gradlew build --no-daemon
+      - name: Build and Publish
+        run: ./gradlew build publish --no-daemon
+        env:
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          SONATYPE_TOKEN: ${{ secrets.SONATYPE_TOKEN }}
+          SONATYPE_SIGNING_KEY: ${{ secrets.SONATYPE_SIGNING_KEY }}
+          SONATYPE_SIGNING_PASSPHRASE: ${{ secrets.SONATYPE_SIGNING_PASSPHRASE }}
