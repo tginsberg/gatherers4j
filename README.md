@@ -4,7 +4,27 @@ A library of useful [Stream Gatherers](https://openjdk.org/jeps/473) (custom int
 
 # Installing
 
-TBD, once I start publishing snapshots to Maven Central.
+To use this library, add it as a dependency to your build.
+
+*Maven*
+
+Add the following dependency to `pom.xml`.
+
+```xml
+<dependency>
+    <groupId>com.ginsberg</groupId>
+    <artifactId>gatherers4j</artifactId>
+    <version>0.0.1</version>
+</dependency>
+```
+
+*Gradle*
+
+Add the following dependency to `build.gradle` or `build.gradle.kts`
+
+```groovy
+implementation("com.ginsberg:gatherers4j:0.0.1")
+```
 
 # Gatherers In This Library
 
