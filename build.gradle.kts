@@ -102,6 +102,7 @@ tasks {
     withType<JavaCompile> {
         options.compilerArgs.add(ENABLE_PREVIEW)
     }
+
     jacocoTestReport {
         dependsOn(test)
     }
@@ -120,8 +121,7 @@ tasks {
             addStringOption("Xdoclint:none", "-quiet") // TODO: Remove this when we've documented things
         }
     }
-    this.register("printVersion").configure {
-        dependsOn("publish")
+    publish {
         doLast {
             println("Project Version: $version")
             println("Publish Version: $gatherers4jVersion")
@@ -132,6 +132,7 @@ tasks {
         jvmArgs(ENABLE_PREVIEW)
         useJUnitPlatform()
     }
+
 }
 
 fun gitBranch(): String =
