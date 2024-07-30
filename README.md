@@ -6,7 +6,7 @@ A library of useful [Stream Gatherers](https://openjdk.org/jeps/473) (custom int
 
 To use this library, add it as a dependency to your build.
 
-*Maven*
+**Maven**
 
 Add the following dependency to `pom.xml`.
 
@@ -18,7 +18,7 @@ Add the following dependency to `pom.xml`.
 </dependency>
 ```
 
-*Gradle*
+**Gradle**
 
 Add the following dependency to `build.gradle` or `build.gradle.kts`
 

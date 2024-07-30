@@ -11,13 +11,13 @@ plugins {
 
 description = "An extra set of helpful Stream Gatherers for Java"
 group = "com.ginsberg"
-version = "0.0.2-SNAPSHOT"
-val gitBranch = gitBranch()
-val gatherers4jVersion = if(gitBranch == "main" || gitBranch.startsWith("release/")) version.toString()
-                         else "${gitBranch.substringAfter("/")}-SNAPSHOT"
-println("Project Version: $gatherers4jVersion")
+version = file("VERSION.txt").readLines().first()
+
 @Suppress("PropertyName")
 val ENABLE_PREVIEW = "--enable-preview"
+val gitBranch = gitBranch()
+val gatherers4jVersion = if(gitBranch == "main" || gitBranch.startsWith("release/")) version.toString()
+                         else "${gitBranch.substringAfterLast("/")}-SNAPSHOT"
 
 java {
     toolchain {
@@ -118,6 +118,13 @@ tasks {
             addStringOption("source", rootProject.java.toolchain.languageVersion.get().toString())
             addBooleanOption("-enable-preview", true)
             addStringOption("Xdoclint:none", "-quiet") // TODO: Remove this when we've documented things
+        }
+    }
+    this.register("printVersion").configure {
+        dependsOn("publish")
+        doLast {
+            println("Project Version: $version")
+            println("Publish Version: $gatherers4jVersion")
         }
     }
     test {
