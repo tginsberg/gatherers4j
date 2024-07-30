@@ -1,3 +1,4 @@
+import java.io.IOException
 import java.net.URI
 
 plugins {
@@ -10,10 +11,13 @@ plugins {
 
 description = "An extra set of helpful Stream Gatherers for Java"
 group = "com.ginsberg"
-version = "0.0.2-SNAPSHOT"
+version = file("VERSION.txt").readLines().first()
 
 @Suppress("PropertyName")
 val ENABLE_PREVIEW = "--enable-preview"
+val gitBranch = gitBranch()
+val gatherers4jVersion = if(gitBranch == "main" || gitBranch.startsWith("release/")) version.toString()
+                         else "${gitBranch.substringAfterLast("/")}-SNAPSHOT"
 
 java {
     toolchain {
@@ -46,6 +50,7 @@ publishing {
             pom {
                 name = "Gatherers4J"
                 description = project.description
+                version = gatherers4jVersion
                 url = "https://github.com/tginsberg/gatherers4j"
                 organization {
                     name = "com.ginsberg"
@@ -97,6 +102,7 @@ tasks {
     withType<JavaCompile> {
         options.compilerArgs.add(ENABLE_PREVIEW)
     }
+
     jacocoTestReport {
         dependsOn(test)
     }
@@ -115,9 +121,27 @@ tasks {
             addStringOption("Xdoclint:none", "-quiet") // TODO: Remove this when we've documented things
         }
     }
+    publish {
+        doLast {
+            println("Project Version: $version")
+            println("Publish Version: $gatherers4jVersion")
+        }
+    }
     test {
         finalizedBy(jacocoTestReport)
         jvmArgs(ENABLE_PREVIEW)
         useJUnitPlatform()
     }
+
 }
+
+fun gitBranch(): String =
+    ProcessBuilder("git rev-parse --abbrev-ref HEAD".split(" "))
+        .redirectOutput(ProcessBuilder.Redirect.PIPE)
+        .redirectError(ProcessBuilder.Redirect.PIPE)
+        .start()
+        .run {
+            val error = errorStream.bufferedReader().readText()
+            if (error.isNotEmpty()) throw IOException(error)
+            inputStream.bufferedReader().readText().trim()
+        }
