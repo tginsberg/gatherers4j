@@ -23,10 +23,8 @@ import java.util.stream.Gatherer;
 
 import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
 
-abstract public sealed class BigDecimalGatherer<INPUT>
-        implements Gatherer<INPUT, BigDecimalGatherer.State, BigDecimal>
-        permits BigDecimalSimpleAverageGatherer, BigDecimalSimpleMovingAverageGatherer, BigDecimalStandardDeviationGatherer {
-
+abstract public class BigDecimalGatherer<INPUT>
+        implements Gatherer<INPUT, BigDecimalGatherer.State, BigDecimal> {
     private final Function<INPUT, BigDecimal> mappingFunction;
     private MathContext mathContext = MathContext.DECIMAL64;
     private BigDecimal nullReplacement;
