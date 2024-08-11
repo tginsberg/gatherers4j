@@ -11,6 +11,7 @@ To use this library, add it as a dependency to your build.
 Add the following dependency to `pom.xml`.
 
 ```xml
+
 <dependency>
     <groupId>com.ginsberg</groupId>
     <artifactId>gatherers4j</artifactId>
@@ -28,26 +29,33 @@ implementation("com.ginsberg:gatherers4j:0.0.1")
 
 # Gatherers In This Library
 
+### Streams
+| Function                                   | Purpose                                                                                                                            |
+|--------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
+| `dedupeConsecutive()`                      | Remove consecutive duplicates from a stream                                                                                        |
+| `dedupeConsecutiveBy(fn)`                  | Remove consecutive duplicates from a stream as returned by `fn`                                                                    |
+| `distinctBy(fn)`                           | Emit only distinct elements from the stream, as measured by `fn`                                                                   |
+| `interleave(stream)`                       | Creates a stream of alternating objects from the input stream and the argument stream                                              |
+| `last(n)`                                  | Constrain the stream to the last `n` values                                                                                        |
+| `withIndex()`                              | Maps all elements of the stream as-is, along with their 0-based index.                                                             |
+| `zipWith(stream)`                          | Creates a stream of `Pair` objects whose values come from the input stream and argument stream                                     |
+| `zipWithNext()`                            | Creates a stream of `List` objects via a sliding window of width 2 and stepping 1                                                  |                          |
 
-| Function                   | Purpose                                                                                                                                                              |
-|----------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `averageBigDecimals()`     | Create a running or trailing average of `BigDecimal` values. See below for options.<br/> See [specific advice on averaging](#averaging-bigdecimal-objects)           |
-| `averageBigDecimalsBy(fn)` | Create a running avergage of `BigDecimal` values mapped out of some different object via `fn`.<br/>See [specific advice on averaging](#averaging-bigdecimal-objects) |
-| `dedupeConsecutive()`      | Remove conescutive duplicates from a stream                                                                                                                          |
-| `dedupeConsecutiveBy(fn)`  | Remove consecutive duplicates from a stream as returned by `fn`                                                                                                      |
-| `distinctBy(fn)`           | Emit only distinct elements from the stream, as measured by `fn`                                                                                                     |
-| `interleave(stream)`       | Creates a stream of alternating objects from the input stream and the argument stream                                                                                |
-| `last(n)`                  | Constrain the stream to the last `n` values                                                                                                                          |
-| `withIndex()`              | Maps all elements of the stream as-is, along with their 0-based index.                                                                                               |
-| `zipWith(stream)`          | Creates a stream of `Pair` objects whose values come from the input stream and argument stream                                                                       |
-| `zipWithNext()`            | Creates a stream of `List` objects via a sliding window of width 2 and stepping 1                                                                                    |                          |
-
+### Mathematics/Statistics
+| Function                                   | Purpose                                                                                                                            |
+|--------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
+| `runningPopulationStandardDeviation()`     | Create a stream of `BigDecimal` objects representing the running population standard deviation.                                    |
+| `runningPopulationStandardDeviationBy(fn)` | Create a stream of `BigDecimal` objects as mapped from the input via `fn`, representing the running population standard deviation. |
+| `runningSampleStandardDeviation()`         | Create a stream of `BigDecimal` objects representing the running sample standard deviation.                                        |
+| `runningSampleStandardDeviationBy(fn)`     | Create a stream of `BigDecimal` objects as mapped from the input via `fn`, representing the running sample standard deviation.     |
+| `simpleMovingAverage(window)`              | Create a moving average of `BigDecimal` values over the previous `window` values. See below for options.                           |
+| `simpleMovingAverageBy(fn, window)`        | Create a moving average of `BigDecimal` values over the previous `window` values, as mapped via `fn`.                              |
+| `simpleRunningAverage()`                   | Create a running average of `BigDecimal` values. See below for options.                                                            |
+| `simpleRunningAverageBy(fn)`               | Create a running average of `BigDecimal` values as mapped via `fn`.                                                                |
 
 # Use Cases
 
 #### Running average of `Stream<BigDecimal>`
-
-For more options, please see the [specific advice on averaging](#averaging-bigdecimal-objects).
 
 ```java
 Stream
@@ -61,8 +69,6 @@ Stream
 
 #### Moving average of `Stream<BigDecimal>`
 
-For more options, please see the [specific advice on averaging](#averaging-bigdecimal-objects)
-
 ```java
 Stream
     .of("1.0", "2.0", "10.0", "20.0", "30.0")
@@ -72,7 +78,6 @@ Stream
 
 // [1.5, 6, 15, 25]
 ```
-
 
 #### Remove consecutive duplicate elements
 
@@ -179,24 +184,23 @@ Stream
 // [["A", "B"], ["B", "C"], ["C", "D"], ["D", "E"]]
 ```
 
-## Averaging `BigDecimal` objects
+## Streams of `BigDecimal`
 
-Functions on `AveragingBigDecimalGatherer` which modify the output.
+Functions which modify output and are available on all `BigDecimal` gatherers (simple average, moving average, and standard deviation).
 
-| Function                         | Purpose                                                                                                                                                                                     |
-|----------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `simpleMovingAverage(window)`    | Instead of a cumulative average, calculate a moving average over a trailing `window`                                                                                                        |
-| `includePartialValues`           | When calculating a moving average, include partially calculated values when less than `window` number of values are availabe.<br/>The default is to only include fully calculated averages. |
-| `treatNullAsZero()`              | When an element in the `Stream<BigDecimal>` is `null` treat it as `BigDecimal.ZERO` instead of skipping it in the calculation.                                                              |
-| `treatNullAs(BigDecimal)`        | When an element in the `Stream<BigDecimal>` is `null` treat it as the `BigDecimal` value given instead of skipping it in the calculation.                                                   |
-| `withMathContext(MathContext)`   | Switch the `MathContext` for all calculations to the non-null `MathContext` given. The default is `MathContext.DECIMAL64`.                                                                  |
-| `withRoundingMode(RoundingMode)` | Switch the `RoundingMode` for all calcullations to the non-null `RoundingMode` given. The default is `RoundingMode.HALF_UP`.                                                                |
-| `withOriginal()`                 | Include the original value (either a `BigDecimal` or some other object type if using `averageBigDecimalsBy()`) with the calculated average.                                                 |
+| Function                       | Purpose                                                                                                                                   |
+|--------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------|
+| `treatNullAsZero()`            | When an element in the `Stream<BigDecimal>` is `null` treat it as `BigDecimal.ZERO` instead of skipping it in the calculation.            |
+| `treatNullAs(BigDecimal)`      | When an element in the `Stream<BigDecimal>` is `null` treat it as the `BigDecimal` value given instead of skipping it in the calculation. |
+| `withMathContext(MathContext)` | Switch the `MathContext` for all calculations to the non-null `MathContext` given. The default is `MathContext.DECIMAL64`.                |
+| `withOriginal()`               | Include the original stream value in addition to the calculated value.                                                                    |
 
-### Example of `averageBigDecimals()`
+Note that rounding mode, precision, and scale are derived from the `MathContext`.
+
+### Example of `simpleRunningAverage()`
 
 This example creates a stream of `double`, converts each value to a `BigDecmial`, and takes a `simpleMovingAverage` over 10 trailing values.
-It will `includePartialValues` and sets the `RoundingMode` and `MathContext` to the values given. Additionally, nulls 
+It will `includePartialValues` and sets the `MathContext` to the values given. Additionally, nulls
 are treated as zeros, and the calculated average is returned along with the original value.
 
 ```java
@@ -205,7 +209,6 @@ someStreamOfBigDecimal()
         .averageBigDecimals()
         .simpleMovingAverage(10)
         .includePartialValues()
-        .withRoundingMode(RoundingMode.HALF_EVEN)
         .withMathContext(MathContext.DECIMAL32)
         .treatNullAsZero()
         .withOriginal()

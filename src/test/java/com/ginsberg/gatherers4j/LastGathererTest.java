@@ -68,4 +68,20 @@ class LastGathererTest {
                 input.gather(Gatherers4j.last(last))
         ).isExactlyInstanceOf(IllegalArgumentException.class);
     }
+
+    @Test
+    void downstreamRejection() {
+        // Arrange
+        final Stream<String> input = Stream.of("A", "B", "C", "D", "E", "F");
+        final int last = 2;
+
+        // Act/Assert
+        final List<String> output = input
+                .gather(Gatherers4j.last(last))
+                .limit(1)
+                .toList();
+
+        // Assert
+        assertThat(output).containsExactly("E");
+    }
 }
