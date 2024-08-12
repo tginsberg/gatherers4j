@@ -105,6 +105,9 @@ tasks {
 
     jacocoTestReport {
         dependsOn(test)
+        reports {
+            xml.required = true
+        }
     }
     jar {
         manifest {
