@@ -29,9 +29,3 @@ jobs:
           SONATYPE_TOKEN: ${{ secrets.SONATYPE_TOKEN }}
           SONATYPE_SIGNING_KEY: ${{ secrets.SONATYPE_SIGNING_KEY }}
           SONATYPE_SIGNING_PASSPHRASE: ${{ secrets.SONATYPE_SIGNING_PASSPHRASE }}
-
-      - name: Add coverage to PR
-        id: jacoco
-        uses: madrapps/jacoco-report@v1.6.1
-        with:
-          paths: ${{ github.workspace }}/**/build/reports/jacoco/test/jacocoTestReport.xml
