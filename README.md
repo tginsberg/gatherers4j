@@ -4,7 +4,7 @@ A library of useful [Stream Gatherers](https://openjdk.org/jeps/473) (custom int
 
 # Installing
 
-To use this library, add it as a dependency to your build.
+To use this library, add it as a dependency to your build. This library has no additional dependencies.
 
 **Maven**
 
@@ -32,6 +32,7 @@ implementation("com.ginsberg:gatherers4j:0.0.1")
 ### Streams
 | Function                                   | Purpose                                                                                                                            |
 |--------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
+| `concat(stream`                            | Creates a stream which is the concatenation of the source stream and the given stream, which must be of the same type |
 | `dedupeConsecutive()`                      | Remove consecutive duplicates from a stream                                                                                        |
 | `dedupeConsecutiveBy(fn)`                  | Remove consecutive duplicates from a stream as returned by `fn`                                                                    |
 | `distinctBy(fn)`                           | Emit only distinct elements from the stream, as measured by `fn`                                                                   |
@@ -61,7 +62,7 @@ implementation("com.ginsberg:gatherers4j:0.0.1")
 Stream
     .of("1.0", "2.0", "10.0")
     .map(BigDecimal::new)        
-    .gather(Gatherers4j.averageBigDecimals())
+    .gather(Gatherers4j.simpleRunningAverage())
     .toList();
 
 // [1, 1.5, 4.3333333333333333]
@@ -73,10 +74,35 @@ Stream
 Stream
     .of("1.0", "2.0", "10.0", "20.0", "30.0")
     .map(BigDecimal::new)
-    .gather(Gatherers4j.averageBigDecimals().simpleMovingAverage(2))
+    .gather(Gatherers4j.simpleMovingAverage(2))
     .toList();
 
 // [1.5, 6, 15, 25]
+```
+
+#### Concatenate two streams
+
+```java
+Stream
+    .of("A", "B", "C")
+    .gather(Gatherers4j.concat(Stream.of("D", "E", "F")))
+    .toList();
+
+// ["A", "B", "C", "D", "E", "F"]
+```
+
+#### Concatenate multiple streams
+
+```java
+Stream
+    .of("A", "B", "C")
+    .gather(Gatherers4j
+        .concat(Stream.of("D", "E", "F"))
+        .thenConcat(Stream.of("G", "H", "I")) // thenConcat can be called again for more streams
+    )
+    .toList();
+
+// ["A", "B", "C", "D", "E", "F", "G", "H", "I"]
 ```
 
 #### Remove consecutive duplicate elements
