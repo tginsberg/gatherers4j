@@ -27,6 +27,15 @@ import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
 public class Gatherers4j {
 
     /**
+     * Concatenate the given <code>Stream&lt;INPUT&gt;</code> to the end of the current stream, in order.
+     *
+     * @param concatThis A non-null <code>Stream&lt;INPUT&gt;</code> instance to concatenate.
+     */
+    public static <INPUT> ConcatenationGatherer<INPUT> concat(final Stream<INPUT> concatThis) {
+        return new ConcatenationGatherer<>(concatThis);
+    }
+
+    /**
      * <p>Given a stream of objects, filter the objects such that any consecutively appearing
      * after the first one are dropped.
      *
@@ -162,7 +171,7 @@ public class Gatherers4j {
      * via a <code>mappingFunction</code> and looking back `windowSize` number of elements.
      *
      * @param mappingFunction The non-null function to map from <code>&lt;INPUT&gt;</code> to <code>BigDecimal</code>.
-     * @param windowSize The number of elements to average, must be greater than 1.
+     * @param windowSize      The number of elements to average, must be greater than 1.
      */
     public static <INPUT> BigDecimalSimpleMovingAverageGatherer<INPUT> simpleMovingAverageBy(
             final Function<INPUT, BigDecimal> mappingFunction,
