@@ -30,10 +30,10 @@ public class ConcatenationGatherer<INPUT> implements Gatherer<INPUT, Concatenati
     private final List<Stream<INPUT>> concatThese = new ArrayList<>();
 
     ConcatenationGatherer(final Stream<INPUT> concatThis) {
-        thenConcat(concatThis);
+        concat(concatThis);
     }
 
-    public final ConcatenationGatherer<INPUT> thenConcat(final Stream<INPUT> concatThis) {
+    public final ConcatenationGatherer<INPUT> concat(final Stream<INPUT> concatThis) {
         mustNotBeNull(concatThis, "Concatenated stream must not be null");
         this.concatThese.add(concatThis);
         return this;

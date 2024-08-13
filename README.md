@@ -98,7 +98,7 @@ Stream
     .of("A", "B", "C")
     .gather(Gatherers4j
         .concat(Stream.of("D", "E", "F"))
-        .thenConcat(Stream.of("G", "H", "I")) // thenConcat can be called again for more streams
+        .concat(Stream.of("G", "H", "I")) // concat can be called again for more streams
     )
     .toList();
 

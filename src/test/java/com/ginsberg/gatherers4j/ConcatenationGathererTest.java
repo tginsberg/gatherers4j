@@ -29,7 +29,7 @@ class ConcatenationGathererTest {
     @Test
     void additionalStreamCannotBeNull() {
         assertThatThrownBy(() ->
-                Stream.of("A").gather(Gatherers4j.concat(Stream.of("1")).thenConcat(null))
+                Stream.of("A").gather(Gatherers4j.concat(Stream.of("1")).concat(null))
         ).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
@@ -74,7 +74,7 @@ class ConcatenationGathererTest {
         final Stream<String> input3 = Stream.of("G", "H", "I");
 
         // Act
-        final List<String> output = input1.gather(Gatherers4j.concat(input2).thenConcat(input3)).toList();
+        final List<String> output = input1.gather(Gatherers4j.concat(input2).concat(input3)).toList();
 
         // Assert
         assertThat(output).containsExactly("A", "B", "C", "D", "E", "F", "G", "H", "I");
