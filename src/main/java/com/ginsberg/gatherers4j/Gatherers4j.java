@@ -27,28 +27,6 @@ import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
 public class Gatherers4j {
 
     /**
-     * Create a Stream that is the running average of <code>Stream&lt;BigDecimal&gt;</code>
-     *
-     * @return AveragingBigDecimalGatherer
-     */
-    public static AveragingBigDecimalGatherer<BigDecimal> averageBigDecimals() {
-        return new AveragingBigDecimalGatherer<>(Function.identity());
-    }
-
-    /**
-     * Create a Stream that is the running average of <code>BigDecimal</code> objects as mapped by
-     * the given function. This is useful when paired with the <code>withOriginal</code> function.
-     *
-     * @param mappingFunction A non-null function to map the <code>INPUT</code> type to <code>BigDecimal</code>
-     * @return AveragingBigDecimalGatherer
-     */
-    public static <INPUT> AveragingBigDecimalGatherer<INPUT> averageBigDecimalsBy(
-            final Function<INPUT, BigDecimal> mappingFunction
-    ) {
-        return new AveragingBigDecimalGatherer<>(mappingFunction);
-    }
-
-    /**
      * <p>Given a stream of objects, filter the objects such that any consecutively appearing
      * after the first one are dropped.
      *
@@ -67,7 +45,7 @@ public class Gatherers4j {
      * @param function A mapping function used to compare objects in the stream for equality.
      */
     public static <INPUT> Gatherer<INPUT, ?, INPUT> dedupeConsecutiveBy(final Function<INPUT, Object> function) {
-        mustNotBeNull(function, "Mapping function cannot be null");
+        mustNotBeNull(function, "Mapping function must not be null");
         return new DedupeConsecutiveGatherer<>(function);
     }
 
@@ -77,7 +55,7 @@ public class Gatherers4j {
      * @param function The non-null mapping function
      */
     public static <INPUT, OUTPUT> Gatherer<INPUT, ?, INPUT> distinctBy(final Function<INPUT, OUTPUT> function) {
-        mustNotBeNull(function, "Mapping function cannot be null");
+        mustNotBeNull(function, "Mapping function must not be null");
         return new DistinctGatherer<>(function);
     }
 
@@ -97,6 +75,101 @@ public class Gatherers4j {
      */
     public static <INPUT> LastGatherer<INPUT> last(final int count) {
         return new LastGatherer<>(count);
+    }
+
+    /**
+     * Create a <code>Stream&lt;BigDecimal&gt;</code> that represents the running population standard deviation of a <code>Stream&lt;BigDecimal&gt;</code>.
+     */
+    public static BigDecimalStandardDeviationGatherer<BigDecimal> runningPopulationStandardDeviation() {
+        return new BigDecimalStandardDeviationGatherer<>(
+                BigDecimalStandardDeviationGatherer.Mode.Population,
+                Function.identity()
+        );
+    }
+
+    /**
+     * Create a <code>Stream&lt;BigDecimal&gt;</code> that represents the running population standard deviation of a <code>BigDecimal</code> objects mapped
+     * from a <code>Stream&lt;BigDecimal&gt;</code> via a <code>mappingFunction</code>.
+     */
+    public static <INPUT> BigDecimalStandardDeviationGatherer<INPUT> runningPopulationStandardDeviationBy(
+            final Function<INPUT, BigDecimal> mappingFunction
+    ) {
+        return new BigDecimalStandardDeviationGatherer<>(
+                BigDecimalStandardDeviationGatherer.Mode.Population,
+                mappingFunction
+        );
+    }
+
+    /**
+     * Create a <code>Stream&lt;BigDecimal&gt;</code> that represents the running sample standard deviation of a <code>Stream&lt;BigDecimal&gt;</code>.
+     */
+    public static BigDecimalStandardDeviationGatherer<BigDecimal> runningSampleStandardDeviation() {
+        return new BigDecimalStandardDeviationGatherer<>(
+                BigDecimalStandardDeviationGatherer.Mode.Sample,
+                Function.identity()
+        );
+    }
+
+    /**
+     * Create a <code>Stream&lt;BigDecimal&gt;</code> that represents the running sample standard deviation of a <code>BigDecimal</code> objects mapped
+     * from a <code>Stream&lt;BigDecimal&gt;</code> via a <code>mappingFunction</code>.
+     *
+     * @param mappingFunction The non-null function to map from <code>&lt;INPUT&gt;</code> to <code>BigDecimal</code>.
+     */
+    public static <INPUT> BigDecimalStandardDeviationGatherer<INPUT> runningSampleStandardDeviationBy(
+            final Function<INPUT, BigDecimal> mappingFunction
+    ) {
+        return new BigDecimalStandardDeviationGatherer<>(
+                BigDecimalStandardDeviationGatherer.Mode.Sample,
+                mappingFunction
+        );
+    }
+
+    /**
+     * Create a Stream that is the running average of <code>Stream&lt;BigDecimal&gt;</code>
+     *
+     * @return BigDecimalSimpleAverageGatherer
+     */
+    public static BigDecimalSimpleAverageGatherer<BigDecimal> simpleRunningAverage() {
+        return simpleRunningAverageBy(Function.identity());
+    }
+
+    /**
+     * Create a Stream that is the running average of <code>BigDecimal</code> objects as mapped by
+     * the given function. This is useful when paired with the <code>withOriginal</code> function.
+     *
+     * @param mappingFunction A non-null function to map the <code>INPUT</code> type to <code>BigDecimal</code>
+     * @return BigDecimalSimpleAverageGatherer
+     */
+    public static <INPUT> BigDecimalSimpleAverageGatherer<INPUT> simpleRunningAverageBy(
+            final Function<INPUT, BigDecimal> mappingFunction
+    ) {
+        mustNotBeNull(mappingFunction, "Mapping function must not be null");
+        return new BigDecimalSimpleAverageGatherer<>(mappingFunction);
+    }
+
+    /**
+     * Create a Stream that represents the simple moving average of a <code>Stream&lt;BigDecimal&gt;</code> looking back `windowSize` number of elements.
+     *
+     * @param windowSize The number of elements to average, must be greater than 1.
+     */
+    public static BigDecimalSimpleMovingAverageGatherer<BigDecimal> simpleMovingAverage(final int windowSize) {
+        return simpleMovingAverageBy(Function.identity(), windowSize);
+    }
+
+    /**
+     * Create a Stream that represents the simple moving average of a <code>BigDecimal</code> objects mapped from a <code>Stream&lt;BigDecimal&gt;</code>
+     * via a <code>mappingFunction</code> and looking back `windowSize` number of elements.
+     *
+     * @param mappingFunction The non-null function to map from <code>&lt;INPUT&gt;</code> to <code>BigDecimal</code>.
+     * @param windowSize The number of elements to average, must be greater than 1.
+     */
+    public static <INPUT> BigDecimalSimpleMovingAverageGatherer<INPUT> simpleMovingAverageBy(
+            final Function<INPUT, BigDecimal> mappingFunction,
+            final int windowSize
+    ) {
+        mustNotBeNull(mappingFunction, "Mapping function must not be null");
+        return new BigDecimalSimpleMovingAverageGatherer<>(mappingFunction, windowSize);
     }
 
     /**
