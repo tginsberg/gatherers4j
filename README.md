@@ -30,17 +30,17 @@ implementation("com.ginsberg:gatherers4j:0.0.1")
 # Gatherers In This Library
 
 ### Streams
-| Function                                   | Purpose                                                                                                                            |
-|--------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
-| `concat(stream`                            | Creates a stream which is the concatenation of the source stream and the given stream, which must be of the same type |
-| `dedupeConsecutive()`                      | Remove consecutive duplicates from a stream                                                                                        |
-| `dedupeConsecutiveBy(fn)`                  | Remove consecutive duplicates from a stream as returned by `fn`                                                                    |
-| `distinctBy(fn)`                           | Emit only distinct elements from the stream, as measured by `fn`                                                                   |
-| `interleave(stream)`                       | Creates a stream of alternating objects from the input stream and the argument stream                                              |
-| `last(n)`                                  | Constrain the stream to the last `n` values                                                                                        |
-| `withIndex()`                              | Maps all elements of the stream as-is, along with their 0-based index.                                                             |
-| `zipWith(stream)`                          | Creates a stream of `Pair` objects whose values come from the input stream and argument stream                                     |
-| `zipWithNext()`                            | Creates a stream of `List` objects via a sliding window of width 2 and stepping 1                                                  |                          |
+| Function                  | Purpose                                                                                                                            |
+|---------------------------|------------------------------------------------------------------------------------------------------------------------------------|
+| `concat(stream)`          | Creates a stream which is the concatenation of the source stream and the given stream, which must be of the same type |
+| `dedupeConsecutive()`     | Remove consecutive duplicates from a stream                                                                                        |
+| `dedupeConsecutiveBy(fn)` | Remove consecutive duplicates from a stream as returned by `fn`                                                                    |
+| `distinctBy(fn)`          | Emit only distinct elements from the stream, as measured by `fn`                                                                   |
+| `interleave(stream)`      | Creates a stream of alternating objects from the input stream and the argument stream                                              |
+| `last(n)`                 | Constrain the stream to the last `n` values                                                                                        |
+| `withIndex()`             | Maps all elements of the stream as-is, along with their 0-based index.                                                             |
+| `zipWith(stream)`         | Creates a stream of `Pair` objects whose values come from the input stream and argument stream                                     |
+| `zipWithNext()`           | Creates a stream of `List` objects via a sliding window of width 2 and stepping 1                                                  |                          |
 
 ### Mathematics/Statistics
 | Function                                   | Purpose                                                                                                                            |
