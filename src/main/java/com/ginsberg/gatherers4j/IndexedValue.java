@@ -16,5 +16,5 @@
 
 package com.ginsberg.gatherers4j;
 
-public record IndexedValue<TYPE>(int index, TYPE value) {
+public record IndexedValue<TYPE>(long index, TYPE value) {
 }
