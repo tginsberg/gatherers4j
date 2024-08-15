@@ -22,21 +22,31 @@ import java.util.stream.Gatherer;
 public class IndexingGatherer<INPUT>
         implements Gatherer<INPUT, IndexingGatherer.State, IndexedValue<INPUT>> {
 
+    private long start = 0;
+
     IndexingGatherer() {
+    }
+
+    public IndexingGatherer<INPUT> startingAt(long start) {
+        this.start = start;
+        return this;
     }
 
     @Override
     public Supplier<IndexingGatherer.State> initializer() {
-        return State::new;
+        return () -> new State(start);
     }
 
     @Override
     public Integrator<IndexingGatherer.State, INPUT, IndexedValue<INPUT>> integrator() {
-        return (state, element, downstream) -> downstream
-                .push(new IndexedValue<>(state.index++, element));
+        return (state, element, downstream) -> downstream.push(new IndexedValue<>(state.index++, element));
     }
 
     public static class State {
-        int index;
+        long index;
+
+        public State(long start) {
+            this.index = start;
+        }
     }
 }

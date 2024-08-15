@@ -182,10 +182,19 @@ public class Gatherers4j {
     }
 
     /**
-     * Maps all elements of the stream as-is, along with their 0-based index.
+     * Maps all elements of the stream as-is along with their 0-based index.
      */
-    public static <INPUT> Gatherer<INPUT, ?, IndexedValue<INPUT>> withIndex() {
+    public static <INPUT> IndexingGatherer<INPUT> withIndex() {
         return new IndexingGatherer<>();
+    }
+
+    /**
+     * Maps all elements of the stream as-is along with and index, starting at the specified number.
+     *
+     * @param start The starting index to use
+     */
+    public static <INPUT> IndexingGatherer<INPUT> withIndexStartingAt(final long start) {
+        return new IndexingGatherer<INPUT>().startingAt(start);
     }
 
     /**
