@@ -92,7 +92,7 @@ public class ThrottlingGatherer<INPUT> implements Gatherer<INPUT, ThrottlingGath
             remainingPermits = allowedPerPeriod;
         }
 
-        // TODO: Is it safe to assume this is single threaded?
+        // Assuming this is not run in parallel. Gate with a lock if that assumption fails/changes.
         boolean attempt() {
             final long now = clock.millis();
             if(now < thisPeriodEnd) {

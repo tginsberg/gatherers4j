@@ -54,7 +54,7 @@ class ThrottlingGathererTest {
 
     @Test
     void defaultsRuleToPause() {
-        // Arrante/Act
+        // Arrange/Act
         final ThrottlingGatherer<String> gatherer = new ThrottlingGatherer<>(null, 1, Duration.ofSeconds(1));
 
         // Assert
