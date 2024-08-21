@@ -17,6 +17,8 @@ package com.ginsberg.gatherers4j;
 
 public class GathererUtils {
 
+    public static long NANOS_PER_MILLISECOND = 1_000_000;
+
     static boolean safeEquals(final Object left, final Object right) {
         if (left == null && right == null) {
             return true;
