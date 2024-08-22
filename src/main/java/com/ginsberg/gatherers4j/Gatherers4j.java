@@ -17,6 +17,7 @@
 package com.ginsberg.gatherers4j;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Gatherer;
@@ -33,6 +34,19 @@ public class Gatherers4j {
      */
     public static <INPUT> ConcatenationGatherer<INPUT> concat(final Stream<INPUT> concatThis) {
         return new ConcatenationGatherer<>(concatThis);
+    }
+
+    /**
+     * Limit the number of elements in the stream to some number per period, dropping anything over the
+     * limit during the period.
+     *
+     * @param amount A positive number of elements to allow per period
+     * @param duration A positive duration for the length of the period
+     * @return A non-null ThrottlingGatherer<INPUT>
+     * @param <INPUT> Type of elements in the stream
+     */
+    public static <INPUT> ThrottlingGatherer<INPUT> debounce(final int amount, final Duration duration) {
+        return new ThrottlingGatherer<>(ThrottlingGatherer.LimitRule.Drop, amount, duration);
     }
 
     /**
@@ -179,6 +193,19 @@ public class Gatherers4j {
     ) {
         mustNotBeNull(mappingFunction, "Mapping function must not be null");
         return new BigDecimalSimpleMovingAverageGatherer<>(mappingFunction, windowSize);
+    }
+
+    /**
+     * Limit the number of elements in the stream to some number per period. When the limit is reached,
+     * consumption is paused until a new period starts and the count resets.
+     *
+     * @param amount A positive number of elements to allow per period
+     * @param duration A positive duration for the length of the period
+     * @return A non-null ThrottlingGatherer<INPUT>
+     * @param <INPUT> Type of elements in the stream
+     */
+    public static <INPUT> ThrottlingGatherer<INPUT> throttle(final int amount, final Duration duration) {
+        return new ThrottlingGatherer<>(ThrottlingGatherer.LimitRule.Pause, amount, duration);
     }
 
     /**
