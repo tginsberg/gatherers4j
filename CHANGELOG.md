@@ -1,3 +1,6 @@
+### 0.3.0
++ Move minimum Java version from 22 to 23
+
 ### 0.2.0
 + Added starting point for indexing gatherer
 + Added throttling over a time period

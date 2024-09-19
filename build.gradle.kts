@@ -21,7 +21,7 @@ val gatherers4jVersion = if(gitBranch == "main" || gitBranch.startsWith("release
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(22)
+        languageVersion = JavaLanguageVersion.of(23)
     }
     withJavadocJar()
     withSourcesJar()
