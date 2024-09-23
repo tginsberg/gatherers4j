@@ -28,15 +28,6 @@ import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
 public class Gatherers4j {
 
     /**
-     * Concatenate the given <code>Stream&lt;INPUT&gt;</code> to the end of the current stream, in order.
-     *
-     * @param concatThis A non-null <code>Stream&lt;INPUT&gt;</code> instance to concatenate.
-     */
-    public static <INPUT> ConcatenationGatherer<INPUT> concat(final Stream<INPUT> concatThis) {
-        return new ConcatenationGatherer<>(concatThis);
-    }
-
-    /**
      * Limit the number of elements in the stream to some number per period, dropping anything over the
      * limit during the period.
      *

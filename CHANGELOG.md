@@ -1,3 +1,6 @@
+### 0.4.0
++ Remove `concat` implementation (the JDK has this)
+
 ### 0.3.0
 + Move minimum Java version from 22 to 23
 
