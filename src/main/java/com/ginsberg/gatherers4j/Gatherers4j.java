@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.List;
 import java.util.function.Function;
+import java.util.random.RandomGenerator;
 import java.util.stream.Gatherer;
 import java.util.stream.Stream;
 
@@ -31,10 +32,10 @@ public class Gatherers4j {
      * Limit the number of elements in the stream to some number per period, dropping anything over the
      * limit during the period.
      *
-     * @param amount A positive number of elements to allow per period
+     * @param amount   A positive number of elements to allow per period
      * @param duration A positive duration for the length of the period
+     * @param <INPUT>  Type of elements in the stream
      * @return A non-null ThrottlingGatherer<INPUT>
-     * @param <INPUT> Type of elements in the stream
      */
     public static <INPUT> ThrottlingGatherer<INPUT> debounce(final int amount, final Duration duration) {
         return new ThrottlingGatherer<>(ThrottlingGatherer.LimitRule.Drop, amount, duration);
@@ -149,6 +150,29 @@ public class Gatherers4j {
     }
 
     /**
+     * Shuffle the input stream into a random order. This consumes the entire stream and
+     * holds it in memory, so it will not work on infinite streams and may cause memory
+     * pressure on very large streams.
+     *
+     * @return A non-null <code>ShufflingGatherer</code>ShufflingGatherer`
+     */
+    public static <INPUT> ShufflingGatherer<INPUT> shuffle() {
+        return new ShufflingGatherer<>(RandomGenerator.getDefault());
+    }
+
+    /**
+     * Shuffle the input stream into a random order. This consumes the entire stream and
+     * holds it in memory, so it will not work on infinite streams and may cause memory
+     * pressure on very large streams.
+     *
+     * @param randomGenerator A non-null <code>RandomGenerator</code> to use as a random source for the shuffle
+     * @return A non-null <code>ShufflingGatherer</code>ShufflingGatherer`
+     */
+    public static <INPUT> ShufflingGatherer<INPUT> shuffle(final RandomGenerator randomGenerator) {
+        return new ShufflingGatherer<>(randomGenerator);
+    }
+
+    /**
      * Create a Stream that is the running average of <code>BigDecimal</code> objects as mapped by
      * the given function. This is useful when paired with the <code>withOriginal</code> function.
      *
@@ -190,10 +214,10 @@ public class Gatherers4j {
      * Limit the number of elements in the stream to some number per period. When the limit is reached,
      * consumption is paused until a new period starts and the count resets.
      *
-     * @param amount A positive number of elements to allow per period
+     * @param amount   A positive number of elements to allow per period
      * @param duration A positive duration for the length of the period
+     * @param <INPUT>  Type of elements in the stream
      * @return A non-null ThrottlingGatherer<INPUT>
-     * @param <INPUT> Type of elements in the stream
      */
     public static <INPUT> ThrottlingGatherer<INPUT> throttle(final int amount, final Duration duration) {
         return new ThrottlingGatherer<>(ThrottlingGatherer.LimitRule.Pause, amount, duration);
