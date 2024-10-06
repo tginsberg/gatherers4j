@@ -1,6 +1,8 @@
 ### 0.4.0
-+ Remove `concat` implementation (the JDK has this)
 + Implement `suffle()` and `shuffle(RandomGenerator)`
++ Implement `filterWithIndex()`
++ Remove `concat()` implementation (the JDK has this)
++ Remove `withIndexStartingAt()`, not sure if this is a real use case.
 
 ### 0.3.0
 + Move minimum Java version from 22 to 23

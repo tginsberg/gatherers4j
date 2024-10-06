@@ -19,6 +19,7 @@ package com.ginsberg.gatherers4j;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.List;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.random.RandomGenerator;
 import java.util.stream.Gatherer;
@@ -72,6 +73,12 @@ public class Gatherers4j {
     public static <INPUT, OUTPUT> Gatherer<INPUT, ?, INPUT> distinctBy(final Function<INPUT, OUTPUT> function) {
         mustNotBeNull(function, "Mapping function must not be null");
         return new DistinctGatherer<>(function);
+    }
+
+    public static <INPUT> FilteringWithIndexGatherer<INPUT> filterWithIndex(
+            final BiPredicate<Long, INPUT> predicate
+    ) {
+        return new FilteringWithIndexGatherer<>(predicate);
     }
 
     /**
@@ -228,15 +235,6 @@ public class Gatherers4j {
      */
     public static <INPUT> IndexingGatherer<INPUT> withIndex() {
         return new IndexingGatherer<>();
-    }
-
-    /**
-     * Maps all elements of the stream as-is along with and index, starting at the specified number.
-     *
-     * @param start The starting index to use
-     */
-    public static <INPUT> IndexingGatherer<INPUT> withIndexStartingAt(final long start) {
-        return new IndexingGatherer<INPUT>().startingAt(start);
     }
 
     /**
