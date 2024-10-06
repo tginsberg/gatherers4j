@@ -78,7 +78,7 @@ public class Gatherers4j {
     /**
      * Filter a stream according to the given <code>predicate</code>, which takes both the item being examined, and its index.
      *
-     * @param predicate A non-null <code>BiPredicate<Long,INPUT></code> where the <code>Long</code> is the zero-based index of
+     * @param predicate A non-null <code>BiPredicate&lt;Long,INPUT&gt;</code> where the <code>Long</code> is the zero-based index of
      *                  the element being filtered, and the <code>INPUT</code> is the element itself.
      *
      * @return A <code>FilterWithIndexGatherer</code>
