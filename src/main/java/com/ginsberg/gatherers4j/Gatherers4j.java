@@ -75,6 +75,14 @@ public class Gatherers4j {
         return new DistinctGatherer<>(function);
     }
 
+    /**
+     * Filter a stream according to the given <code>predicate</code>, which takes both the item being examined, and its index.
+     *
+     * @param predicate A non-null <code>BiPredicate<Long,INPUT></code> where the <code>Long</code> is the zero-based index of
+     *                  the element being filtered, and the <code>INPUT</code> is the element itself.
+     *
+     * @return A <code>FilterWithIndexGatherer</code>
+     */
     public static <INPUT> FilteringWithIndexGatherer<INPUT> filterWithIndex(
             final BiPredicate<Long, INPUT> predicate
     ) {
