@@ -18,6 +18,7 @@ package com.ginsberg.gatherers4j;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -49,12 +50,14 @@ class ShufflingGathererTest {
         final List<String> input = List.of("A", "B", "C", "D", "E");
 
         // Act
-        final Set<String> output = Set.of(
-                input.stream().gather(Gatherers4j.shuffle()).collect(Collectors.joining()),
-                input.stream().gather(Gatherers4j.shuffle()).collect(Collectors.joining()),
-                input.stream().gather(Gatherers4j.shuffle()).collect(Collectors.joining()),
-                input.stream().gather(Gatherers4j.shuffle()).collect(Collectors.joining()),
-                input.stream().gather(Gatherers4j.shuffle()).collect(Collectors.joining())
+        final Set<String> output = new HashSet<>(
+                List.of(
+                        input.stream().gather(Gatherers4j.shuffle()).collect(Collectors.joining()),
+                        input.stream().gather(Gatherers4j.shuffle()).collect(Collectors.joining()),
+                        input.stream().gather(Gatherers4j.shuffle()).collect(Collectors.joining()),
+                        input.stream().gather(Gatherers4j.shuffle()).collect(Collectors.joining()),
+                        input.stream().gather(Gatherers4j.shuffle()).collect(Collectors.joining())
+                )
         );
 
         // Assert
