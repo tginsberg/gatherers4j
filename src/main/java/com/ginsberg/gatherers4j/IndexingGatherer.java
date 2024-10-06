@@ -22,19 +22,12 @@ import java.util.stream.Gatherer;
 public class IndexingGatherer<INPUT>
         implements Gatherer<INPUT, IndexingGatherer.State, IndexedValue<INPUT>> {
 
-    private long start = 0;
-
     IndexingGatherer() {
-    }
-
-    public IndexingGatherer<INPUT> startingAt(long start) {
-        this.start = start;
-        return this;
     }
 
     @Override
     public Supplier<IndexingGatherer.State> initializer() {
-        return () -> new State(start);
+        return () -> new State(0);
     }
 
     @Override

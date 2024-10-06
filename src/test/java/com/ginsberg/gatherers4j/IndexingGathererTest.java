@@ -62,43 +62,4 @@ class IndexingGathererTest {
                         new IndexedValue<>(2, 3)
                 );
     }
-
-    @Test
-    void startingAtNonZero() {
-        // Arrange
-        final Stream<String> input = Stream.of("A", "B", "C");
-
-        // Act
-        final List<IndexedValue<String>> output = input
-                .gather(Gatherers4j.withIndexStartingAt(100))
-                .toList();
-
-        // Assert
-        assertThat(output)
-                .containsExactly(
-                        new IndexedValue<>(100, "A"),
-                        new IndexedValue<>(101, "B"),
-                        new IndexedValue<>(102, "C")
-                );
-    }
-
-    @Test
-    void startingAtNonZeroTypeWitnessed() {
-        // Arrange
-        final Stream<String> input = Stream.of("A", "B", "C");
-
-        // Act
-        final List<IndexedValue<String>> output = input
-                .gather(Gatherers4j.<String>withIndex().startingAt(100))
-                .toList();
-
-        // Assert
-        assertThat(output)
-                .containsExactly(
-                        new IndexedValue<>(100, "A"),
-                        new IndexedValue<>(101, "B"),
-                        new IndexedValue<>(102, "C")
-                );
-    }
-
 }
