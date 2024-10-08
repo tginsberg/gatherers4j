@@ -15,7 +15,7 @@ Add the following dependency to `pom.xml`.
 <dependency>
     <groupId>com.ginsberg</groupId>
     <artifactId>gatherers4j</artifactId>
-    <version>0.3.0</version>
+    <version>0.4.0</version>
 </dependency>
 ```
 
@@ -24,34 +24,41 @@ Add the following dependency to `pom.xml`.
 Add the following dependency to `build.gradle` or `build.gradle.kts`
 
 ```groovy
-implementation("com.ginsberg:gatherers4j:0.3.0")
+implementation("com.ginsberg:gatherers4j:0.4.0")
 ```
 
 # Gatherers In This Library
 
 ### Streams
-| Function                     | Purpose                                                                                                               |
-|------------------------------|-----------------------------------------------------------------------------------------------------------------------|
-| `concat(stream)`             | Creates a stream which is the concatenation of the source stream and the given stream, which must be of the same type |
+
+| Function                     | Purpose                                                                                                                        |
+|------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
 | `debounce(amount, duration)` | Limit stream elements to `amount` elements over `duration`, dropping any elements over the limit until a new `duration` starts |
-| `dedupeConsecutive()`        | Remove consecutive duplicates from a stream                                                                           |
-| `dedupeConsecutiveBy(fn)`    | Remove consecutive duplicates from a stream as returned by `fn`                                                       |
-| `distinctBy(fn)`             | Emit only distinct elements from the stream, as measured by `fn`                                                      |
-| `interleave(stream)`         | Creates a stream of alternating objects from the input stream and the argument stream                                 |
-| `last(n)`                    | Constrain the stream to the last `n` values                                                                           |
-| `throttle(amount, duration)` | Limit stream elements to `amount` elements over `duration`, pausing until a new `duration` period starts |
-| `withIndex()`                | Maps all elements of the stream as-is along with their 0-based index                                                  |
-| `withIndexStartingAt(n)`     | Maps all elements of the stream as-is along with an index starting at the number specified                            |
-| `zipWith(stream)`            | Creates a stream of `Pair` objects whose values come from the input stream and argument stream                        |
-| `zipWithNext()`              | Creates a stream of `List` objects via a sliding window of width 2 and stepping 1                                     |      
+| `dedupeConsecutive()`        | Remove consecutive duplicates from a stream                                                                                    |
+| `dedupeConsecutiveBy(fn)`    | Remove consecutive duplicates from a stream as returned by `fn`                                                                |
+| `distinctBy(fn)`             | Emit only distinct elements from the stream, as measured by `fn`                                                               |
+| `filterWithIndex(predicate)` | Filter the stream with the given `predicate`, which takes an `element` and its `index`                                         | 
+| `interleave(stream)`         | Creates a stream of alternating objects from the input stream and the argument stream                                          |
+| `last(n)`                    | Constrain the stream to the last `n` values                                                                                    |
+| `shuffle()`                  | Shuffle the stream into a random order using the platform default `RandomGenerator`                                            |
+| `shuffle(rg)`                | Shuffle the stream into a random order using the specified `RandomGenerator`                                                   |
+| `throttle(amount, duration)` | Limit stream elements to `amount` elements over `duration`, pausing until a new `duration` period starts                       |
+| `withIndex()`                | Maps all elements of the stream as-is along with their 0-based index                                                           |
+| `zipWith(stream)`            | Creates a stream of `Pair` objects whose values come from the input stream and argument stream                                 |
+| `zipWithNext()`              | Creates a stream of `List` objects via a sliding window of width 2 and stepping 1                                              |      
 
 ### Mathematics/Statistics
+
 | Function                                   | Purpose                                                                                                                            |
 |--------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
 | `runningPopulationStandardDeviation()`     | Create a stream of `BigDecimal` objects representing the running population standard deviation.                                    |
 | `runningPopulationStandardDeviationBy(fn)` | Create a stream of `BigDecimal` objects as mapped from the input via `fn`, representing the running population standard deviation. |
+| `runningProduct()`                         | Create a stream of `BigDecimal` objects representing the running product.                                                          |                                                          |
+| `runningProductBy(fn)                      | Create a stream of `BigDecimal` objects as mapped from the input via `fn`, representing the running product.                       |
 | `runningSampleStandardDeviation()`         | Create a stream of `BigDecimal` objects representing the running sample standard deviation.                                        |
 | `runningSampleStandardDeviationBy(fn)`     | Create a stream of `BigDecimal` objects as mapped from the input via `fn`, representing the running sample standard deviation.     |
+| `runningSum()`                             | Create a stream of `BigDecimal` objects representing the running sum.                                                              |
+| `runningSumBy(fn)`                         | Create a stream of `BigDecimal` objects as mapped from the input via `fn`, representing the running sum.                           |
 | `simpleMovingAverage(window)`              | Create a moving average of `BigDecimal` values over the previous `window` values. See below for options.                           |
 | `simpleMovingAverageBy(fn, window)`        | Create a moving average of `BigDecimal` values over the previous `window` values, as mapped via `fn`.                              |
 | `simpleRunningAverage()`                   | Create a running average of `BigDecimal` values. See below for options.                                                            |
@@ -81,31 +88,6 @@ Stream
     .toList();
 
 // [1.5, 6, 15, 25]
-```
-
-#### Concatenate two streams
-
-```java
-Stream
-    .of("A", "B", "C")
-    .gather(Gatherers4j.concat(Stream.of("D", "E", "F")))
-    .toList();
-
-// ["A", "B", "C", "D", "E", "F"]
-```
-
-#### Concatenate multiple streams
-
-```java
-Stream
-    .of("A", "B", "C")
-    .gather(Gatherers4j
-        .concat(Stream.of("D", "E", "F"))
-        .concat(Stream.of("G", "H", "I")) // concat can be called again for more streams
-    )
-    .toList();
-
-// ["A", "B", "C", "D", "E", "F", "G", "H", "I"]
 ```
 
 #### Remove consecutive duplicate elements
@@ -153,6 +135,16 @@ Stream
 // [Person("Todd", "Ginsberg"), Person("Emma", "Ginsberg")]
 ```
 
+#### Filter a stream, knowing the index of each element
+
+```java
+Stream.of("A", "B", "C", "D")
+      .gather(Gatherers4j.filterWithIndex((index, element) -> index % 2 == 0 || element.equals("D")))
+      .toList();
+
+// ["A", "C", "D"]
+```
+
 #### Interleave streams of the same type into one stream
 
 ```java
@@ -186,7 +178,29 @@ Stream
 // [IndexedValue(0, "A"), IndexedValue(1, "B"), IndexedValue(2, "C")]
 ```
 
-### Throttle the number of elements consumed in a period
+#### Shuffle the stream into a random order
+
+```java
+Stream
+     .of("A", "B", "C", "D" ,"E")
+     .gather(Gatherers4j.shuffle())
+     .toList();
+
+// ex: ["B", "E", "A", "C", "D"] -- or some other randomly arranged stream
+```
+
+#### Shuffle the stream into a random order, with a specific `RandomGenerator`
+
+```java
+Stream
+     .of("A", "B", "C", "D" ,"E")
+     .gather(Gatherers4j.shuffle(RandomGenerator.of("someGenerator")))
+     .toList();
+
+// ex: ["B", "E", "A", "C", "D"] -- or some other randomly arranged stream
+```
+
+#### Throttle the number of elements consumed in a period
 
 ```java
 Stream
