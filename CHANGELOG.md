@@ -1,3 +1,6 @@
+### 0.5.0
++ TBD
+
 ### 0.4.0
 + Implement `suffle()` and `shuffle(RandomGenerator)`
 + Implement `filterWithIndex()`
