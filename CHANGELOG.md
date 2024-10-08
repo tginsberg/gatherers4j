@@ -1,6 +1,8 @@
 ### 0.4.0
 + Implement `suffle()` and `shuffle(RandomGenerator)`
 + Implement `filterWithIndex()`
++ Implement `runningProduct()` and `runningProductBy()`
++ Implement `runningSum()` and `runningSumBy()`
 + Remove `concat()` implementation (the JDK has this)
 + Remove `withIndexStartingAt()`, not sure if this is a real use case.
 

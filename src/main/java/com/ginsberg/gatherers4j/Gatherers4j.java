@@ -131,6 +131,25 @@ public class Gatherers4j {
     }
 
     /**
+     * Create a <code>Stream&lt;BigDecimal&gt;</code> that represents the running product of a <code>Stream&lt;BigDecimal&gt;</code>.
+     */
+    public static BigDecimalProductGatherer<BigDecimal> runningProduct() {
+        return new BigDecimalProductGatherer<>(Function.identity());
+    }
+
+    /**
+     * Create a <code>Stream&lt;BigDecimal&gt;</code> that represents the running product of <code>BigDecimal</code> objects mapped
+     * from a <code>Stream&lt;INPUT&gt;</code> via a <code>mappingFunction</code>.
+     *
+     * @param mappingFunction The non-null function to map from <code>&lt;INPUT&gt;</code> to <code>BigDecimal</code>.
+     */
+    public static <INPUT> BigDecimalProductGatherer<INPUT> runningProductBy(
+            final Function<INPUT, BigDecimal> mappingFunction
+    ) {
+        return new BigDecimalProductGatherer<>(mappingFunction);
+    }
+
+    /**
      * Create a <code>Stream&lt;BigDecimal&gt;</code> that represents the running sample standard deviation of a <code>Stream&lt;BigDecimal&gt;</code>.
      */
     public static BigDecimalStandardDeviationGatherer<BigDecimal> runningSampleStandardDeviation() {
@@ -141,8 +160,8 @@ public class Gatherers4j {
     }
 
     /**
-     * Create a <code>Stream&lt;BigDecimal&gt;</code> that represents the running sample standard deviation of a <code>BigDecimal</code> objects mapped
-     * from a <code>Stream&lt;BigDecimal&gt;</code> via a <code>mappingFunction</code>.
+     * Create a <code>Stream&lt;BigDecimal&gt;</code> that represents the running sample standard deviation of <code>BigDecimal</code> objects mapped
+     * from a <code>Stream&lt;INPUT&gt;</code> via a <code>mappingFunction</code>.
      *
      * @param mappingFunction The non-null function to map from <code>&lt;INPUT&gt;</code> to <code>BigDecimal</code>.
      */
@@ -153,6 +172,25 @@ public class Gatherers4j {
                 BigDecimalStandardDeviationGatherer.Mode.Sample,
                 mappingFunction
         );
+    }
+
+    /**
+     * Create a <code>Stream&lt;BigDecimal&gt;</code> that represents the running sum of a <code>Stream&lt;BigDecimal&gt;</code>.
+     */
+    public static BigDecimalSumGatherer<BigDecimal> runningSum() {
+        return new BigDecimalSumGatherer<>(Function.identity());
+    }
+
+    /**
+     * Create a <code>Stream&lt;BigDecimal&gt;</code> that represents the running sum of <code>BigDecimal</code> objects mapped
+     * from a <code>Stream&lt;INPUT&gt;</code> via a <code>mappingFunction</code>.
+     *
+     * @param mappingFunction The non-null function to map from <code>&lt;INPUT&gt;</code> to <code>BigDecimal</code>.
+     */
+    public static <INPUT> BigDecimalSumGatherer<INPUT> runningSumBy(
+            final Function<INPUT, BigDecimal> mappingFunction
+    ) {
+        return new BigDecimalSumGatherer<>(mappingFunction);
     }
 
     /**
