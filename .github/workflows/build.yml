@@ -1,11 +1,10 @@
 name: Build and Test
 
 on:
-  [ push ]
+  [ pull_request, push ]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -22,10 +21,29 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
 
-      - name: Build and Publish
-        run: ./gradlew build publish --no-daemon
+      - name: Build
+        run: ./gradlew build --no-daemon
+
+      - name: Publish
+        if: github.ref != 'refs/heads/main'
+        run: ./gradlew publish --no-daemon
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_TOKEN: ${{ secrets.SONATYPE_TOKEN }}
           SONATYPE_SIGNING_KEY: ${{ secrets.SONATYPE_SIGNING_KEY }}
           SONATYPE_SIGNING_PASSPHRASE: ${{ secrets.SONATYPE_SIGNING_PASSPHRASE }}
+
+  coverage:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Add coverage to PR
+        if: github.event_name == 'pull_request'
+        id: jacoco
+        uses: madrapps/jacoco-report@v1.6.1
+        with:
+          paths: ${{ github.workspace }}/**/build/reports/jacoco/test/jacocoTestReport.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
