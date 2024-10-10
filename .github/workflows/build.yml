@@ -9,8 +9,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-      pull-requests: write
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -40,6 +38,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      pull-requests: write
     steps:
       - name: Add coverage to PR
         if: github.event_name == 'pull_request'
