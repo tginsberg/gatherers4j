@@ -40,6 +40,7 @@ implementation("com.ginsberg:gatherers4j:0.5.0")
 | `filterWithIndex(predicate)` | Filter the stream with the given `predicate`, which takes an `element` and its `index`                                         | 
 | `interleave(stream)`         | Creates a stream of alternating objects from the input stream and the argument stream                                          |
 | `last(n)`                    | Constrain the stream to the last `n` values                                                                                    |
+| `reverse()`                  | Reverse the order of the stream                                                                                                |
 | `shuffle()`                  | Shuffle the stream into a random order using the platform default `RandomGenerator`                                            |
 | `shuffle(rg)`                | Shuffle the stream into a random order using the specified `RandomGenerator`                                                   |
 | `throttle(amount, duration)` | Limit stream elements to `amount` elements over `duration`, pausing until a new `duration` period starts                       |
@@ -54,7 +55,7 @@ implementation("com.ginsberg:gatherers4j:0.5.0")
 | `runningPopulationStandardDeviation()`     | Create a stream of `BigDecimal` objects representing the running population standard deviation.                                    |
 | `runningPopulationStandardDeviationBy(fn)` | Create a stream of `BigDecimal` objects as mapped from the input via `fn`, representing the running population standard deviation. |
 | `runningProduct()`                         | Create a stream of `BigDecimal` objects representing the running product.                                                          |                                                          |
-| `runningProductBy(fn)                      | Create a stream of `BigDecimal` objects as mapped from the input via `fn`, representing the running product.                       |
+| `runningProductBy(fn)`                     | Create a stream of `BigDecimal` objects as mapped from the input via `fn`, representing the running product.                       |
 | `runningSampleStandardDeviation()`         | Create a stream of `BigDecimal` objects representing the running sample standard deviation.                                        |
 | `runningSampleStandardDeviationBy(fn)`     | Create a stream of `BigDecimal` objects as mapped from the input via `fn`, representing the running sample standard deviation.     |
 | `runningSum()`                             | Create a stream of `BigDecimal` objects representing the running sum.                                                              |
@@ -165,6 +166,17 @@ Stream
     .toList();
 
 // ["E", "F", "G"]
+```
+
+#### Reverse the order of the stream
+
+```java
+Stream
+    .of("A", "B", "C")
+    .gather(Gatherers4j.reverse())
+    .toList();
+
+// ["C", "B", "A"]
 ```
 
 #### Include index with original stream values
