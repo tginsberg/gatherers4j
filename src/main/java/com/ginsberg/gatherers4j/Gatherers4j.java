@@ -80,7 +80,6 @@ public class Gatherers4j {
      *
      * @param predicate A non-null <code>BiPredicate&lt;Long,INPUT&gt;</code> where the <code>Long</code> is the zero-based index of
      *                  the element being filtered, and the <code>INPUT</code> is the element itself.
-     *
      * @return A <code>FilterWithIndexGatherer</code>
      */
     public static <INPUT> FilteringWithIndexGatherer<INPUT> filterWithIndex(
@@ -105,6 +104,16 @@ public class Gatherers4j {
      */
     public static <INPUT> LastGatherer<INPUT> last(final int count) {
         return new LastGatherer<>(count);
+    }
+
+    /**
+     * Reverse the order of the input Stream.
+     *
+     * Note: This consumes the entire stream and holds it in memory, so it will not work on
+     * infinite streams and may cause memory pressure on very large streams.
+     */
+    public static <INPUT> ReversingGatherer<INPUT> reverse() {
+        return new ReversingGatherer<>();
     }
 
     /**
@@ -203,9 +212,10 @@ public class Gatherers4j {
     }
 
     /**
-     * Shuffle the input stream into a random order. This consumes the entire stream and
-     * holds it in memory, so it will not work on infinite streams and may cause memory
-     * pressure on very large streams.
+     * Shuffle the input stream into a random order.
+     *
+     * Note: This consumes the entire stream and holds it in memory, so it will not work on
+     * infinite streams and may cause memory pressure on very large streams.
      *
      * @return A non-null <code>ShufflingGatherer</code>ShufflingGatherer`
      */

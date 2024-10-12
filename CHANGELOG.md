@@ -1,5 +1,5 @@
 ### 0.5.0
-+ TBD
++ Implement `reverse()`
 
 ### 0.4.0
 + Implement `suffle()` and `shuffle(RandomGenerator)`
