@@ -40,6 +40,8 @@ implementation("com.ginsberg:gatherers4j:0.5.0")
 | `filterWithIndex(predicate)` | Filter the stream with the given `predicate`, which takes an `element` and its `index`                                         | 
 | `interleave(stream)`         | Creates a stream of alternating objects from the input stream and the argument stream                                          |
 | `last(n)`                    | Constrain the stream to the last `n` values                                                                                    |
+| `maxBy(fn)`                  | Return a stream containing a single element, which is the maximum value returned by the mapping function `fn`                  |
+| `minBy(fn)`                  | Return a stream containing a single element, which is the minimum value returned by the mapping function `fn`                  |
 | `reverse()`                  | Reverse the order of the stream                                                                                                |
 | `shuffle()`                  | Shuffle the stream into a random order using the platform default `RandomGenerator`                                            |
 | `shuffle(rg)`                | Shuffle the stream into a random order using the specified `RandomGenerator`                                                   |
@@ -166,6 +168,30 @@ Stream
     .toList();
 
 // ["E", "F", "G"]
+```
+
+#### Find the object with the maximum mapped value
+
+```java
+record Employee(String name, int salary) {}
+
+streamOfEmployees
+    .gather(Gatherers4j.maxBy(Employee:salary))
+    .toList();
+
+// Employee("Big Shot", 1_000_000)
+```
+
+#### Find the object with the minimum mapped value
+
+```java
+record Person(String name, int age) {}
+
+streamOfPeople
+    .gather(Gatherers4j.minBy(Person:age))
+    .toList();
+
+// Person("Baby", 1)
 ```
 
 #### Reverse the order of the stream

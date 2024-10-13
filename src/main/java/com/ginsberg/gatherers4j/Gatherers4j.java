@@ -107,6 +107,34 @@ public class Gatherers4j {
     }
 
     /**
+     * Return a Stream containing the single maximum value of the input stream, according to
+     * the given mapping function. In the case where a stream has more than one mapped value
+     * that is the maximum, the first one encountered makes up the stream. This does not
+     * evaluate null values or null mappings.
+     *
+     * @param function A mapping function, the results of which must implement <code>Comparable</code>
+     */
+    public static <INPUT, MAPPED extends Comparable<MAPPED>> MinMaxGatherer<INPUT, MAPPED> maxBy(
+            final Function<INPUT, MAPPED> function
+    ) {
+        return new MinMaxGatherer<>(true, function);
+    }
+
+    /**
+     * Return a Stream containing the single minimum value of the input stream, according to
+     * the given mapping function. In the case where a stream has more than one mapped value
+     * that is the minimum, the first one encountered makes up the stream. This does not
+     * evaluate null values or null mappings.
+     *
+     * @param function A mapping function, the results of which must implement <code>Comparable</code>
+     */
+    public static <INPUT, MAPPED extends Comparable<MAPPED>> MinMaxGatherer<INPUT, MAPPED> minBy(
+            final Function<INPUT, MAPPED> function
+    ) {
+        return new MinMaxGatherer<>(false, function);
+    }
+
+    /**
      * Reverse the order of the input Stream.
      *
      * Note: This consumes the entire stream and holds it in memory, so it will not work on

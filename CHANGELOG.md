@@ -1,5 +1,6 @@
 ### 0.5.0
 + Implement `reverse()`
++ Implement `maxBy(fn)` and `minBy(fn)`
 
 ### 0.4.0
 + Implement `suffle()` and `shuffle(RandomGenerator)`
