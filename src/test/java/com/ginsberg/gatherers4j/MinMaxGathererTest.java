@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class MinMaxGathererTest {
 
@@ -69,6 +70,13 @@ class MinMaxGathererTest {
 
             // Assert
             assertThat(output).containsExactly(new TestObject("A", 1));
+        }
+
+        @Test
+        void mappingFunctionMustNotBeNull() {
+            assertThatThrownBy(() ->
+                    Stream.empty().gather(Gatherers4j.maxBy(null))
+            ).isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -130,6 +138,13 @@ class MinMaxGathererTest {
 
             // Assert
             assertThat(output).containsExactly(new TestObject("A", 1));
+        }
+
+        @Test
+        void mappingFunctionMustNotBeNull() {
+            assertThatThrownBy(() ->
+                    Stream.empty().gather(Gatherers4j.minBy(null))
+            ).isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test

@@ -64,7 +64,6 @@ public class MinMaxGatherer<INPUT, MAPPED extends Comparable<MAPPED>>
             if (state.bestSoFar != null) {
                 downstream.push(state.bestSoFar);
             }
-            // TODO: What happens if we have no best?
         };
     }
 
