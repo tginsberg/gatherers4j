@@ -76,6 +76,16 @@ public class Gatherers4j {
     }
 
     /**
+     * Ensure the input stream is exactly <code>size</code> elements long, and emit all elements
+     * if so. If not, throw an <code>IllegalStateException</code>.
+     *
+     * @param size Exact number of elements the stream must have
+     */
+    public static <INPUT> SizeGatherer<INPUT> exactSize(final long size) {
+        return new SizeGatherer<>(size);
+    }
+
+    /**
      * Filter a stream according to the given <code>predicate</code>, which takes both the item being examined, and its index.
      *
      * @param predicate A non-null <code>BiPredicate&lt;Long,INPUT&gt;</code> where the <code>Long</code> is the zero-based index of
@@ -138,7 +148,7 @@ public class Gatherers4j {
 
     /**
      * Reverse the order of the input Stream.
-     *
+     * <p>
      * Note: This consumes the entire stream and holds it in memory, so it will not work on
      * infinite streams and may cause memory pressure on very large streams.
      */
@@ -243,7 +253,7 @@ public class Gatherers4j {
 
     /**
      * Shuffle the input stream into a random order.
-     *
+     * <p>
      * Note: This consumes the entire stream and holds it in memory, so it will not work on
      * infinite streams and may cause memory pressure on very large streams.
      *
