@@ -1,3 +1,6 @@
+### 0.6.0
++ TBD
+
 ### 0.5.0
 + Implement `reverse()`
 + Implement `maxBy(fn)` and `minBy(fn)`
