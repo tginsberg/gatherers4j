@@ -117,6 +117,7 @@ public class Gatherers4j {
     public static <INPUT, MAPPED extends Comparable<MAPPED>> MinMaxGatherer<INPUT, MAPPED> maxBy(
             final Function<INPUT, MAPPED> function
     ) {
+        mustNotBeNull(function, "Mapping function must not be null");
         return new MinMaxGatherer<>(true, function);
     }
 
@@ -131,6 +132,7 @@ public class Gatherers4j {
     public static <INPUT, MAPPED extends Comparable<MAPPED>> MinMaxGatherer<INPUT, MAPPED> minBy(
             final Function<INPUT, MAPPED> function
     ) {
+        mustNotBeNull(function, "Mapping function must not be null");
         return new MinMaxGatherer<>(false, function);
     }
 
