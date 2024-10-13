@@ -1,3 +1,8 @@
+### 0.5.0
++ Implement `reverse()`
++ Implement `maxBy(fn)` and `minBy(fn)`
++ Implement `exactSize(n)`
++ 
 ### 0.4.0
 + Implement `suffle()` and `shuffle(RandomGenerator)`
 + Implement `filterWithIndex()`

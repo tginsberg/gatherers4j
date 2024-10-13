@@ -15,7 +15,7 @@ Add the following dependency to `pom.xml`.
 <dependency>
     <groupId>com.ginsberg</groupId>
     <artifactId>gatherers4j</artifactId>
-    <version>0.4.0</version>
+    <version>0.5.0</version>
 </dependency>
 ```
 
@@ -24,7 +24,7 @@ Add the following dependency to `pom.xml`.
 Add the following dependency to `build.gradle` or `build.gradle.kts`
 
 ```groovy
-implementation("com.ginsberg:gatherers4j:0.4.0")
+implementation("com.ginsberg:gatherers4j:0.5.0")
 ```
 
 # Gatherers In This Library
@@ -37,9 +37,13 @@ implementation("com.ginsberg:gatherers4j:0.4.0")
 | `dedupeConsecutive()`        | Remove consecutive duplicates from a stream                                                                                    |
 | `dedupeConsecutiveBy(fn)`    | Remove consecutive duplicates from a stream as returned by `fn`                                                                |
 | `distinctBy(fn)`             | Emit only distinct elements from the stream, as measured by `fn`                                                               |
+| `exactSize(n)`               | Ensure the stream is exactly `n` elements long, or throw an `IllegalStateException`                                            |
 | `filterWithIndex(predicate)` | Filter the stream with the given `predicate`, which takes an `element` and its `index`                                         | 
 | `interleave(stream)`         | Creates a stream of alternating objects from the input stream and the argument stream                                          |
 | `last(n)`                    | Constrain the stream to the last `n` values                                                                                    |
+| `maxBy(fn)`                  | Return a stream containing a single element, which is the maximum value returned by the mapping function `fn`                  |
+| `minBy(fn)`                  | Return a stream containing a single element, which is the minimum value returned by the mapping function `fn`                  |
+| `reverse()`                  | Reverse the order of the stream                                                                                                |
 | `shuffle()`                  | Shuffle the stream into a random order using the platform default `RandomGenerator`                                            |
 | `shuffle(rg)`                | Shuffle the stream into a random order using the specified `RandomGenerator`                                                   |
 | `throttle(amount, duration)` | Limit stream elements to `amount` elements over `duration`, pausing until a new `duration` period starts                       |
@@ -54,7 +58,7 @@ implementation("com.ginsberg:gatherers4j:0.4.0")
 | `runningPopulationStandardDeviation()`     | Create a stream of `BigDecimal` objects representing the running population standard deviation.                                    |
 | `runningPopulationStandardDeviationBy(fn)` | Create a stream of `BigDecimal` objects as mapped from the input via `fn`, representing the running population standard deviation. |
 | `runningProduct()`                         | Create a stream of `BigDecimal` objects representing the running product.                                                          |                                                          |
-| `runningProductBy(fn)                      | Create a stream of `BigDecimal` objects as mapped from the input via `fn`, representing the running product.                       |
+| `runningProductBy(fn)`                     | Create a stream of `BigDecimal` objects as mapped from the input via `fn`, representing the running product.                       |
 | `runningSampleStandardDeviation()`         | Create a stream of `BigDecimal` objects representing the running sample standard deviation.                                        |
 | `runningSampleStandardDeviationBy(fn)`     | Create a stream of `BigDecimal` objects as mapped from the input via `fn`, representing the running sample standard deviation.     |
 | `runningSum()`                             | Create a stream of `BigDecimal` objects representing the running sum.                                                              |
@@ -135,6 +139,19 @@ Stream
 // [Person("Todd", "Ginsberg"), Person("Emma", "Ginsberg")]
 ```
 
+#### Ensure the stream is exactly `n` elements long
+
+```java
+// Good
+
+Stream.of("A", "B", "C").gather(Gatherers4j.exactSize(3)).toList();
+// ["A", "B", "C"]
+
+// Bad
+Stream.of("A").gather(Gatherers4j.exactSize(3)).toList();
+// IllegalStateException
+```
+
 #### Filter a stream, knowing the index of each element
 
 ```java
@@ -165,6 +182,41 @@ Stream
     .toList();
 
 // ["E", "F", "G"]
+```
+
+#### Find the object with the maximum mapped value
+
+```java
+record Employee(String name, int salary) {}
+
+streamOfEmployees
+    .gather(Gatherers4j.maxBy(Employee:salary))
+    .toList();
+
+// Employee("Big Shot", 1_000_000)
+```
+
+#### Find the object with the minimum mapped value
+
+```java
+record Person(String name, int age) {}
+
+streamOfPeople
+    .gather(Gatherers4j.minBy(Person:age))
+    .toList();
+
+// Person("Baby", 1)
+```
+
+#### Reverse the order of the stream
+
+```java
+Stream
+    .of("A", "B", "C")
+    .gather(Gatherers4j.reverse())
+    .toList();
+
+// ["C", "B", "A"]
 ```
 
 #### Include index with original stream values
