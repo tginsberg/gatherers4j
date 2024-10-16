@@ -37,6 +37,7 @@ implementation("com.ginsberg:gatherers4j:0.6.0")
 | `dedupeConsecutive()`        | Remove consecutive duplicates from a stream                                                                                    |
 | `dedupeConsecutiveBy(fn)`    | Remove consecutive duplicates from a stream as returned by `fn`                                                                |
 | `distinctBy(fn)`             | Emit only distinct elements from the stream, as measured by `fn`                                                               |
+| `dropLast(n)`                | Keep all but the last `n` elements of the stream                                                                               |
 | `exactSize(n)`               | Ensure the stream is exactly `n` elements long, or throw an `IllegalStateException`                                            |
 | `filterWithIndex(predicate)` | Filter the stream with the given `predicate`, which takes an `element` and its `index`                                         | 
 | `interleave(stream)`         | Creates a stream of alternating objects from the input stream and the argument stream                                          |
@@ -137,6 +138,16 @@ Stream
     .toList();
 
 // [Person("Todd", "Ginsberg"), Person("Emma", "Ginsberg")]
+```
+
+#### Keep all but the last `n` elements 
+
+```java
+Stream.of("A", "B", "C", "D", "E")
+    .gather(Gatherers4j.dropLast(2))
+    .toList();
+
+// ["A", "B", "C"]
 ```
 
 #### Ensure the stream is exactly `n` elements long
