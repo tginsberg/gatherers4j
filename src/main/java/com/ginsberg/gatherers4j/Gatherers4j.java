@@ -76,6 +76,15 @@ public class Gatherers4j {
     }
 
     /**
+     * Keep all elements except the last <code>count</code> elements of the stream.
+     *
+     * @param count A positive number of elements to drop from the end of the stream
+     */
+    public static <INPUT> DropLastGatherer<INPUT> dropLast(final int count) {
+        return new DropLastGatherer<>(count);
+    }
+
+    /**
      * Ensure the input stream is exactly <code>size</code> elements long, and emit all elements
      * if so. If not, throw an <code>IllegalStateException</code>.
      *

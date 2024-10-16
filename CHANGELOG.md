@@ -1,5 +1,5 @@
 ### 0.6.0
-+ TBD
++ Implement `dropLast(n)`
 
 ### 0.5.0
 + Implement `reverse()`
