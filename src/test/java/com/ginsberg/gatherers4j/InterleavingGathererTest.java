@@ -53,6 +53,51 @@ class InterleavingGathererTest {
     }
 
     @Test
+    void interleaveOtherLongerSpecifyingEither() {
+        final Stream<String> left = Stream.of("A", "B", "C");
+        final Stream<String> right = Stream.of("D", "E", "F", "G", "H");
+
+        // Act
+        final List<String> output = left
+                .gather(Gatherers4j.interleave(right).appendLonger())
+                .toList();
+
+        // Assert
+        assertThat(output)
+                .containsExactly("A", "D", "B", "E", "C", "F", "G", "H");
+    }
+
+    @Test
+    void interleaveArgumentLongerSpecifyingArgument() {
+        final Stream<String> left = Stream.of("A", "B", "C");
+        final Stream<String> right = Stream.of("D", "E", "F", "G", "H");
+
+        // Act
+        final List<String> output = left
+                .gather(Gatherers4j.interleave(right).appendArgumentIfLonger())
+                .toList();
+
+        // Assert
+        assertThat(output)
+                .containsExactly("A", "D", "B", "E", "C", "F", "G", "H");
+    }
+
+    @Test
+    void interleaveSourceLongerSpecifyingSourceEither() {
+        final Stream<String> left = Stream.of("A", "B", "C", "D", "E");
+        final Stream<String> right = Stream.of("F", "G", "H");
+
+        // Act
+        final List<String> output = left
+                .gather(Gatherers4j.interleave(right).appendSourceIfLonger())
+                .toList();
+
+        // Assert
+        assertThat(output)
+                .containsExactly("A", "F", "B", "G", "C", "H", "D", "E");
+    }
+
+    @Test
     void interleavingGathererIterable() {
         // Arrange
         final Stream<String> left = Stream.of("A", "B", "C");
