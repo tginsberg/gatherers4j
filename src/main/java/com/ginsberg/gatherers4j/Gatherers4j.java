@@ -18,6 +18,8 @@ package com.ginsberg.gatherers4j;
 
 import java.math.BigDecimal;
 import java.time.Duration;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
@@ -343,13 +345,32 @@ public class Gatherers4j {
     }
 
     /**
-     * Creates a stream of `Pair` objects whose values come from the input stream and argument stream
+     * Creates a stream of `Pair` objects whose values come from the stream this is called on and the argument collection
+     *
+     * @param other A non-null collection to zip with
+     */
+    public static <FIRST, SECOND> Gatherer<FIRST, Void, Pair<FIRST, SECOND>> zipWith(final Collection<SECOND> other) {
+        return new ZipWithGatherer<>(other);
+    }
+
+    /**
+     * Creates a stream of `Pair` objects whose values come from the stream this is called on and the argument iterator
+     *
+     * @param other A non-null iterator to zip with
+     */
+    public static <FIRST, SECOND> Gatherer<FIRST, Void, Pair<FIRST, SECOND>> zipWith(final Iterator<SECOND> other) {
+        return new ZipWithGatherer<>(other);
+    }
+
+    /**
+     * Creates a stream of `Pair` objects whose values come from the stream this is called on and the argument stream
      *
      * @param other A non-null stream to zip with
      */
     public static <FIRST, SECOND> Gatherer<FIRST, Void, Pair<FIRST, SECOND>> zipWith(final Stream<SECOND> other) {
         return new ZipWithGatherer<>(other);
     }
+
 
     /**
      * Creates a stream of `List` objects via a sliding window of width 2 and stepping 1

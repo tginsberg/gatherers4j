@@ -49,6 +49,8 @@ implementation("com.ginsberg:gatherers4j:0.6.0")
 | `shuffle(rg)`                | Shuffle the stream into a random order using the specified `RandomGenerator`                                                   |
 | `throttle(amount, duration)` | Limit stream elements to `amount` elements over `duration`, pausing until a new `duration` period starts                       |
 | `withIndex()`                | Maps all elements of the stream as-is along with their 0-based index                                                           |
+| `zipWith(collection)`        | Creates a stream of `Pair` objects whose values come from the input stream and argument collection                             |
+| `zipWith(iterator)`          | Creates a stream of `Pair` objects whose values come from the input stream and argument iterator                               |
 | `zipWith(stream)`            | Creates a stream of `Pair` objects whose values come from the input stream and argument stream                                 |
 | `zipWithNext()`              | Creates a stream of `List` objects via a sliding window of width 2 and stepping 1                                              |      
 

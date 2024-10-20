@@ -16,16 +16,31 @@
 
 package com.ginsberg.gatherers4j;
 
-import java.util.Objects;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.stream.Gatherer;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
+import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
 
 public class ZipWithGatherer<FIRST, SECOND> implements Gatherer<FIRST, Void, Pair<FIRST, SECOND>> {
     private final Spliterator<SECOND> otherSpliterator;
 
+    ZipWithGatherer(final Collection<SECOND> other) {
+        mustNotBeNull(other, "Other collection must not be null");
+        this(other.stream());
+    }
+
+    ZipWithGatherer(final Iterator<SECOND> other) {
+        mustNotBeNull(other, "Other iterator must not be null");
+        final Iterable<SECOND> iterable = () -> other;
+        this(StreamSupport.stream(iterable.spliterator(), false));
+    }
+
     ZipWithGatherer(final Stream<SECOND> other) {
-        Objects.requireNonNull(other, "Other stream must not be null");
+        mustNotBeNull(other, "Other stream must not be null");
         otherSpliterator = other.spliterator();
     }
 
@@ -33,7 +48,7 @@ public class ZipWithGatherer<FIRST, SECOND> implements Gatherer<FIRST, Void, Pai
     public Integrator<Void, FIRST, Pair<FIRST, SECOND>> integrator() {
         return (_, element, downstream) -> otherSpliterator
                 .tryAdvance(
-                    it -> downstream.push(new Pair<>(element, it))
+                        it -> downstream.push(new Pair<>(element, it))
                 ) && !downstream.isRejecting();
     }
 }

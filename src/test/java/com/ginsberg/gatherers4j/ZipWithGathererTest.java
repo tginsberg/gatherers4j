@@ -18,17 +18,41 @@ package com.ginsberg.gatherers4j;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class ZipWithGathererTest {
 
     @Test
-    void zipGatherer() {
+    void inputCollectionMustNotBeNull() {
+        assertThatThrownBy(() -> Stream.of("A")
+                .gather(Gatherers4j.zipWith((Collection<String>)null)).toList()
+        ).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void inputIteratorMustNotBeNull() {
+        assertThatThrownBy(() -> Stream.of("A")
+                .gather(Gatherers4j.zipWith((Iterator<String>)null)).toList()
+        ).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void inputStreamMustNotBeNull() {
+        assertThatThrownBy(() -> Stream.of("A")
+                .gather(Gatherers4j.zipWith((Stream<String>)null)).toList()
+        ).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void interleavingGathererThisEmpty() {
         // Arrange
-        final Stream<String> left = Stream.of("A", "B", "C");
+        final Stream<String> left = Stream.empty();
         final Stream<Integer> right = Stream.of(1, 2, 3);
 
         // Act
@@ -37,12 +61,7 @@ class ZipWithGathererTest {
                 .toList();
 
         // Assert
-        assertThat(output)
-                .containsExactly(
-                        new Pair<>("A", 1),
-                        new Pair<>("B", 2),
-                        new Pair<>("C", 3)
-                );
+        assertThat(output).isEmpty();
     }
 
     @Test
@@ -61,9 +80,49 @@ class ZipWithGathererTest {
     }
 
     @Test
-    void interleavingGathererThisEmpty() {
+    void zipWithCollectionGatherer() {
         // Arrange
-        final Stream<String> left = Stream.empty();
+        final Stream<String> left = Stream.of("A", "B", "C");
+        final Collection<Integer> right = List.of(1, 2, 3);
+
+        // Act
+        final List<Pair<String, Integer>> output = left
+                .gather(Gatherers4j.zipWith(right))
+                .toList();
+
+        // Assert
+        assertThat(output)
+                .containsExactly(
+                        new Pair<>("A", 1),
+                        new Pair<>("B", 2),
+                        new Pair<>("C", 3)
+                );
+    }
+
+    @Test
+    void zipWithIteratorGatherer() {
+        // Arrange
+        final Stream<String> left = Stream.of("A", "B", "C");
+        final Iterator<Integer> right = List.of(1, 2, 3).iterator();
+
+        // Act
+        final List<Pair<String, Integer>> output = left
+                .gather(Gatherers4j.zipWith(right))
+                .toList();
+
+        // Assert
+        assertThat(output)
+                .containsExactly(
+                        new Pair<>("A", 1),
+                        new Pair<>("B", 2),
+                        new Pair<>("C", 3)
+                );
+    }
+
+    @Test
+    void zipWithStreamGatherer() {
+        // Arrange
+        final Stream<String> left = Stream.of("A", "B", "C");
         final Stream<Integer> right = Stream.of(1, 2, 3);
 
         // Act
@@ -72,6 +131,11 @@ class ZipWithGathererTest {
                 .toList();
 
         // Assert
-        assertThat(output).isEmpty();
+        assertThat(output)
+                .containsExactly(
+                        new Pair<>("A", 1),
+                        new Pair<>("B", 2),
+                        new Pair<>("C", 3)
+                );
     }
 }
