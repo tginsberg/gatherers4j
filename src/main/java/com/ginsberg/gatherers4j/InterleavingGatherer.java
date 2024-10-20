@@ -16,17 +16,30 @@
 
 package com.ginsberg.gatherers4j;
 
-import java.util.Objects;
+import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.stream.Gatherer;
 import java.util.stream.Stream;
+
+import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
 
 public class InterleavingGatherer<INPUT> implements Gatherer<INPUT, Void, INPUT> {
 
     private final Spliterator<INPUT> otherSpliterator;
 
+    InterleavingGatherer(final Iterable<INPUT> other) {
+        mustNotBeNull(other, "Other iterable must not be null");
+        otherSpliterator = other.spliterator();
+    }
+
+    InterleavingGatherer(final Iterator<INPUT> other) {
+        mustNotBeNull(other, "Other iterable must not be null");
+        final Iterable<INPUT> iterable = () -> other;
+        otherSpliterator = iterable.spliterator();
+    }
+
     InterleavingGatherer(final Stream<INPUT> other) {
-        Objects.requireNonNull(other, "Other stream must not be null");
+        mustNotBeNull(other, "Other stream must not be null");
         otherSpliterator = other.spliterator();
     }
 

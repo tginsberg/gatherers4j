@@ -16,27 +16,25 @@
 
 package com.ginsberg.gatherers4j;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.stream.Gatherer;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
 
 public class ZipWithGatherer<FIRST, SECOND> implements Gatherer<FIRST, Void, Pair<FIRST, SECOND>> {
     private final Spliterator<SECOND> otherSpliterator;
 
-    ZipWithGatherer(final Collection<SECOND> other) {
-        mustNotBeNull(other, "Other collection must not be null");
-        this(other.stream());
+    ZipWithGatherer(final Iterable<SECOND> other) {
+        mustNotBeNull(other, "Other iterable must not be null");
+        otherSpliterator = other.spliterator();
     }
 
     ZipWithGatherer(final Iterator<SECOND> other) {
         mustNotBeNull(other, "Other iterator must not be null");
         final Iterable<SECOND> iterable = () -> other;
-        this(StreamSupport.stream(iterable.spliterator(), false));
+        otherSpliterator = iterable.spliterator();
     }
 
     ZipWithGatherer(final Stream<SECOND> other) {
