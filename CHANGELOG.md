@@ -1,5 +1,6 @@
 ### 0.6.0
 + Implement `dropLast(n)`
++ Add support for `zipWith(collection)` and `zipWith(iterator)`
 
 ### 0.5.0
 + Implement `reverse()`
