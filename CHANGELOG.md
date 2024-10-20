@@ -2,6 +2,7 @@
 + Implement `dropLast(n)`
 + Add support for `zipWith(iterable)` and `zipWith(iterator)`
 + Add support for `interleave(iterable)` and `interleave(iterator)`
++ Add support for `appendLonger()`, `appendArgumentIfLonger()` and `appendSourceIfLonger()` on `interleave()`
 
 ### 0.5.0
 + Implement `reverse()`
