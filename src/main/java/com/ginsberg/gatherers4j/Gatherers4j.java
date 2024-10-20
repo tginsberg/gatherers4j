@@ -18,7 +18,6 @@ package com.ginsberg.gatherers4j;
 
 import java.math.BigDecimal;
 import java.time.Duration;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.BiPredicate;
@@ -110,11 +109,29 @@ public class Gatherers4j {
     }
 
     /**
+     * Creates a stream of alternating objects from the input stream and the argument iterable
+     *
+     * @param other A non-null Iterable to interleave
+     */
+    public static <INPUT> InterleavingGatherer<INPUT> interleave(final Iterable<INPUT> other) {
+        return new InterleavingGatherer<>(other);
+    }
+
+    /**
+     * Creates a stream of alternating objects from the input stream and the argument iterator
+     *
+     * @param other A non-null Iterator to interleave
+     */
+    public static <INPUT> InterleavingGatherer<INPUT> interleave(final Iterator<INPUT> other) {
+        return new InterleavingGatherer<>(other);
+    }
+
+    /**
      * Creates a stream of alternating objects from the input stream and the argument stream
      *
      * @param other A non-null stream to interleave
      */
-    public static <INPUT> Gatherer<INPUT, Void, INPUT> interleave(final Stream<INPUT> other) {
+    public static <INPUT> InterleavingGatherer<INPUT> interleave(final Stream<INPUT> other) {
         return new InterleavingGatherer<>(other);
     }
 
@@ -347,9 +364,9 @@ public class Gatherers4j {
     /**
      * Creates a stream of `Pair` objects whose values come from the stream this is called on and the argument collection
      *
-     * @param other A non-null collection to zip with
+     * @param other A non-null iterable to zip with
      */
-    public static <FIRST, SECOND> Gatherer<FIRST, Void, Pair<FIRST, SECOND>> zipWith(final Collection<SECOND> other) {
+    public static <FIRST, SECOND> Gatherer<FIRST, Void, Pair<FIRST, SECOND>> zipWith(final Iterable<SECOND> other) {
         return new ZipWithGatherer<>(other);
     }
 

@@ -29,23 +29,23 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class ZipWithGathererTest {
 
     @Test
-    void inputCollectionMustNotBeNull() {
+    void argumentIterableMustNotBeNull() {
         assertThatThrownBy(() -> Stream.of("A")
-                .gather(Gatherers4j.zipWith((Collection<String>)null)).toList()
+                .gather(Gatherers4j.zipWith((Iterable<String>) null)).toList()
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    void inputIteratorMustNotBeNull() {
+    void argumentIteratorMustNotBeNull() {
         assertThatThrownBy(() -> Stream.of("A")
-                .gather(Gatherers4j.zipWith((Iterator<String>)null)).toList()
+                .gather(Gatherers4j.zipWith((Iterator<String>) null)).toList()
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    void inputStreamMustNotBeNull() {
+    void argumentStreamMustNotBeNull() {
         assertThatThrownBy(() -> Stream.of("A")
-                .gather(Gatherers4j.zipWith((Stream<String>)null)).toList()
+                .gather(Gatherers4j.zipWith((Stream<String>) null)).toList()
         ).isInstanceOf(IllegalArgumentException.class);
     }
 

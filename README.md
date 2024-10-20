@@ -40,6 +40,8 @@ implementation("com.ginsberg:gatherers4j:0.6.0")
 | `dropLast(n)`                | Keep all but the last `n` elements of the stream                                                                               |
 | `exactSize(n)`               | Ensure the stream is exactly `n` elements long, or throw an `IllegalStateException`                                            |
 | `filterWithIndex(predicate)` | Filter the stream with the given `predicate`, which takes an `element` and its `index`                                         | 
+| `interleave(iterable)`       | Creates a stream of alternating objects from the input stream and the argument iterable                                        |
+| `interleave(iterator)`       | Creates a stream of alternating objects from the input stream and the argument iterator                                        |
 | `interleave(stream)`         | Creates a stream of alternating objects from the input stream and the argument stream                                          |
 | `last(n)`                    | Constrain the stream to the last `n` values                                                                                    |
 | `maxBy(fn)`                  | Return a stream containing a single element, which is the maximum value returned by the mapping function `fn`                  |
@@ -49,7 +51,7 @@ implementation("com.ginsberg:gatherers4j:0.6.0")
 | `shuffle(rg)`                | Shuffle the stream into a random order using the specified `RandomGenerator`                                                   |
 | `throttle(amount, duration)` | Limit stream elements to `amount` elements over `duration`, pausing until a new `duration` period starts                       |
 | `withIndex()`                | Maps all elements of the stream as-is along with their 0-based index                                                           |
-| `zipWith(collection)`        | Creates a stream of `Pair` objects whose values come from the input stream and argument collection                             |
+| `zipWith(iterable)`          | Creates a stream of `Pair` objects whose values come from the input stream and argument iterable                               |
 | `zipWith(iterator)`          | Creates a stream of `Pair` objects whose values come from the input stream and argument iterator                               |
 | `zipWith(stream)`            | Creates a stream of `Pair` objects whose values come from the input stream and argument stream                                 |
 | `zipWithNext()`              | Creates a stream of `List` objects via a sliding window of width 2 and stepping 1                                              |      
