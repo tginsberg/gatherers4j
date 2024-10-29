@@ -108,6 +108,23 @@ public class Gatherers4j {
         return new FilteringWithIndexGatherer<>(predicate);
     }
 
+
+    /**
+     * Turn a <code>Stream&lt;INPUT&gt;</code> into a <code>Stream&lt;List&lt;INPUT&gt;&gt</code> where consecutive
+     * equal elements are in the same <code>List</code>.
+     */
+    public static <INPUT> GroupingByGatherer<INPUT> grouping() {
+        return new GroupingByGatherer<>(it -> it);
+    }
+
+    /**
+     * Turn a <code>Stream&lt;INPUT&gt;</code> into a <code>Stream&lt;List&lt;INPUT&gt;&gt</code> where consecutive
+     * equal elements, where equality is measured by the given <code>mappingFunction</code>, are in the same <code>List</code>.
+     */
+    public static <INPUT> GroupingByGatherer<INPUT> groupingBy(final Function<INPUT, Object> mappingFunction) {
+        return new GroupingByGatherer<>(mappingFunction);
+    }
+
     /**
      * Creates a stream of alternating objects from the input stream and the argument iterable
      *
