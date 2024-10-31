@@ -46,29 +46,23 @@ public class InterleavingGatherer<INPUT> implements Gatherer<INPUT, Void, INPUT>
         otherSpliterator = other.spliterator();
     }
 
-    /**
-     * If the source stream and the argument stream/iterator/iterable provide a different
-     * number of elements, append all the remaining elements from either one to the output stream.
-     */
+    /// If the source stream and the argument stream/iterator/iterable provide a different
+    /// number of elements, append all the remaining elements from either one to the output stream.
     public InterleavingGatherer<INPUT> appendLonger() {
         this.appendArgumentIfLonger = true;
         this.appendSourceIfLonger = true;
         return this;
     }
 
-    /**
-     * If the argument stream/iterator/iterable provides more elements than the source stream,
-     * append all remaining elements from the argument stream/iterator/iterable to the output stream.
-     */
+    /// If the argument stream/iterator/iterable provides more elements than the source stream,
+    /// append all remaining elements from the argument stream/iterator/iterable to the output stream.
     public InterleavingGatherer<INPUT> appendArgumentIfLonger() {
         this.appendArgumentIfLonger = true;
         return this;
     }
 
-    /**
-     * If the source stream provides more elements than the argument stream/iterator/iterable,
-     * append all the remaining elements to the output stream.
-     */
+    /// If the source stream provides more elements than the argument stream/iterator/iterable,
+    /// append all the remaining elements to the output stream.
     public InterleavingGatherer<INPUT> appendSourceIfLonger() {
         this.appendSourceIfLonger = true;
         return this;

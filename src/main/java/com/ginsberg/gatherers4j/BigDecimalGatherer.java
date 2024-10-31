@@ -48,37 +48,29 @@ abstract public class BigDecimalGatherer<INPUT>
         };
     }
 
-    /**
-     * When encountering a <code>null</code> value in a stream, treat it as `BigDecimal.ZERO` instead.
-     */
+    /// When encountering a `null` value in a stream, treat it as `BigDecimal.ZERO` instead.
     public BigDecimalGatherer<INPUT> treatNullAsZero() {
         return treatNullAs(BigDecimal.ZERO);
     }
 
-    /**
-     * When encountering a <code>null</code> value in a stream, treat it as the given `replacement` value instead.
-     *
-     * @param replacement The value to replace null with
-     */
+    /// When encountering a `null` value in a stream, treat it as the given `replacement` value instead.
+    ///
+    /// @param replacement The value to replace `null` with
     public BigDecimalGatherer<INPUT> treatNullAs(final BigDecimal replacement) {
         this.nullReplacement = replacement;
         return this;
     }
 
-    /**
-     * Replace the <code>MathContext</code> used for all mathematical operations in this class.
-     *
-     * @param mathContext A non-null <code>MathContext</code>
-     */
+    /// Replace the `MathContext` used for all mathematical operations in this class.
+    ///
+    /// @param mathContext A non-null `MathContext`
     public BigDecimalGatherer<INPUT> withMathContext(final MathContext mathContext) {
         mustNotBeNull(mathContext, "MathContext must not be null");
         this.mathContext = mathContext;
         return this;
     }
 
-    /**
-     * Include the original input value from the stream in addition to the calculated average.
-     */
+    /// Include the original input value from the stream in addition to the calculated average.
     public WithOriginalGatherer<INPUT, BigDecimalGatherer.State, BigDecimal> withOriginal() {
         return new WithOriginalGatherer<>(this);
     }

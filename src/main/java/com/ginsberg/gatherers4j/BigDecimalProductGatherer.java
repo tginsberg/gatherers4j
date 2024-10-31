@@ -32,9 +32,7 @@ public class BigDecimalProductGatherer<INPUT> extends BigDecimalGatherer<INPUT> 
         return State::new;
     }
 
-    /**
-     * When encountering a <code>null</code> value in a stream, treat it as `BigDecimal.ZERO` instead.
-     */
+    /// When encountering a `null` value in a stream, treat it as `BigDecimal.ONE` instead.
     public BigDecimalGatherer<INPUT> treatNullAsOne() {
         return treatNullAs(BigDecimal.ONE);
     }
