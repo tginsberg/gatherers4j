@@ -24,7 +24,7 @@ import java.util.function.Supplier;
 
 public final class BigDecimalSimpleMovingAverageGatherer<INPUT> extends BigDecimalGatherer<INPUT> {
 
-    private int windowSize;
+    private final int windowSize;
     private boolean includePartialValues;
 
     BigDecimalSimpleMovingAverageGatherer(
@@ -43,13 +43,12 @@ public final class BigDecimalSimpleMovingAverageGatherer<INPUT> extends BigDecim
         return () -> new State(windowSize, includePartialValues);
     }
 
-    /**
-     * When creating a moving average and the full size of the window has not yet been reached, the
-     * gatherer should emit averages for what it has.
-     * For example, if the trailing average is over 10 values, but the stream has only emitted two
-     * values, the gatherer should calculate the two values and emit the answer. The default is to not
-     * emit anything until the full size of the window has been seen.
-     */
+    /// When creating a moving average and the full size of the window has not yet been reached, the
+    /// gatherer should emit averages for what it has.
+    ///
+    /// For example, if the trailing average is over 10 values, but the stream has only emitted two
+    /// values, the gatherer should calculate the two values and emit the answer. The default is to not
+    /// emit anything until the full size of the window has been seen.
     public BigDecimalSimpleMovingAverageGatherer<INPUT> includePartialValues() {
         includePartialValues = true;
         return this;

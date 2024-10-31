@@ -30,180 +30,142 @@ import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
 
 public class Gatherers4j {
 
-    /**
-     * Limit the number of elements in the stream to some number per period, dropping anything over the
-     * limit during the period.
-     *
-     * @param amount   A positive number of elements to allow per period
-     * @param duration A positive duration for the length of the period
-     * @param <INPUT>  Type of elements in the stream
-     * @return A non-null ThrottlingGatherer<INPUT>
-     */
+    /// Limit the number of elements in the stream to some number per period, dropping anything over the
+    /// limit during the period.
+    ///
+    /// @param amount   A positive number of elements to allow per period
+    /// @param duration A positive duration for the length of the period
+    /// @param <INPUT>  Type of elements in the stream
     public static <INPUT> ThrottlingGatherer<INPUT> debounce(final int amount, final Duration duration) {
         return new ThrottlingGatherer<>(ThrottlingGatherer.LimitRule.Drop, amount, duration);
     }
-
-    /**
-     * <p>Given a stream of objects, filter the objects such that any consecutively appearing
-     * after the first one are dropped.
-     *
-     * <p>Examples:<ul>
-     * <li>[A, A, B] => [A, B]
-     * <li>[A, B, A] => [A, B, A]
-     * </ul>
-     */
+    
+    /// Remove consecutive duplicate elements from a stream according `Object.equals(Object)`
     public static <INPUT> Gatherer<INPUT, ?, INPUT> dedupeConsecutive() {
         return new DedupeConsecutiveGatherer<>(null);
     }
 
-    /**
-     * Remove consecutive duplicates from a stream where duplication is measured by the given <code>function</code>.
-     *
-     * @param function A mapping function used to compare objects in the stream for equality.
-     */
-    public static <INPUT> Gatherer<INPUT, ?, INPUT> dedupeConsecutiveBy(final Function<INPUT, Object> function) {
-        mustNotBeNull(function, "Mapping function must not be null");
-        return new DedupeConsecutiveGatherer<>(function);
+    /// Remove consecutive duplicates from a stream where duplication is measured by the given `function`.
+    ///
+    /// @param mappingFunction A non-null function, the results of which will be used to check for consecutive duplication.
+    public static <INPUT> Gatherer<INPUT, ?, INPUT> dedupeConsecutiveBy(final Function<INPUT, Object> mappingFunction) {
+        mustNotBeNull(mappingFunction, "Mapping function must not be null");
+        return new DedupeConsecutiveGatherer<>(mappingFunction);
     }
 
-    /**
-     * Filter a stream to only distinct elements as described by the given <code>function</code>.
-     *
-     * @param function The non-null mapping function
-     */
-    public static <INPUT, OUTPUT> Gatherer<INPUT, ?, INPUT> distinctBy(final Function<INPUT, OUTPUT> function) {
-        mustNotBeNull(function, "Mapping function must not be null");
-        return new DistinctGatherer<>(function);
+    /// Filter a stream such that it only contains distinct elements measured by the given `function`.
+    ///
+    /// @param mappingFunction A non-null mapping function, the results of which will be used to check for distinct elements
+    public static <INPUT, OUTPUT> Gatherer<INPUT, ?, INPUT> distinctBy(final Function<INPUT, OUTPUT> mappingFunction) {
+        mustNotBeNull(mappingFunction, "Mapping function must not be null");
+        return new DistinctGatherer<>(mappingFunction);
     }
 
-    /**
-     * Keep all elements except the last <code>count</code> elements of the stream.
-     *
-     * @param count A positive number of elements to drop from the end of the stream
-     */
+    /// Keep all elements except the last `count` elements of the stream.
+    ///
+    /// @param count A positive number of elements to drop from the end of the stream
     public static <INPUT> DropLastGatherer<INPUT> dropLast(final int count) {
         return new DropLastGatherer<>(count);
     }
 
-    /**
-     * Ensure the input stream is exactly <code>size</code> elements long, and emit all elements
-     * if so. If not, throw an <code>IllegalStateException</code>.
-     *
-     * @param size Exact number of elements the stream must have
-     */
+    /// Ensure the input stream is exactly `size` elements long, and emit all elements if so.
+    /// If not, throw an `IllegalStateException`.
+    ///
+    /// @param size Exact number of elements the stream must have
     public static <INPUT> SizeGatherer<INPUT> exactSize(final long size) {
         return new SizeGatherer<>(size);
     }
 
-    /**
-     * Filter a stream according to the given <code>predicate</code>, which takes both the item being examined, and its index.
-     *
-     * @param predicate A non-null <code>BiPredicate&lt;Long,INPUT&gt;</code> where the <code>Long</code> is the zero-based index of
-     *                  the element being filtered, and the <code>INPUT</code> is the element itself.
-     * @return A <code>FilterWithIndexGatherer</code>
-     */
+    /// Filter a stream according to the given `predicate`, which takes both the item being examined, 
+    /// and its index.
+    ///
+    /// @param predicate A non-null `BiPredicate<Long,INPUT>` where the `Long` is 
+    ///                  the zero-based index of the element being filtered, and the `INPUT` is 
+    ///                  the element itself.
     public static <INPUT> FilteringWithIndexGatherer<INPUT> filterWithIndex(
             final BiPredicate<Long, INPUT> predicate
     ) {
         return new FilteringWithIndexGatherer<>(predicate);
     }
 
-
-    /**
-     * Turn a <code>Stream&lt;INPUT&gt;</code> into a <code>Stream&lt;List&lt;INPUT&gt;&gt</code> where consecutive
-     * equal elements are in the same <code>List</code>.
-     */
+    /// Turn a `Stream<INPUT>` into a `Stream<List<INPUT>>` where consecutive
+    /// equal elements, where equality is measured by `Object.equals(Object)`.
     public static <INPUT> GroupingByGatherer<INPUT> grouping() {
         return new GroupingByGatherer<>(it -> it);
     }
 
-    /**
-     * Turn a <code>Stream&lt;INPUT&gt;</code> into a <code>Stream&lt;List&lt;INPUT&gt;&gt</code> where consecutive
-     * equal elements, where equality is measured by the given <code>mappingFunction</code>, are in the same <code>List</code>.
-     */
+    /// Turn a `Stream<INPUT>` into a `Stream<List<INPUT>>` where consecutive
+    /// equal elements, where equality is measured by the given `mappingFunction`, are in the same `List`.
+    ///
+    /// @param mappingFunction A non-null function, the results of which are used to measure equality of consecutive elements.
     public static <INPUT> GroupingByGatherer<INPUT> groupingBy(final Function<INPUT, Object> mappingFunction) {
         return new GroupingByGatherer<>(mappingFunction);
     }
 
-    /**
-     * Creates a stream of alternating objects from the input stream and the argument iterable
-     *
-     * @param other A non-null Iterable to interleave
-     */
+    /// Creates a stream of alternating objects from the input stream and the argument iterable
+    ///
+    /// @param other A non-null Iterable to interleave
     public static <INPUT> InterleavingGatherer<INPUT> interleave(final Iterable<INPUT> other) {
         return new InterleavingGatherer<>(other);
     }
 
-    /**
-     * Creates a stream of alternating objects from the input stream and the argument iterator
-     *
-     * @param other A non-null Iterator to interleave
-     */
+    /// Creates a stream of alternating objects from the input stream and the argument iterator
+    ///
+    /// @param other A non-null Iterator to interleave
     public static <INPUT> InterleavingGatherer<INPUT> interleave(final Iterator<INPUT> other) {
         return new InterleavingGatherer<>(other);
     }
 
-    /**
-     * Creates a stream of alternating objects from the input stream and the argument stream
-     *
-     * @param other A non-null stream to interleave
-     */
+    /// Creates a stream of alternating objects from the input stream and the argument stream
+    ///
+    /// @param other A non-null stream to interleave
     public static <INPUT> InterleavingGatherer<INPUT> interleave(final Stream<INPUT> other) {
         return new InterleavingGatherer<>(other);
     }
 
-    /**
-     * Remove all but the last {@code count} elements from the stream.
-     *
-     * @param count A non-negative integer, the number of elements to return
-     */
+    /// Remove all but the last `count` elements from the stream.
+    ///
+    /// @param count A non-negative integer, the number of elements to return
     public static <INPUT> LastGatherer<INPUT> last(final int count) {
         return new LastGatherer<>(count);
     }
 
-    /**
-     * Return a Stream containing the single maximum value of the input stream, according to
-     * the given mapping function. In the case where a stream has more than one mapped value
-     * that is the maximum, the first one encountered makes up the stream. This does not
-     * evaluate null values or null mappings.
-     *
-     * @param function A mapping function, the results of which must implement <code>Comparable</code>
-     */
+    /// Return a Stream containing the single maximum value of the input stream, according to
+    /// the given mapping function. In the case where a stream has more than one mapped value
+    /// that is the maximum, the first one encountered makes up the stream. This does not
+    /// evaluate null values or null mappings.
+    ///
+    /// @param mappingFunction A mapping function, the results of which must implement `Comparable`
     public static <INPUT, MAPPED extends Comparable<MAPPED>> MinMaxGatherer<INPUT, MAPPED> maxBy(
-            final Function<INPUT, MAPPED> function
+            final Function<INPUT, MAPPED> mappingFunction
     ) {
-        mustNotBeNull(function, "Mapping function must not be null");
-        return new MinMaxGatherer<>(true, function);
+        mustNotBeNull(mappingFunction, "Mapping function must not be null");
+        return new MinMaxGatherer<>(true, mappingFunction);
     }
 
-    /**
-     * Return a Stream containing the single minimum value of the input stream, according to
-     * the given mapping function. In the case where a stream has more than one mapped value
-     * that is the minimum, the first one encountered makes up the stream. This does not
-     * evaluate null values or null mappings.
-     *
-     * @param function A mapping function, the results of which must implement <code>Comparable</code>
-     */
+    /// Return a Stream containing the single minimum value of the input stream, according to
+    /// the given mapping function. In the case where a stream has more than one mapped value
+    /// that is the minimum, the first one encountered makes up the stream. This does not
+    /// evaluate null values or null mappings.
+    ///
+    /// @param mappingFunction A mapping function, the results of which must implement `Comparable`
     public static <INPUT, MAPPED extends Comparable<MAPPED>> MinMaxGatherer<INPUT, MAPPED> minBy(
-            final Function<INPUT, MAPPED> function
+            final Function<INPUT, MAPPED> mappingFunction
     ) {
-        mustNotBeNull(function, "Mapping function must not be null");
-        return new MinMaxGatherer<>(false, function);
+        mustNotBeNull(mappingFunction, "Mapping function must not be null");
+        return new MinMaxGatherer<>(false, mappingFunction);
     }
 
-    /**
-     * Reverse the order of the input Stream.
-     * <p>
-     * Note: This consumes the entire stream and holds it in memory, so it will not work on
-     * infinite streams and may cause memory pressure on very large streams.
-     */
+    /// Reverse the order of the input Stream.
+    ///
+    /// Note: This consumes the entire stream and holds it in memory, so it will not work on infinite
+    /// streams and may cause memory pressure on very large streams.
     public static <INPUT> ReversingGatherer<INPUT> reverse() {
         return new ReversingGatherer<>();
     }
 
-    /**
-     * Create a <code>Stream&lt;BigDecimal&gt;</code> that represents the running population standard deviation of a <code>Stream&lt;BigDecimal&gt;</code>.
-     */
+    /// Create a `Stream<BigDecimal>` that represents the running population standard 
+    /// deviation of a `Stream<BigDecimal>`.
     public static BigDecimalStandardDeviationGatherer<BigDecimal> runningPopulationStandardDeviation() {
         return new BigDecimalStandardDeviationGatherer<>(
                 BigDecimalStandardDeviationGatherer.Mode.Population,
@@ -211,10 +173,11 @@ public class Gatherers4j {
         );
     }
 
-    /**
-     * Create a <code>Stream&lt;BigDecimal&gt;</code> that represents the running population standard deviation of a <code>BigDecimal</code> objects mapped
-     * from a <code>Stream&lt;BigDecimal&gt;</code> via a <code>mappingFunction</code>.
-     */
+    /// Create a `Stream<BigDecimal>` that represents the running population standard deviation of a `BigDecimal` objects mapped
+    /// from a `Stream<BigDecimal>` via a `mappingFunction`.
+    ///
+    /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
+    ///                        in the standard deviation calculation
     public static <INPUT> BigDecimalStandardDeviationGatherer<INPUT> runningPopulationStandardDeviationBy(
             final Function<INPUT, BigDecimal> mappingFunction
     ) {
@@ -224,28 +187,23 @@ public class Gatherers4j {
         );
     }
 
-    /**
-     * Create a <code>Stream&lt;BigDecimal&gt;</code> that represents the running product of a <code>Stream&lt;BigDecimal&gt;</code>.
-     */
+    /// Create a `Stream<BigDecimal>` that represents the running product of a `Stream<BigDecimal>`.
     public static BigDecimalProductGatherer<BigDecimal> runningProduct() {
         return new BigDecimalProductGatherer<>(Function.identity());
     }
 
-    /**
-     * Create a <code>Stream&lt;BigDecimal&gt;</code> that represents the running product of <code>BigDecimal</code> objects mapped
-     * from a <code>Stream&lt;INPUT&gt;</code> via a <code>mappingFunction</code>.
-     *
-     * @param mappingFunction The non-null function to map from <code>&lt;INPUT&gt;</code> to <code>BigDecimal</code>.
-     */
+    /// Create a `Stream<BigDecimal>` that represents the running product of `BigDecimal` objects mapped
+    /// from a `Stream<INPUT>` via a `mappingFunction`.
+    ///
+    /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
+    ///                        in the product calculation
     public static <INPUT> BigDecimalProductGatherer<INPUT> runningProductBy(
             final Function<INPUT, BigDecimal> mappingFunction
     ) {
         return new BigDecimalProductGatherer<>(mappingFunction);
     }
 
-    /**
-     * Create a <code>Stream&lt;BigDecimal&gt;</code> that represents the running sample standard deviation of a <code>Stream&lt;BigDecimal&gt;</code>.
-     */
+    /// Create a `Stream<BigDecimal>` that represents the running sample standard deviation of a `Stream<BigDecimal>`.
     public static BigDecimalStandardDeviationGatherer<BigDecimal> runningSampleStandardDeviation() {
         return new BigDecimalStandardDeviationGatherer<>(
                 BigDecimalStandardDeviationGatherer.Mode.Sample,
@@ -253,12 +211,11 @@ public class Gatherers4j {
         );
     }
 
-    /**
-     * Create a <code>Stream&lt;BigDecimal&gt;</code> that represents the running sample standard deviation of <code>BigDecimal</code> objects mapped
-     * from a <code>Stream&lt;INPUT&gt;</code> via a <code>mappingFunction</code>.
-     *
-     * @param mappingFunction The non-null function to map from <code>&lt;INPUT&gt;</code> to <code>BigDecimal</code>.
-     */
+    /// Create a `Stream<BigDecimal>` that represents the running sample standard deviation of `BigDecimal` objects mapped
+    /// from a `Stream<INPUT>` via a `mappingFunction`.
+    ///
+    /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
+    ///                        in the standard deviation calculation
     public static <INPUT> BigDecimalStandardDeviationGatherer<INPUT> runningSampleStandardDeviationBy(
             final Function<INPUT, BigDecimal> mappingFunction
     ) {
@@ -268,65 +225,52 @@ public class Gatherers4j {
         );
     }
 
-    /**
-     * Create a <code>Stream&lt;BigDecimal&gt;</code> that represents the running sum of a <code>Stream&lt;BigDecimal&gt;</code>.
-     */
+    /// Create a `Stream<BigDecimal>` that represents the running sum of a `Stream<BigDecimal>`.
     public static BigDecimalSumGatherer<BigDecimal> runningSum() {
         return new BigDecimalSumGatherer<>(Function.identity());
     }
 
-    /**
-     * Create a <code>Stream&lt;BigDecimal&gt;</code> that represents the running sum of <code>BigDecimal</code> objects mapped
-     * from a <code>Stream&lt;INPUT&gt;</code> via a <code>mappingFunction</code>.
-     *
-     * @param mappingFunction The non-null function to map from <code>&lt;INPUT&gt;</code> to <code>BigDecimal</code>.
-     */
+    /// Create a `Stream<BigDecimal>` that represents the running sum of `BigDecimal` objects mapped
+    /// from a `Stream<INPUT>` via a `mappingFunction`.
+    ///
+    /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
+    ///                        in the running sum calculation
     public static <INPUT> BigDecimalSumGatherer<INPUT> runningSumBy(
             final Function<INPUT, BigDecimal> mappingFunction
     ) {
         return new BigDecimalSumGatherer<>(mappingFunction);
     }
 
-    /**
-     * Create a Stream that is the running average of <code>Stream&lt;BigDecimal&gt;</code>
-     *
-     * @return BigDecimalSimpleAverageGatherer
-     */
+    /// Create a Stream that is the running average of `Stream<BigDecimal>`
+    ///
+    /// @return BigDecimalSimpleAverageGatherer
     public static BigDecimalSimpleAverageGatherer<BigDecimal> simpleRunningAverage() {
         return simpleRunningAverageBy(Function.identity());
     }
 
-    /**
-     * Shuffle the input stream into a random order.
-     * <p>
-     * Note: This consumes the entire stream and holds it in memory, so it will not work on
-     * infinite streams and may cause memory pressure on very large streams.
-     *
-     * @return A non-null <code>ShufflingGatherer</code>ShufflingGatherer`
-     */
+    /// Shuffle the input stream into a random order.
+    ///
+    /// Note: This consumes the entire stream and holds it in memory, so it will not work on infinite
+    /// streams and may cause memory pressure on very large streams.
     public static <INPUT> ShufflingGatherer<INPUT> shuffle() {
         return new ShufflingGatherer<>(RandomGenerator.getDefault());
     }
 
-    /**
-     * Shuffle the input stream into a random order. This consumes the entire stream and
-     * holds it in memory, so it will not work on infinite streams and may cause memory
-     * pressure on very large streams.
-     *
-     * @param randomGenerator A non-null <code>RandomGenerator</code> to use as a random source for the shuffle
-     * @return A non-null <code>ShufflingGatherer</code>ShufflingGatherer`
-     */
+    /// Shuffle the input stream into a random order.
+    ///
+    /// Note: This consumes the entire stream and holds it in memory, so it will not work on infinite
+    /// streams and may cause memory pressure on very large streams.
+    ///
+    /// @param randomGenerator A non-null `RandomGenerator` to use as a random source for the shuffle
     public static <INPUT> ShufflingGatherer<INPUT> shuffle(final RandomGenerator randomGenerator) {
         return new ShufflingGatherer<>(randomGenerator);
     }
 
-    /**
-     * Create a Stream that is the running average of <code>BigDecimal</code> objects as mapped by
-     * the given function. This is useful when paired with the <code>withOriginal</code> function.
-     *
-     * @param mappingFunction A non-null function to map the <code>INPUT</code> type to <code>BigDecimal</code>
-     * @return BigDecimalSimpleAverageGatherer
-     */
+    /// Create a Stream that is the running average of `BigDecimal` objects as mapped by
+    /// the given function. This is useful when paired with the `withOriginal` function.
+    ///
+    /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
+    ///                        in the running average calculation
     public static <INPUT> BigDecimalSimpleAverageGatherer<INPUT> simpleRunningAverageBy(
             final Function<INPUT, BigDecimal> mappingFunction
     ) {
@@ -334,22 +278,20 @@ public class Gatherers4j {
         return new BigDecimalSimpleAverageGatherer<>(mappingFunction);
     }
 
-    /**
-     * Create a Stream that represents the simple moving average of a <code>Stream&lt;BigDecimal&gt;</code> looking back `windowSize` number of elements.
-     *
-     * @param windowSize The number of elements to average, must be greater than 1.
-     */
+    /// Create a Stream that represents the simple moving average of a `Stream<BigDecimal>` looking
+    /// back `windowSize` number of elements.
+    ///
+    /// @param windowSize The number of elements to average, must be greater than 1.
     public static BigDecimalSimpleMovingAverageGatherer<BigDecimal> simpleMovingAverage(final int windowSize) {
         return simpleMovingAverageBy(Function.identity(), windowSize);
     }
 
-    /**
-     * Create a Stream that represents the simple moving average of a <code>BigDecimal</code> objects mapped from a <code>Stream&lt;BigDecimal&gt;</code>
-     * via a <code>mappingFunction</code> and looking back `windowSize` number of elements.
-     *
-     * @param mappingFunction The non-null function to map from <code>&lt;INPUT&gt;</code> to <code>BigDecimal</code>.
-     * @param windowSize      The number of elements to average, must be greater than 1.
-     */
+    /// Create a Stream that represents the simple moving average of a `BigDecimal` objects mapped from a `Stream<BigDecimal>`
+    /// via a `mappingFunction` and looking back `windowSize` number of elements.
+    ///
+    /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
+    ///                        in the moving average calculation
+    /// @param windowSize      The number of elements to average, must be greater than 1.
     public static <INPUT> BigDecimalSimpleMovingAverageGatherer<INPUT> simpleMovingAverageBy(
             final Function<INPUT, BigDecimal> mappingFunction,
             final int windowSize
@@ -358,57 +300,45 @@ public class Gatherers4j {
         return new BigDecimalSimpleMovingAverageGatherer<>(mappingFunction, windowSize);
     }
 
-    /**
-     * Limit the number of elements in the stream to some number per period. When the limit is reached,
-     * consumption is paused until a new period starts and the count resets.
-     *
-     * @param amount   A positive number of elements to allow per period
-     * @param duration A positive duration for the length of the period
-     * @param <INPUT>  Type of elements in the stream
-     * @return A non-null ThrottlingGatherer<INPUT>
-     */
+    /// Limit the number of elements in the stream to some number per period. When the limit is reached,
+    /// consumption is paused until a new period starts and the count resets.
+    ///
+    /// @param amount   A positive number of elements to allow per period
+    /// @param duration A positive duration for the length of the period
     public static <INPUT> ThrottlingGatherer<INPUT> throttle(final int amount, final Duration duration) {
         return new ThrottlingGatherer<>(ThrottlingGatherer.LimitRule.Pause, amount, duration);
     }
 
-    /**
-     * Maps all elements of the stream as-is along with their 0-based index.
-     */
+    /// Maps all elements of the stream as-is along with their 0-based index.
     public static <INPUT> IndexingGatherer<INPUT> withIndex() {
         return new IndexingGatherer<>();
     }
 
-    /**
-     * Creates a stream of `Pair` objects whose values come from the stream this is called on and the argument collection
-     *
-     * @param other A non-null iterable to zip with
-     */
+    /// Creates a stream of `Pair<FIRST,SECOND>` objects whose values come from the stream this is called on
+    /// and the argument collection
+    ///
+    /// @param other A non-null iterable to zip with
     public static <FIRST, SECOND> Gatherer<FIRST, Void, Pair<FIRST, SECOND>> zipWith(final Iterable<SECOND> other) {
         return new ZipWithGatherer<>(other);
     }
 
-    /**
-     * Creates a stream of `Pair` objects whose values come from the stream this is called on and the argument iterator
-     *
-     * @param other A non-null iterator to zip with
-     */
+    /// Creates a stream of `Pair<FIRST,SECOND>` objects whose values come from the stream this is called on
+    /// and the argument iterator
+    ///
+    /// @param other A non-null iterator to zip with
     public static <FIRST, SECOND> Gatherer<FIRST, Void, Pair<FIRST, SECOND>> zipWith(final Iterator<SECOND> other) {
         return new ZipWithGatherer<>(other);
     }
 
-    /**
-     * Creates a stream of `Pair` objects whose values come from the stream this is called on and the argument stream
-     *
-     * @param other A non-null stream to zip with
-     */
+    /// Creates a stream of `Pair<FIRST,SECOND>` objects whose values come from the stream this is called on
+    /// and the argument stream
+    ///
+    /// @param other A non-null stream to zip with
     public static <FIRST, SECOND> Gatherer<FIRST, Void, Pair<FIRST, SECOND>> zipWith(final Stream<SECOND> other) {
         return new ZipWithGatherer<>(other);
     }
-
-
-    /**
-     * Creates a stream of `List` objects via a sliding window of width 2 and stepping 1
-     */
+    
+    /// Creates a stream of `List` objects which contain each two adjacent elements in the input stream.
     public static <INPUT> Gatherer<INPUT, ?, List<INPUT>> zipWithNext() {
         return new ZipWithNextGatherer<>();
     }
