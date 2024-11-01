@@ -18,7 +18,6 @@ package com.ginsberg.gatherers4j;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
@@ -50,22 +49,65 @@ class ZipWithGathererTest {
     }
 
     @Test
-    void interleavingGathererThisEmpty() {
-        // Arrange
-        final Stream<String> left = Stream.empty();
-        final Stream<Integer> right = Stream.of(1, 2, 3);
-
-        // Act
-        final List<Pair<String, Integer>> output = left
-                .gather(Gatherers4j.zipWith(right))
-                .toList();
-
-        // Assert
-        assertThat(output).isEmpty();
+    void argumentWhenSourceLongerFunctionMustNotBeNull() {
+        assertThatThrownBy(() -> Stream.of("A")
+                .gather(Gatherers4j.zipWith(List.of("A")).argumentWhenSourceLonger(null)).toList()
+        ).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    void zipGathererOtherEmpty() {
+    void sourceWhenArgumentLongerFunctionMustNotBeNull() {
+        assertThatThrownBy(() -> Stream.of("A")
+                .gather(Gatherers4j.zipWith(List.of("A")).sourceWhenArgumentLonger(null)).toList()
+        ).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void zipWhenArgumentIsLongerFromFunction() {
+        // Arrange
+        final Stream<String> left = Stream.of("A");
+        final Stream<Integer> right = Stream.of(1, 2, 3, 4);
+
+        // Act
+        final List<Pair<String, Integer>> output = left
+                .gather(Gatherers4j.<String, Integer>zipWith(right).sourceWhenArgumentLonger(String::valueOf))
+                .toList();
+
+        // Assert
+        assertThat(output)
+                .hasSize(4)
+                .containsExactly(
+                        new Pair<>("A", 1),
+                        new Pair<>("2", 2),
+                        new Pair<>("3", 3),
+                        new Pair<>("4", 4)
+                );
+    }
+
+    @Test
+    void zipWhenArgumentIsLongerNull() {
+        // Arrange
+        final Stream<String> left = Stream.of("A");
+        final Stream<Integer> right = Stream.of(1, 2, 3, 4);
+
+        // Act
+        final List<Pair<String, Integer>> output = left
+                .gather(Gatherers4j.<String, Integer>zipWith(right).nullSourceWhenArgumentLonger())
+                .toList();
+
+        // Assert
+        assertThat(output)
+                .hasSize(4)
+                .containsExactly(
+                        new Pair<>("A", 1),
+                        new Pair<>(null, 2),
+                        new Pair<>(null, 3),
+                        new Pair<>(null, 4)
+                );
+    }
+
+    @Test
+    void zipWhenOtherIsEmpty() {
         // Arrange
         final Stream<String> left = Stream.of("A", "B", "C");
         final Stream<Integer> right = Stream.empty();
@@ -80,10 +122,69 @@ class ZipWithGathererTest {
     }
 
     @Test
-    void zipWithCollectionGatherer() {
+    void zipWhenSourceIsLongerFromFunction() {
+        // Arrange
+        final Stream<String> left = Stream.of("A", "Bb", "Ccc", "Dddd");
+        final Stream<Integer> right = Stream.of(1);
+
+        // Act
+        final List<Pair<String, Integer>> output = left
+                .gather(Gatherers4j.<String, Integer>zipWith(right).argumentWhenSourceLonger(String::length))
+                .toList();
+
+        // Assert
+        assertThat(output)
+                .hasSize(4)
+                .containsExactly(
+                        new Pair<>("A", 1),
+                        new Pair<>("Bb", 2),
+                        new Pair<>("Ccc", 3),
+                        new Pair<>("Dddd", 4)
+                );
+    }
+
+    @Test
+    void zipWhenSourceIsLongerNull() {
+        // Arrange
+        final Stream<String> left = Stream.of("A", "B", "C", "D");
+        final Stream<Integer> right = Stream.of(1);
+
+        // Act
+        final List<Pair<String, Integer>> output = left
+                .gather(Gatherers4j.<String, Integer>zipWith(right).nullArgumentWhenSourceLonger())
+                .toList();
+
+        // Assert
+        assertThat(output)
+                .hasSize(4)
+                .containsExactly(
+                        new Pair<>("A", 1),
+                        new Pair<>("B", null),
+                        new Pair<>("C", null),
+                        new Pair<>("D", null)
+                );
+    }
+
+    @Test
+    void zipWhenThisIsEmpty() {
+        // Arrange
+        final Stream<String> left = Stream.empty();
+        final Stream<Integer> right = Stream.of(1, 2, 3);
+
+        // Act
+        final List<Pair<String, Integer>> output = left
+                .gather(Gatherers4j.zipWith(right))
+                .toList();
+
+        // Assert
+        assertThat(output).isEmpty();
+    }
+
+    @Test
+    void zipWithIterableGatherer() {
         // Arrange
         final Stream<String> left = Stream.of("A", "B", "C");
-        final Collection<Integer> right = List.of(1, 2, 3);
+        final Iterable<Integer> right = List.of(1, 2, 3);
 
         // Act
         final List<Pair<String, Integer>> output = left

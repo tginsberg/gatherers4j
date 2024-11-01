@@ -318,7 +318,7 @@ public class Gatherers4j {
     /// and the argument collection
     ///
     /// @param other A non-null iterable to zip with
-    public static <FIRST, SECOND> Gatherer<FIRST, Void, Pair<FIRST, SECOND>> zipWith(final Iterable<SECOND> other) {
+    public static <FIRST, SECOND> ZipWithGatherer<FIRST, SECOND> zipWith(final Iterable<SECOND> other) {
         return new ZipWithGatherer<>(other);
     }
 
@@ -326,7 +326,7 @@ public class Gatherers4j {
     /// and the argument iterator
     ///
     /// @param other A non-null iterator to zip with
-    public static <FIRST, SECOND> Gatherer<FIRST, Void, Pair<FIRST, SECOND>> zipWith(final Iterator<SECOND> other) {
+    public static <FIRST, SECOND> ZipWithGatherer<FIRST, SECOND> zipWith(final Iterator<SECOND> other) {
         return new ZipWithGatherer<>(other);
     }
 
@@ -334,7 +334,7 @@ public class Gatherers4j {
     /// and the argument stream
     ///
     /// @param other A non-null stream to zip with
-    public static <FIRST, SECOND> Gatherer<FIRST, Void, Pair<FIRST, SECOND>> zipWith(final Stream<SECOND> other) {
+    public static <FIRST, SECOND> ZipWithGatherer<FIRST, SECOND> zipWith(final Stream<SECOND> other) {
         return new ZipWithGatherer<>(other);
     }
     
