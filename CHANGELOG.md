@@ -1,3 +1,11 @@
+### 0.6.0
++ Implement `dropLast(n)`
++ Implement `grouping()` and `groupingBy(fn)`
++ Add support for `zipWith(iterable)` and `zipWith(iterator)`
++ Add support for `interleave(iterable)` and `interleave(iterator)`
++ Add support for `appendLonger()`, `appendArgumentIfLonger()`, and `appendSourceIfLonger()` on `interleave()`
++ Add support for `argumentWhenSourceLonger()`, `sourceWhenArgumentLonger()`, `nullArgumentWhenSourceLonger()`, and `nullSourceWhenArgumentLonger` on `zipWith()`
+
 ### 0.5.0
 + Implement `reverse()`
 + Implement `maxBy(fn)` and `minBy(fn)`

@@ -18,18 +18,106 @@ package com.ginsberg.gatherers4j;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class InterleavingGathererTest {
 
     @Test
-    void interleavingGatherer() {
+    void argumentIterableMustNotBeNull() {
+        assertThatThrownBy(() -> Stream.of("A")
+                .gather(Gatherers4j.interleave((Iterable<String>) null))
+                .toList()
+        ).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void argumentIteratorMustNotBeNull() {
+        assertThatThrownBy(() -> Stream.of("A")
+                .gather(Gatherers4j.interleave((Iterator<String>) null))
+                .toList()
+        ).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void argumentStreamMustNotBeNull() {
+        assertThatThrownBy(() -> Stream.of("A")
+                .gather(Gatherers4j.interleave((Stream<String>) null))
+                .toList()
+        ).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void interleaveOtherLongerSpecifyingEither() {
+        final Stream<String> left = Stream.of("A", "B", "C");
+        final Stream<String> right = Stream.of("D", "E", "F", "G", "H");
+
+        // Act
+        final List<String> output = left
+                .gather(Gatherers4j.interleave(right).appendLonger())
+                .toList();
+
+        // Assert
+        assertThat(output)
+                .containsExactly("A", "D", "B", "E", "C", "F", "G", "H");
+    }
+
+    @Test
+    void interleaveArgumentLongerSpecifyingArgument() {
+        final Stream<String> left = Stream.of("A", "B", "C");
+        final Stream<String> right = Stream.of("D", "E", "F", "G", "H");
+
+        // Act
+        final List<String> output = left
+                .gather(Gatherers4j.interleave(right).appendArgumentIfLonger())
+                .toList();
+
+        // Assert
+        assertThat(output)
+                .containsExactly("A", "D", "B", "E", "C", "F", "G", "H");
+    }
+
+    @Test
+    void interleaveSourceLongerSpecifyingSourceEither() {
+        final Stream<String> left = Stream.of("A", "B", "C", "D", "E");
+        final Stream<String> right = Stream.of("F", "G", "H");
+
+        // Act
+        final List<String> output = left
+                .gather(Gatherers4j.interleave(right).appendSourceIfLonger())
+                .toList();
+
+        // Assert
+        assertThat(output)
+                .containsExactly("A", "F", "B", "G", "C", "H", "D", "E");
+    }
+
+    @Test
+    void interleavingGathererIterable() {
         // Arrange
         final Stream<String> left = Stream.of("A", "B", "C");
-        final Stream<String> right = Stream.of("D", "E", "F");
+        final Collection<String> right = List.of("D", "E", "F");
+
+        // Act
+        final List<String> output = left
+                .gather(Gatherers4j.interleave(right))
+                .toList();
+
+        // Assert
+        assertThat(output)
+                .containsExactly("A", "D", "B", "E", "C", "F");
+    }
+
+    @Test
+    void interleavingGathererIterator() {
+        // Arrange
+        final Stream<String> left = Stream.of("A", "B", "C");
+        final Iterator<String> right = List.of("D", "E", "F").iterator();
 
         // Act
         final List<String> output = left
@@ -58,6 +146,22 @@ class InterleavingGathererTest {
     }
 
     @Test
+    void interleavingGathererStream() {
+        // Arrange
+        final Stream<String> left = Stream.of("A", "B", "C");
+        final Stream<String> right = Stream.of("D", "E", "F");
+
+        // Act
+        final List<String> output = left
+                .gather(Gatherers4j.interleave(right))
+                .toList();
+
+        // Assert
+        assertThat(output)
+                .containsExactly("A", "D", "B", "E", "C", "F");
+    }
+
+    @Test
     void interleavingGathererThisEmpty() {
         // Arrange
         final Stream<String> left = Stream.empty();
@@ -71,5 +175,4 @@ class InterleavingGathererTest {
         // Assert
         assertThat(output).isEmpty();
     }
-
 }

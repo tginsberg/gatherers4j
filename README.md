@@ -15,7 +15,7 @@ Add the following dependency to `pom.xml`.
 <dependency>
     <groupId>com.ginsberg</groupId>
     <artifactId>gatherers4j</artifactId>
-    <version>0.5.0</version>
+    <version>0.6.0</version>
 </dependency>
 ```
 
@@ -24,7 +24,7 @@ Add the following dependency to `pom.xml`.
 Add the following dependency to `build.gradle` or `build.gradle.kts`
 
 ```groovy
-implementation("com.ginsberg:gatherers4j:0.5.0")
+implementation("com.ginsberg:gatherers4j:0.6.0")
 ```
 
 # Gatherers In This Library
@@ -37,8 +37,13 @@ implementation("com.ginsberg:gatherers4j:0.5.0")
 | `dedupeConsecutive()`        | Remove consecutive duplicates from a stream                                                                                    |
 | `dedupeConsecutiveBy(fn)`    | Remove consecutive duplicates from a stream as returned by `fn`                                                                |
 | `distinctBy(fn)`             | Emit only distinct elements from the stream, as measured by `fn`                                                               |
+| `dropLast(n)`                | Keep all but the last `n` elements of the stream                                                                               |
 | `exactSize(n)`               | Ensure the stream is exactly `n` elements long, or throw an `IllegalStateException`                                            |
-| `filterWithIndex(predicate)` | Filter the stream with the given `predicate`, which takes an `element` and its `index`                                         | 
+| `filterWithIndex(predicate)` | Filter the stream with the given `predicate`, which takes an `element` and its `index`                                         |
+| `grouping()`                 | Group consecute identical elements into lists                                                                                  |
+| `groupingBy(fn)`             | Group consecutive elements that are identical according to `fn` into lists                                                     |                                                                                                                    
+| `interleave(iterable)`       | Creates a stream of alternating objects from the input stream and the argument iterable                                        |
+| `interleave(iterator)`       | Creates a stream of alternating objects from the input stream and the argument iterator                                        |
 | `interleave(stream)`         | Creates a stream of alternating objects from the input stream and the argument stream                                          |
 | `last(n)`                    | Constrain the stream to the last `n` values                                                                                    |
 | `maxBy(fn)`                  | Return a stream containing a single element, which is the maximum value returned by the mapping function `fn`                  |
@@ -48,6 +53,8 @@ implementation("com.ginsberg:gatherers4j:0.5.0")
 | `shuffle(rg)`                | Shuffle the stream into a random order using the specified `RandomGenerator`                                                   |
 | `throttle(amount, duration)` | Limit stream elements to `amount` elements over `duration`, pausing until a new `duration` period starts                       |
 | `withIndex()`                | Maps all elements of the stream as-is along with their 0-based index                                                           |
+| `zipWith(iterable)`          | Creates a stream of `Pair` objects whose values come from the input stream and argument iterable                               |
+| `zipWith(iterator)`          | Creates a stream of `Pair` objects whose values come from the input stream and argument iterator                               |
 | `zipWith(stream)`            | Creates a stream of `Pair` objects whose values come from the input stream and argument stream                                 |
 | `zipWithNext()`              | Creates a stream of `List` objects via a sliding window of width 2 and stepping 1                                              |      
 
@@ -139,6 +146,16 @@ Stream
 // [Person("Todd", "Ginsberg"), Person("Emma", "Ginsberg")]
 ```
 
+#### Keep all but the last `n` elements 
+
+```java
+Stream.of("A", "B", "C", "D", "E")
+    .gather(Gatherers4j.dropLast(2))
+    .toList();
+
+// ["A", "B", "C"]
+```
+
 #### Ensure the stream is exactly `n` elements long
 
 ```java
@@ -161,6 +178,27 @@ Stream.of("A", "B", "C", "D")
 
 // ["A", "C", "D"]
 ```
+
+### Group identical elements
+
+```java
+Stream.of("A", "A", "B", "B", "B", "C")
+    .gather(Gatherers4j.grouping())
+    .toList();
+
+// [["A", "A"], ["B", "B", "B"], ["C"]]
+```
+
+### Group identical elements as measured by a function
+
+```java
+Stream.of("A", "B", "AA", "BB", "CC", "DDD")
+    .gather(Gatherers4j.groupingBy(String::length))
+    .toList();
+
+// [["A", "B"], ["AA", "BB", "CC"], ["DDD"]]
+```
+
 
 #### Interleave streams of the same type into one stream
 
@@ -316,7 +354,6 @@ are treated as zeros, and the calculated average is returned along with the orig
 ```java
 someStreamOfBigDecimal()
     .gather(Gatherers4j
-        .averageBigDecimals()
         .simpleMovingAverage(10)
         .includePartialValues()
         .withMathContext(MathContext.DECIMAL32)
