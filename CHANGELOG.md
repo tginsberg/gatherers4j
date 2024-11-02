@@ -1,3 +1,6 @@
+### 0.7.0
++ TBD
+
 ### 0.6.0
 + Implement `dropLast(n)`
 + Implement `grouping()` and `groupingBy(fn)`
