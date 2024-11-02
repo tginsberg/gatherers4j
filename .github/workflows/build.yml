@@ -25,7 +25,7 @@ jobs:
         run: ./gradlew build --no-daemon
 
       - name: Publish
-        if: github.ref != 'refs/heads/main' && !(github.event_name == 'pull_request' && github.base_ref == 'main')
+        if: github.ref != 'refs/heads/main' && !(github.event_name == 'pull_request' && github.base_ref == 'refs/heads/main')
         run: ./gradlew publish --no-daemon
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
