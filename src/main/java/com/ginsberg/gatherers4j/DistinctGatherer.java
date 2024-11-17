@@ -23,23 +23,23 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Gatherer;
 
-public class DistinctGatherer<INPUT, MAPPED>
-        implements Gatherer<INPUT, DistinctGatherer.State<MAPPED>, INPUT> {
+public class DistinctGatherer<INPUT>
+        implements Gatherer<INPUT, DistinctGatherer.State, INPUT> {
 
-    private final Function<INPUT, MAPPED> byFunction;
+    private final Function<INPUT, Object> byFunction;
 
-    DistinctGatherer(final Function<INPUT, MAPPED> byFunction) {
+    DistinctGatherer(final Function<INPUT, Object> byFunction) {
         Objects.requireNonNull(byFunction, "Mapping function must not be null");
         this.byFunction = byFunction;
     }
 
     @Override
-    public Supplier<State<MAPPED>> initializer() {
+    public Supplier<State> initializer() {
         return State::new;
     }
 
     @Override
-    public Integrator<DistinctGatherer.State<MAPPED>, INPUT, INPUT> integrator() {
+    public Integrator<DistinctGatherer.State, INPUT, INPUT> integrator() {
         return (state, element, downstream) -> {
             if (state.knownObjects.add(byFunction.apply(element))) {
                 downstream.push(element);
@@ -48,7 +48,7 @@ public class DistinctGatherer<INPUT, MAPPED>
         };
     }
 
-    public static class State<MAPPED> {
-        final Set<MAPPED> knownObjects = new HashSet<>();
+    public static class State {
+        final Set<Object> knownObjects = new HashSet<>();
     }
 }
