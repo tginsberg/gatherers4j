@@ -33,7 +33,7 @@ public class ZipWithNextGatherer<INPUT> implements Gatherer<INPUT, ZipWithNextGa
 
     @Override
     public Integrator<State<INPUT>, INPUT, List<INPUT>> integrator() {
-        return (state, element, downstream) -> {
+        return Integrator.ofGreedy((state, element, downstream) -> {
             if (!state.hasValue) {
                 state.hasValue = true;
             } else {
@@ -41,7 +41,7 @@ public class ZipWithNextGatherer<INPUT> implements Gatherer<INPUT, ZipWithNextGa
             }
             state.value = element;
             return !downstream.isRejecting();
-        };
+        });
 
     }
 

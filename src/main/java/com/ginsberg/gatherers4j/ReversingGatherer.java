@@ -31,7 +31,10 @@ public class ReversingGatherer<INPUT> implements Gatherer<INPUT, ReversingGather
 
     @Override
     public Integrator<State<INPUT>, INPUT, INPUT> integrator() {
-        return (state, element, _) -> state.inputs.add(element);
+        return Integrator.ofGreedy((state, element, downstream) -> {
+            state.inputs.add(element);
+            return !downstream.isRejecting();
+        });
     }
 
     @Override

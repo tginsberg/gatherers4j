@@ -40,12 +40,12 @@ public class DistinctGatherer<INPUT>
 
     @Override
     public Integrator<DistinctGatherer.State, INPUT, INPUT> integrator() {
-        return (state, element, downstream) -> {
+        return Integrator.ofGreedy((state, element, downstream) -> {
             if (state.knownObjects.add(byFunction.apply(element))) {
                 downstream.push(element);
             }
             return !downstream.isRejecting();
-        };
+        });
     }
 
     public static class State {

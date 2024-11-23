@@ -40,10 +40,10 @@ public class DropLastGatherer<INPUT> implements Gatherer<INPUT, DropLastGatherer
 
     @Override
     public Integrator<State<INPUT>, INPUT, INPUT> integrator() {
-        return (state, element, downstream) -> {
+        return Integrator.ofGreedy((state, element, downstream) -> {
             state.elements.add(element);
             return !downstream.isRejecting();
-        };
+        });
     }
 
     @Override

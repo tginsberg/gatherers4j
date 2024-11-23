@@ -63,12 +63,12 @@ public class ThrottlingGatherer<INPUT> implements Gatherer<INPUT, ThrottlingGath
 
     @Override
     public Integrator<State, INPUT, INPUT> integrator() {
-        return (state, element, downstream) -> {
+        return Integrator.ofGreedy((state, element, downstream) -> {
             if (!downstream.isRejecting() && state.attempt()) {
                 downstream.push(element);
             }
             return !downstream.isRejecting();
-        };
+        });
     }
 
     public static class State {

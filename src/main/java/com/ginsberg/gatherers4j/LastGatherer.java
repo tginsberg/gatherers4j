@@ -51,12 +51,12 @@ public class LastGatherer<INPUT> implements Gatherer<INPUT, LastGatherer.State<I
 
     @Override
     public Integrator<State<INPUT>, INPUT, INPUT> integrator() {
-        return Integrator.ofGreedy((state, element, _) -> {
+        return Integrator.ofGreedy((state, element, downstream) -> {
             if (state.elements.size() == lastCount) {
                 state.elements.removeFirst();
             }
             state.elements.add(element);
-            return true;
+            return !downstream.isRejecting();
         });
     }
 

@@ -41,7 +41,10 @@ public class ShufflingGatherer<INPUT> implements Gatherer<INPUT, ShufflingGather
 
     @Override
     public Integrator<ShufflingGatherer.State<INPUT>, INPUT, INPUT> integrator() {
-        return (state, element, _) -> state.inputs.add(element);
+        return Integrator.ofGreedy((state, element, downstream) -> {
+            state.inputs.add(element);
+            return !downstream.isRejecting();
+        });
     }
 
     @Override
