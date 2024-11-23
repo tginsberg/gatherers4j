@@ -36,7 +36,7 @@ abstract public class BigDecimalGatherer<INPUT>
 
     @Override
     public Integrator<BigDecimalGatherer.State, INPUT, BigDecimal> integrator() {
-        return (state, element, downstream) -> {
+        return Integrator.ofGreedy((state, element, downstream) -> {
             final BigDecimal mappedElement = element == null ? nullReplacement : mappingFunction.apply(element);
             if (mappedElement != null) {
                 state.add(mappedElement, mathContext);
@@ -45,7 +45,7 @@ abstract public class BigDecimalGatherer<INPUT>
                 }
             }
             return !downstream.isRejecting();
-        };
+        });
     }
 
     /// When encountering a `null` value in a stream, treat it as `BigDecimal.ZERO` instead.

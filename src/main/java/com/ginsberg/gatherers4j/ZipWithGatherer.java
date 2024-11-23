@@ -106,9 +106,9 @@ public class ZipWithGatherer<FIRST, SECOND> implements Gatherer<FIRST, Void, Pai
         return (_, element, downstream) -> {
             boolean advanced = otherSpliterator.tryAdvance(it -> downstream.push(new Pair<>(element, it)));
             if (!advanced && argumentWhenSourceLonger != null) {
-                downstream.push(new Pair<>(element, argumentWhenSourceLonger.apply(element)));
+                return downstream.push(new Pair<>(element, argumentWhenSourceLonger.apply(element)));
             }
-            return !downstream.isRejecting();
+            return advanced && !downstream.isRejecting();
         };
     }
 

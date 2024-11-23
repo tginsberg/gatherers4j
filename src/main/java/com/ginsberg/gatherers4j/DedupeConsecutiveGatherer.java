@@ -37,7 +37,7 @@ public class DedupeConsecutiveGatherer<INPUT>
 
     @Override
     public Integrator<DedupeConsecutiveGatherer.State, INPUT, INPUT> integrator() {
-        return (state, element, downstream) -> {
+        return Integrator.ofGreedy((state, element, downstream) -> {
             final Object mapped = mappingFunction == null ? element : mappingFunction.apply(element);
             if (!state.hasValue) {
                 state.hasValue = true;
@@ -48,7 +48,7 @@ public class DedupeConsecutiveGatherer<INPUT>
                 return downstream.push(element);
             }
             return !downstream.isRejecting();
-        };
+        });
     }
 
     public static class State {

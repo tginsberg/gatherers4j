@@ -1,5 +1,5 @@
 ### 0.7.0
-+ TBD
++ Use greedy integrators where possible (Fixes #57)
 
 ### 0.6.0
 + Implement `dropLast(n)`

@@ -32,7 +32,9 @@ public class IndexingGatherer<INPUT>
 
     @Override
     public Integrator<IndexingGatherer.State, INPUT, IndexedValue<INPUT>> integrator() {
-        return (state, element, downstream) -> downstream.push(new IndexedValue<>(state.index++, element));
+        return Integrator.ofGreedy((state, element, downstream) ->
+                downstream.push(new IndexedValue<>(state.index++, element))
+        );
     }
 
     public static class State {

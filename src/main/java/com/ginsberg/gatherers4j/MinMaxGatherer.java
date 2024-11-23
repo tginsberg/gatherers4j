@@ -39,7 +39,7 @@ public class MinMaxGatherer<INPUT, MAPPED extends Comparable<MAPPED>>
 
     @Override
     public Integrator<State<INPUT, MAPPED>, INPUT, INPUT> integrator() {
-        return (state, element, downstream) -> {
+        return Integrator.ofGreedy((state, element, downstream) -> {
             final MAPPED mapped = element == null ? null : mappingFunction.apply(element);
             if (mapped == null) {
                 return !downstream.isRejecting();
@@ -55,7 +55,7 @@ public class MinMaxGatherer<INPUT, MAPPED extends Comparable<MAPPED>>
                 }
             }
             return !downstream.isRejecting();
-        };
+        });
     }
 
     @Override

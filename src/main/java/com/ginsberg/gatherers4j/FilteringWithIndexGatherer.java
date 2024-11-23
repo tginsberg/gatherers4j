@@ -39,12 +39,12 @@ public class FilteringWithIndexGatherer<INPUT>
 
     @Override
     public Integrator<FilteringWithIndexGatherer.State, INPUT, INPUT> integrator() {
-        return (state, element, downstream) -> {
+        return Integrator.ofGreedy((state, element, downstream) -> {
             if (predicate.test(state.index++, element)) {
                 downstream.push(element);
             }
             return !downstream.isRejecting();
-        };
+        });
     }
 
     public static class State {
