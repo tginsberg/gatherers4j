@@ -16,6 +16,8 @@
 
 package com.ginsberg.gatherers4j;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -26,11 +28,12 @@ import java.util.stream.Gatherer;
 import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
 import static com.ginsberg.gatherers4j.GathererUtils.safeEquals;
 
-public class GroupingByGatherer<INPUT> implements Gatherer<INPUT, GroupingByGatherer.State<INPUT>, List<INPUT>> {
+public class GroupingByGatherer<INPUT extends @Nullable Object> implements
+        Gatherer<INPUT, GroupingByGatherer.State<INPUT>, List<INPUT>> {
 
     private final Function<INPUT, Object> mappingFunction;
 
-    GroupingByGatherer(Function<INPUT, Object> mappingFunction) {
+    GroupingByGatherer(Function<INPUT, @Nullable Object> mappingFunction) {
         mustNotBeNull(mappingFunction, "Mapping function must not be null");
         this.mappingFunction = mappingFunction;
     }
@@ -42,7 +45,7 @@ public class GroupingByGatherer<INPUT> implements Gatherer<INPUT, GroupingByGath
 
     @Override
     public Integrator<State<INPUT>, INPUT, List<INPUT>> integrator() {
-        return Integrator.ofGreedy(((state, element, downstream) -> {
+        return Integrator.ofGreedy((state, element, downstream) -> {
             final Object thisMatch = mappingFunction.apply(element);
             if (state.working == null) {
                 state.working = new ArrayList<>();
@@ -57,20 +60,20 @@ public class GroupingByGatherer<INPUT> implements Gatherer<INPUT, GroupingByGath
                 state.working.add(element);
             }
             return !downstream.isRejecting();
-        }));
+        });
     }
 
     @Override
     public BiConsumer<State<INPUT>, Downstream<? super List<INPUT>>> finisher() {
-        return ((state, downstream) -> {
+        return (state, downstream) -> {
             if (state.working != null) {
                 downstream.push(state.working);
             }
-        });
+        };
     }
 
     public static class State<INPUT> {
-        Object pastMatch = null;
-        List<INPUT> working = null;
+        @Nullable Object pastMatch = null;
+        @Nullable List<INPUT> working = null;
     }
 }

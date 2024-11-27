@@ -16,13 +16,16 @@
 
 package com.ginsberg.gatherers4j;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import java.util.stream.Gatherer;
 
-public class ReversingGatherer<INPUT> implements Gatherer<INPUT, ReversingGatherer.State<INPUT>, INPUT> {
+public class ReversingGatherer<INPUT extends @Nullable Object>
+        implements Gatherer<INPUT, ReversingGatherer.State<INPUT>, INPUT> {
 
     @Override
     public Supplier<ReversingGatherer.State<INPUT>> initializer() {
@@ -47,6 +50,6 @@ public class ReversingGatherer<INPUT> implements Gatherer<INPUT, ReversingGather
     }
 
     public static class State<INPUT> {
-        List<INPUT> inputs = new ArrayList<>();
+        final List<INPUT> inputs = new ArrayList<>();
     }
 }

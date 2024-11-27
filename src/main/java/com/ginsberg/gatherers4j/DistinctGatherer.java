@@ -16,21 +16,24 @@
 
 package com.ginsberg.gatherers4j;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Gatherer;
 
-public class DistinctGatherer<INPUT>
+import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
+
+public class DistinctGatherer<INPUT extends @Nullable Object>
         implements Gatherer<INPUT, DistinctGatherer.State, INPUT> {
 
-    private final Function<INPUT, Object> byFunction;
+    private final Function<INPUT, Object> mappingFunction;
 
-    DistinctGatherer(final Function<INPUT, Object> byFunction) {
-        Objects.requireNonNull(byFunction, "Mapping function must not be null");
-        this.byFunction = byFunction;
+    DistinctGatherer(final Function<INPUT, @Nullable Object> mappingFunction) {
+        mustNotBeNull(mappingFunction, "Mapping function must not be null");
+        this.mappingFunction = mappingFunction;
     }
 
     @Override
@@ -41,7 +44,7 @@ public class DistinctGatherer<INPUT>
     @Override
     public Integrator<DistinctGatherer.State, INPUT, INPUT> integrator() {
         return Integrator.ofGreedy((state, element, downstream) -> {
-            if (state.knownObjects.add(byFunction.apply(element))) {
+            if (state.knownObjects.add(mappingFunction.apply(element))) {
                 downstream.push(element);
             }
             return !downstream.isRejecting();
@@ -49,6 +52,6 @@ public class DistinctGatherer<INPUT>
     }
 
     public static class State {
-        final Set<Object> knownObjects = new HashSet<>();
+        final Set<@Nullable Object> knownObjects = new HashSet<>();
     }
 }

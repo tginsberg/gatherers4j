@@ -16,10 +16,12 @@
 
 package com.ginsberg.gatherers4j;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.function.Supplier;
 import java.util.stream.Gatherer;
 
-public class IndexingGatherer<INPUT>
+public class IndexingGatherer<INPUT extends @Nullable Object>
         implements Gatherer<INPUT, IndexingGatherer.State, IndexedValue<INPUT>> {
 
     IndexingGatherer() {

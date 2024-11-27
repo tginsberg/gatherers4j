@@ -16,6 +16,8 @@
 
 package com.ginsberg.gatherers4j;
 
+import org.jspecify.annotations.Nullable;
+
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.Iterator;
@@ -64,8 +66,7 @@ public abstract class Gatherers4j {
     /// @param mappingFunction A non-null mapping function, the results of which will be used to check for distinct elements
     /// @param <INPUT> Type of elements in both the input and output streams
     /// @return A non-null `DistinctGatherer`
-    public static <INPUT> DistinctGatherer<INPUT> distinctBy(final Function<INPUT, Object> mappingFunction) {
-        mustNotBeNull(mappingFunction, "Mapping function must not be null");
+    public static <INPUT extends @Nullable Object> DistinctGatherer<INPUT> distinctBy(final Function<INPUT, @Nullable Object> mappingFunction) {
         return new DistinctGatherer<>(mappingFunction);
     }
 
@@ -169,7 +170,6 @@ public abstract class Gatherers4j {
     public static <INPUT, MAPPED extends Comparable<MAPPED>> MinMaxGatherer<INPUT, MAPPED> maxBy(
             final Function<INPUT, MAPPED> mappingFunction
     ) {
-        mustNotBeNull(mappingFunction, "Mapping function must not be null");
         return new MinMaxGatherer<>(true, mappingFunction);
     }
 
@@ -185,7 +185,6 @@ public abstract class Gatherers4j {
     public static <INPUT, MAPPED extends Comparable<MAPPED>> MinMaxGatherer<INPUT, MAPPED> minBy(
             final Function<INPUT, MAPPED> mappingFunction
     ) {
-        mustNotBeNull(mappingFunction, "Mapping function must not be null");
         return new MinMaxGatherer<>(false, mappingFunction);
     }
 
@@ -328,7 +327,6 @@ public abstract class Gatherers4j {
     public static <INPUT> BigDecimalSimpleAverageGatherer<INPUT> simpleRunningAverageBy(
             final Function<INPUT, BigDecimal> mappingFunction
     ) {
-        mustNotBeNull(mappingFunction, "Mapping function must not be null");
         return new BigDecimalSimpleAverageGatherer<>(mappingFunction);
     }
 
@@ -353,7 +351,6 @@ public abstract class Gatherers4j {
             final Function<INPUT, BigDecimal> mappingFunction,
             final int windowSize
     ) {
-        mustNotBeNull(mappingFunction, "Mapping function must not be null");
         return new BigDecimalSimpleMovingAverageGatherer<>(mappingFunction, windowSize);
     }
 

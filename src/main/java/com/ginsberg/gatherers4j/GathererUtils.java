@@ -15,22 +15,35 @@
  */
 package com.ginsberg.gatherers4j;
 
+import org.jspecify.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
+
 abstract class GathererUtils {
 
-    static long NANOS_PER_MILLISECOND = 1_000_000;
+    final static long NANOS_PER_MILLISECOND = 1_000_000;
 
-    static boolean safeEquals(final Object left, final Object right) {
+
+    static <INPUT> List<INPUT> listOfNullables(final @Nullable INPUT left, final @Nullable INPUT right) {
+        final List<INPUT> list = new ArrayList<>();
+        list.add(left);
+        list.add(right);
+        return list;
+    }
+
+    static void mustNotBeNull(final @Nullable Object subject, final String message) {
+        if (subject == null) {
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    static boolean safeEquals(final @Nullable Object left, final @Nullable Object right) {
         if (left == null && right == null) {
             return true;
         } else if (left == null || right == null) {
             return false;
         }
         return left.equals(right);
-    }
-
-    static void mustNotBeNull(final Object subject, final String message) {
-        if (subject == null) {
-            throw new IllegalArgumentException(message);
-        }
     }
 }

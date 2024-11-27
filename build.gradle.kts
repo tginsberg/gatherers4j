@@ -1,3 +1,5 @@
+import net.ltgt.gradle.errorprone.CheckSeverity
+import net.ltgt.gradle.errorprone.errorprone
 import java.io.IOException
 import java.net.URI
 
@@ -6,6 +8,7 @@ plugins {
     id("jacoco")
     id("java-library")
     id("maven-publish")
+    id("net.ltgt.errorprone") version "4.1.0"
     id("signing")
 }
 
@@ -32,6 +35,9 @@ repositories {
 }
 
 dependencies {
+    api("org.jspecify:jspecify:1.0.0") {
+        because("Annotating with JSpecify makes static analysis more accurate")
+    }
     testRuntimeOnly("org.junit.platform:junit-platform-launcher") {
         because("Starting in Gradle 9.0, this needs to be an explicitly declared dependency")
     }
@@ -41,6 +47,9 @@ dependencies {
     testImplementation("org.assertj:assertj-core:3.26.3") {
         because("These assertions are clearer than JUnit+Hamcrest")
     }
+
+    errorprone("com.google.errorprone:error_prone_core:2.36.0")
+    errorprone("com.uber.nullaway:nullaway:0.12.1")
 }
 
 publishing {
@@ -101,6 +110,15 @@ signing {
 tasks {
     withType<JavaCompile> {
         options.compilerArgs.add(ENABLE_PREVIEW)
+        options.errorprone {
+            check("NullAway", CheckSeverity.ERROR)
+            option("NullAway:AnnotatedPackages", "com.ginsberg.gatherers4j")
+        }
+        if (name.lowercase().contains("test")) {
+            options.errorprone {
+                disable("NullAway")
+            }
+        }
     }
 
     jacocoTestReport {

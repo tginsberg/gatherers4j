@@ -54,6 +54,7 @@ class BigDecimalProductGathererTest {
     }
 
     @Test
+    @SuppressWarnings("DataFlowIssue")
     void mathContextCannotBeNull() {
         assertThatThrownBy(() ->
                 Stream.of(BigDecimal.ONE).gather(Gatherers4j.runningProduct().withMathContext(null))

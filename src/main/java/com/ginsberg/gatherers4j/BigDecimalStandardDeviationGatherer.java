@@ -16,12 +16,16 @@
 
 package com.ginsberg.gatherers4j;
 
+import org.jspecify.annotations.Nullable;
+
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public final class BigDecimalStandardDeviationGatherer<INPUT> extends BigDecimalGatherer<INPUT> {
+import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
+
+public final class BigDecimalStandardDeviationGatherer<INPUT extends @Nullable Object> extends BigDecimalGatherer<INPUT> {
 
     enum Mode {
         Population,
@@ -32,9 +36,10 @@ public final class BigDecimalStandardDeviationGatherer<INPUT> extends BigDecimal
 
     BigDecimalStandardDeviationGatherer(
             final Mode mode,
-            final Function<INPUT, BigDecimal> mappingFunction) {
+            final Function<INPUT, @Nullable BigDecimal> mappingFunction) {
         super(mappingFunction);
-        this.mode = mode == null ? Mode.Population : mode;
+        mustNotBeNull(mode, "Mode must not be null");
+        this.mode = mode;
     }
 
     @Override
@@ -46,7 +51,6 @@ public final class BigDecimalStandardDeviationGatherer<INPUT> extends BigDecimal
         private final Mode mode;
         private BigDecimal dSquared = BigDecimal.ZERO;
         private BigDecimal stdDev = BigDecimal.ZERO;
-        private long count;
 
         State(Mode mode) {
             this.mode = mode;
@@ -56,8 +60,7 @@ public final class BigDecimalStandardDeviationGatherer<INPUT> extends BigDecimal
         public void add(final BigDecimal element, final MathContext mathContext) {
             final BigDecimal previousAverage = average;
             super.add(element, mathContext);
-            count++;
-            dSquared = dSquared.add((element.subtract(average).multiply((element.subtract(previousAverage)))));
+            dSquared = dSquared.add( element.subtract(average).multiply( element.subtract(previousAverage)));
             if (mode == Mode.Sample) {
                 if (count > 1) {
                     stdDev = dSquared

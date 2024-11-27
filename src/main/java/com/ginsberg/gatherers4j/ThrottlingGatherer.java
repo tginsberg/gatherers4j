@@ -16,6 +16,8 @@
 
 package com.ginsberg.gatherers4j;
 
+import org.jspecify.annotations.Nullable;
+
 import java.time.Clock;
 import java.time.Duration;
 import java.util.concurrent.locks.LockSupport;
@@ -25,7 +27,8 @@ import java.util.stream.Gatherer;
 import static com.ginsberg.gatherers4j.GathererUtils.NANOS_PER_MILLISECOND;
 import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
 
-public class ThrottlingGatherer<INPUT> implements Gatherer<INPUT, ThrottlingGatherer.State, INPUT> {
+public class ThrottlingGatherer<INPUT extends @Nullable Object>
+        implements Gatherer<INPUT, ThrottlingGatherer.State, INPUT> {
 
     public enum LimitRule {
         Drop,
@@ -38,6 +41,7 @@ public class ThrottlingGatherer<INPUT> implements Gatherer<INPUT, ThrottlingGath
     private Clock clock = Clock.systemUTC();
 
     ThrottlingGatherer(final LimitRule limitRule, final int allowed, final Duration duration) {
+        mustNotBeNull(limitRule, "LimitRule must not be null");
         mustNotBeNull(duration, "Duration must not be null");
         if (duration.toMillis() < 1) {
             throw new IllegalArgumentException("Minimum duration is 1ms");
@@ -45,7 +49,7 @@ public class ThrottlingGatherer<INPUT> implements Gatherer<INPUT, ThrottlingGath
         if (allowed <= 0) {
             throw new IllegalArgumentException("Allowed must be positive");
         }
-        this.limitRule = limitRule == null ? LimitRule.Pause : limitRule;
+        this.limitRule = limitRule;
         this.duration = duration;
         this.allowed = allowed;
     }

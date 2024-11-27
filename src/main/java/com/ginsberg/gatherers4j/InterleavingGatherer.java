@@ -16,6 +16,8 @@
 
 package com.ginsberg.gatherers4j;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.function.BiConsumer;
@@ -24,7 +26,8 @@ import java.util.stream.Stream;
 
 import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
 
-public class InterleavingGatherer<INPUT> implements Gatherer<INPUT, Void, INPUT> {
+public class InterleavingGatherer<INPUT extends @Nullable Object>
+        implements Gatherer<INPUT, Void, INPUT> {
 
     private final Spliterator<INPUT> otherSpliterator;
     private boolean appendArgumentIfLonger;

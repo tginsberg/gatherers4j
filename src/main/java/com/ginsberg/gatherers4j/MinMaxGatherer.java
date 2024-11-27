@@ -16,18 +16,23 @@
 
 package com.ginsberg.gatherers4j;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Gatherer;
 
-public class MinMaxGatherer<INPUT, MAPPED extends Comparable<MAPPED>>
+import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
+
+public class MinMaxGatherer<INPUT extends @Nullable Object, MAPPED extends @Nullable Comparable<MAPPED>>
         implements Gatherer<INPUT, MinMaxGatherer.State<INPUT, MAPPED>, INPUT> {
 
     private final Function<INPUT, MAPPED> mappingFunction;
     private final boolean max;
 
     MinMaxGatherer(final boolean max, final Function<INPUT, MAPPED> mappingFunction) {
+        mustNotBeNull(mappingFunction, "Mapping function must not be null");
         this.mappingFunction = mappingFunction;
         this.max = max;
     }
@@ -41,13 +46,14 @@ public class MinMaxGatherer<INPUT, MAPPED extends Comparable<MAPPED>>
     public Integrator<State<INPUT, MAPPED>, INPUT, INPUT> integrator() {
         return Integrator.ofGreedy((state, element, downstream) -> {
             final MAPPED mapped = element == null ? null : mappingFunction.apply(element);
-            if (mapped == null) {
+            if (element == null || mapped == null) {
                 return !downstream.isRejecting();
             }
             if (state.bestSoFar == null) {
                 state.bestSoFar = element;
                 state.mappedField = mapped;
             } else {
+                assert state.mappedField != null;
                 final int compared = mapped.compareTo(state.mappedField);
                 if ((compared > 0 && max) || (compared < 0 && !max)) {
                     state.bestSoFar = element;
@@ -67,8 +73,8 @@ public class MinMaxGatherer<INPUT, MAPPED extends Comparable<MAPPED>>
         };
     }
 
-    public static class State<INPUT, MAPPED extends Comparable<MAPPED>> {
-        private INPUT bestSoFar;
-        private MAPPED mappedField;
+    public static class State<INPUT, MAPPED extends @Nullable Comparable<@Nullable MAPPED>> {
+        @Nullable private INPUT bestSoFar;
+        @Nullable private MAPPED mappedField;
     }
 }

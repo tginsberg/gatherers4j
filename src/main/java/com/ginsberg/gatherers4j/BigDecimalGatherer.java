@@ -16,6 +16,8 @@
 
 package com.ginsberg.gatherers4j;
 
+import org.jspecify.annotations.Nullable;
+
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.function.Function;
@@ -23,14 +25,14 @@ import java.util.stream.Gatherer;
 
 import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
 
-abstract public class BigDecimalGatherer<INPUT>
+abstract public class BigDecimalGatherer<INPUT extends @Nullable Object>
         implements Gatherer<INPUT, BigDecimalGatherer.State, BigDecimal> {
-    private final Function<INPUT, BigDecimal> mappingFunction;
+    private final Function<INPUT, @Nullable BigDecimal> mappingFunction;
     private MathContext mathContext = MathContext.DECIMAL64;
-    private BigDecimal nullReplacement;
+    private @Nullable BigDecimal nullReplacement;
 
-    BigDecimalGatherer(final Function<INPUT, BigDecimal> mappingFunction) {
-        super();
+    BigDecimalGatherer(final Function<INPUT, @Nullable BigDecimal> mappingFunction) {
+        mustNotBeNull(mappingFunction, "Mapping function must not be null");
         this.mappingFunction = mappingFunction;
     }
 
@@ -56,7 +58,7 @@ abstract public class BigDecimalGatherer<INPUT>
     /// When encountering a `null` value in a stream, treat it as the given `replacement` value instead.
     ///
     /// @param replacement The value to replace `null` with
-    public BigDecimalGatherer<INPUT> treatNullAs(final BigDecimal replacement) {
+    public BigDecimalGatherer<INPUT> treatNullAs(final @Nullable BigDecimal replacement) {
         this.nullReplacement = replacement;
         return this;
     }
