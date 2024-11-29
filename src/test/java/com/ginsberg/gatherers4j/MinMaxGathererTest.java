@@ -16,6 +16,7 @@
 
 package com.ginsberg.gatherers4j;
 
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -27,11 +28,39 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class MinMaxGathererTest {
 
-    private record TestObject(String a, int b) {
+    private record TestObject(@Nullable String a, int b) {
     }
 
     @Nested
     class Max {
+
+        @Test
+        void allNullHasNoMax() {
+            // Arrange
+            final Stream<String> input = Stream.of(null, null, null);
+
+            // Act
+            final List<String> output = input.gather(Gatherers4j.maxBy(String::length)).toList();
+
+            // Assert
+            assertThat(output).isEmpty();
+        }
+
+        @Test
+        void canHandleNullValues() {
+            // Arrange
+            final Stream<TestObject> input = Stream.of(
+                    new TestObject("A", 1),
+                    null,
+                    new TestObject("C", 3)
+            );
+
+            // Act
+            final List<TestObject> output = input.gather(Gatherers4j.maxBy(TestObject::b)).toList();
+
+            // Assert
+            assertThat(output).containsExactly(new TestObject("C", 3));
+        }
 
         @Test
         void doesNotTestNullMappings() {
@@ -100,6 +129,33 @@ class MinMaxGathererTest {
 
     @Nested
     class Min {
+        @Test
+        void allNullHasNoMin() {
+            // Arrange
+            final Stream<String> input = Stream.of(null, null, null);
+
+            // Act
+            final List<String> output = input.skip(1).gather(Gatherers4j.minBy(String::length)).toList();
+
+            // Assert
+            assertThat(output).isEmpty();
+        }
+
+        @Test
+        void canHandleNullValues() {
+            // Arrange
+            final Stream<TestObject> input = Stream.of(
+                    new TestObject("A", 1),
+                    null,
+                    new TestObject("C", 3)
+            );
+
+            // Act
+            final List<TestObject> output = input.gather(Gatherers4j.minBy(TestObject::b)).toList();
+
+            // Assert
+            assertThat(output).containsExactly(new TestObject("A", 1));
+        }
 
         @Test
         void doesNotTestNullMappings() {
