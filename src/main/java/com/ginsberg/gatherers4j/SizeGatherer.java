@@ -16,13 +16,16 @@
 
 package com.ginsberg.gatherers4j;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import java.util.stream.Gatherer;
 
-public class SizeGatherer<INPUT> implements Gatherer<INPUT, SizeGatherer.State<INPUT>, INPUT> {
+public class SizeGatherer<INPUT extends @Nullable Object>
+        implements Gatherer<INPUT, SizeGatherer.State<INPUT>, INPUT> {
 
     private final long targetSize;
 

@@ -16,12 +16,14 @@
 
 package com.ginsberg.gatherers4j;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.function.Supplier;
 import java.util.stream.Gatherer;
 
-public class WithOriginalGatherer<INPUT, STATE, OUTPUT>
+public class WithOriginalGatherer<INPUT extends @Nullable Object, STATE, OUTPUT extends @Nullable Object>
         implements Gatherer<INPUT, STATE, WithOriginal<INPUT, OUTPUT>> {
 
     private final Gatherer<INPUT, STATE, OUTPUT> delegate;

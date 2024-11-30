@@ -16,19 +16,21 @@
 
 package com.ginsberg.gatherers4j;
 
+import org.jspecify.annotations.Nullable;
+
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.Arrays;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public final class BigDecimalSimpleMovingAverageGatherer<INPUT> extends BigDecimalGatherer<INPUT> {
+public final class BigDecimalSimpleMovingAverageGatherer<INPUT extends @Nullable Object> extends BigDecimalGatherer<INPUT> {
 
     private final int windowSize;
     private boolean includePartialValues;
 
     BigDecimalSimpleMovingAverageGatherer(
-            final Function<INPUT, BigDecimal> mappingFunction,
+            final Function<INPUT, @Nullable BigDecimal> mappingFunction,
             final int windowSize
     ) {
         super(mappingFunction);
@@ -59,7 +61,7 @@ public final class BigDecimalSimpleMovingAverageGatherer<INPUT> extends BigDecim
         final BigDecimal[] series;
         BigDecimal sum = BigDecimal.ZERO;
         BigDecimal count = BigDecimal.ZERO;
-        BigDecimal average = null;
+        BigDecimal average = BigDecimal.ZERO;
         int index = 0;
 
         private State(final int lookBack, final boolean includePartialValues) {

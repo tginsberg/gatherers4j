@@ -17,4 +17,7 @@
 /// A library of useful Stream Gatherers (custom intermediate operations) for Java.
 ///
 /// @author Todd Ginsberg (todd@ginsberg.com)
+@NullMarked
 package com.ginsberg.gatherers4j;
+
+import org.jspecify.annotations.NullMarked;

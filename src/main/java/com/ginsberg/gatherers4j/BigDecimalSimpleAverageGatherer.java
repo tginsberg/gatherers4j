@@ -16,14 +16,19 @@
 
 package com.ginsberg.gatherers4j;
 
+import org.jspecify.annotations.Nullable;
+
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public final class BigDecimalSimpleAverageGatherer<INPUT> extends BigDecimalGatherer<INPUT> {
+import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
 
-    BigDecimalSimpleAverageGatherer(final Function<INPUT, BigDecimal> mappingFunction) {
+public final class BigDecimalSimpleAverageGatherer<INPUT extends @Nullable Object> extends BigDecimalGatherer<INPUT> {
+
+    BigDecimalSimpleAverageGatherer(final Function<INPUT, @Nullable BigDecimal> mappingFunction) {
+        mustNotBeNull(mappingFunction, "Mapping function must not be null");
         super(mappingFunction);
     }
 
@@ -39,7 +44,7 @@ public final class BigDecimalSimpleAverageGatherer<INPUT> extends BigDecimalGath
         @Override
         public void add(final BigDecimal element, final MathContext mathContext) {
             count++;
-            average = average.add((element.subtract(average)).divide(BigDecimal.valueOf(count), mathContext));
+            average = average.add(element.subtract(average).divide(BigDecimal.valueOf(count), mathContext));
         }
 
         @Override

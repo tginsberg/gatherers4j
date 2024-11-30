@@ -16,6 +16,8 @@
 
 package com.ginsberg.gatherers4j;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -25,7 +27,8 @@ import java.util.stream.Gatherer;
 
 import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
 
-public class ShufflingGatherer<INPUT> implements Gatherer<INPUT, ShufflingGatherer.State<INPUT>, INPUT> {
+public class ShufflingGatherer<INPUT extends @Nullable Object> implements
+        Gatherer<INPUT, ShufflingGatherer.State<INPUT>, INPUT> {
 
     private final RandomGenerator randomGenerator;
 
@@ -63,6 +66,6 @@ public class ShufflingGatherer<INPUT> implements Gatherer<INPUT, ShufflingGather
     }
 
     public static class State<INPUT> {
-        List<INPUT> inputs = new ArrayList<>();
+        final List<INPUT> inputs = new ArrayList<>();
     }
 }

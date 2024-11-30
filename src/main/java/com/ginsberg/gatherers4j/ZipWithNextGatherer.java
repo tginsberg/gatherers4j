@@ -16,11 +16,16 @@
 
 package com.ginsberg.gatherers4j;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Gatherer;
 
-public class ZipWithNextGatherer<INPUT> implements Gatherer<INPUT, ZipWithNextGatherer.State<INPUT>, List<INPUT>> {
+import static com.ginsberg.gatherers4j.GathererUtils.listOfNullables;
+
+public class ZipWithNextGatherer<INPUT extends @Nullable Object>
+        implements Gatherer<INPUT, ZipWithNextGatherer.State<INPUT>, List<INPUT>> {
 
     ZipWithNextGatherer() {
         super();
@@ -37,7 +42,7 @@ public class ZipWithNextGatherer<INPUT> implements Gatherer<INPUT, ZipWithNextGa
             if (!state.hasValue) {
                 state.hasValue = true;
             } else {
-                downstream.push(List.of(state.value, element));
+                downstream.push(listOfNullables(state.value, element));
             }
             state.value = element;
             return !downstream.isRejecting();
@@ -46,6 +51,7 @@ public class ZipWithNextGatherer<INPUT> implements Gatherer<INPUT, ZipWithNextGa
     }
 
     public static class State<INPUT> {
+        @Nullable
         INPUT value;
         boolean hasValue;
     }

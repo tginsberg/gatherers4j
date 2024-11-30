@@ -16,5 +16,10 @@
 
 package com.ginsberg.gatherers4j;
 
-public record IndexedValue<TYPE>(long index, TYPE value) {
+import org.jspecify.annotations.Nullable;
+
+public record IndexedValue<TYPE>(
+        long index,
+        @Nullable TYPE value
+) {
 }

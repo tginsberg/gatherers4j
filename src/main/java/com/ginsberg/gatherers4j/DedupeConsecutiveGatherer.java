@@ -15,19 +15,21 @@
  */
 package com.ginsberg.gatherers4j;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Gatherer;
 
 import static com.ginsberg.gatherers4j.GathererUtils.safeEquals;
 
-public class DedupeConsecutiveGatherer<INPUT>
+public class DedupeConsecutiveGatherer<INPUT extends @Nullable Object>
         implements Gatherer<INPUT, DedupeConsecutiveGatherer.State, INPUT> {
 
-    private final Function<INPUT, Object> mappingFunction;
+    private final @Nullable Function<INPUT, @Nullable Object> mappingFunction;
 
-    DedupeConsecutiveGatherer(final Function<INPUT, Object> function) {
-        this.mappingFunction = function;
+    DedupeConsecutiveGatherer(final @Nullable Function<INPUT, @Nullable Object> mappingFunction) {
+        this.mappingFunction = mappingFunction;
     }
 
     @Override
@@ -52,7 +54,7 @@ public class DedupeConsecutiveGatherer<INPUT>
     }
 
     public static class State {
-        Object value;
+        @Nullable Object value;
         boolean hasValue;
     }
 }

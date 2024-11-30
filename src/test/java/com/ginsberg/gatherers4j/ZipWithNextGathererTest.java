@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static com.ginsberg.gatherers4j.GathererUtils.listOfNullables;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ZipWithNextGathererTest {
@@ -42,6 +43,26 @@ class ZipWithNextGathererTest {
                         List.of("B", "C"),
                         List.of("C", "D"),
                         List.of("D", "E")
+                );
+    }
+
+
+    @Test
+    void zipWithNextIncludingNulls() {
+        // Arrange
+        final Stream<String> input = Stream.of("A", null, "C", null);
+
+        // Act
+        final List<List<String>> output = input
+                .gather(Gatherers4j.zipWithNext())
+                .toList();
+
+        // Assert
+        assertThat(output)
+                .containsExactly(
+                        listOfNullables("A", null),
+                        listOfNullables(null, "C"),
+                        listOfNullables("C", null)
                 );
     }
 

@@ -16,6 +16,8 @@
 
 package com.ginsberg.gatherers4j;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
@@ -23,7 +25,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import java.util.stream.Gatherer;
 
-public class LastGatherer<INPUT> implements Gatherer<INPUT, LastGatherer.State<INPUT>, INPUT> {
+public class LastGatherer<INPUT extends @Nullable Object>
+        implements Gatherer<INPUT, LastGatherer.State<INPUT>, INPUT> {
 
     private final int lastCount;
 

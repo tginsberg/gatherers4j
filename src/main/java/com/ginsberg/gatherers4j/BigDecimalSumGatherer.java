@@ -16,14 +16,16 @@
 
 package com.ginsberg.gatherers4j;
 
+import org.jspecify.annotations.Nullable;
+
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class BigDecimalSumGatherer<INPUT> extends BigDecimalGatherer<INPUT> {
+public class BigDecimalSumGatherer<INPUT extends @Nullable Object> extends BigDecimalGatherer<INPUT> {
 
-    BigDecimalSumGatherer(final Function<INPUT, BigDecimal> mappingFunction) {
+    BigDecimalSumGatherer(final Function<INPUT, @Nullable BigDecimal> mappingFunction) {
         super(mappingFunction);
     }
 

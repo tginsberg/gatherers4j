@@ -53,15 +53,6 @@ class ThrottlingGathererTest {
     }
 
     @Test
-    void defaultsRuleToPause() {
-        // Arrange/Act
-        final ThrottlingGatherer<String> gatherer = new ThrottlingGatherer<>(null, 1, Duration.ofSeconds(1));
-
-        // Assert
-        assertThat(gatherer).hasFieldOrPropertyWithValue("limitRule", ThrottlingGatherer.LimitRule.Pause);
-    }
-
-    @Test
     void durationIsNegative() {
         assertThatThrownBy(() ->
                 Stream.of("A").gather(Gatherers4j.throttle(1, Duration.ofSeconds(-1)))
@@ -79,6 +70,12 @@ class ThrottlingGathererTest {
     void durationIsZero() {
         assertThatThrownBy(() ->
                 Stream.of("A").gather(Gatherers4j.throttle(1, Duration.ofSeconds(0)))
+        ).isExactlyInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void limitRuleIsNotNull() {
+        assertThatThrownBy(() -> new ThrottlingGatherer<>(null, 1, Duration.ofSeconds(1))
         ).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
@@ -143,7 +140,7 @@ class ThrottlingGathererTest {
 
         @Override
         public ZoneId getZone() {
-            return null;
+            return ZoneId.systemDefault();
         }
 
         @Override
@@ -158,7 +155,7 @@ class ThrottlingGathererTest {
 
         @Override
         public Clock withZone(ZoneId zone) {
-            return null;
+            return Clock.systemDefaultZone();
         }
     }
 }
