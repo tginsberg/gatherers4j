@@ -17,20 +17,9 @@ package com.ginsberg.gatherers4j;
 
 import org.jspecify.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-
 abstract class GathererUtils {
 
     final static long NANOS_PER_MILLISECOND = 1_000_000;
-
-
-    static <INPUT> List<INPUT> listOfNullables(final @Nullable INPUT left, final @Nullable INPUT right) {
-        final List<INPUT> list = new ArrayList<>();
-        list.add(left);
-        list.add(right);
-        return list;
-    }
 
     static void mustNotBeNull(final @Nullable Object subject, final String message) {
         if (subject == null) {

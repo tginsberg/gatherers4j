@@ -18,10 +18,10 @@ package com.ginsberg.gatherers4j;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static com.ginsberg.gatherers4j.GathererUtils.listOfNullables;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ZipWithNextGathererTest {
@@ -60,9 +60,9 @@ class ZipWithNextGathererTest {
         // Assert
         assertThat(output)
                 .containsExactly(
-                        listOfNullables("A", null),
-                        listOfNullables(null, "C"),
-                        listOfNullables("C", null)
+                        Arrays.asList("A", null),
+                        Arrays.asList(null, "C"),
+                        Arrays.asList("C", null)
                 );
     }
 

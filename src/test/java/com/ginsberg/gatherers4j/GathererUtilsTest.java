@@ -19,9 +19,9 @@ package com.ginsberg.gatherers4j;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
-import static com.ginsberg.gatherers4j.GathererUtils.listOfNullables;
 import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
 import static org.assertj.core.api.Assertions.*;
 
@@ -37,7 +37,7 @@ class GathererUtilsTest {
             final String right = null;
 
             // Act
-            final List<String> output = listOfNullables(left, right);
+            final List<String> output = Arrays.asList(left, right);
 
             // Assert
             assertThat(output).isNotNull().hasSize(2).containsExactly(left, right);
@@ -50,7 +50,7 @@ class GathererUtilsTest {
             final String right = "B";
 
             // Act
-            final List<String> output = listOfNullables(left, right);
+            final List<String> output = Arrays.asList(left, right);
 
             // Assert
             assertThat(output).isNotNull().hasSize(2).containsExactly(left, right);
