@@ -1,6 +1,7 @@
 ### 0.7.0
 + Use greedy integrators where possible (Fixes #57)
 + Add [JSpecify](https://jspecify.dev/) annotations for static analysis
++ Implement `orderByFrequencyAscending()` and `orderByFrequencyDescending()`
 
 ### 0.6.0
 + Implement `dropLast(n)`
