@@ -92,7 +92,7 @@ class BigDecimalSimpleMovingAverageGathererTest {
 
         // Act
         final List<BigDecimal> output = input.stream()
-                .gather(Gatherers4j.simpleMovingAverageBy(TestValueHolder::value, 2))
+                .gather(Gatherers4j.simpleMovingAverageBy(2, TestValueHolder::value))
                 .toList();
 
         // Assert
@@ -253,7 +253,7 @@ class BigDecimalSimpleMovingAverageGathererTest {
 
         // Act
         final List<WithOriginal<TestValueHolder, BigDecimal>> output = input.stream()
-                .gather(Gatherers4j.simpleMovingAverageBy(TestValueHolder::value, 2).withOriginal())
+                .gather(Gatherers4j.simpleMovingAverageBy(2, TestValueHolder::value).withOriginal())
                 .toList();
 
         // Assert

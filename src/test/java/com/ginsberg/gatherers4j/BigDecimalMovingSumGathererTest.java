@@ -90,7 +90,7 @@ class BigDecimalMovingSumGathererTest {
 
         // Act
         final List<BigDecimal> output = input.stream()
-                .gather(Gatherers4j.movingSumBy(TestValueHolder::value, 2))
+                .gather(Gatherers4j.movingSumBy(2, TestValueHolder::value))
                 .toList();
 
         // Assert

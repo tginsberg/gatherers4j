@@ -31,8 +31,9 @@ public class BigDecimalMovingProductGatherer<INPUT extends @Nullable Object>
     private boolean includePartialValues = false;
 
     BigDecimalMovingProductGatherer(
-            final Function<INPUT, @Nullable BigDecimal> mappingFunction,
-            final int windowSize) {
+            final int windowSize,
+            final Function<INPUT, @Nullable BigDecimal> mappingFunction
+    ) {
         super(mappingFunction);
         if (windowSize <= 1) {
             throw new IllegalArgumentException("Window size must be greater than 1");

@@ -65,9 +65,9 @@ implementation("com.ginsberg:gatherers4j:0.7.0")
 | Function                                   | Purpose                                                                                                                            |
 |--------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
 | `movingProduct(window)`                    | Create a moving product of `BigDecimal` values over the previous `window` values.                                                  |
-| `movingProductBy(fn, window)`              | Create a moving product of `BigDecimal` values over the previous `window` values, as mapped via `fn`.                              |
+| `movingProductBy(window, fn)`              | Create a moving product of `BigDecimal` values over the previous `window` values, as mapped via `fn`.                              |
 | `movingSum(window)`                        | Create a moving sum of `BigDecimal` values over the previous `window` values.                                                      |
-| `movingSumBy(fn, window)`                  | Create a moving sum of `BigDecimal` values over the previous `window` values, as mapped via `fn`.                                  |
+| `movingSumBy(window, fn)`                  | Create a moving sum of `BigDecimal` values over the previous `window` values, as mapped via `fn`.                                  |
 | `runningPopulationStandardDeviation()`     | Create a stream of `BigDecimal` objects representing the running population standard deviation.                                    |
 | `runningPopulationStandardDeviationBy(fn)` | Create a stream of `BigDecimal` objects as mapped from the input via `fn`, representing the running population standard deviation. |
 | `runningProduct()`                         | Create a stream of `BigDecimal` objects representing the running product.                                                          |                                                          |
@@ -77,7 +77,7 @@ implementation("com.ginsberg:gatherers4j:0.7.0")
 | `runningSum()`                             | Create a stream of `BigDecimal` objects representing the running sum.                                                              |
 | `runningSumBy(fn)`                         | Create a stream of `BigDecimal` objects as mapped from the input via `fn`, representing the running sum.                           |
 | `simpleMovingAverage(window)`              | Create a moving average of `BigDecimal` values over the previous `window` values. See below for options.                           |
-| `simpleMovingAverageBy(fn, window)`        | Create a moving average of `BigDecimal` values over the previous `window` values, as mapped via `fn`.                              |
+| `simpleMovingAverageBy(window, fn)`        | Create a moving average of `BigDecimal` values over the previous `window` values, as mapped via `fn`.                              |
 | `simpleRunningAverage()`                   | Create a running average of `BigDecimal` values. See below for options.                                                            |
 | `simpleRunningAverageBy(fn)`               | Create a running average of `BigDecimal` values as mapped via `fn`.                                                                |
 

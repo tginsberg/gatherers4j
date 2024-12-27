@@ -30,8 +30,8 @@ public final class BigDecimalSimpleMovingAverageGatherer<INPUT extends @Nullable
     private boolean includePartialValues;
 
     BigDecimalSimpleMovingAverageGatherer(
-            final Function<INPUT, @Nullable BigDecimal> mappingFunction,
-            final int windowSize
+            final int windowSize,
+            final Function<INPUT, @Nullable BigDecimal> mappingFunction
     ) {
         super(mappingFunction);
         if (windowSize <= 1) {
