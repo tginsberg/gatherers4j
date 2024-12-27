@@ -2,6 +2,8 @@
 + Use greedy integrators where possible (Fixes #57)
 + Add [JSpecify](https://jspecify.dev/) annotations for static analysis
 + Implement `orderByFrequencyAscending()` and `orderByFrequencyDescending()`
++ Implement `movingProduct()` and `movingProductBy()`
++ Implement `movingSum()` and `movingSumBy()`
 
 ### 0.6.0
 + Implement `dropLast(n)`
