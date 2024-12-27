@@ -31,9 +31,13 @@ import static com.ginsberg.gatherers4j.GathererUtils.safeEquals;
 public class GroupingByGatherer<INPUT extends @Nullable Object> implements
         Gatherer<INPUT, GroupingByGatherer.State<INPUT>, List<INPUT>> {
 
-    private final Function<INPUT, Object> mappingFunction;
+    private final @Nullable Function<INPUT, Object> mappingFunction;
 
-    GroupingByGatherer(Function<INPUT, @Nullable Object> mappingFunction) {
+    GroupingByGatherer() {
+        mappingFunction = null;
+    }
+
+    GroupingByGatherer(Function<@Nullable INPUT, @Nullable Object> mappingFunction) {
         mustNotBeNull(mappingFunction, "Mapping function must not be null");
         this.mappingFunction = mappingFunction;
     }
@@ -46,7 +50,7 @@ public class GroupingByGatherer<INPUT extends @Nullable Object> implements
     @Override
     public Integrator<State<INPUT>, INPUT, List<INPUT>> integrator() {
         return Integrator.ofGreedy((state, element, downstream) -> {
-            final Object thisMatch = mappingFunction.apply(element);
+            final Object thisMatch = mappingFunction == null ? element: mappingFunction.apply(element);
             if (state.working == null) {
                 state.working = new ArrayList<>();
                 state.working.add(element);

@@ -34,8 +34,8 @@ public final class BigDecimalSimpleMovingAverageGatherer<INPUT extends @Nullable
             final int windowSize
     ) {
         super(mappingFunction);
-        if (windowSize <= 0) {
-            throw new IllegalArgumentException("Window size must be positive");
+        if (windowSize <= 1) {
+            throw new IllegalArgumentException("Window size must be greater than 1");
         }
         this.windowSize = windowSize;
     }
