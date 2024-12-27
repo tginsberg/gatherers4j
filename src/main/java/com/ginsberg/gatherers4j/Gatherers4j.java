@@ -39,7 +39,10 @@ public abstract class Gatherers4j {
     /// @param duration A positive duration for the length of the period
     /// @param <INPUT>  Type of elements in both the input and output streams
     /// @return A non-null `ThrottlingGatherer`
-    public static <INPUT> ThrottlingGatherer<INPUT> debounce(final int amount, final Duration duration) {
+    public static <INPUT extends @Nullable Object> ThrottlingGatherer<INPUT> debounce(
+            final int amount,
+            final Duration duration
+    ) {
         return new ThrottlingGatherer<>(ThrottlingGatherer.LimitRule.Drop, amount, duration);
     }
 
@@ -47,7 +50,7 @@ public abstract class Gatherers4j {
     ///
     /// @param <INPUT> Type of elements in both the input and output streams
     /// @return A non-null `DedupeConsecutiveGatherer`
-    public static <INPUT> DedupeConsecutiveGatherer<INPUT> dedupeConsecutive() {
+    public static <INPUT extends @Nullable Object> DedupeConsecutiveGatherer<INPUT> dedupeConsecutive() {
         return new DedupeConsecutiveGatherer<>(null);
     }
 
@@ -56,7 +59,9 @@ public abstract class Gatherers4j {
     /// @param mappingFunction A non-null function, the results of which will be used to check for consecutive duplication.
     /// @param <INPUT>         Type of elements in both the input and output streams
     /// @return A non-null `DedupeConsecutiveGatherer`
-    public static <INPUT> DedupeConsecutiveGatherer<INPUT> dedupeConsecutiveBy(final Function<INPUT, Object> mappingFunction) {
+    public static <INPUT extends @Nullable Object> DedupeConsecutiveGatherer<INPUT> dedupeConsecutiveBy(
+            final Function<INPUT, Object> mappingFunction
+    ) {
         mustNotBeNull(mappingFunction, "Mapping function must not be null");
         return new DedupeConsecutiveGatherer<>(mappingFunction);
     }
@@ -66,7 +71,9 @@ public abstract class Gatherers4j {
     /// @param mappingFunction A non-null mapping function, the results of which will be used to check for distinct elements
     /// @param <INPUT>         Type of elements in both the input and output streams
     /// @return A non-null `DistinctGatherer`
-    public static <INPUT extends @Nullable Object> DistinctGatherer<INPUT> distinctBy(final Function<INPUT, @Nullable Object> mappingFunction) {
+    public static <INPUT extends @Nullable Object> DistinctGatherer<INPUT> distinctBy(
+            final Function<INPUT, @Nullable Object> mappingFunction
+    ) {
         return new DistinctGatherer<>(mappingFunction);
     }
 
@@ -75,7 +82,7 @@ public abstract class Gatherers4j {
     /// @param count   A positive number of elements to drop from the end of the stream
     /// @param <INPUT> Type of elements in both the input and output streams
     /// @return A non-null `DropLastGatherer`
-    public static <INPUT> DropLastGatherer<INPUT> dropLast(final int count) {
+    public static <INPUT extends @Nullable Object> DropLastGatherer<INPUT> dropLast(final int count) {
         return new DropLastGatherer<>(count);
     }
 
@@ -86,7 +93,7 @@ public abstract class Gatherers4j {
     /// @param <INPUT> Type of elements in both the input and output streams
     /// @return A non-null `SizeGatherer`
     /// @throws IllegalStateException when the input stream is not exactly `size` elements long
-    public static <INPUT> SizeGatherer<INPUT> exactSize(final long size) {
+    public static <INPUT extends @Nullable Object> SizeGatherer<INPUT> exactSize(final long size) {
         return new SizeGatherer<>(size);
     }
 
@@ -97,7 +104,7 @@ public abstract class Gatherers4j {
     ///                                                    being filtered, and the `INPUT` is the element itself.
     /// @param <INPUT>   Type of elements in the input stream
     /// @return A non-null `FilteringWithIndexGatherer`
-    public static <INPUT> FilteringWithIndexGatherer<INPUT> filterWithIndex(
+    public static <INPUT extends @Nullable Object> FilteringWithIndexGatherer<INPUT> filterWithIndex(
             final BiPredicate<Long, INPUT> predicate
     ) {
         return new FilteringWithIndexGatherer<>(predicate);
@@ -108,8 +115,8 @@ public abstract class Gatherers4j {
     ///
     /// @param <INPUT> Type of elements in the input stream
     /// @return A non-null `GroupingByGatherer`
-    public static <INPUT> GroupingByGatherer<INPUT> grouping() {
-        return new GroupingByGatherer<>(it -> it);
+    public static <INPUT extends @Nullable Object> GroupingByGatherer<INPUT> grouping() {
+        return new GroupingByGatherer<>();
     }
 
     /// Turn a `Stream<INPUT>` into a `Stream<List<INPUT>>` where consecutive
@@ -118,7 +125,9 @@ public abstract class Gatherers4j {
     /// @param mappingFunction A non-null function, the results of which are used to measure equality of consecutive elements.
     /// @param <INPUT>         Type of elements in the input stream
     /// @return A non-null `GroupingByGatherer`
-    public static <INPUT> GroupingByGatherer<INPUT> groupingBy(final Function<INPUT, Object> mappingFunction) {
+    public static <INPUT extends @Nullable Object> GroupingByGatherer<INPUT> groupingBy(
+            final Function<@Nullable INPUT, @Nullable Object> mappingFunction
+    ) {
         return new GroupingByGatherer<>(mappingFunction);
     }
 
@@ -127,7 +136,7 @@ public abstract class Gatherers4j {
     /// @param other   A non-null Iterable to interleave
     /// @param <INPUT> Type of elements in both the input stream and argument iterable
     /// @return A non-null `InterleavingGatherer`
-    public static <INPUT> InterleavingGatherer<INPUT> interleave(final Iterable<INPUT> other) {
+    public static <INPUT extends @Nullable Object> InterleavingGatherer<INPUT> interleave(final Iterable<INPUT> other) {
         return new InterleavingGatherer<>(other);
     }
 
@@ -136,7 +145,7 @@ public abstract class Gatherers4j {
     /// @param other   A non-null Iterator to interleave
     /// @param <INPUT> Type of elements in both the input stream and argument iterator
     /// @return A non-null `InterleavingGatherer`
-    public static <INPUT> InterleavingGatherer<INPUT> interleave(final Iterator<INPUT> other) {
+    public static <INPUT extends @Nullable Object> InterleavingGatherer<INPUT> interleave(final Iterator<INPUT> other) {
         return new InterleavingGatherer<>(other);
     }
 
@@ -145,7 +154,7 @@ public abstract class Gatherers4j {
     /// @param other   A non-null stream to interleave
     /// @param <INPUT> Type of elements in both the input and argument streams
     /// @return A non-null `InterleavingGatherer`
-    public static <INPUT> InterleavingGatherer<INPUT> interleave(final Stream<INPUT> other) {
+    public static <INPUT extends @Nullable Object> InterleavingGatherer<INPUT> interleave(final Stream<INPUT> other) {
         return new InterleavingGatherer<>(other);
     }
 
@@ -167,7 +176,7 @@ public abstract class Gatherers4j {
     /// @param <INPUT>         Type of elements in the input stream
     /// @param <MAPPED>        Type of object returned from the `mappingFunction`, which much implement `Comparable`
     /// @return A non-null `MinMaxGatherer`
-    public static <INPUT, MAPPED extends Comparable<MAPPED>> MinMaxGatherer<INPUT, MAPPED> maxBy(
+    public static <INPUT extends @Nullable Object, MAPPED extends @Nullable Comparable<MAPPED>> MinMaxGatherer<INPUT, MAPPED> maxBy(
             final Function<INPUT, MAPPED> mappingFunction
     ) {
         return new MinMaxGatherer<>(true, mappingFunction);
@@ -182,29 +191,59 @@ public abstract class Gatherers4j {
     /// @param <INPUT>         Type of elements in the input stream
     /// @param <MAPPED>        Type of object returned from the `mappingFunction`, which much implement `Comparable`
     /// @return A non-null `MinMaxGatherer`
-    public static <INPUT, MAPPED extends Comparable<MAPPED>> MinMaxGatherer<INPUT, MAPPED> minBy(
+    public static <INPUT extends @Nullable Object, MAPPED extends @Nullable Comparable<MAPPED>> MinMaxGatherer<INPUT, MAPPED> minBy(
             final Function<INPUT, MAPPED> mappingFunction
     ) {
         return new MinMaxGatherer<>(false, mappingFunction);
     }
 
-    public static BigDecimalMovingProductGatherer<BigDecimal> movingProduct(int windowSize) {
+    /// Create a Stream that represents the moving product of a `Stream<BigDecimal>` looking
+    /// back `windowSize` number of elements.
+    ///
+    /// @param windowSize The trailing number of elements to multiply, must be greater than 1.
+    /// @return A non-null `BigDecimalMovingProductGatherer`
+    public static BigDecimalMovingProductGatherer<@Nullable BigDecimal> movingProduct(int windowSize) {
         return movingProductBy(Function.identity(), windowSize);
     }
 
-    public static <INPUT> BigDecimalMovingProductGatherer<INPUT> movingProductBy(Function<INPUT, BigDecimal> mappingFunction, int windowSize) {
+    /// Create a Stream that represents the moving product of a `BigDecimal` objects mapped from a `Stream<T>`
+    /// via a `mappingFunction` and looking back `windowSize` number of elements.
+    ///
+    /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
+    ///                        in the moving product calculation
+    /// @param windowSize      The trailing number of elements to multiply, must be greater than 1.
+    /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
+    /// @return A non-null `BigDecimalMovingProductGatherer`
+    public static <INPUT extends @Nullable Object> BigDecimalMovingProductGatherer<INPUT> movingProductBy(
+            final Function<INPUT, BigDecimal> mappingFunction,
+            int windowSize
+    ) {
         return new BigDecimalMovingProductGatherer<>(mappingFunction, windowSize);
     }
 
-    public static BigDecimalMovingSumGatherer<BigDecimal> movingSum(int windowSize) {
+    /// Create a Stream that represents the moving sum of a `Stream<BigDecimal>` looking
+    /// back `windowSize` number of elements.
+    ///
+    /// @param windowSize The trailing number of elements to add, must be greater than 1.
+    /// @return A non-null `BigDecimalMovingSumGatherer`
+    public static BigDecimalMovingSumGatherer<@Nullable BigDecimal> movingSum(int windowSize) {
         return movingSumBy(Function.identity(), windowSize);
     }
 
-    public static <INPUT> BigDecimalMovingSumGatherer<INPUT> movingSumBy(Function<INPUT, BigDecimal> mappingFunction, int windowSize) {
+    /// Create a Stream that represents the moving sum of a `BigDecimal` objects mapped from a `Stream<T>`
+    /// via a `mappingFunction` and looking back `windowSize` number of elements.
+    ///
+    /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
+    ///                        in the moving sum calculation
+    /// @param windowSize      The trailing number of elements to multiply, must be greater than 1.
+    /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
+    /// @return A non-null `BigDecimalMovingSumGatherer`
+    public static <INPUT extends @Nullable Object> BigDecimalMovingSumGatherer<INPUT> movingSumBy(
+            final Function<INPUT, BigDecimal> mappingFunction,
+            int windowSize
+    ) {
         return new BigDecimalMovingSumGatherer<>(mappingFunction, windowSize);
     }
-
-
 
     /// Emit elements in the input stream ordered by frequency from least frequently occurring
     /// to most frequently occurring. Elements are emitted wrapped in `WithCount<INPUT>` objects
@@ -225,7 +264,7 @@ public abstract class Gatherers4j {
     ///
     /// @param <INPUT> Type of elements in the input stream
     /// @return A non-null `FrequencyGatherer`
-    public static <INPUT> FrequencyGatherer<INPUT> orderByFrequencyAscending() {
+    public static <INPUT extends @Nullable Object> FrequencyGatherer<INPUT> orderByFrequencyAscending() {
         return new FrequencyGatherer<>(FrequencyGatherer.Order.Ascending);
     }
 
@@ -248,7 +287,7 @@ public abstract class Gatherers4j {
     ///
     /// @param <INPUT> Type of elements in the input stream
     /// @return A non-null `FrequencyGatherer`
-    public static <INPUT> FrequencyGatherer<INPUT> orderByFrequencyDescending() {
+    public static <INPUT extends @Nullable Object> FrequencyGatherer<INPUT> orderByFrequencyDescending() {
         return new FrequencyGatherer<>(FrequencyGatherer.Order.Descending);
     }
 
@@ -259,7 +298,7 @@ public abstract class Gatherers4j {
     ///
     /// @param <INPUT> Type of elements in the input stream
     /// @return A non-null `ReversingGatherer`
-    public static <INPUT> ReversingGatherer<INPUT> reverse() {
+    public static <INPUT extends @Nullable Object> ReversingGatherer<INPUT> reverse() {
         return new ReversingGatherer<>();
     }
 
@@ -267,7 +306,7 @@ public abstract class Gatherers4j {
     /// deviation of a `Stream<BigDecimal>`.
     ///
     /// @return A non-null `BigDecimalStandardDeviationGatherer`
-    public static BigDecimalStandardDeviationGatherer<BigDecimal> runningPopulationStandardDeviation() {
+    public static BigDecimalStandardDeviationGatherer<@Nullable BigDecimal> runningPopulationStandardDeviation() {
         return new BigDecimalStandardDeviationGatherer<>(
                 BigDecimalStandardDeviationGatherer.Mode.Population,
                 Function.identity()
@@ -281,7 +320,7 @@ public abstract class Gatherers4j {
     ///                                                                      in the standard deviation calculation
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalStandardDeviationGatherer`
-    public static <INPUT> BigDecimalStandardDeviationGatherer<INPUT> runningPopulationStandardDeviationBy(
+    public static <INPUT extends @Nullable Object> BigDecimalStandardDeviationGatherer<INPUT> runningPopulationStandardDeviationBy(
             final Function<INPUT, BigDecimal> mappingFunction
     ) {
         return new BigDecimalStandardDeviationGatherer<>(
@@ -293,7 +332,7 @@ public abstract class Gatherers4j {
     /// Create a `Stream<BigDecimal>` that represents the running product of a `Stream<BigDecimal>`.
     ///
     /// @return A non-null `BigDecimalProductGatherer`
-    public static BigDecimalProductGatherer<BigDecimal> runningProduct() {
+    public static BigDecimalProductGatherer<@Nullable BigDecimal> runningProduct() {
         return new BigDecimalProductGatherer<>(Function.identity());
     }
 
@@ -304,7 +343,7 @@ public abstract class Gatherers4j {
     ///                                                                      in the product calculation
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalProductGatherer`
-    public static <INPUT> BigDecimalProductGatherer<INPUT> runningProductBy(
+    public static <INPUT extends @Nullable Object> BigDecimalProductGatherer<INPUT> runningProductBy(
             final Function<INPUT, BigDecimal> mappingFunction
     ) {
         return new BigDecimalProductGatherer<>(mappingFunction);
@@ -313,7 +352,7 @@ public abstract class Gatherers4j {
     /// Create a `Stream<BigDecimal>` that represents the running sample standard deviation of a `Stream<BigDecimal>`.
     ///
     /// @return A non-null `BigDecimalStandardDeviationGatherer`
-    public static BigDecimalStandardDeviationGatherer<BigDecimal> runningSampleStandardDeviation() {
+    public static BigDecimalStandardDeviationGatherer<@Nullable BigDecimal> runningSampleStandardDeviation() {
         return new BigDecimalStandardDeviationGatherer<>(
                 BigDecimalStandardDeviationGatherer.Mode.Sample,
                 Function.identity()
@@ -327,7 +366,7 @@ public abstract class Gatherers4j {
     ///                                                                      in the standard deviation calculation
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalStandardDeviationGatherer`
-    public static <INPUT> BigDecimalStandardDeviationGatherer<INPUT> runningSampleStandardDeviationBy(
+    public static <INPUT extends @Nullable Object> BigDecimalStandardDeviationGatherer<INPUT> runningSampleStandardDeviationBy(
             final Function<INPUT, BigDecimal> mappingFunction
     ) {
         return new BigDecimalStandardDeviationGatherer<>(
@@ -339,7 +378,7 @@ public abstract class Gatherers4j {
     /// Create a `Stream<BigDecimal>` that represents the running sum of a `Stream<BigDecimal>`.
     ///
     /// @return A non-null `BigDecimalSumGatherer`
-    public static BigDecimalSumGatherer<BigDecimal> runningSum() {
+    public static BigDecimalSumGatherer<@Nullable BigDecimal> runningSum() {
         return new BigDecimalSumGatherer<>(Function.identity());
     }
 
@@ -350,17 +389,10 @@ public abstract class Gatherers4j {
     ///                                                                      in the running sum calculation
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalSumGatherer`
-    public static <INPUT> BigDecimalSumGatherer<INPUT> runningSumBy(
+    public static <INPUT extends @Nullable Object> BigDecimalSumGatherer<INPUT> runningSumBy(
             final Function<INPUT, BigDecimal> mappingFunction
     ) {
         return new BigDecimalSumGatherer<>(mappingFunction);
-    }
-
-    /// Create a Stream that is the running average of `Stream<BigDecimal>`
-    ///
-    /// @return BigDecimalSimpleAverageGatherer
-    public static BigDecimalSimpleAverageGatherer<BigDecimal> simpleRunningAverage() {
-        return simpleRunningAverageBy(Function.identity());
     }
 
     /// Shuffle the input stream into a random order.
@@ -370,7 +402,7 @@ public abstract class Gatherers4j {
     ///
     /// @param <INPUT> Type of elements in the input stream
     /// @return A non-null `ShufflingGatherer`
-    public static <INPUT> ShufflingGatherer<INPUT> shuffle() {
+    public static <INPUT extends @Nullable Object> ShufflingGatherer<INPUT> shuffle() {
         return new ShufflingGatherer<>(RandomGenerator.getDefault());
     }
 
@@ -382,8 +414,15 @@ public abstract class Gatherers4j {
     /// @param randomGenerator A non-null `RandomGenerator` to use as a random source for the shuffle
     /// @param <INPUT>         Type of elements in the input stream
     /// @return A non-null `ShufflingGatherer`
-    public static <INPUT> ShufflingGatherer<INPUT> shuffle(final RandomGenerator randomGenerator) {
+    public static <INPUT extends @Nullable Object> ShufflingGatherer<INPUT> shuffle(final RandomGenerator randomGenerator) {
         return new ShufflingGatherer<>(randomGenerator);
+    }
+
+    /// Create a Stream that is the running average of `Stream<BigDecimal>`
+    ///
+    /// @return BigDecimalSimpleAverageGatherer
+    public static BigDecimalSimpleAverageGatherer<@Nullable BigDecimal> simpleRunningAverage() {
+        return simpleRunningAverageBy(Function.identity());
     }
 
     /// Create a Stream that is the running average of `BigDecimal` objects as mapped by
@@ -393,7 +432,7 @@ public abstract class Gatherers4j {
     ///                                               in the running average calculation
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalSimpleAverageGatherer`
-    public static <INPUT> BigDecimalSimpleAverageGatherer<INPUT> simpleRunningAverageBy(
+    public static <INPUT extends @Nullable Object> BigDecimalSimpleAverageGatherer<INPUT> simpleRunningAverageBy(
             final Function<INPUT, BigDecimal> mappingFunction
     ) {
         return new BigDecimalSimpleAverageGatherer<>(mappingFunction);
@@ -404,11 +443,11 @@ public abstract class Gatherers4j {
     ///
     /// @param windowSize The number of elements to average, must be greater than 1.
     /// @return A non-null `BigDecimalSimpleMovingAverageGatherer`
-    public static BigDecimalSimpleMovingAverageGatherer<BigDecimal> simpleMovingAverage(final int windowSize) {
+    public static BigDecimalSimpleMovingAverageGatherer<@Nullable BigDecimal> simpleMovingAverage(final int windowSize) {
         return simpleMovingAverageBy(Function.identity(), windowSize);
     }
 
-    /// Create a Stream that represents the simple moving average of a `BigDecimal` objects mapped from a `Stream<BigDecimal>`
+    /// Create a Stream that represents the simple moving average of a `BigDecimal` objects mapped from a `Stream<T>`
     /// via a `mappingFunction` and looking back `windowSize` number of elements.
     ///
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
@@ -416,7 +455,7 @@ public abstract class Gatherers4j {
     /// @param windowSize      The number of elements to average, must be greater than 1.
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalSimpleMovingAverageGatherer`
-    public static <INPUT> BigDecimalSimpleMovingAverageGatherer<INPUT> simpleMovingAverageBy(
+    public static <INPUT extends @Nullable Object> BigDecimalSimpleMovingAverageGatherer<INPUT> simpleMovingAverageBy(
             final Function<INPUT, BigDecimal> mappingFunction,
             final int windowSize
     ) {
@@ -430,7 +469,10 @@ public abstract class Gatherers4j {
     /// @param duration A positive duration for the length of the period
     /// @param <INPUT>  Type of elements in the input stream
     /// @return A non-null `ThrottlingGatherer`
-    public static <INPUT> ThrottlingGatherer<INPUT> throttle(final int amount, final Duration duration) {
+    public static <INPUT extends @Nullable Object> ThrottlingGatherer<INPUT> throttle(
+            final int amount,
+            final Duration duration
+    ) {
         return new ThrottlingGatherer<>(ThrottlingGatherer.LimitRule.Pause, amount, duration);
     }
 
@@ -438,7 +480,7 @@ public abstract class Gatherers4j {
     ///
     /// @param <INPUT> Type of elements in the input stream
     /// @return A non-null `IndexingGatherer`
-    public static <INPUT> IndexingGatherer<INPUT> withIndex() {
+    public static <INPUT extends @Nullable Object> IndexingGatherer<INPUT> withIndex() {
         return new IndexingGatherer<>();
     }
 
@@ -449,7 +491,9 @@ public abstract class Gatherers4j {
     /// @param <FIRST>  Type of object in the source stream
     /// @param <SECOND> Type of object in the argument `Iterable`
     /// @return A non-null `ZipWithGatherer`
-    public static <FIRST, SECOND> ZipWithGatherer<FIRST, SECOND> zipWith(final Iterable<SECOND> other) {
+    public static <FIRST extends @Nullable Object, SECOND extends @Nullable Object> ZipWithGatherer<FIRST, SECOND> zipWith(
+            final Iterable<SECOND> other
+    ) {
         return new ZipWithGatherer<>(other);
     }
 
@@ -460,7 +504,9 @@ public abstract class Gatherers4j {
     /// @param <FIRST>  Type of object in the source stream
     /// @param <SECOND> Type of object in the argument `Iterator`
     /// @return A non-null `ZipWithGatherer`
-    public static <FIRST, SECOND> ZipWithGatherer<FIRST, SECOND> zipWith(final Iterator<SECOND> other) {
+    public static <FIRST extends @Nullable Object, SECOND extends @Nullable Object> ZipWithGatherer<FIRST, SECOND> zipWith(
+            final Iterator<SECOND> other
+    ) {
         return new ZipWithGatherer<>(other);
     }
 
@@ -471,7 +517,9 @@ public abstract class Gatherers4j {
     /// @param <FIRST>  Type of object in the source stream
     /// @param <SECOND> Type of object in the argument `Stream`
     /// @return A non-null `ZipWithGatherer`
-    public static <FIRST, SECOND> ZipWithGatherer<FIRST, SECOND> zipWith(final Stream<SECOND> other) {
+    public static <FIRST extends @Nullable Object, SECOND extends @Nullable Object> ZipWithGatherer<FIRST, SECOND> zipWith(
+            final Stream<SECOND> other
+    ) {
         return new ZipWithGatherer<>(other);
     }
 
@@ -479,7 +527,7 @@ public abstract class Gatherers4j {
     ///
     /// @param <INPUT> Type of elements in the input stream
     /// @return A non-null `ZipWithNextGatherer`
-    public static <INPUT> ZipWithNextGatherer<INPUT> zipWithNext() {
+    public static <INPUT extends @Nullable Object> ZipWithNextGatherer<INPUT> zipWithNext() {
         return new ZipWithNextGatherer<>();
     }
 }

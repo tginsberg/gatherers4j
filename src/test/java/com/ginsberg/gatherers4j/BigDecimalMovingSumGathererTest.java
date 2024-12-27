@@ -17,6 +17,8 @@
 package com.ginsberg.gatherers4j;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -172,14 +174,13 @@ class BigDecimalMovingSumGathererTest {
                 );
     }
 
-    @Test
-    void windowSizeMustBePositive() {
-        assertThatThrownBy(() ->
-                Stream.of(BigDecimal.ONE).gather(Gatherers4j.movingSum(0))
-        ).isExactlyInstanceOf(IllegalArgumentException.class);
 
+    @ParameterizedTest(name = "windowSize of {0}")
+    @ValueSource(ints = {-1, 0, 1})
+    void windowSizeMustBeGreaterThanOne(final int windowSize) {
         assertThatThrownBy(() ->
-                Stream.of(BigDecimal.ONE).gather(Gatherers4j.movingSum(-1))
+                Stream.of(BigDecimal.ONE).gather(Gatherers4j.movingSum(windowSize))
         ).isExactlyInstanceOf(IllegalArgumentException.class);
     }
+
 }
