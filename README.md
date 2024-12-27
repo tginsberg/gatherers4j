@@ -64,6 +64,10 @@ implementation("com.ginsberg:gatherers4j:0.7.0")
 
 | Function                                   | Purpose                                                                                                                            |
 |--------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
+| `movingProduct(window)`                    | Create a moving product of `BigDecimal` values over the previous `window` values.                                                  |
+| `movingProductBy(fn, window)`              | Create a moving product of `BigDecimal` values over the previous `window` values, as mapped via `fn`.                              |
+| `movingSum(window)`                        | Create a moving sum of `BigDecimal` values over the previous `window` values.                                                      |
+| `movingSumBy(fn, window)`                  | Create a moving sum of `BigDecimal` values over the previous `window` values, as mapped via `fn`.                                  |
 | `runningPopulationStandardDeviation()`     | Create a stream of `BigDecimal` objects representing the running population standard deviation.                                    |
 | `runningPopulationStandardDeviationBy(fn)` | Create a stream of `BigDecimal` objects as mapped from the input via `fn`, representing the running population standard deviation. |
 | `runningProduct()`                         | Create a stream of `BigDecimal` objects representing the running product.                                                          |                                                          |
