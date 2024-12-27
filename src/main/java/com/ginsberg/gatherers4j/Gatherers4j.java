@@ -202,23 +202,23 @@ public abstract class Gatherers4j {
     ///
     /// @param windowSize The trailing number of elements to multiply, must be greater than 1.
     /// @return A non-null `BigDecimalMovingProductGatherer`
-    public static BigDecimalMovingProductGatherer<@Nullable BigDecimal> movingProduct(int windowSize) {
-        return movingProductBy(Function.identity(), windowSize);
+    public static BigDecimalMovingProductGatherer<@Nullable BigDecimal> movingProduct(final int windowSize) {
+        return new BigDecimalMovingProductGatherer<>(windowSize, Function.identity());
     }
 
     /// Create a Stream that represents the moving product of a `BigDecimal` objects mapped from a `Stream<T>`
     /// via a `mappingFunction` and looking back `windowSize` number of elements.
     ///
+    /// @param windowSize      The trailing number of elements to multiply, must be greater than 1.
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the moving product calculation
-    /// @param windowSize      The trailing number of elements to multiply, must be greater than 1.
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalMovingProductGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalMovingProductGatherer<INPUT> movingProductBy(
-            final Function<INPUT, BigDecimal> mappingFunction,
-            int windowSize
+            final int windowSize,
+            final Function<INPUT, BigDecimal> mappingFunction
     ) {
-        return new BigDecimalMovingProductGatherer<>(mappingFunction, windowSize);
+        return new BigDecimalMovingProductGatherer<>(windowSize, mappingFunction);
     }
 
     /// Create a Stream that represents the moving sum of a `Stream<BigDecimal>` looking
@@ -226,23 +226,23 @@ public abstract class Gatherers4j {
     ///
     /// @param windowSize The trailing number of elements to add, must be greater than 1.
     /// @return A non-null `BigDecimalMovingSumGatherer`
-    public static BigDecimalMovingSumGatherer<@Nullable BigDecimal> movingSum(int windowSize) {
-        return movingSumBy(Function.identity(), windowSize);
+    public static BigDecimalMovingSumGatherer<@Nullable BigDecimal> movingSum(final int windowSize) {
+        return new BigDecimalMovingSumGatherer<>(windowSize, Function.identity());
     }
 
     /// Create a Stream that represents the moving sum of a `BigDecimal` objects mapped from a `Stream<T>`
     /// via a `mappingFunction` and looking back `windowSize` number of elements.
     ///
+    /// @param windowSize      The trailing number of elements to multiply, must be greater than 1.
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the moving sum calculation
-    /// @param windowSize      The trailing number of elements to multiply, must be greater than 1.
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalMovingSumGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalMovingSumGatherer<INPUT> movingSumBy(
-            final Function<INPUT, BigDecimal> mappingFunction,
-            int windowSize
+            final int windowSize,
+            final Function<INPUT, BigDecimal> mappingFunction
     ) {
-        return new BigDecimalMovingSumGatherer<>(mappingFunction, windowSize);
+        return new BigDecimalMovingSumGatherer<>(windowSize, mappingFunction);
     }
 
     /// Emit elements in the input stream ordered by frequency from least frequently occurring
@@ -444,22 +444,22 @@ public abstract class Gatherers4j {
     /// @param windowSize The number of elements to average, must be greater than 1.
     /// @return A non-null `BigDecimalSimpleMovingAverageGatherer`
     public static BigDecimalSimpleMovingAverageGatherer<@Nullable BigDecimal> simpleMovingAverage(final int windowSize) {
-        return simpleMovingAverageBy(Function.identity(), windowSize);
+        return new BigDecimalSimpleMovingAverageGatherer<>(windowSize, Function.identity());
     }
 
     /// Create a Stream that represents the simple moving average of a `BigDecimal` objects mapped from a `Stream<T>`
     /// via a `mappingFunction` and looking back `windowSize` number of elements.
     ///
-    /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
-    ///                                               in the moving average calculation
     /// @param windowSize      The number of elements to average, must be greater than 1.
+    /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
+    ///                        in the moving average calculation
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalSimpleMovingAverageGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalSimpleMovingAverageGatherer<INPUT> simpleMovingAverageBy(
-            final Function<INPUT, BigDecimal> mappingFunction,
-            final int windowSize
+            final int windowSize,
+            final Function<INPUT, BigDecimal> mappingFunction
     ) {
-        return new BigDecimalSimpleMovingAverageGatherer<>(mappingFunction, windowSize);
+        return new BigDecimalSimpleMovingAverageGatherer<>(windowSize, mappingFunction);
     }
 
     /// Limit the number of elements in the stream to some number per period. When the limit is reached,

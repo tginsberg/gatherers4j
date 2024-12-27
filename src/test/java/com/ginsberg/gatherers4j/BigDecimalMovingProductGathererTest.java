@@ -90,7 +90,7 @@ class BigDecimalMovingProductGathererTest {
 
         // Act
         final List<BigDecimal> output = input.stream()
-                .gather(Gatherers4j.movingProductBy(TestValueHolder::value, 2))
+                .gather(Gatherers4j.movingProductBy(2, TestValueHolder::value))
                 .toList();
 
         // Assert
