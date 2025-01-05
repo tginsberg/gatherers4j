@@ -46,8 +46,6 @@ implementation("com.ginsberg:gatherers4j:0.7.0")
 | `interleave(iterator)`        | Creates a stream of alternating objects from the input stream and the argument iterator                                        |
 | `interleave(stream)`          | Creates a stream of alternating objects from the input stream and the argument stream                                          |
 | `last(n)`                     | Constrain the stream to the last `n` values                                                                                    |
-| `maxBy(fn)`                   | Return a stream containing a single element, which is the maximum value returned by the mapping function `fn`                  |
-| `minBy(fn)`                   | Return a stream containing a single element, which is the minimum value returned by the mapping function `fn`                  |
 | `orderByFrequencyAscending()  | Returns a stream where elements are ordered from least to most frequent as `WithCount<T>` wrapper objects.                     |
 | `orderByFrequencyDescending() | Returns a stream where elements are ordered from most to least frequent as `WithCount<T>` wrapper objects.                     |
 | `reverse()`                   | Reverse the order of the stream                                                                                                |
@@ -227,31 +225,6 @@ Stream
 
 // ["E", "F", "G"]
 ```
-
-#### Find the object with the maximum mapped value
-
-```java
-record Employee(String name, int salary) {}
-
-streamOfEmployees
-    .gather(Gatherers4j.maxBy(Employee:salary))
-    .toList();
-
-// Employee("Big Shot", 1_000_000)
-```
-
-#### Find the object with the minimum mapped value
-
-```java
-record Person(String name, int age) {}
-
-streamOfPeople
-    .gather(Gatherers4j.minBy(Person:age))
-    .toList();
-
-// Person("Baby", 1)
-```
-
 
 #### Order elements by frequency, ascending
 

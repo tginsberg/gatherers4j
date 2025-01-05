@@ -167,36 +167,6 @@ public abstract class Gatherers4j {
         return new LastGatherer<>(count);
     }
 
-    /// Return a Stream containing the single maximum value of the input stream, according to
-    /// the given mapping function. In the case where a stream has more than one mapped value
-    /// that is the maximum, the first one encountered makes up the stream. This does not
-    /// evaluate null values or null mappings.
-    ///
-    /// @param mappingFunction A mapping function, the results of which must implement `Comparable`
-    /// @param <INPUT>         Type of elements in the input stream
-    /// @param <MAPPED>        Type of object returned from the `mappingFunction`, which much implement `Comparable`
-    /// @return A non-null `MinMaxGatherer`
-    public static <INPUT extends @Nullable Object, MAPPED extends @Nullable Comparable<MAPPED>> MinMaxGatherer<INPUT, MAPPED> maxBy(
-            final Function<INPUT, MAPPED> mappingFunction
-    ) {
-        return new MinMaxGatherer<>(true, mappingFunction);
-    }
-
-    /// Return a Stream containing the single minimum value of the input stream, according to
-    /// the given mapping function. In the case where a stream has more than one mapped value
-    /// that is the minimum, the first one encountered makes up the stream. This does not
-    /// evaluate null values or null mappings.
-    ///
-    /// @param mappingFunction A mapping function, the results of which must implement `Comparable`
-    /// @param <INPUT>         Type of elements in the input stream
-    /// @param <MAPPED>        Type of object returned from the `mappingFunction`, which much implement `Comparable`
-    /// @return A non-null `MinMaxGatherer`
-    public static <INPUT extends @Nullable Object, MAPPED extends @Nullable Comparable<MAPPED>> MinMaxGatherer<INPUT, MAPPED> minBy(
-            final Function<INPUT, MAPPED> mappingFunction
-    ) {
-        return new MinMaxGatherer<>(false, mappingFunction);
-    }
-
     /// Create a Stream that represents the moving product of a `Stream<BigDecimal>` looking
     /// back `windowSize` number of elements.
     ///
