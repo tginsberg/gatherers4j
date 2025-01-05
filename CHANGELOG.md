@@ -5,6 +5,7 @@
 + Implement `movingProduct()` and `movingProductBy()`
 + Implement `movingSum()` and `movingSumBy()`
 + Functions, when used as arguments, should come last for consistency and to play nice with Kotlin (Fixes #64)
++ Remove `maxBy(fn)` and `minBy(fn)`, can be done with JDK methods trivially
 
 ### 0.6.0
 + Implement `dropLast(n)`
