@@ -155,7 +155,7 @@ class ThrottlingGathererTest {
 
         @Override
         public Clock withZone(ZoneId zone) {
-            return Clock.systemDefaultZone();
+            return Clock.system(ZoneId.systemDefault());
         }
     }
 }
