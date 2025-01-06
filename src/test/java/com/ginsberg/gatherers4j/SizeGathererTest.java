@@ -16,6 +16,7 @@
 
 package com.ginsberg.gatherers4j;
 
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -26,37 +27,176 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class SizeGathererTest {
 
-    @Test
-    void sizeMustNotBeNegative() {
-        assertThatThrownBy(() ->
-                Stream.empty().gather(Gatherers4j.exactSize(-1)).toList()
-        ).isInstanceOf(IllegalArgumentException.class);
+
+    @Nested
+    class Common {
+        @Test
+        void targetSizeMustNotBeNegative() {
+            assertThatThrownBy(() ->
+                    Stream.empty().gather(Gatherers4j.sizeExactly(-1)).toList()
+            ).isInstanceOf(IllegalArgumentException.class);
+        }
     }
 
-    @Test
-    void doesNotEmitUnderTarget() {
-        assertThatThrownBy(() ->
-                Stream.of("A").gather(Gatherers4j.exactSize(2)).toList()
-        ).isInstanceOf(IllegalStateException.class);
+    @Nested
+    class Equal {
+
+        @Test
+        void doesNotEmitUnderTarget() {
+            assertThatThrownBy(() ->
+                    Stream.of("A").gather(Gatherers4j.sizeExactly(2)).toList()
+            ).isInstanceOf(IllegalStateException.class);
+        }
+
+        @Test
+        void doesNotEmitOverTarget() {
+            assertThatThrownBy(() ->
+                    Stream.of("A", "B", "C").gather(Gatherers4j.sizeExactly(2)).toList()
+            ).isInstanceOf(IllegalStateException.class);
+        }
+
+        @Test
+        void emitsAtTarget() {
+            // Arrange
+            final Stream<String> input = Stream.of("A", "B", "C");
+
+            // Act
+            final List<String> output = input.gather(Gatherers4j.sizeExactly(3)).toList();
+
+            // Assert
+            assertThat(output).containsExactly("A", "B", "C");
+        }
     }
 
-    @Test
-    void doesNotEmitOverTarget() {
-        assertThatThrownBy(() ->
-                Stream.of("A", "B", "C").gather(Gatherers4j.exactSize(2)).toList()
-        ).isInstanceOf(IllegalStateException.class);
+    @Nested
+    class GreaterThan {
+
+        @Test
+        void doesNotEmitUnderTarget() {
+            assertThatThrownBy(() ->
+                    Stream.of("A").gather(Gatherers4j.sizeGreaterThan(2)).toList()
+            ).isInstanceOf(IllegalStateException.class);
+        }
+
+        @Test
+        void doesNotEmitAtTarget() {
+            assertThatThrownBy(() ->
+                    Stream.of("A", "B").gather(Gatherers4j.sizeGreaterThan(2)).toList()
+            ).isInstanceOf(IllegalStateException.class);
+        }
+
+        @Test
+        void emitsOverTarget() {
+            // Arrange
+            final Stream<String> input = Stream.of("A", "B", "C");
+
+            // Act
+            final List<String> output = input.gather(Gatherers4j.sizeGreaterThan(2)).toList();
+
+            // Assert
+            assertThat(output).containsExactly("A", "B", "C");
+        }
     }
 
-    @Test
-    void emitsAtTarget() {
-        // Arrange
-        final Stream<String> input = Stream.of("A", "B", "C");
+    @Nested
+    class GreaterThanOrEqualTo {
 
-        // Act
-        final List<String> output = input.gather(Gatherers4j.exactSize(3)).toList();
+        @Test
+        void doesNotEmitUnderTarget() {
+            assertThatThrownBy(() ->
+                    Stream.of("A").gather(Gatherers4j.sizeGreaterThanOrEqualTo(2)).toList()
+            ).isInstanceOf(IllegalStateException.class);
+        }
 
-        // Assert
-        assertThat(output).containsExactly("A", "B", "C");
+        @Test
+        void emitsAtTarget() {
+            // Arrange
+            final Stream<String> input = Stream.of("A", "B");
+
+            // Act
+            final List<String> output = input.gather(Gatherers4j.sizeGreaterThanOrEqualTo(2)).toList();
+
+            // Assert
+            assertThat(output).containsExactly("A", "B");
+        }
+
+        @Test
+        void emitsOverTarget() {
+            // Arrange
+            final Stream<String> input = Stream.of("A", "B", "C");
+
+            // Act
+            final List<String> output = input.gather(Gatherers4j.sizeGreaterThanOrEqualTo(2)).toList();
+
+            // Assert
+            assertThat(output).containsExactly("A", "B", "C");
+        }
+
     }
 
+    @Nested
+    class LessThan {
+
+        @Test
+        void emitsUnderTarget() {
+            // Arrange
+            final Stream<String> input = Stream.of("A");
+
+            // Act
+            final List<String> output = input.gather(Gatherers4j.sizeLessThan(2)).toList();
+
+            // Assert
+            assertThat(output).containsExactly("A");
+        }
+
+        @Test
+        void doesNotEmitAtTarget() {
+            assertThatThrownBy(() ->
+                    Stream.of("A", "B").gather(Gatherers4j.sizeLessThan(2)).toList()
+            ).isInstanceOf(IllegalStateException.class);
+        }
+
+        @Test
+        void doesNotEmitOverTarget() {
+            assertThatThrownBy(() ->
+                    Stream.of("A", "B", "C").gather(Gatherers4j.sizeLessThan(2)).toList()
+            ).isInstanceOf(IllegalStateException.class);
+        }
+    }
+
+
+    @Nested
+    class LessThanOrEqualTo {
+
+        @Test
+        void emitsUnderTarget() {
+            // Arrange
+            final Stream<String> input = Stream.of("A");
+
+            // Act
+            final List<String> output = input.gather(Gatherers4j.sizeLessThanOrEqualTo(2)).toList();
+
+            // Assert
+            assertThat(output).containsExactly("A");
+        }
+
+        @Test
+        void emitsAtTarget() {
+            // Arrange
+            final Stream<String> input = Stream.of("A", "B");
+
+            // Act
+            final List<String> output = input.gather(Gatherers4j.sizeLessThanOrEqualTo(2)).toList();
+
+            // Assert
+            assertThat(output).containsExactly("A", "B");
+        }
+
+        @Test
+        void doesNotEmitOverTarget() {
+            assertThatThrownBy(() ->
+                    Stream.of("A", "B", "C").gather(Gatherers4j.sizeLessThanOrEqualTo(2)).toList()
+            ).isInstanceOf(IllegalStateException.class);
+        }
+    }
 }

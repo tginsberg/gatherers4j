@@ -1,6 +1,6 @@
 # Gatherers4j
 
-A library of useful [Stream Gatherers](https://openjdk.org/jeps/473) (custom intermediate operations) for Java 23+.
+A library of useful [Stream Gatherers](https://openjdk.org/jeps/485) (custom intermediate operations) for Java 23+.
 
 # Installing
 
@@ -15,7 +15,7 @@ Add the following dependency to `pom.xml`.
 <dependency>
     <groupId>com.ginsberg</groupId>
     <artifactId>gatherers4j</artifactId>
-    <version>0.6.0</version>
+    <version>0.7.0</version>
 </dependency>
 ```
 
@@ -24,44 +24,52 @@ Add the following dependency to `pom.xml`.
 Add the following dependency to `build.gradle` or `build.gradle.kts`
 
 ```groovy
-implementation("com.ginsberg:gatherers4j:0.6.0")
+implementation("com.ginsberg:gatherers4j:0.7.0")
 ```
 
 # Gatherers In This Library
 
 ### Streams
 
-| Function                     | Purpose                                                                                                                        |
-|------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
-| `debounce(amount, duration)` | Limit stream elements to `amount` elements over `duration`, dropping any elements over the limit until a new `duration` starts |
-| `dedupeConsecutive()`        | Remove consecutive duplicates from a stream                                                                                    |
-| `dedupeConsecutiveBy(fn)`    | Remove consecutive duplicates from a stream as returned by `fn`                                                                |
-| `distinctBy(fn)`             | Emit only distinct elements from the stream, as measured by `fn`                                                               |
-| `dropLast(n)`                | Keep all but the last `n` elements of the stream                                                                               |
-| `exactSize(n)`               | Ensure the stream is exactly `n` elements long, or throw an `IllegalStateException`                                            |
-| `filterWithIndex(predicate)` | Filter the stream with the given `predicate`, which takes an `element` and its `index`                                         |
-| `grouping()`                 | Group consecute identical elements into lists                                                                                  |
-| `groupingBy(fn)`             | Group consecutive elements that are identical according to `fn` into lists                                                     |                                                                                                                    
-| `interleave(iterable)`       | Creates a stream of alternating objects from the input stream and the argument iterable                                        |
-| `interleave(iterator)`       | Creates a stream of alternating objects from the input stream and the argument iterator                                        |
-| `interleave(stream)`         | Creates a stream of alternating objects from the input stream and the argument stream                                          |
-| `last(n)`                    | Constrain the stream to the last `n` values                                                                                    |
-| `maxBy(fn)`                  | Return a stream containing a single element, which is the maximum value returned by the mapping function `fn`                  |
-| `minBy(fn)`                  | Return a stream containing a single element, which is the minimum value returned by the mapping function `fn`                  |
-| `reverse()`                  | Reverse the order of the stream                                                                                                |
-| `shuffle()`                  | Shuffle the stream into a random order using the platform default `RandomGenerator`                                            |
-| `shuffle(rg)`                | Shuffle the stream into a random order using the specified `RandomGenerator`                                                   |
-| `throttle(amount, duration)` | Limit stream elements to `amount` elements over `duration`, pausing until a new `duration` period starts                       |
-| `withIndex()`                | Maps all elements of the stream as-is along with their 0-based index                                                           |
-| `zipWith(iterable)`          | Creates a stream of `Pair` objects whose values come from the input stream and argument iterable                               |
-| `zipWith(iterator)`          | Creates a stream of `Pair` objects whose values come from the input stream and argument iterator                               |
-| `zipWith(stream)`            | Creates a stream of `Pair` objects whose values come from the input stream and argument stream                                 |
-| `zipWithNext()`              | Creates a stream of `List` objects via a sliding window of width 2 and stepping 1                                              |      
+| Function                      | Purpose                                                                                                                        |
+|-------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
+| `debounce(amount, duration)`  | Limit stream elements to `amount` elements over `duration`, dropping any elements over the limit until a new `duration` starts |
+| `dedupeConsecutive()`         | Remove consecutive duplicates from a stream                                                                                    |
+| `dedupeConsecutiveBy(fn)`     | Remove consecutive duplicates from a stream as returned by `fn`                                                                |
+| `distinctBy(fn)`              | Emit only distinct elements from the stream, as measured by `fn`                                                               |
+| `dropLast(n)`                 | Keep all but the last `n` elements of the stream                                                                               |
+| `filterWithIndex(predicate)`  | Filter the stream with the given `predicate`, which takes an `element` and its `index`                                         |
+| `grouping()`                  | Group consecute identical elements into lists                                                                                  |
+| `groupingBy(fn)`              | Group consecutive elements that are identical according to `fn` into lists                                                     |                                                                                                                    
+| `interleave(iterable)`        | Creates a stream of alternating objects from the input stream and the argument iterable                                        |
+| `interleave(iterator)`        | Creates a stream of alternating objects from the input stream and the argument iterator                                        |
+| `interleave(stream)`          | Creates a stream of alternating objects from the input stream and the argument stream                                          |
+| `last(n)`                     | Constrain the stream to the last `n` values                                                                                    |
+| `orderByFrequencyAscending()  | Returns a stream where elements are ordered from least to most frequent as `WithCount<T>` wrapper objects.                     |
+| `orderByFrequencyDescending() | Returns a stream where elements are ordered from most to least frequent as `WithCount<T>` wrapper objects.                     |
+| `reverse()`                   | Reverse the order of the stream                                                                                                |
+| `shuffle()`                   | Shuffle the stream into a random order using the platform default `RandomGenerator`                                            |
+| `shuffle(rg)`                 | Shuffle the stream into a random order using the specified `RandomGenerator`                                                   |
+| `sizeExactly(n)`              | Ensure the stream is exactly `n` elements long, or throw an `IllegalStateException`                                            |
+| `sizeGreaterThan(n)`          | Ensure the stream is greater than `n` elements long, or throw an `IllegalStateException`                                       |
+| `sizeGreaterThanOrEqualTo(n)` | Ensure the stream is greater than or equal to `n` elements long, or throw an `IllegalStateException`                           |
+| `sizeLessThan(n)`             | Ensure the stream is less than `n` elements long, or throw an `IllegalStateException`                                          |
+| `sizeLessThanOrEqualTo(n)`    | Ensure the stream is less than or equal to `n` elements long, or throw an `IllegalStateException`                              |
+| `throttle(amount, duration)`  | Limit stream elements to `amount` elements over `duration`, pausing until a new `duration` period starts                       |
+| `withIndex()`                 | Maps all elements of the stream as-is along with their 0-based index                                                           |
+| `zipWith(iterable)`           | Creates a stream of `Pair` objects whose values come from the input stream and argument iterable                               |
+| `zipWith(iterator)`           | Creates a stream of `Pair` objects whose values come from the input stream and argument iterator                               |
+| `zipWith(stream)`             | Creates a stream of `Pair` objects whose values come from the input stream and argument stream                                 |
+| `zipWithNext()`               | Creates a stream of `List` objects via a sliding window of width 2 and stepping 1                                              |      
 
 ### Mathematics/Statistics
 
 | Function                                   | Purpose                                                                                                                            |
 |--------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
+| `movingProduct(window)`                    | Create a moving product of `BigDecimal` values over the previous `window` values.                                                  |
+| `movingProductBy(window, fn)`              | Create a moving product of `BigDecimal` values over the previous `window` values, as mapped via `fn`.                              |
+| `movingSum(window)`                        | Create a moving sum of `BigDecimal` values over the previous `window` values.                                                      |
+| `movingSumBy(window, fn)`                  | Create a moving sum of `BigDecimal` values over the previous `window` values, as mapped via `fn`.                                  |
 | `runningPopulationStandardDeviation()`     | Create a stream of `BigDecimal` objects representing the running population standard deviation.                                    |
 | `runningPopulationStandardDeviationBy(fn)` | Create a stream of `BigDecimal` objects as mapped from the input via `fn`, representing the running population standard deviation. |
 | `runningProduct()`                         | Create a stream of `BigDecimal` objects representing the running product.                                                          |                                                          |
@@ -71,7 +79,7 @@ implementation("com.ginsberg:gatherers4j:0.6.0")
 | `runningSum()`                             | Create a stream of `BigDecimal` objects representing the running sum.                                                              |
 | `runningSumBy(fn)`                         | Create a stream of `BigDecimal` objects as mapped from the input via `fn`, representing the running sum.                           |
 | `simpleMovingAverage(window)`              | Create a moving average of `BigDecimal` values over the previous `window` values. See below for options.                           |
-| `simpleMovingAverageBy(fn, window)`        | Create a moving average of `BigDecimal` values over the previous `window` values, as mapped via `fn`.                              |
+| `simpleMovingAverageBy(window, fn)`        | Create a moving average of `BigDecimal` values over the previous `window` values, as mapped via `fn`.                              |
 | `simpleRunningAverage()`                   | Create a running average of `BigDecimal` values. See below for options.                                                            |
 | `simpleRunningAverageBy(fn)`               | Create a running average of `BigDecimal` values as mapped via `fn`.                                                                |
 
@@ -161,11 +169,64 @@ Stream.of("A", "B", "C", "D", "E")
 ```java
 // Good
 
-Stream.of("A", "B", "C").gather(Gatherers4j.exactSize(3)).toList();
+Stream.of("A", "B", "C").gather(Gatherers4j.sizeExactly(3)).toList();
 // ["A", "B", "C"]
 
 // Bad
-Stream.of("A").gather(Gatherers4j.exactSize(3)).toList();
+Stream.of("A").gather(Gatherers4j.sizeExactly(3)).toList();
+// IllegalStateException
+```
+
+#### Ensure the stream is greater than `n` elements long
+
+```java
+// Good
+
+Stream.of("A", "B", "C").gather(Gatherers4j.sizeGreaterThan(2)).toList();
+// ["A", "B", "C"]
+
+// Bad
+Stream.of("A", "B").gather(Gatherers4j.sizeGreaterThan(2)).toList();
+// IllegalStateException
+```
+
+#### Ensure the stream is greater than or equal to `n` elements long
+
+```java
+// Good
+
+Stream.of("A", "B").gather(Gatherers4j.sizeGreaterThanOrEqualTo(2)).toList();
+// ["A", "B"]
+
+// Bad
+Stream.of("A").gather(Gatherers4j.sizeGreaterThanOrEqualTo(2)).toList();
+// IllegalStateException
+```
+
+#### Ensure the stream is less than `n` elements long
+
+```java
+// Good
+
+Stream.of("A").gather(Gatherers4j.sizeLessThan(2)).toList();
+// ["A"]
+
+// Bad
+Stream.of("A", "B").gather(Gatherers4j.sizeLessThan(2)).toList();
+// IllegalStateException
+```
+
+
+#### Ensure the stream is less than or equal to `n` elements long
+
+```java
+// Good
+
+Stream.of("A", "B").gather(Gatherers4j.sizeLessThanOrEqualTo(2)).toList();
+// ["A", "B"]
+
+// Bad
+Stream.of("A", "B", "C").gather(Gatherers4j.sizeLessThanOrEqualTo(2)).toList();
 // IllegalStateException
 ```
 
@@ -222,28 +283,24 @@ Stream
 // ["E", "F", "G"]
 ```
 
-#### Find the object with the maximum mapped value
+#### Order elements by frequency, ascending
 
 ```java
-record Employee(String name, int salary) {}
+Stream.of("A", "A", "A", "B", "B" ,"C")  
+    .gather(Gatherers4j.orderByFrequencyAscending())
+    .toList()
 
-streamOfEmployees
-    .gather(Gatherers4j.maxBy(Employee:salary))
-    .toList();
-
-// Employee("Big Shot", 1_000_000)
+// [WithCount("C", 1), WithCount("B", 2), WithCount("C", 3) ]
 ```
 
-#### Find the object with the minimum mapped value
+#### Order elements by frequency, descending
 
 ```java
-record Person(String name, int age) {}
+Stream.of("A", "A", "A", "B", "B" ,"C")  
+    .gather(Gatherers4j.orderByFrequencyDescending())
+    .toList()
 
-streamOfPeople
-    .gather(Gatherers4j.minBy(Person:age))
-    .toList();
-
-// Person("Baby", 1)
+// [WithCount("C", 3), WithCount("B", 2), WithCount("A", 1) ]
 ```
 
 #### Reverse the order of the stream

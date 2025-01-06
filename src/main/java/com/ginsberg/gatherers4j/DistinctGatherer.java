@@ -16,39 +16,42 @@
 
 package com.ginsberg.gatherers4j;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Gatherer;
 
-public class DistinctGatherer<INPUT, MAPPED>
-        implements Gatherer<INPUT, DistinctGatherer.State<MAPPED>, INPUT> {
+import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
 
-    private final Function<INPUT, MAPPED> byFunction;
+public class DistinctGatherer<INPUT extends @Nullable Object>
+        implements Gatherer<INPUT, DistinctGatherer.State, INPUT> {
 
-    DistinctGatherer(final Function<INPUT, MAPPED> byFunction) {
-        Objects.requireNonNull(byFunction, "Mapping function must not be null");
-        this.byFunction = byFunction;
+    private final Function<INPUT, Object> mappingFunction;
+
+    DistinctGatherer(final Function<INPUT, @Nullable Object> mappingFunction) {
+        mustNotBeNull(mappingFunction, "Mapping function must not be null");
+        this.mappingFunction = mappingFunction;
     }
 
     @Override
-    public Supplier<State<MAPPED>> initializer() {
+    public Supplier<State> initializer() {
         return State::new;
     }
 
     @Override
-    public Integrator<DistinctGatherer.State<MAPPED>, INPUT, INPUT> integrator() {
-        return (state, element, downstream) -> {
-            if (state.knownObjects.add(byFunction.apply(element))) {
+    public Integrator<DistinctGatherer.State, INPUT, INPUT> integrator() {
+        return Integrator.ofGreedy((state, element, downstream) -> {
+            if (state.knownObjects.add(mappingFunction.apply(element))) {
                 downstream.push(element);
             }
             return !downstream.isRejecting();
-        };
+        });
     }
 
-    public static class State<MAPPED> {
-        final Set<MAPPED> knownObjects = new HashSet<>();
+    public static class State {
+        final Set<@Nullable Object> knownObjects = new HashSet<>();
     }
 }

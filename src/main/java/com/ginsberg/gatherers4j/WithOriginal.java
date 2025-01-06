@@ -16,5 +16,10 @@
 
 package com.ginsberg.gatherers4j;
 
-public record WithOriginal<ORIGINAL, CALCULATED>(ORIGINAL original, CALCULATED calculated) {
+import org.jspecify.annotations.Nullable;
+
+public record WithOriginal<ORIGINAL, CALCULATED>(
+        @Nullable ORIGINAL original,
+        @Nullable CALCULATED calculated
+) {
 }

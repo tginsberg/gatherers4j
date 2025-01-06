@@ -19,11 +19,59 @@ package com.ginsberg.gatherers4j;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
 import static org.assertj.core.api.Assertions.*;
 
 
 class GathererUtilsTest {
+
+    @Nested
+    class ListOfNullables {
+        @Test
+        void containsNulls() {
+            // Arrange
+            final String left = null;
+            final String right = null;
+
+            // Act
+            final List<String> output = Arrays.asList(left, right);
+
+            // Assert
+            assertThat(output).isNotNull().hasSize(2).containsExactly(left, right);
+        }
+
+        @Test
+        void containsNonNulls() {
+            // Arrange
+            final String left = "A";
+            final String right = "B";
+
+            // Act
+            final List<String> output = Arrays.asList(left, right);
+
+            // Assert
+            assertThat(output).isNotNull().hasSize(2).containsExactly(left, right);
+        }
+    }
+
+    @SuppressWarnings("DataFlowIssue")
+    @Nested
+    class MustNotBeNull {
+        @Test
+        void whenNull() {
+            assertThatThrownBy(() -> mustNotBeNull(null, "123"))
+                    .isExactlyInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("123");
+        }
+
+        @Test
+        void whenNotNull() {
+            assertThatNoException().isThrownBy(() -> mustNotBeNull("NonNull", "123"));
+        }
+    }
 
     @SuppressWarnings("ConstantValue")
     @Nested
@@ -55,19 +103,4 @@ class GathererUtilsTest {
         }
     }
 
-    @SuppressWarnings("DataFlowIssue")
-    @Nested
-    class MustNotBeNull {
-        @Test
-        void whenNull() {
-            assertThatThrownBy(() -> mustNotBeNull(null, "123"))
-                    .isExactlyInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("123");
-        }
-
-        @Test
-        void whenNotNull() {
-            assertThatNoException().isThrownBy(() -> mustNotBeNull("NonNull", "123"));
-        }
-    }
 }

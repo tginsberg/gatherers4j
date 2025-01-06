@@ -16,18 +16,20 @@
 
 package com.ginsberg.gatherers4j;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.function.BiPredicate;
 import java.util.function.Supplier;
 import java.util.stream.Gatherer;
 
 import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
 
-public class FilteringWithIndexGatherer<INPUT>
+public class FilteringWithIndexGatherer<INPUT extends @Nullable Object>
         implements Gatherer<INPUT, FilteringWithIndexGatherer.State, INPUT> {
 
     private final BiPredicate<Long, INPUT> predicate;
 
-    FilteringWithIndexGatherer(final BiPredicate<Long, INPUT> predicate) {
+    FilteringWithIndexGatherer(final BiPredicate<Long, @Nullable INPUT> predicate) {
         mustNotBeNull(predicate, "Predicate must not be null");
         this.predicate = predicate;
     }
@@ -39,12 +41,12 @@ public class FilteringWithIndexGatherer<INPUT>
 
     @Override
     public Integrator<FilteringWithIndexGatherer.State, INPUT, INPUT> integrator() {
-        return (state, element, downstream) -> {
+        return Integrator.ofGreedy((state, element, downstream) -> {
             if (predicate.test(state.index++, element)) {
                 downstream.push(element);
             }
             return !downstream.isRejecting();
-        };
+        });
     }
 
     public static class State {

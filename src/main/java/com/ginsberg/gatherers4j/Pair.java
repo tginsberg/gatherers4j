@@ -16,5 +16,10 @@
 
 package com.ginsberg.gatherers4j;
 
-public record Pair<FIRST, SECOND>(FIRST first, SECOND second) {
+import org.jspecify.annotations.Nullable;
+
+public record Pair<FIRST, SECOND>(
+        @Nullable FIRST first,
+        @Nullable SECOND second
+) {
 }

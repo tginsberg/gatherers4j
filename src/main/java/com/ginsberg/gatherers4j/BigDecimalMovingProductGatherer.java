@@ -24,12 +24,13 @@ import java.util.Arrays;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public final class BigDecimalSimpleMovingAverageGatherer<INPUT extends @Nullable Object> extends BigDecimalGatherer<INPUT> {
+public class BigDecimalMovingProductGatherer<INPUT extends @Nullable Object>
+        extends BigDecimalGatherer<INPUT> {
 
     private final int windowSize;
-    private boolean includePartialValues;
+    private boolean includePartialValues = false;
 
-    BigDecimalSimpleMovingAverageGatherer(
+    BigDecimalMovingProductGatherer(
             final int windowSize,
             final Function<INPUT, @Nullable BigDecimal> mappingFunction
     ) {
@@ -42,53 +43,52 @@ public final class BigDecimalSimpleMovingAverageGatherer<INPUT extends @Nullable
 
     @Override
     public Supplier<BigDecimalGatherer.State> initializer() {
-        return () -> new State(windowSize, includePartialValues);
+        return () -> new BigDecimalMovingProductGatherer.State(windowSize, includePartialValues);
     }
 
-    /// When creating a moving average and the full size of the window has not yet been reached, the
-    /// gatherer should emit averages for what it has.
+    /// When creating a moving product and the full size of the window has not yet been reached, the
+    /// gatherer should emit the product for what it has.
     ///
-    /// For example, if the trailing average is over 10 values, but the stream has only emitted two
+    /// For example, if the trailing product is over 10 values, but the stream has only emitted two
     /// values, the gatherer should calculate the two values and emit the answer. The default is to not
     /// emit anything until the full size of the window has been seen.
-    public BigDecimalSimpleMovingAverageGatherer<INPUT> includePartialValues() {
+    public BigDecimalMovingProductGatherer<INPUT> includePartialValues() {
         includePartialValues = true;
         return this;
+    }
+
+    /// When encountering a `null` value in a stream, treat it as `BigDecimal.ONE` instead.
+    public BigDecimalGatherer<INPUT> treatNullAsOne() {
+        return treatNullAs(BigDecimal.ONE);
     }
 
     static class State implements BigDecimalGatherer.State {
         final boolean includePartialValues;
         final BigDecimal[] series;
-        BigDecimal sum = BigDecimal.ZERO;
-        BigDecimal count = BigDecimal.ZERO;
-        BigDecimal average = BigDecimal.ZERO;
+        BigDecimal product = BigDecimal.ONE;
         int index = 0;
 
         private State(final int lookBack, final boolean includePartialValues) {
             this.includePartialValues = includePartialValues;
             this.series = new BigDecimal[lookBack];
-            Arrays.fill(series, BigDecimal.ZERO);
+            Arrays.fill(series, BigDecimal.ONE);
         }
 
         @Override
         public boolean canCalculate() {
-            return includePartialValues || count.intValue() >= series.length;
+            return includePartialValues || index >= series.length;
         }
 
         @Override
         public void add(final BigDecimal element, final MathContext mathContext) {
-            sum = sum.subtract(series[index]).add(element, mathContext);
+            product = product.divide(series[index % series.length], mathContext).multiply(element, mathContext);
             series[index % series.length] = element;
-            index = (index + 1) % series.length;
-            if (count.intValue() < series.length) {
-                count = count.add(BigDecimal.ONE);
-            }
-            average = sum.divide(count, mathContext);
+            index++;
         }
 
         @Override
         public BigDecimal calculate() {
-            return average;
+            return product;
         }
     }
 }

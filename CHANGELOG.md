@@ -1,3 +1,14 @@
+### 0.7.0
++ Use greedy integrators where possible (Fixes #57)
++ Add [JSpecify](https://jspecify.dev/) annotations for static analysis
++ Implement `orderByFrequencyAscending()` and `orderByFrequencyDescending()`
++ Implement `movingProduct()` and `movingProductBy()`
++ Implement `movingSum()` and `movingSumBy()`
++ Remove `maxBy(fn)` and `minBy(fn)`, can be done with JDK methods trivially
++ Rename `exactSize()` to `sizeExactly()`
++ Implement `sizeLessThan`, `sizeLessThanOrEqualTo`, `sizeGreaterThan`, and `sizeGreaterThanOrEqualTo`
++ API Style - Functions, when used as arguments, should come last for consistency and to play nice with Kotlin (Fixes #64)
+
 ### 0.6.0
 + Implement `dropLast(n)`
 + Implement `grouping()` and `groupingBy(fn)`

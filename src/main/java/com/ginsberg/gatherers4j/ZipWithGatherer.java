@@ -16,6 +16,8 @@
 
 package com.ginsberg.gatherers4j;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.function.BiConsumer;
@@ -25,10 +27,11 @@ import java.util.stream.Stream;
 
 import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
 
-public class ZipWithGatherer<FIRST, SECOND> implements Gatherer<FIRST, Void, Pair<FIRST, SECOND>> {
+public class ZipWithGatherer<FIRST extends @Nullable Object, SECOND extends @Nullable Object>
+        implements Gatherer<FIRST, Void, Pair<FIRST, SECOND>> {
     private final Spliterator<SECOND> otherSpliterator;
-    private Function<SECOND, FIRST> sourceWhenArgumentLonger;
-    private Function<FIRST, SECOND> argumentWhenSourceLonger;
+    private @Nullable Function<SECOND, FIRST> sourceWhenArgumentLonger;
+    private @Nullable Function<FIRST, SECOND> argumentWhenSourceLonger;
 
     ZipWithGatherer(final Iterable<SECOND> other) {
         mustNotBeNull(other, "Other iterable must not be null");
@@ -38,7 +41,7 @@ public class ZipWithGatherer<FIRST, SECOND> implements Gatherer<FIRST, Void, Pai
     ZipWithGatherer(final Iterator<SECOND> other) {
         mustNotBeNull(other, "Other iterator must not be null");
         final Iterable<SECOND> iterable = () -> other;
-        otherSpliterator = (iterable).spliterator();
+        otherSpliterator = iterable.spliterator();
     }
 
     ZipWithGatherer(final Stream<SECOND> other) {
@@ -106,20 +109,23 @@ public class ZipWithGatherer<FIRST, SECOND> implements Gatherer<FIRST, Void, Pai
         return (_, element, downstream) -> {
             boolean advanced = otherSpliterator.tryAdvance(it -> downstream.push(new Pair<>(element, it)));
             if (!advanced && argumentWhenSourceLonger != null) {
-                downstream.push(new Pair<>(element, argumentWhenSourceLonger.apply(element)));
+                return downstream.push(new Pair<>(element, argumentWhenSourceLonger.apply(element)));
             }
-            return !downstream.isRejecting();
+            return advanced && !downstream.isRejecting();
         };
     }
 
     @Override
+    @SuppressWarnings("NullAway")
     public BiConsumer<Void, Downstream<? super Pair<FIRST, SECOND>>> finisher() {
         return (_, downstream) -> {
-            boolean downstreamIsRejecting = downstream.isRejecting();
-            while (sourceWhenArgumentLonger != null && !downstreamIsRejecting) {
-                downstreamIsRejecting = !otherSpliterator.tryAdvance(arg ->
-                        downstream.push(new Pair<>(sourceWhenArgumentLonger.apply(arg), arg))
-                );
+            if(sourceWhenArgumentLonger != null) {
+                boolean downstreamIsRejecting = downstream.isRejecting();
+                while (!downstreamIsRejecting) {
+                    downstreamIsRejecting = !otherSpliterator.tryAdvance(arg ->
+                            downstream.push(new Pair<>(sourceWhenArgumentLonger.apply(arg), arg))
+                    );
+                }
             }
         };
     }

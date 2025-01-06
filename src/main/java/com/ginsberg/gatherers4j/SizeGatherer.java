@@ -16,21 +16,34 @@
 
 package com.ginsberg.gatherers4j;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import java.util.stream.Gatherer;
 
-public class SizeGatherer<INPUT> implements Gatherer<INPUT, SizeGatherer.State<INPUT>, INPUT> {
+public class SizeGatherer<INPUT extends @Nullable Object>
+        implements Gatherer<INPUT, SizeGatherer.State<INPUT>, INPUT> {
 
     private final long targetSize;
+    private final Operation operation;
 
-    SizeGatherer(long targetSize) {
+    SizeGatherer(final Operation operation, final long targetSize) {
         if (targetSize < 0) {
             throw new IllegalArgumentException("Target size cannot be negative");
         }
+        this.operation = operation;
         this.targetSize = targetSize;
+    }
+
+    @Override
+    public BiConsumer<State<INPUT>, Downstream<? super INPUT>> finisher() {
+        return (state, downstream) -> {
+            operation.checkFinalLength(state.elements.size(), targetSize);
+            state.elements.forEach(downstream::push);
+        };
     }
 
     @Override
@@ -41,27 +54,71 @@ public class SizeGatherer<INPUT> implements Gatherer<INPUT, SizeGatherer.State<I
     @Override
     public Integrator<State<INPUT>, INPUT, INPUT> integrator() {
         return (state, element, downstream) -> {
+            operation.tryAccept(state.elements.size() + 1, targetSize);
             state.elements.add(element);
-            if (state.elements.size() > targetSize) {
-                fail();
-            }
             return !downstream.isRejecting();
         };
     }
 
-    @Override
-    public BiConsumer<State<INPUT>, Downstream<? super INPUT>> finisher() {
-        return (state, downstream) -> {
-            if (state.elements.size() == targetSize) {
-                state.elements.forEach(downstream::push);
-            } else {
-                fail();
+    enum Operation {
+        Equal {
+            @Override
+            void tryAccept(long length, long target) {
+                if(length > target) {
+                    fail(target);
+                }
+            }
+
+            @Override
+            void checkFinalLength(long length, long target) {
+                if (length != target) {
+                    fail(target);
+                }
+            }
+
+            void fail(long target) {
+                throw new IllegalStateException("Stream length must be equal to " + target);
+            }
+        },
+        GreaterThan {
+            @Override
+            void checkFinalLength(long length, long target) {
+                if (length <= target) {
+                    throw new IllegalStateException("Stream length must be greater than " + target);
+                }
+            }
+        },
+        GreaterThanOrEqualTo {
+            @Override
+            void checkFinalLength(long length, long target) {
+                if (length < target) {
+                    throw new IllegalStateException("Stream length must be greater than or equal to " + target);
+                }
+            }
+        },
+        LessThan {
+            @Override
+            void tryAccept(long length, long target) {
+                if(length >= target) {
+                    throw new IllegalStateException("Stream length must be less than " + target);
+                }
+            }
+        },
+        LessThanOrEqualTo {
+            @Override
+            void tryAccept(long length, long target) {
+                if(length > target) {
+                    throw new IllegalStateException("Stream length must be less than or equal to " + target);
+                }
             }
         };
-    }
 
-    private void fail() {
-        throw new IllegalStateException("Size must be exactly " + targetSize);
+        void checkFinalLength(long length, long target) {
+            // Empty implementation
+        }
+        void tryAccept(long length, long target){
+            // Empty implementation
+        }
     }
 
     public static class State<INPUT> {

@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
+/// A library of useful Stream Gatherers (custom intermediate operations) for Java.
+///
+/// @author Todd Ginsberg (todd@ginsberg.com)
+@NullMarked
 package com.ginsberg.gatherers4j;
 
-import org.jspecify.annotations.Nullable;
-
-public record IndexedValue<TYPE>(
-        long index,
-        @Nullable TYPE value
-) {
-}
+import org.jspecify.annotations.NullMarked;

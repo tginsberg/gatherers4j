@@ -16,10 +16,12 @@
 
 package com.ginsberg.gatherers4j;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.function.Supplier;
 import java.util.stream.Gatherer;
 
-public class IndexingGatherer<INPUT>
+public class IndexingGatherer<INPUT extends @Nullable Object>
         implements Gatherer<INPUT, IndexingGatherer.State, IndexedValue<INPUT>> {
 
     IndexingGatherer() {
@@ -32,7 +34,9 @@ public class IndexingGatherer<INPUT>
 
     @Override
     public Integrator<IndexingGatherer.State, INPUT, IndexedValue<INPUT>> integrator() {
-        return (state, element, downstream) -> downstream.push(new IndexedValue<>(state.index++, element));
+        return Integrator.ofGreedy((state, element, downstream) ->
+                downstream.push(new IndexedValue<>(state.index++, element))
+        );
     }
 
     public static class State {

@@ -19,6 +19,7 @@ package com.ginsberg.gatherers4j;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -47,7 +48,7 @@ class DistinctGathererTest {
 
         // Act
         final List<String> output = input
-                .gather(Gatherers4j.distinctBy(it -> it == null ? null : it.toUpperCase()))
+                .gather(Gatherers4j.distinctBy(it -> it == null ? null : it.toUpperCase(Locale.getDefault())))
                 .toList();
 
         // Assert

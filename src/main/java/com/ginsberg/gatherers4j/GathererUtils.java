@@ -15,22 +15,24 @@
  */
 package com.ginsberg.gatherers4j;
 
-public class GathererUtils {
+import org.jspecify.annotations.Nullable;
 
-    public static long NANOS_PER_MILLISECOND = 1_000_000;
+abstract class GathererUtils {
 
-    static boolean safeEquals(final Object left, final Object right) {
+    final static long NANOS_PER_MILLISECOND = 1_000_000;
+
+    static void mustNotBeNull(final @Nullable Object subject, final String message) {
+        if (subject == null) {
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    static boolean safeEquals(final @Nullable Object left, final @Nullable Object right) {
         if (left == null && right == null) {
             return true;
         } else if (left == null || right == null) {
             return false;
         }
         return left.equals(right);
-    }
-
-    static void mustNotBeNull(final Object subject, final String message) {
-        if (subject == null) {
-            throw new IllegalArgumentException(message);
-        }
     }
 }

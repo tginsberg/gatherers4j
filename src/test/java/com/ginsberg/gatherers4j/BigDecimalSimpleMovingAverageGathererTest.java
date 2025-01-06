@@ -17,6 +17,8 @@
 package com.ginsberg.gatherers4j;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -90,7 +92,7 @@ class BigDecimalSimpleMovingAverageGathererTest {
 
         // Act
         final List<BigDecimal> output = input.stream()
-                .gather(Gatherers4j.simpleMovingAverageBy(TestValueHolder::value, 2))
+                .gather(Gatherers4j.simpleMovingAverageBy(2, TestValueHolder::value))
                 .toList();
 
         // Assert
@@ -187,14 +189,11 @@ class BigDecimalSimpleMovingAverageGathererTest {
                 );
     }
 
-    @Test
-    void windowSizeMustBePositive() {
+    @ParameterizedTest(name = "windowSize of {0}")
+    @ValueSource(ints = {-1, 0, 1})
+    void windowSizeMustBeGreaterThanOne(final int windowSize) {
         assertThatThrownBy(() ->
-                Stream.of(BigDecimal.ONE).gather(Gatherers4j.simpleMovingAverage(0))
-        ).isExactlyInstanceOf(IllegalArgumentException.class);
-
-        assertThatThrownBy(() ->
-                Stream.of(BigDecimal.ONE).gather(Gatherers4j.simpleMovingAverage(-1))
+                Stream.of(BigDecimal.ONE).gather(Gatherers4j.simpleMovingAverage(windowSize))
         ).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
@@ -254,7 +253,7 @@ class BigDecimalSimpleMovingAverageGathererTest {
 
         // Act
         final List<WithOriginal<TestValueHolder, BigDecimal>> output = input.stream()
-                .gather(Gatherers4j.simpleMovingAverageBy(TestValueHolder::value, 2).withOriginal())
+                .gather(Gatherers4j.simpleMovingAverageBy(2, TestValueHolder::value).withOriginal())
                 .toList();
 
         // Assert

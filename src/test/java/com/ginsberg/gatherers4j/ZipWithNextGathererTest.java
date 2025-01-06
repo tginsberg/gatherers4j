@@ -18,6 +18,7 @@ package com.ginsberg.gatherers4j;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -42,6 +43,26 @@ class ZipWithNextGathererTest {
                         List.of("B", "C"),
                         List.of("C", "D"),
                         List.of("D", "E")
+                );
+    }
+
+
+    @Test
+    void zipWithNextIncludingNulls() {
+        // Arrange
+        final Stream<String> input = Stream.of("A", null, "C", null);
+
+        // Act
+        final List<List<String>> output = input
+                .gather(Gatherers4j.zipWithNext())
+                .toList();
+
+        // Assert
+        assertThat(output)
+                .containsExactly(
+                        Arrays.asList("A", null),
+                        Arrays.asList(null, "C"),
+                        Arrays.asList("C", null)
                 );
     }
 
