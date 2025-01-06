@@ -38,7 +38,6 @@ implementation("com.ginsberg:gatherers4j:0.7.0")
 | `dedupeConsecutiveBy(fn)`     | Remove consecutive duplicates from a stream as returned by `fn`                                                                |
 | `distinctBy(fn)`              | Emit only distinct elements from the stream, as measured by `fn`                                                               |
 | `dropLast(n)`                 | Keep all but the last `n` elements of the stream                                                                               |
-| `exactSize(n)`                | Ensure the stream is exactly `n` elements long, or throw an `IllegalStateException`                                            |
 | `filterWithIndex(predicate)`  | Filter the stream with the given `predicate`, which takes an `element` and its `index`                                         |
 | `grouping()`                  | Group consecute identical elements into lists                                                                                  |
 | `groupingBy(fn)`              | Group consecutive elements that are identical according to `fn` into lists                                                     |                                                                                                                    
@@ -51,6 +50,11 @@ implementation("com.ginsberg:gatherers4j:0.7.0")
 | `reverse()`                   | Reverse the order of the stream                                                                                                |
 | `shuffle()`                   | Shuffle the stream into a random order using the platform default `RandomGenerator`                                            |
 | `shuffle(rg)`                 | Shuffle the stream into a random order using the specified `RandomGenerator`                                                   |
+| `sizeExactly(n)`              | Ensure the stream is exactly `n` elements long, or throw an `IllegalStateException`                                            |
+| `sizeGreaterThan(n)`          | Ensure the stream is greater than `n` elements long, or throw an `IllegalStateException`                                       |
+| `sizeGreaterThanOrEqualTo(n)` | Ensure the stream is greater than or equal to `n` elements long, or throw an `IllegalStateException`                           |
+| `sizeLessThan(n)`             | Ensure the stream is less than `n` elements long, or throw an `IllegalStateException`                                          |
+| `sizeLessThanOrEqualTo(n)`    | Ensure the stream is less than or equal to `n` elements long, or throw an `IllegalStateException`                              |
 | `throttle(amount, duration)`  | Limit stream elements to `amount` elements over `duration`, pausing until a new `duration` period starts                       |
 | `withIndex()`                 | Maps all elements of the stream as-is along with their 0-based index                                                           |
 | `zipWith(iterable)`           | Creates a stream of `Pair` objects whose values come from the input stream and argument iterable                               |
@@ -165,11 +169,64 @@ Stream.of("A", "B", "C", "D", "E")
 ```java
 // Good
 
-Stream.of("A", "B", "C").gather(Gatherers4j.exactSize(3)).toList();
+Stream.of("A", "B", "C").gather(Gatherers4j.sizeExactly(3)).toList();
 // ["A", "B", "C"]
 
 // Bad
-Stream.of("A").gather(Gatherers4j.exactSize(3)).toList();
+Stream.of("A").gather(Gatherers4j.sizeExactly(3)).toList();
+// IllegalStateException
+```
+
+#### Ensure the stream is greater than `n` elements long
+
+```java
+// Good
+
+Stream.of("A", "B", "C").gather(Gatherers4j.sizeGreaterThan(2)).toList();
+// ["A", "B", "C"]
+
+// Bad
+Stream.of("A", "B").gather(Gatherers4j.sizeGreaterThan(2)).toList();
+// IllegalStateException
+```
+
+#### Ensure the stream is greater than or equal to `n` elements long
+
+```java
+// Good
+
+Stream.of("A", "B").gather(Gatherers4j.sizeGreaterThanOrEqualTo(2)).toList();
+// ["A", "B"]
+
+// Bad
+Stream.of("A").gather(Gatherers4j.sizeGreaterThanOrEqualTo(2)).toList();
+// IllegalStateException
+```
+
+#### Ensure the stream is less than `n` elements long
+
+```java
+// Good
+
+Stream.of("A").gather(Gatherers4j.sizeLessThan(2)).toList();
+// ["A"]
+
+// Bad
+Stream.of("A", "B").gather(Gatherers4j.sizeLessThan(2)).toList();
+// IllegalStateException
+```
+
+
+#### Ensure the stream is less than or equal to `n` elements long
+
+```java
+// Good
+
+Stream.of("A", "B").gather(Gatherers4j.sizeLessThanOrEqualTo(2)).toList();
+// ["A", "B"]
+
+// Bad
+Stream.of("A", "B", "C").gather(Gatherers4j.sizeLessThanOrEqualTo(2)).toList();
 // IllegalStateException
 ```
 

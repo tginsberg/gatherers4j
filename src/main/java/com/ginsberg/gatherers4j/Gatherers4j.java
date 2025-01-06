@@ -86,22 +86,11 @@ public abstract class Gatherers4j {
         return new DropLastGatherer<>(count);
     }
 
-    /// Ensure the input stream is exactly `size` elements long, and emit all elements if so.
-    /// If not, throw an `IllegalStateException`.
-    ///
-    /// @param size    Exact number of elements the stream must have
-    /// @param <INPUT> Type of elements in both the input and output streams
-    /// @return A non-null `SizeGatherer`
-    /// @throws IllegalStateException when the input stream is not exactly `size` elements long
-    public static <INPUT extends @Nullable Object> SizeGatherer<INPUT> exactSize(final long size) {
-        return new SizeGatherer<>(size);
-    }
-
     /// Filter a stream according to the given `predicate`, which takes both the item being examined,
     /// and its index.
     ///
     /// @param predicate A non-null `BiPredicate<Long,INPUT>` where the `Long` is the zero-based index of the element
-    ///                                                    being filtered, and the `INPUT` is the element itself.
+    ///                                                                     being filtered, and the `INPUT` is the element itself.
     /// @param <INPUT>   Type of elements in the input stream
     /// @return A non-null `FilteringWithIndexGatherer`
     public static <INPUT extends @Nullable Object> FilteringWithIndexGatherer<INPUT> filterWithIndex(
@@ -181,7 +170,7 @@ public abstract class Gatherers4j {
     ///
     /// @param windowSize      The trailing number of elements to multiply, must be greater than 1.
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
-    ///                        in the moving product calculation
+    ///                                               in the moving product calculation
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalMovingProductGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalMovingProductGatherer<INPUT> movingProductBy(
@@ -205,7 +194,7 @@ public abstract class Gatherers4j {
     ///
     /// @param windowSize      The trailing number of elements to multiply, must be greater than 1.
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
-    ///                        in the moving sum calculation
+    ///                                               in the moving sum calculation
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalMovingSumGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalMovingSumGatherer<INPUT> movingSumBy(
@@ -287,7 +276,7 @@ public abstract class Gatherers4j {
     /// objects mapped from a `Stream<BigDecimal>` via a `mappingFunction`.
     ///
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
-    ///                                                                      in the standard deviation calculation
+    ///                                                                                             in the standard deviation calculation
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalStandardDeviationGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalStandardDeviationGatherer<INPUT> runningPopulationStandardDeviationBy(
@@ -310,7 +299,7 @@ public abstract class Gatherers4j {
     /// from a `Stream<INPUT>` via a `mappingFunction`.
     ///
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
-    ///                                                                      in the product calculation
+    ///                                                                                             in the product calculation
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalProductGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalProductGatherer<INPUT> runningProductBy(
@@ -333,7 +322,7 @@ public abstract class Gatherers4j {
     /// from a `Stream<INPUT>` via a `mappingFunction`.
     ///
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
-    ///                                                                      in the standard deviation calculation
+    ///                                                                                             in the standard deviation calculation
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalStandardDeviationGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalStandardDeviationGatherer<INPUT> runningSampleStandardDeviationBy(
@@ -356,7 +345,7 @@ public abstract class Gatherers4j {
     /// from a `Stream<INPUT>` via a `mappingFunction`.
     ///
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
-    ///                                                                      in the running sum calculation
+    ///                                                                                             in the running sum calculation
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalSumGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalSumGatherer<INPUT> runningSumBy(
@@ -399,7 +388,7 @@ public abstract class Gatherers4j {
     /// the given function. This is useful when paired with the `withOriginal` function.
     ///
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
-    ///                                               in the running average calculation
+    ///                                                                      in the running average calculation
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalSimpleAverageGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalSimpleAverageGatherer<INPUT> simpleRunningAverageBy(
@@ -422,7 +411,7 @@ public abstract class Gatherers4j {
     ///
     /// @param windowSize      The number of elements to average, must be greater than 1.
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
-    ///                        in the moving average calculation
+    ///                                               in the moving average calculation
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalSimpleMovingAverageGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalSimpleMovingAverageGatherer<INPUT> simpleMovingAverageBy(
@@ -430,6 +419,61 @@ public abstract class Gatherers4j {
             final Function<INPUT, BigDecimal> mappingFunction
     ) {
         return new BigDecimalSimpleMovingAverageGatherer<>(windowSize, mappingFunction);
+    }
+
+    /// Ensure the input stream is exactly `size` elements long, and emit all elements if so.
+    /// If not, throw an `IllegalStateException`.
+    ///
+    /// @param size    Exact number of elements the stream must have
+    /// @param <INPUT> Type of elements in both the input and output streams
+    /// @return A non-null `SizeGatherer`
+    /// @throws IllegalStateException when the input stream is not exactly `size` elements long
+    public static <INPUT extends @Nullable Object> SizeGatherer<INPUT> sizeExactly(final long size) {
+        return new SizeGatherer<>(SizeGatherer.Operation.Equal, size);
+    }
+
+    /// Ensure the input stream is greater than `size` elements long, and emit all elements if so.
+    /// If not, throw an `IllegalStateException`.
+    ///
+    /// @param size The size the stream must be longer than
+    /// @param <INPUT> Type of elements in both the input and output streams
+    /// @return A non-null `SizeGatherer`
+    /// @throws IllegalStateException when the input stream is not exactly `size` elements long
+    public static <INPUT extends @Nullable Object> SizeGatherer<INPUT> sizeGreaterThan(final long size) {
+        return new SizeGatherer<>(SizeGatherer.Operation.GreaterThan, size);
+    }
+
+    /// Ensure the input stream is greater than or equal to `size` elements long, and emit all elements if so.
+    /// If not, throw an `IllegalStateException`.
+    ///
+    /// @param size The minimum size of the stream
+    /// @param <INPUT> Type of elements in both the input and output streams
+    /// @return A non-null `SizeGatherer`
+    /// @throws IllegalStateException when the input stream is not exactly `size` elements long
+    public static <INPUT extends @Nullable Object> SizeGatherer<INPUT> sizeGreaterThanOrEqualTo(final long size) {
+        return new SizeGatherer<>(SizeGatherer.Operation.GreaterThanOrEqualTo, size);
+    }
+
+    /// Ensure the input stream is less than `size` elements long, and emit all elements if so.
+    /// If not, throw an `IllegalStateException`.
+    ///
+    /// @param size The size the stream must be shorter than
+    /// @param <INPUT> Type of elements in both the input and output streams
+    /// @return A non-null `SizeGatherer`
+    /// @throws IllegalStateException when the input stream is not exactly `size` elements long
+    public static <INPUT extends @Nullable Object> SizeGatherer<INPUT> sizeLessThan(final long size) {
+        return new SizeGatherer<>(SizeGatherer.Operation.LessThan, size);
+    }
+
+    /// Ensure the input stream is less than or equal to `size` elements long, and emit all elements if so.
+    /// If not, throw an `IllegalStateException`.
+    ///
+    /// @param size The maximum size the stream
+    /// @param <INPUT> Type of elements in both the input and output streams
+    /// @return A non-null `SizeGatherer`
+    /// @throws IllegalStateException when the input stream is not exactly `size` elements long
+    public static <INPUT extends @Nullable Object> SizeGatherer<INPUT> sizeLessThanOrEqualTo(final long size) {
+        return new SizeGatherer<>(SizeGatherer.Operation.LessThanOrEqualTo, size);
     }
 
     /// Limit the number of elements in the stream to some number per period. When the limit is reached,
