@@ -84,67 +84,38 @@ public class SizeGatherer<INPUT extends @Nullable Object>
             @Override
             void checkFinalLength(long length, long target) {
                 if (length <= target) {
-                    fail(target);
+                    throw new IllegalStateException("Stream length must be greater than " + target);
                 }
             }
-
-            void fail(long target) {
-                throw new IllegalStateException("Stream length must be greater than " + target);
-            }
-
         },
         GreaterThanOrEqualTo {
             @Override
             void checkFinalLength(long length, long target) {
                 if (length < target) {
-                    fail(target);
+                    throw new IllegalStateException("Stream length must be greater than or equal to " + target);
                 }
-            }
-
-            void fail(long target) {
-                throw new IllegalStateException("Stream length must be greater than or equal to " + target);
             }
         },
         LessThan {
             @Override
             void tryAccept(long length, long target) {
                 if(length >= target) {
-                    fail(target);
+                    throw new IllegalStateException("Stream length must be less than " + target);
                 }
-            }
-
-            @Override
-            void checkFinalLength(long length, long target) {
-                if (length >= target) {
-                    fail(target);
-                }
-            }
-
-            void fail(long target) {
-                throw new IllegalStateException("Stream length must be less than " + target);
             }
         },
         LessThanOrEqualTo {
             @Override
             void tryAccept(long length, long target) {
                 if(length > target) {
-                    fail(target);
+                    throw new IllegalStateException("Stream length must be less than or equal to " + target);
                 }
-            }
-
-            @Override
-            void checkFinalLength(long length, long target) {
-                if (length > target) {
-                    fail(target);
-                }
-            }
-
-            void fail(long target) {
-                throw new IllegalStateException("Stream length must be less than or equal to " + target);
             }
         };
 
-        abstract void checkFinalLength(long length, long target);
+        void checkFinalLength(long length, long target) {
+            // Empty implementation
+        }
         void tryAccept(long length, long target){
             // Empty implementation
         }
