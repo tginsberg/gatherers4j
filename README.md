@@ -4,14 +4,14 @@ A library of useful [Stream Gatherers](https://openjdk.org/jeps/485) (custom int
 
 # Installing
 
-To use this library, add it as a dependency to your build. This library has no additional dependencies.
+To use this library, add it as a dependency to your build. This library has one transitive
+dependency - the [JSpecify](https://jspecify.dev/) set of annotations for static analysis tools.
 
 **Maven**
 
 Add the following dependency to `pom.xml`.
 
 ```xml
-
 <dependency>
     <groupId>com.ginsberg</groupId>
     <artifactId>gatherers4j</artifactId>
@@ -31,36 +31,36 @@ implementation("com.ginsberg:gatherers4j:0.7.0")
 
 ### Streams
 
-| Function                      | Purpose                                                                                                                        |
-|-------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
-| `debounce(amount, duration)`  | Limit stream elements to `amount` elements over `duration`, dropping any elements over the limit until a new `duration` starts |
-| `dedupeConsecutive()`         | Remove consecutive duplicates from a stream                                                                                    |
-| `dedupeConsecutiveBy(fn)`     | Remove consecutive duplicates from a stream as returned by `fn`                                                                |
-| `distinctBy(fn)`              | Emit only distinct elements from the stream, as measured by `fn`                                                               |
-| `dropLast(n)`                 | Keep all but the last `n` elements of the stream                                                                               |
-| `filterWithIndex(predicate)`  | Filter the stream with the given `predicate`, which takes an `element` and its `index`                                         |
-| `grouping()`                  | Group consecute identical elements into lists                                                                                  |
-| `groupingBy(fn)`              | Group consecutive elements that are identical according to `fn` into lists                                                     |                                                                                                                    
-| `interleave(iterable)`        | Creates a stream of alternating objects from the input stream and the argument iterable                                        |
-| `interleave(iterator)`        | Creates a stream of alternating objects from the input stream and the argument iterator                                        |
-| `interleave(stream)`          | Creates a stream of alternating objects from the input stream and the argument stream                                          |
-| `last(n)`                     | Constrain the stream to the last `n` values                                                                                    |
-| `orderByFrequencyAscending()  | Returns a stream where elements are ordered from least to most frequent as `WithCount<T>` wrapper objects.                     |
-| `orderByFrequencyDescending() | Returns a stream where elements are ordered from most to least frequent as `WithCount<T>` wrapper objects.                     |
-| `reverse()`                   | Reverse the order of the stream                                                                                                |
-| `shuffle()`                   | Shuffle the stream into a random order using the platform default `RandomGenerator`                                            |
-| `shuffle(rg)`                 | Shuffle the stream into a random order using the specified `RandomGenerator`                                                   |
-| `sizeExactly(n)`              | Ensure the stream is exactly `n` elements long, or throw an `IllegalStateException`                                            |
-| `sizeGreaterThan(n)`          | Ensure the stream is greater than `n` elements long, or throw an `IllegalStateException`                                       |
-| `sizeGreaterThanOrEqualTo(n)` | Ensure the stream is greater than or equal to `n` elements long, or throw an `IllegalStateException`                           |
-| `sizeLessThan(n)`             | Ensure the stream is less than `n` elements long, or throw an `IllegalStateException`                                          |
-| `sizeLessThanOrEqualTo(n)`    | Ensure the stream is less than or equal to `n` elements long, or throw an `IllegalStateException`                              |
-| `throttle(amount, duration)`  | Limit stream elements to `amount` elements over `duration`, pausing until a new `duration` period starts                       |
-| `withIndex()`                 | Maps all elements of the stream as-is along with their 0-based index                                                           |
-| `zipWith(iterable)`           | Creates a stream of `Pair` objects whose values come from the input stream and argument iterable                               |
-| `zipWith(iterator)`           | Creates a stream of `Pair` objects whose values come from the input stream and argument iterator                               |
-| `zipWith(stream)`             | Creates a stream of `Pair` objects whose values come from the input stream and argument stream                                 |
-| `zipWithNext()`               | Creates a stream of `List` objects via a sliding window of width 2 and stepping 1                                              |      
+| Function                       | Purpose                                                                                                                        |
+|--------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
+| `debounce(amount, duration)`   | Limit stream elements to `amount` elements over `duration`, dropping any elements over the limit until a new `duration` starts |
+| `dedupeConsecutive()`          | Remove consecutive duplicates from a stream                                                                                    |
+| `dedupeConsecutiveBy(fn)`      | Remove consecutive duplicates from a stream as returned by `fn`                                                                |
+| `distinctBy(fn)`               | Emit only distinct elements from the stream, as measured by `fn`                                                               |
+| `dropLast(n)`                  | Keep all but the last `n` elements of the stream                                                                               |
+| `filterWithIndex(predicate)`   | Filter the stream with the given `predicate`, which takes an `element` and its `index`                                         |
+| `grouping()`                   | Group consecute identical elements into lists                                                                                  |
+| `groupingBy(fn)`               | Group consecutive elements that are identical according to `fn` into lists                                                     |                                                                                                                    
+| `interleave(iterable)`         | Creates a stream of alternating objects from the input stream and the argument iterable                                        |
+| `interleave(iterator)`         | Creates a stream of alternating objects from the input stream and the argument iterator                                        |
+| `interleave(stream)`           | Creates a stream of alternating objects from the input stream and the argument stream                                          |
+| `last(n)`                      | Constrain the stream to the last `n` values                                                                                    |
+| `orderByFrequencyAscending()`  | Returns a stream where elements are ordered from least to most frequent as `WithCount<T>` wrapper objects.                     |
+| `orderByFrequencyDescending()` | Returns a stream where elements are ordered from most to least frequent as `WithCount<T>` wrapper objects.                     |
+| `reverse()`                    | Reverse the order of the stream                                                                                                |
+| `shuffle()`                    | Shuffle the stream into a random order using the platform default `RandomGenerator`                                            |
+| `shuffle(rg)`                  | Shuffle the stream into a random order using the specified `RandomGenerator`                                                   |
+| `sizeExactly(n)`               | Ensure the stream is exactly `n` elements long, or throw an `IllegalStateException`                                            |
+| `sizeGreaterThan(n)`           | Ensure the stream is greater than `n` elements long, or throw an `IllegalStateException`                                       |
+| `sizeGreaterThanOrEqualTo(n)`  | Ensure the stream is greater than or equal to `n` elements long, or throw an `IllegalStateException`                           |
+| `sizeLessThan(n)`              | Ensure the stream is less than `n` elements long, or throw an `IllegalStateException`                                          |
+| `sizeLessThanOrEqualTo(n)`     | Ensure the stream is less than or equal to `n` elements long, or throw an `IllegalStateException`                              |
+| `throttle(amount, duration)`   | Limit stream elements to `amount` elements over `duration`, pausing until a new `duration` period starts                       |
+| `withIndex()`                  | Maps all elements of the stream as-is along with their 0-based index                                                           |
+| `zipWith(iterable)`            | Creates a stream of `Pair` objects whose values come from the input stream and argument iterable                               |
+| `zipWith(iterator)`            | Creates a stream of `Pair` objects whose values come from the input stream and argument iterator                               |
+| `zipWith(stream)`              | Creates a stream of `Pair` objects whose values come from the input stream and argument stream                                 |
+| `zipWithNext()`                | Creates a stream of `List` objects via a sliding window of width 2 and stepping 1                                              |      
 
 ### Mathematics/Statistics
 
