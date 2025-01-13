@@ -1,5 +1,5 @@
 ### 0.8.0 
-+ TBD
++ Add support for `orElse()` and `orElseEmpty()` on size-based gatherers to provide a non-exceptional output stream
 
 ### 0.7.0
 + Use greedy integrators where possible (Fixes #57)

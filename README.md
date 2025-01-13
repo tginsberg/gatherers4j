@@ -39,7 +39,7 @@ implementation("com.ginsberg:gatherers4j:0.8.0")
 | `distinctBy(fn)`               | Emit only distinct elements from the stream, as measured by `fn`                                                               |
 | `dropLast(n)`                  | Keep all but the last `n` elements of the stream                                                                               |
 | `filterWithIndex(predicate)`   | Filter the stream with the given `predicate`, which takes an `element` and its `index`                                         |
-| `grouping()`                   | Group consecute identical elements into lists                                                                                  |
+| `grouping()`                   | Group consecutive identical elements into lists                                                                                |
 | `groupingBy(fn)`               | Group consecutive elements that are identical according to `fn` into lists                                                     |                                                                                                                    
 | `interleave(iterable)`         | Creates a stream of alternating objects from the input stream and the argument iterable                                        |
 | `interleave(iterator)`         | Creates a stream of alternating objects from the input stream and the argument iterator                                        |
@@ -175,6 +175,34 @@ Stream.of("A", "B", "C").gather(Gatherers4j.sizeExactly(3)).toList();
 // Bad
 Stream.of("A").gather(Gatherers4j.sizeExactly(3)).toList();
 // IllegalStateException
+```
+
+#### Replace stream when size check fails
+
+This applies to `sizeExactly()`, `sizeLessThan()`, `sizeLessThanOrEqualTo()`, `sizeGreaterThan()`, and `sizeGreaterThanOrEqualTo()`.
+
+Note, this needs a type witness due to how Java generics work.
+
+```java
+Stream.of("A")
+    .gather(Gatherers4j.<String>sizeExactly(2).orElse(() -> Stream.of("A", "B")))
+    .toList();
+
+// ["A", "B"]
+```
+
+#### Return an empty stream when size check fails
+
+This applies to `sizeExactly()`, `sizeLessThan()`, `sizeLessThanOrEqualTo()`, `sizeGreaterThan()`, and `sizeGreaterThanOrEqualTo()`.
+
+Note, this needs a type witness due to how Java generics work.
+
+```java
+Stream.of("A")
+    .gather(Gatherers4j.<String>sizeExactly(2).orElseEmpty())
+    .toList();
+
+// []
 ```
 
 #### Ensure the stream is greater than `n` elements long

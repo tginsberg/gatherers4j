@@ -429,7 +429,7 @@ public abstract class Gatherers4j {
     /// @return A non-null `SizeGatherer`
     /// @throws IllegalStateException when the input stream is not exactly `size` elements long
     public static <INPUT extends @Nullable Object> SizeGatherer<INPUT> sizeExactly(final long size) {
-        return new SizeGatherer<>(SizeGatherer.Operation.Equal, size);
+        return new SizeGatherer<>(SizeGatherer.Operation.Equals, size);
     }
 
     /// Ensure the input stream is greater than `size` elements long, and emit all elements if so.
