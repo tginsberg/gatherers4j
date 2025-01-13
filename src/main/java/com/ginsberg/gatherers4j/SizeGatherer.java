@@ -23,12 +23,16 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import java.util.stream.Gatherer;
+import java.util.stream.Stream;
+
+import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
 
 public class SizeGatherer<INPUT extends @Nullable Object>
         implements Gatherer<INPUT, SizeGatherer.State<INPUT>, INPUT> {
 
     private final long targetSize;
     private final Operation operation;
+    private Supplier<Stream<INPUT>> orElse;
 
     SizeGatherer(final Operation operation, final long targetSize) {
         if (targetSize < 0) {
@@ -36,13 +40,45 @@ public class SizeGatherer<INPUT extends @Nullable Object>
         }
         this.operation = operation;
         this.targetSize = targetSize;
+        this.orElse = () -> {
+            throw new IllegalStateException("Invalid stream size: wanted " + operation.name() + " " + targetSize);
+        };
+    }
+
+    /// When the current stream does not have the correct length, call the given
+    /// `Supplier<Stream<INPUT>>` to produce an output instead of throwing an exception (the default behavior).
+    ///
+    /// Note: You will need a type witness when using this:
+    ///
+    /// `source.gather(Gatherers4j.<String>sizeExactly(2).orElse(() -> Stream.of("A", "B")))`
+    ///
+    /// @param orElse - A non-null `Supplier`, the results of which will be used instead of the input stream.
+    public SizeGatherer<INPUT> orElse(final Supplier<Stream<INPUT>> orElse) {
+        mustNotBeNull(orElse, "The orElse function must not be null");
+        this.orElse = orElse;
+        return this;
+    }
+
+    /// When the current stream does not have the correct length, produce an empty stream instead of throwing
+    /// an exception (the default behavior).
+    ///
+    /// Note: You will need a type witness when using this:
+    ///
+    /// `source.gather(Gatherers4j.<String>sizeExactly(2).orElseEmpty())`
+    ///
+    public SizeGatherer<INPUT> orElseEmpty() {
+        this.orElse = Stream::empty;
+        return this;
     }
 
     @Override
     public BiConsumer<State<INPUT>, Downstream<? super INPUT>> finisher() {
         return (state, downstream) -> {
-            operation.checkFinalLength(state.elements.size(), targetSize);
-            state.elements.forEach(downstream::push);
+            if (!state.failed && operation.accept(state.elements.size(), targetSize)) {
+                state.elements.forEach(downstream::push);
+            } else {
+                orElse.get().forEach(downstream::push);
+            }
         };
     }
 
@@ -54,74 +90,63 @@ public class SizeGatherer<INPUT extends @Nullable Object>
     @Override
     public Integrator<State<INPUT>, INPUT, INPUT> integrator() {
         return (state, element, downstream) -> {
-            operation.tryAccept(state.elements.size() + 1, targetSize);
-            state.elements.add(element);
-            return !downstream.isRejecting();
+            if (operation.tryAccept(state.elements.size() + 1, targetSize)) {
+                state.elements.add(element);
+            } else {
+                state.failed = true;
+            }
+            return !state.failed || !downstream.isRejecting();
         };
     }
 
     enum Operation {
-        Equal {
+        Equals {
             @Override
-            void tryAccept(long length, long target) {
-                if(length > target) {
-                    fail(target);
-                }
+            boolean tryAccept(long length, long target) {
+                return length <= target;
             }
 
             @Override
-            void checkFinalLength(long length, long target) {
-                if (length != target) {
-                    fail(target);
-                }
-            }
-
-            void fail(long target) {
-                throw new IllegalStateException("Stream length must be equal to " + target);
+            boolean accept(long length, long target) {
+                return length == target;
             }
         },
         GreaterThan {
             @Override
-            void checkFinalLength(long length, long target) {
-                if (length <= target) {
-                    throw new IllegalStateException("Stream length must be greater than " + target);
-                }
+            boolean accept(long length, long target) {
+                return length > target;
             }
         },
         GreaterThanOrEqualTo {
             @Override
-            void checkFinalLength(long length, long target) {
-                if (length < target) {
-                    throw new IllegalStateException("Stream length must be greater than or equal to " + target);
-                }
+            boolean accept(long length, long target) {
+                return length >= target;
             }
         },
         LessThan {
             @Override
-            void tryAccept(long length, long target) {
-                if(length >= target) {
-                    throw new IllegalStateException("Stream length must be less than " + target);
-                }
+            boolean tryAccept(long length, long target) {
+                return length < target;
             }
         },
         LessThanOrEqualTo {
             @Override
-            void tryAccept(long length, long target) {
-                if(length > target) {
-                    throw new IllegalStateException("Stream length must be less than or equal to " + target);
-                }
+            boolean tryAccept(long length, long target) {
+                return length <= target;
             }
         };
 
-        void checkFinalLength(long length, long target) {
-            // Empty implementation
+        boolean accept(long length, long target) {
+            return true;
         }
-        void tryAccept(long length, long target){
-            // Empty implementation
+
+        boolean tryAccept(long length, long target) {
+            return true;
         }
     }
 
     public static class State<INPUT> {
+        boolean failed = false;
         final List<INPUT> elements = new ArrayList<>();
     }
 }
