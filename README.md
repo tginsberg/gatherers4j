@@ -38,6 +38,7 @@ implementation("com.ginsberg:gatherers4j:0.8.0")
 | `dedupeConsecutiveBy(fn)`      | Remove consecutive duplicates from a stream as returned by `fn`                                                                |
 | `distinctBy(fn)`               | Emit only distinct elements from the stream, as measured by `fn`                                                               |
 | `dropLast(n)`                  | Keep all but the last `n` elements of the stream                                                                               |
+| `everyNth(n)`                  | Limit the stream to every `n`<sup>th</sup> element                                                                                        |
 | `filterWithIndex(predicate)`   | Filter the stream with the given `predicate`, which takes an `element` and its `index`                                         |
 | `grouping()`                   | Group consecutive identical elements into lists                                                                                |
 | `groupingBy(fn)`               | Group consecutive elements that are identical according to `fn` into lists                                                     |                                                                                                                    
@@ -162,6 +163,16 @@ Stream.of("A", "B", "C", "D", "E")
     .toList();
 
 // ["A", "B", "C"]
+```
+
+#### Keep every `n`<sup>th</sup> element
+
+```java
+Stream.of("A", "B", "C", "D", "E", "F", "G")
+    .gather(Gatherers4j.everyNth(3))
+    .toList()
+    
+// ["A", "D", "G"]
 ```
 
 #### Ensure the stream is exactly `n` elements long
@@ -476,4 +487,4 @@ someStreamOfBigDecimal()
 
 Please feel free to file issues for change requests or bugs. If you would like to contribute new functionality, please contact me before starting work!
 
-Copyright © 2024 by Todd Ginsberg
+Copyright © 2024-2025 by Todd Ginsberg

@@ -86,11 +86,20 @@ public abstract class Gatherers4j {
         return new DropLastGatherer<>(count);
     }
 
+    /// Keep every nth element of the stream.
+    ///
+    /// @param count The number of the elements to keep, must be at least 2
+    /// @param <INPUT> Type of elements in both the input and output streams
+    /// @return A non-null `EveryNthGatherer`
+    public static <INPUT extends @Nullable Object> EveryNthGatherer<INPUT> everyNth(final int count) {
+        return new EveryNthGatherer<>(count);
+    }
+
     /// Filter a stream according to the given `predicate`, which takes both the item being examined,
     /// and its index.
     ///
     /// @param predicate A non-null `BiPredicate<Long,INPUT>` where the `Long` is the zero-based index of the element
-    ///                                                                     being filtered, and the `INPUT` is the element itself.
+    ///                              being filtered, and the `INPUT` is the element itself.
     /// @param <INPUT>   Type of elements in the input stream
     /// @return A non-null `FilteringWithIndexGatherer`
     public static <INPUT extends @Nullable Object> FilteringWithIndexGatherer<INPUT> filterWithIndex(
