@@ -1,5 +1,6 @@
 ### 0.8.0 
 + Add support for `orElse()` and `orElseEmpty()` on size-based gatherers to provide a non-exceptional output stream
++ Implement `everyNth()` to get every `n`<sup>th</sup> element from the stream
 
 ### 0.7.0
 + Use greedy integrators where possible (Fixes #57)
