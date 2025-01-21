@@ -499,6 +499,15 @@ public abstract class Gatherers4j {
         return new ThrottlingGatherer<>(ThrottlingGatherer.LimitRule.Pause, amount, duration);
     }
 
+
+    /// Emit only those elements that occur in the input stream a single time.
+    ///
+    /// @param <INPUT>  Type of elements in the input stream
+    /// @return A non-null `UniquelyOccurringGatherer`
+    public static <INPUT extends @Nullable Object> UniquelyOccurringGatherer<INPUT> uniquelyOccurring() {
+        return new UniquelyOccurringGatherer<>();
+    }
+
     /// Maps all elements of the stream as-is along with their 0-based index.
     ///
     /// @param <INPUT> Type of elements in the input stream
