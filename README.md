@@ -57,6 +57,7 @@ implementation("com.ginsberg:gatherers4j:0.8.0")
 | `sizeLessThan(n)`              | Ensure the stream is less than `n` elements long, or throw an `IllegalStateException`                                          |
 | `sizeLessThanOrEqualTo(n)`     | Ensure the stream is less than or equal to `n` elements long, or throw an `IllegalStateException`                              |
 | `throttle(amount, duration)`   | Limit stream elements to `amount` elements over `duration`, pausing until a new `duration` period starts                       |
+| `uniquelyOccurring()`          | Emit elements that occur a single time, dropping all others                                                                    |
 | `withIndex()`                  | Maps all elements of the stream as-is along with their 0-based index                                                           |
 | `zipWith(iterable)`            | Creates a stream of `Pair` objects whose values come from the input stream and argument iterable                               |
 | `zipWith(iterator)`            | Creates a stream of `Pair` objects whose values come from the input stream and argument iterator                               |
@@ -400,6 +401,16 @@ Stream
               +----------- Pause
 ```
 
+#### Limit stream to elements that occur a single time
+
+```java
+Stream
+    .of("A", "B", "C", "A")
+    .gather(Gatherers4j.uniquelyOccurring())
+    .toList();
+
+// ["B", "C"]
+```
 
 #### Zip two streams of together into a `Stream<Pair>`
 
