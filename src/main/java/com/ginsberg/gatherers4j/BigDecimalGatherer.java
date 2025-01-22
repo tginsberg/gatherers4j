@@ -58,7 +58,7 @@ abstract public class BigDecimalGatherer<INPUT extends @Nullable Object>
     /// When encountering a `null` value in a stream, treat it as the given `replacement` value instead.
     ///
     /// @param replacement The value to replace `null` with
-    public BigDecimalGatherer<INPUT> treatNullAs(final @Nullable BigDecimal replacement) {
+    public BigDecimalGatherer<INPUT> treatNullAs(@Nullable final BigDecimal replacement) {
         this.nullReplacement = replacement;
         return this;
     }

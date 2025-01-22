@@ -26,9 +26,10 @@ import static com.ginsberg.gatherers4j.GathererUtils.safeEquals;
 public class DedupeConsecutiveGatherer<INPUT extends @Nullable Object>
         implements Gatherer<INPUT, DedupeConsecutiveGatherer.State, INPUT> {
 
-    private final @Nullable Function<INPUT, @Nullable Object> mappingFunction;
+    @Nullable
+    private final Function<INPUT, @Nullable Object> mappingFunction;
 
-    DedupeConsecutiveGatherer(final @Nullable Function<INPUT, @Nullable Object> mappingFunction) {
+    DedupeConsecutiveGatherer(@Nullable final Function<INPUT, @Nullable Object> mappingFunction) {
         this.mappingFunction = mappingFunction;
     }
 

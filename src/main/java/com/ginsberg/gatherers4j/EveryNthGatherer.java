@@ -40,12 +40,12 @@ public class EveryNthGatherer<INPUT extends @Nullable Object>
 
     @Override
     public Integrator<EveryNthGatherer.State, INPUT, INPUT> integrator() {
-        return (state, element, downstream) -> {
+        return Integrator.ofGreedy((state, element, downstream) -> {
             if (state.size++ % count == 0) {
                 downstream.push(element);
             }
             return !downstream.isRejecting();
-        };
+        });
     }
 
     public static class State {

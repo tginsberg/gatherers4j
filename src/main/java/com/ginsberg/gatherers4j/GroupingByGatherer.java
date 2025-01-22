@@ -31,7 +31,8 @@ import static com.ginsberg.gatherers4j.GathererUtils.safeEquals;
 public class GroupingByGatherer<INPUT extends @Nullable Object> implements
         Gatherer<INPUT, GroupingByGatherer.State<INPUT>, List<INPUT>> {
 
-    private final @Nullable Function<INPUT, Object> mappingFunction;
+    @Nullable
+    private final Function<INPUT, Object> mappingFunction;
 
     GroupingByGatherer() {
         mappingFunction = null;
