@@ -18,9 +18,8 @@ package com.ginsberg.gatherers4j;
 
 import org.jspecify.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
@@ -41,12 +40,12 @@ public class UniquelyOccurringGatherer<INPUT extends @Nullable Object>
     @Override
     public Integrator<State<INPUT>, INPUT, INPUT> integrator() {
         return Integrator.ofGreedy((state, element, downstream) -> {
-            if (!state.knownBad.contains(element)) {
-                if (state.found.containsKey(element)) {
-                    state.knownBad.add(element);
+            if (!state.duplicates.contains(element)) {
+                if (state.found.contains(element)) {
+                    state.duplicates.add(element);
                     state.found.remove(element);
                 } else {
-                    state.found.put(element, state.iteration++);
+                    state.found.add(element);
                 }
             }
             return !downstream.isRejecting();
@@ -55,17 +54,11 @@ public class UniquelyOccurringGatherer<INPUT extends @Nullable Object>
 
     @Override
     public BiConsumer<State<INPUT>, Downstream<? super INPUT>> finisher() {
-        return (inputState, downstream) ->
-            inputState.found
-                    .entrySet()
-                    .stream()
-                    .sorted((a, b) -> (int) (a.getValue() - b.getValue()))
-                    .forEach(it -> downstream.push(it.getKey()));
+        return (inputState, downstream) -> inputState.found.forEach(downstream::push);
     }
 
     public static class State<INPUT> {
-        long iteration = 0;
-        final Set<INPUT> knownBad = new HashSet<>();
-        final Map<INPUT, Long> found = new HashMap<>();
+        final Set<INPUT> duplicates = new HashSet<>();
+        final Set<INPUT> found = new LinkedHashSet<>();
     }
 }

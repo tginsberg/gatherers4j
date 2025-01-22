@@ -21,13 +21,13 @@ abstract class GathererUtils {
 
     final static long NANOS_PER_MILLISECOND = 1_000_000;
 
-    static void mustNotBeNull(final @Nullable Object subject, final String message) {
+    static void mustNotBeNull(@Nullable final Object subject, final String message) {
         if (subject == null) {
             throw new IllegalArgumentException(message);
         }
     }
 
-    static boolean safeEquals(final @Nullable Object left, final @Nullable Object right) {
+    static boolean safeEquals(@Nullable final Object left, @Nullable final Object right) {
         if (left == null && right == null) {
             return true;
         } else if (left == null || right == null) {
