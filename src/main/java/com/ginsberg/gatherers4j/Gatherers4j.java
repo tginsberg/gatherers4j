@@ -23,6 +23,7 @@ import java.time.Duration;
 import java.util.Iterator;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.random.RandomGenerator;
 import java.util.stream.Stream;
 
@@ -485,6 +486,18 @@ public abstract class Gatherers4j {
         return new SizeGatherer<>(SizeGatherer.Operation.LessThanOrEqualTo, size);
     }
 
+    /// Take elements from the input stream until the `predicate` is met, including the first element that
+    /// matches the `predicate`.
+    ///
+    /// @param predicate A non-null predicate function
+    /// @param <INPUT> Type of elements in both the input and output streams
+    /// @return A non-null `TakeUntilGatherer`
+    public static <INPUT extends @Nullable Object> TakeUntilGatherer<INPUT> takeUntil(
+            final Predicate<INPUT> predicate
+    ) {
+        return new TakeUntilGatherer<>(predicate);
+    }
+
     /// Limit the number of elements in the stream to some number per period. When the limit is reached,
     /// consumption is paused until a new period starts and the count resets.
     ///
@@ -498,7 +511,6 @@ public abstract class Gatherers4j {
     ) {
         return new ThrottlingGatherer<>(ThrottlingGatherer.LimitRule.Pause, amount, duration);
     }
-
 
     /// Emit only those elements that occur in the input stream a single time.
     ///

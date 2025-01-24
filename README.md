@@ -56,6 +56,7 @@ implementation("com.ginsberg:gatherers4j:0.8.0")
 | `sizeGreaterThanOrEqualTo(n)`  | Ensure the stream is greater than or equal to `n` elements long, or throw an `IllegalStateException`                           |
 | `sizeLessThan(n)`              | Ensure the stream is less than `n` elements long, or throw an `IllegalStateException`                                          |
 | `sizeLessThanOrEqualTo(n)`     | Ensure the stream is less than or equal to `n` elements long, or throw an `IllegalStateException`                              |
+| `takeUntil(predicate)`         | Take elements from the input stream until the `predicate` is met, including the first element that matches the `preciate`      |
 | `throttle(amount, duration)`   | Limit stream elements to `amount` elements over `duration`, pausing until a new `duration` period starts                       |
 | `uniquelyOccurring()`          | Emit elements that occur a single time, dropping all others                                                                    |
 | `withIndex()`                  | Maps all elements of the stream as-is along with their 0-based index                                                           |
@@ -174,6 +175,16 @@ Stream.of("A", "B", "C", "D", "E", "F", "G")
     .toList()
     
 // ["A", "D", "G"]
+```
+
+#### Take from a stream until a predicate is met, inclusive
+
+```java
+Stream.of("A", "B", "C", "D", "E", "F", "G")
+    .gather(Gatherers4j.takeUntil(it -> it.equals("C")))
+    .toList()
+    
+// ["A", "B", "C"]
 ```
 
 #### Ensure the stream is exactly `n` elements long
