@@ -4,6 +4,7 @@
 + Implement `uniquelyOccurring()` to emit stream elements that occur a single time
 + Implement `takeUntil()` to take from a stream until a predicate is met, including the first element that matches the predicate
 + Implement `foldIndexed()` to perform a traditional fold along with the index of each element
++ Implement `reduceIndexed()` to perform a reduce along with the index of each element
 
 ### 0.7.0
 + Use greedy integrators where possible (Fixes #57)

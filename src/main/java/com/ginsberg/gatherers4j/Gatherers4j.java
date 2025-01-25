@@ -275,6 +275,13 @@ public abstract class Gatherers4j {
         return new FrequencyGatherer<>(FrequencyGatherer.Order.Descending);
     }
 
+
+    public static <INPUT extends @Nullable Object> ReduceIndexedGatherer<INPUT> reduceIndexed(
+            final TriFunction<Long, INPUT, INPUT, INPUT> reduceFunction
+    ) {
+        return new ReduceIndexedGatherer<>(reduceFunction);
+    }
+
     /// Reverse the order of the input Stream.
     ///
     /// Note: This consumes the entire stream and holds it in memory, so it will not work on infinite
