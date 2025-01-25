@@ -292,7 +292,23 @@ Stream.of("A", "B", "C", "D")
 // ["A", "C", "D"]
 ```
 
-### Group identical elements
+
+#### Perform a fold including the index of each element
+
+```java
+// Add even elements only
+Stream.of(1, 2, 3, 4, 5, 6)
+    .gather(
+        Gatherers4j.foldIndexed(
+            () -> 0,
+            (index, carry, next) -> index % 2 == 0 ? carry + next : carry
+        )
+    ).toList().getFirst();
+
+// 9
+```
+
+#### Group identical elements
 
 ```java
 Stream.of("A", "A", "B", "B", "B", "C")
@@ -302,7 +318,7 @@ Stream.of("A", "A", "B", "B", "B", "C")
 // [["A", "A"], ["B", "B", "B"], ["C"]]
 ```
 
-### Group identical elements as measured by a function
+#### Group identical elements as measured by a function
 
 ```java
 Stream.of("A", "B", "AA", "BB", "CC", "DDD")
@@ -464,7 +480,7 @@ Functions which modify output and are available on all `BigDecimal` gatherers (s
 
 Note that rounding mode, precision, and scale are derived from the `MathContext`.
 
-### Example of `simpleRunningAverage()`
+#### Example of `simpleRunningAverage()`
 
 This example creates a stream of `double`, converts each value to a `BigDecmial`, and takes a `simpleMovingAverage` over 10 trailing values.
 It will `includePartialValues` and sets the `MathContext` to the values given. Additionally, nulls
