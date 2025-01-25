@@ -31,5 +31,5 @@ public interface TriFunction<
     /// @param b the second function argument
     /// @param c the third function argument
     /// @return the function result
-    R apply(A a, B b, C c);
+    R apply(@Nullable A a, @Nullable B b, @Nullable C c);
 }
