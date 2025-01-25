@@ -49,6 +49,7 @@ implementation("com.ginsberg:gatherers4j:0.8.0")
 | `last(n)`                      | Constrain the stream to the last `n` values                                                                                    |
 | `orderByFrequencyAscending()`  | Returns a stream where elements are ordered from least to most frequent as `WithCount<T>` wrapper objects.                     |
 | `orderByFrequencyDescending()` | Returns a stream where elements are ordered from most to least frequent as `WithCount<T>` wrapper objects.                     |
+| `reduceIndexed(fn)`            | Performs a reduce on the input stream using the given function, and includes the index of the elements                         |
 | `reverse()`                    | Reverse the order of the stream                                                                                                |
 | `shuffle()`                    | Shuffle the stream into a random order using the platform default `RandomGenerator`                                            |
 | `shuffle(rg)`                  | Shuffle the stream into a random order using the specified `RandomGenerator`                                                   |
@@ -173,9 +174,20 @@ Stream.of("A", "B", "C", "D", "E")
 ```java
 Stream.of("A", "B", "C", "D", "E", "F", "G")
     .gather(Gatherers4j.everyNth(3))
-    .toList()
+    .toList();
     
 // ["A", "D", "G"]
+```
+
+#### Reduce a stream with access to the index of the elements
+
+```java
+Stream.of("A", "B", "C")
+    .gather(Gatherers4j.reduceIndexed((index, a, b) -> a + b + index))
+    .toList()
+    .getFirst();
+
+// "AB1C2"
 ```
 
 #### Take from a stream until a predicate is met, inclusive
