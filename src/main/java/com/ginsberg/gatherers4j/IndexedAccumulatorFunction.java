@@ -19,17 +19,16 @@ package com.ginsberg.gatherers4j;
 import org.jspecify.annotations.Nullable;
 
 @FunctionalInterface
-public interface TriFunction<
+public interface IndexedAccumulatorFunction<
         A extends @Nullable Object,
         B extends @Nullable Object,
-        C extends @Nullable Object,
         R extends @Nullable Object> {
 
     ///  Applies this function to the given arguments
     ///
-    /// @param a the first function argument
-    /// @param b the second function argument
-    /// @param c the third function argument
+    /// @param index the index of the function invocation
+    /// @param carry the accumulated value
+    /// @param next  the next value to accumulate
     /// @return the function result
-    R apply(@Nullable A a, @Nullable B b, @Nullable C c);
+    R apply(long index, @Nullable A carry, @Nullable B next);
 }

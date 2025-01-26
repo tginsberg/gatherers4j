@@ -101,7 +101,7 @@ public abstract class Gatherers4j {
     /// and its index.
     ///
     /// @param predicate A non-null `BiPredicate<Long,INPUT>` where the `Long` is the zero-based index of the element
-    ///                                               being filtered, and the `INPUT` is the element itself.
+    ///                  being filtered, and the `INPUT` is the element itself.
     /// @param <INPUT>   Type of elements in the input stream
     /// @return A non-null `FilteringWithIndexGatherer`
     public static <INPUT extends @Nullable Object> FilteringWithIndexGatherer<INPUT> filterWithIndex(
@@ -112,16 +112,16 @@ public abstract class Gatherers4j {
 
     ///  Perform a fold over every element in the input stream along with its index
     ///
-    /// @param <INPUT> Type of elements in the input stream
-    /// @param <OUTPUT> Type elements are folded to (the carry value)
+    /// @param <INPUT>      Type of elements in the input stream
+    /// @param <OUTPUT>     Type elements are folded to (the accumulated value)
     /// @param initialValue Initial value of the fold
     /// @param foldFunction Function that performs the fold given an element, its index, and the carry value
-    /// @return A non-null FoldIndexedGatherer
-    public static <INPUT extends @Nullable Object, OUTPUT extends @Nullable Object> FoldIndexedGatherer<INPUT, OUTPUT> foldIndexed(
+    /// @return A non-null AccumulatingGatherer
+    public static <INPUT extends @Nullable Object, OUTPUT extends @Nullable Object> AccumulatingGatherer<INPUT, OUTPUT> foldIndexed(
             final Supplier<OUTPUT> initialValue,
-            final TriFunction<Long, OUTPUT, INPUT, OUTPUT> foldFunction
+            final IndexedAccumulatorFunction<? super OUTPUT, ? super INPUT, ? extends OUTPUT> foldFunction
     ) {
-        return new FoldIndexedGatherer<>(initialValue, foldFunction);
+        return new AccumulatingGatherer<>(false, initialValue, foldFunction);
     }
 
     /// Turn a `Stream<INPUT>` into a `Stream<List<INPUT>>` where consecutive
@@ -195,7 +195,7 @@ public abstract class Gatherers4j {
     ///
     /// @param windowSize      The trailing number of elements to multiply, must be greater than 1.
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
-    ///                                                                      in the moving product calculation
+    ///                        in the moving product calculation
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalMovingProductGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalMovingProductGatherer<INPUT> movingProductBy(
@@ -219,7 +219,7 @@ public abstract class Gatherers4j {
     ///
     /// @param windowSize      The trailing number of elements to multiply, must be greater than 1.
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
-    ///                                                                      in the moving sum calculation
+    ///                        in the moving sum calculation
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalMovingSumGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalMovingSumGatherer<INPUT> movingSumBy(
@@ -275,13 +275,6 @@ public abstract class Gatherers4j {
         return new FrequencyGatherer<>(FrequencyGatherer.Order.Descending);
     }
 
-
-    public static <INPUT extends @Nullable Object> ReduceIndexedGatherer<INPUT> reduceIndexed(
-            final TriFunction<Long, INPUT, INPUT, INPUT> reduceFunction
-    ) {
-        return new ReduceIndexedGatherer<>(reduceFunction);
-    }
-
     /// Reverse the order of the input Stream.
     ///
     /// Note: This consumes the entire stream and holds it in memory, so it will not work on infinite
@@ -308,7 +301,7 @@ public abstract class Gatherers4j {
     /// objects mapped from a `Stream<BigDecimal>` via a `mappingFunction`.
     ///
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
-    ///                                                                                                                    in the standard deviation calculation
+    ///                        in the standard deviation calculation
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalStandardDeviationGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalStandardDeviationGatherer<INPUT> runningPopulationStandardDeviationBy(
@@ -331,7 +324,7 @@ public abstract class Gatherers4j {
     /// from a `Stream<INPUT>` via a `mappingFunction`.
     ///
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
-    ///                                                                                                                    in the product calculation
+    ///                        in the product calculation
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalProductGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalProductGatherer<INPUT> runningProductBy(
@@ -354,7 +347,7 @@ public abstract class Gatherers4j {
     /// from a `Stream<INPUT>` via a `mappingFunction`.
     ///
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
-    ///                                                                                                                    in the standard deviation calculation
+    ///                        in the standard deviation calculation
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalStandardDeviationGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalStandardDeviationGatherer<INPUT> runningSampleStandardDeviationBy(
@@ -377,13 +370,27 @@ public abstract class Gatherers4j {
     /// from a `Stream<INPUT>` via a `mappingFunction`.
     ///
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
-    ///                                                                                                                    in the running sum calculation
+    ///                        in the running sum calculation
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalSumGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalSumGatherer<INPUT> runningSumBy(
             final Function<INPUT, BigDecimal> mappingFunction
     ) {
         return new BigDecimalSumGatherer<>(mappingFunction);
+    }
+
+    ///  Perform a scan over every element in the input stream along with its index
+    ///
+    /// @param <INPUT>      Type of elements in the input stream
+    /// @param <OUTPUT>     Type elements are accumulated to
+    /// @param initialValue Initial value of the scan
+    /// @param scanFunction Function that performs the accumulation given an element, its index, and the carry value
+    /// @return A non-null AccumulatingGatherer
+    public static <INPUT extends @Nullable Object, OUTPUT extends @Nullable Object> AccumulatingGatherer<INPUT, OUTPUT> scanIndexed(
+            final Supplier<OUTPUT> initialValue,
+            final IndexedAccumulatorFunction<OUTPUT, INPUT, OUTPUT> scanFunction
+    ) {
+        return new AccumulatingGatherer<>(true, initialValue, scanFunction);
     }
 
     /// Shuffle the input stream into a random order.
@@ -420,7 +427,7 @@ public abstract class Gatherers4j {
     /// the given function. This is useful when paired with the `withOriginal` function.
     ///
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
-    ///                                                                                             in the running average calculation
+    ///                        in the running average calculation
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalSimpleAverageGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalSimpleAverageGatherer<INPUT> simpleRunningAverageBy(
@@ -443,7 +450,7 @@ public abstract class Gatherers4j {
     ///
     /// @param windowSize      The number of elements to average, must be greater than 1.
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
-    ///                                                                      in the moving average calculation
+    ///                        in the moving average calculation
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalSimpleMovingAverageGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalSimpleMovingAverageGatherer<INPUT> simpleMovingAverageBy(

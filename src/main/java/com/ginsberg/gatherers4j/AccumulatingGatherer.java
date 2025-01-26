@@ -24,20 +24,23 @@ import java.util.stream.Gatherer;
 
 import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
 
-public class FoldIndexedGatherer<INPUT extends @Nullable Object, OUTPUT extends @Nullable Object>
-        implements Gatherer<INPUT, FoldIndexedGatherer.State<OUTPUT>, OUTPUT> {
+public class AccumulatingGatherer<INPUT extends @Nullable Object, OUTPUT extends @Nullable Object>
+        implements Gatherer<INPUT, AccumulatingGatherer.State<OUTPUT>, OUTPUT> {
 
-    private final TriFunction<Long, OUTPUT, INPUT, OUTPUT> foldFunction;
+    private final IndexedAccumulatorFunction<? super OUTPUT, ? super INPUT, ? extends OUTPUT> accumulatorFunction;
     private final Supplier<OUTPUT> initialValue;
+    private final boolean running;
 
-    FoldIndexedGatherer(
+    AccumulatingGatherer(
+            final boolean running,
             final Supplier<OUTPUT> initialValue,
-            final TriFunction<Long, OUTPUT, INPUT, OUTPUT> foldFunction
+            final IndexedAccumulatorFunction<? super OUTPUT, ? super INPUT, ? extends OUTPUT> foldFunction
     ) {
         mustNotBeNull(initialValue, "Initial value supplier must not be null");
-        mustNotBeNull(foldFunction, "Fold function must not be null");
-        this.foldFunction = foldFunction;
+        mustNotBeNull(foldFunction, "Accumulator function must not be null");
+        this.accumulatorFunction = foldFunction;
         this.initialValue = initialValue;
+        this.running = running;
     }
 
     @Override
@@ -48,14 +51,21 @@ public class FoldIndexedGatherer<INPUT extends @Nullable Object, OUTPUT extends 
     @Override
     public Integrator<State<OUTPUT>, INPUT, OUTPUT> integrator() {
         return Integrator.ofGreedy((state, element, downstream) -> {
-            state.carriedValue = foldFunction.apply(state.index++, state.carriedValue, element);
+            state.carriedValue = accumulatorFunction.apply(state.index++, state.carriedValue, element);
+            if (running) {
+                downstream.push(state.carriedValue);
+            }
             return !downstream.isRejecting();
         });
     }
 
     @Override
     public BiConsumer<State<OUTPUT>, Downstream<? super OUTPUT>> finisher() {
-        return (outputState, downstream) -> downstream.push(outputState.carriedValue);
+        return (outputState, downstream) -> {
+            if (!running) {
+                downstream.push(outputState.carriedValue);
+            }
+        };
     }
 
     public static class State<OUTPUT> {
