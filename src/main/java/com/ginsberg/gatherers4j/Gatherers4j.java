@@ -172,6 +172,15 @@ public abstract class Gatherers4j {
         return new InterleavingGatherer<>(other);
     }
 
+    /// Intersperse the given `intersperseElement` between each element of the input stream.
+    ///
+    /// @param intersperseElement The element to intersperse, which may be null
+    /// @param <INPUT> The type of elements in the stream and the element to intersperse
+    /// @return A non-null IntersperseGatherer
+    public static <INPUT extends @Nullable Object> IntersperseGatherer<INPUT> intersperse(final INPUT intersperseElement) {
+        return new IntersperseGatherer<>(intersperseElement);
+    }
+
     /// Remove all but the last `count` elements from the stream.
     ///
     /// @param count   A non-negative integer, the number of elements to return
