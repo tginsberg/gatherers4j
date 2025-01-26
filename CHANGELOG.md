@@ -6,6 +6,7 @@
 + Implement `foldIndexed()` to perform a fold along with the index of each element
 + Implement `scanIndexed()` to perform a scan along with the index of each element
 + Implement `intersperse()` to put the given element between each element of the stream
++ Implement `cross(iterable)`, `cross(iterator)`, and `cross(stream)` to combine elements in the input stream with the given source of elements
 + 
 ### 0.7.0
 + Use greedy integrators where possible (Fixes #57)

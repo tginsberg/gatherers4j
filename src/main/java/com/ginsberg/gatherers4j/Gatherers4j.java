@@ -34,6 +34,50 @@ import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
 /// are created from static methods on this class.
 public abstract class Gatherers4j {
 
+    /// Cross every element of the input stream with every element of the given `Iterable`, emitting them
+    /// to the output stream as a `Pair<INPUT, CROSS>`.
+    ///
+    /// @param <INPUT> Type of element in the input stream
+    /// @param <CROSS> Type of element in the cross `Iterable`
+    /// @param crossWith The Iterable to cross with
+    /// @return A non-null CrossGatherer
+    public static <INPUT extends @Nullable Object, CROSS extends @Nullable Object> CrossGatherer<INPUT, CROSS> cross(
+            final Iterable<CROSS> crossWith
+    ) {
+        return new CrossGatherer<>(crossWith);
+    }
+
+    /// Cross every element of the input stream with every element of the given `Iterator`, emitting them
+    /// to the output stream as a `Pair<INPUT, CROSS>`.
+    ///
+    /// Note: the Iterator is consumed fully and stored as a List in memory.
+    ///
+    /// @param <INPUT> Type of element in the input stream
+    /// @param <CROSS> Type of element in the cross `Iterator`
+    /// @param crossWith The Iterator to cross with
+    /// @return A non-null CrossGatherer
+    public static <INPUT extends @Nullable Object, CROSS extends @Nullable Object> CrossGatherer<INPUT, CROSS> cross(
+            final Iterator<CROSS> crossWith
+    ) {
+        return new CrossGatherer<>(crossWith);
+    }
+
+    /// Cross every element of the input stream with every element of the given `Stream`, emitting them
+    /// to the output stream as a `Pair<INPUT, CROSS>`.
+    ///
+    /// Note: the Iterator is consumed fully and stored as a List in memory.
+    /// Note: The Ghostbusters warned us about this and I hereby absolve myself of any responsibility if you cause some kind of cataclysm.
+    ///
+    /// @param <INPUT> Type of element in the input stream
+    /// @param <CROSS> Type of element in the cross `Iterator`
+    /// @param crossWith The Stream to cross with
+    /// @return A non-null CrossGatherer
+    public static <INPUT extends @Nullable Object, CROSS extends @Nullable Object> CrossGatherer<INPUT, CROSS> cross(
+            final Stream<CROSS> crossWith
+    ) {
+        return new CrossGatherer<>(crossWith);
+    }
+
     /// Limit the number of elements in the stream to some number per period, dropping anything over the
     /// limit during the period.
     ///

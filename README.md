@@ -33,6 +33,9 @@ implementation("com.ginsberg:gatherers4j:0.8.0")
 
 | Function                       | Purpose                                                                                                                        |
 |--------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
+| `cross(iterable)`              | Emit each element of the source stream with each element of the given `iterable` as a `Pair` to the output stream              |
+| `cross(iterator)`              | Emit each element of the source stream with each element of the given `iterator` as a `Pair` to the output stream              |
+| `cross(stream)`                | Emit each element of the source stream with each element of the given `stream` as a `Pair` to the output stream                |
 | `debounce(amount, duration)`   | Limit stream elements to `amount` elements over `duration`, dropping any elements over the limit until a new `duration` starts |
 | `dedupeConsecutive()`          | Remove consecutive duplicates from a stream                                                                                    |
 | `dedupeConsecutiveBy(fn)`      | Remove consecutive duplicates from a stream as returned by `fn`                                                                |
@@ -321,6 +324,39 @@ Stream.of("A", "B", "C")
     ).toList();
 
 // ["A0", "A0B1", "A0B1C2"]
+```
+
+#### Cross the input stream with the given iterable
+
+```java
+Stream.of("A", "B", "C")
+    .gather(
+        Gatherers4j.cross(List.of(1, 2))
+    ).toList();
+
+// [Pair(A, 1), Pair(A, 2), Pair(B, 1), Pair(B, 2), Pair(C, 1), Pair(C, 2)]
+```
+
+#### Cross the input stream with the given iterator
+
+```java
+Stream.of("A", "B", "C")
+    .gather(
+        Gatherers4j.cross(List.of(1, 2).iterator())
+    ).toList();
+
+// [Pair(A, 1), Pair(A, 2), Pair(B, 1), Pair(B, 2), Pair(C, 1), Pair(C, 2)]
+```
+
+#### Cross the input stream with the given stream
+
+```java
+Stream.of("A", "B", "C")
+    .gather(
+        Gatherers4j.cross(Stream.of(1, 2))
+    ).toList();
+
+// [Pair(A, 1), Pair(A, 2), Pair(B, 1), Pair(B, 2), Pair(C, 1), Pair(C, 2)]
 ```
 
 
