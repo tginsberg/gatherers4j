@@ -49,8 +49,8 @@ implementation("com.ginsberg:gatherers4j:0.8.0")
 | `last(n)`                      | Constrain the stream to the last `n` values                                                                                    |
 | `orderByFrequencyAscending()`  | Returns a stream where elements are ordered from least to most frequent as `WithCount<T>` wrapper objects.                     |
 | `orderByFrequencyDescending()` | Returns a stream where elements are ordered from most to least frequent as `WithCount<T>` wrapper objects.                     |
-| `reduceIndexed(fn)`            | Performs a reduce on the input stream using the given function, and includes the index of the elements                         |
 | `reverse()`                    | Reverse the order of the stream                                                                                                |
+| `scanIndexed(fn)`              | Performs a scan on the input stream using the given function, and includes the index of the elements                           |
 | `shuffle()`                    | Shuffle the stream into a random order using the platform default `RandomGenerator`                                            |
 | `shuffle(rg)`                  | Shuffle the stream into a random order using the specified `RandomGenerator`                                                   |
 | `sizeExactly(n)`               | Ensure the stream is exactly `n` elements long, or throw an `IllegalStateException`                                            |
@@ -179,17 +179,6 @@ Stream.of("A", "B", "C", "D", "E", "F", "G")
 // ["A", "D", "G"]
 ```
 
-#### Reduce a stream with access to the index of the elements
-
-```java
-Stream.of("A", "B", "C")
-    .gather(Gatherers4j.reduceIndexed((index, a, b) -> a + b + index))
-    .toList()
-    .getFirst();
-
-// "AB1C2"
-```
-
 #### Take from a stream until a predicate is met, inclusive
 
 ```java
@@ -305,7 +294,7 @@ Stream.of("A", "B", "C", "D")
 ```
 
 
-#### Perform a fold including the index of each element
+#### Perform a fold with access to the index of the elements
 
 ```java
 // Add even elements only
@@ -319,6 +308,21 @@ Stream.of(1, 2, 3, 4, 5, 6)
 
 // 9
 ```
+
+#### Perform a scan with access to the index of the elements
+
+```java
+Stream.of("A", "B", "C")
+    .gather(
+        Gatherers4j.scanIndexed(
+            () -> "",
+            (index, carry, next) -> carry + next + index
+        )
+    ).toList();
+
+// ["A0", "A0B1", "A0B1C2"]
+```
+
 
 #### Group identical elements
 
