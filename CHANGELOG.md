@@ -5,7 +5,8 @@
 + Implement `takeUntil()` to take from a stream until a predicate is met, including the first element that matches the predicate
 + Implement `foldIndexed()` to perform a fold along with the index of each element
 + Implement `scanIndexed()` to perform a scan along with the index of each element
-
++ Implement `intersperse()` to put the given element between each element of the stream
++ 
 ### 0.7.0
 + Use greedy integrators where possible (Fixes #57)
 + Add [JSpecify](https://jspecify.dev/) annotations for static analysis
