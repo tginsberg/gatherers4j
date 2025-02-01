@@ -1,3 +1,13 @@
+### 0.8.0 
++ Add support for `orElse()` and `orElseEmpty()` on size-based gatherers to provide a non-exceptional output stream
++ Implement `everyNth()` to get every `n`<sup>th</sup> element from the stream
++ Implement `uniquelyOccurring()` to emit stream elements that occur a single time
++ Implement `takeUntil()` to take from a stream until a predicate is met, including the first element that matches the predicate
++ Implement `foldIndexed()` to perform a fold along with the index of each element
++ Implement `scanIndexed()` to perform a scan along with the index of each element
++ Implement `intersperse()` to put the given element between each element of the stream
++ Implement `cross(iterable)`, `cross(iterator)`, and `cross(stream)` to combine elements in the input stream with the given source of elements
++ 
 ### 0.7.0
 + Use greedy integrators where possible (Fixes #57)
 + Add [JSpecify](https://jspecify.dev/) annotations for static analysis

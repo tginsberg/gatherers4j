@@ -15,7 +15,7 @@ Add the following dependency to `pom.xml`.
 <dependency>
     <groupId>com.ginsberg</groupId>
     <artifactId>gatherers4j</artifactId>
-    <version>0.7.0</version>
+    <version>0.8.0</version>
 </dependency>
 ```
 
@@ -24,7 +24,7 @@ Add the following dependency to `pom.xml`.
 Add the following dependency to `build.gradle` or `build.gradle.kts`
 
 ```groovy
-implementation("com.ginsberg:gatherers4j:0.7.0")
+implementation("com.ginsberg:gatherers4j:0.8.0")
 ```
 
 # Gatherers In This Library
@@ -33,13 +33,18 @@ implementation("com.ginsberg:gatherers4j:0.7.0")
 
 | Function                       | Purpose                                                                                                                        |
 |--------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
+| `cross(iterable)`              | Emit each element of the source stream with each element of the given `iterable` as a `Pair` to the output stream              |
+| `cross(iterator)`              | Emit each element of the source stream with each element of the given `iterator` as a `Pair` to the output stream              |
+| `cross(stream)`                | Emit each element of the source stream with each element of the given `stream` as a `Pair` to the output stream                |
 | `debounce(amount, duration)`   | Limit stream elements to `amount` elements over `duration`, dropping any elements over the limit until a new `duration` starts |
 | `dedupeConsecutive()`          | Remove consecutive duplicates from a stream                                                                                    |
 | `dedupeConsecutiveBy(fn)`      | Remove consecutive duplicates from a stream as returned by `fn`                                                                |
 | `distinctBy(fn)`               | Emit only distinct elements from the stream, as measured by `fn`                                                               |
 | `dropLast(n)`                  | Keep all but the last `n` elements of the stream                                                                               |
+| `everyNth(n)`                  | Limit the stream to every `n`<sup>th</sup> element                                                                             |
 | `filterWithIndex(predicate)`   | Filter the stream with the given `predicate`, which takes an `element` and its `index`                                         |
-| `grouping()`                   | Group consecute identical elements into lists                                                                                  |
+| `foldIndexed(fn)`              | Perform a fold over the input stream where each element is included along with its index                                       |
+| `grouping()`                   | Group consecutive identical elements into lists                                                                                |
 | `groupingBy(fn)`               | Group consecutive elements that are identical according to `fn` into lists                                                     |                                                                                                                    
 | `interleave(iterable)`         | Creates a stream of alternating objects from the input stream and the argument iterable                                        |
 | `interleave(iterator)`         | Creates a stream of alternating objects from the input stream and the argument iterator                                        |
@@ -48,6 +53,7 @@ implementation("com.ginsberg:gatherers4j:0.7.0")
 | `orderByFrequencyAscending()`  | Returns a stream where elements are ordered from least to most frequent as `WithCount<T>` wrapper objects.                     |
 | `orderByFrequencyDescending()` | Returns a stream where elements are ordered from most to least frequent as `WithCount<T>` wrapper objects.                     |
 | `reverse()`                    | Reverse the order of the stream                                                                                                |
+| `scanIndexed(fn)`              | Performs a scan on the input stream using the given function, and includes the index of the elements                           |
 | `shuffle()`                    | Shuffle the stream into a random order using the platform default `RandomGenerator`                                            |
 | `shuffle(rg)`                  | Shuffle the stream into a random order using the specified `RandomGenerator`                                                   |
 | `sizeExactly(n)`               | Ensure the stream is exactly `n` elements long, or throw an `IllegalStateException`                                            |
@@ -55,7 +61,9 @@ implementation("com.ginsberg:gatherers4j:0.7.0")
 | `sizeGreaterThanOrEqualTo(n)`  | Ensure the stream is greater than or equal to `n` elements long, or throw an `IllegalStateException`                           |
 | `sizeLessThan(n)`              | Ensure the stream is less than `n` elements long, or throw an `IllegalStateException`                                          |
 | `sizeLessThanOrEqualTo(n)`     | Ensure the stream is less than or equal to `n` elements long, or throw an `IllegalStateException`                              |
+| `takeUntil(predicate)`         | Take elements from the input stream until the `predicate` is met, including the first element that matches the `preciate`      |
 | `throttle(amount, duration)`   | Limit stream elements to `amount` elements over `duration`, pausing until a new `duration` period starts                       |
+| `uniquelyOccurring()`          | Emit elements that occur a single time, dropping all others                                                                    |
 | `withIndex()`                  | Maps all elements of the stream as-is along with their 0-based index                                                           |
 | `zipWith(iterable)`            | Creates a stream of `Pair` objects whose values come from the input stream and argument iterable                               |
 | `zipWith(iterator)`            | Creates a stream of `Pair` objects whose values come from the input stream and argument iterator                               |
@@ -164,6 +172,26 @@ Stream.of("A", "B", "C", "D", "E")
 // ["A", "B", "C"]
 ```
 
+#### Keep every `n`<sup>th</sup> element
+
+```java
+Stream.of("A", "B", "C", "D", "E", "F", "G")
+    .gather(Gatherers4j.everyNth(3))
+    .toList();
+    
+// ["A", "D", "G"]
+```
+
+#### Take from a stream until a predicate is met, inclusive
+
+```java
+Stream.of("A", "B", "C", "D", "E", "F", "G")
+    .gather(Gatherers4j.takeUntil(it -> it.equals("C")))
+    .toList()
+    
+// ["A", "B", "C"]
+```
+
 #### Ensure the stream is exactly `n` elements long
 
 ```java
@@ -175,6 +203,34 @@ Stream.of("A", "B", "C").gather(Gatherers4j.sizeExactly(3)).toList();
 // Bad
 Stream.of("A").gather(Gatherers4j.sizeExactly(3)).toList();
 // IllegalStateException
+```
+
+#### Replace stream when size check fails
+
+This applies to `sizeExactly()`, `sizeLessThan()`, `sizeLessThanOrEqualTo()`, `sizeGreaterThan()`, and `sizeGreaterThanOrEqualTo()`.
+
+Note, this needs a type witness due to how Java generics work.
+
+```java
+Stream.of("A")
+    .gather(Gatherers4j.<String>sizeExactly(2).orElse(() -> Stream.of("A", "B")))
+    .toList();
+
+// ["A", "B"]
+```
+
+#### Return an empty stream when size check fails
+
+This applies to `sizeExactly()`, `sizeLessThan()`, `sizeLessThanOrEqualTo()`, `sizeGreaterThan()`, and `sizeGreaterThanOrEqualTo()`.
+
+Note, this needs a type witness due to how Java generics work.
+
+```java
+Stream.of("A")
+    .gather(Gatherers4j.<String>sizeExactly(2).orElseEmpty())
+    .toList();
+
+// []
 ```
 
 #### Ensure the stream is greater than `n` elements long
@@ -240,7 +296,71 @@ Stream.of("A", "B", "C", "D")
 // ["A", "C", "D"]
 ```
 
-### Group identical elements
+
+#### Perform a fold with access to the index of the elements
+
+```java
+// Add even elements only
+Stream.of(1, 2, 3, 4, 5, 6)
+    .gather(
+        Gatherers4j.foldIndexed(
+            () -> 0,
+            (index, carry, next) -> index % 2 == 0 ? carry + next : carry
+        )
+    ).toList().getFirst();
+
+// 9
+```
+
+#### Perform a scan with access to the index of the elements
+
+```java
+Stream.of("A", "B", "C")
+    .gather(
+        Gatherers4j.scanIndexed(
+            () -> "",
+            (index, carry, next) -> carry + next + index
+        )
+    ).toList();
+
+// ["A0", "A0B1", "A0B1C2"]
+```
+
+#### Cross the input stream with the given iterable
+
+```java
+Stream.of("A", "B", "C")
+    .gather(
+        Gatherers4j.cross(List.of(1, 2))
+    ).toList();
+
+// [Pair(A, 1), Pair(A, 2), Pair(B, 1), Pair(B, 2), Pair(C, 1), Pair(C, 2)]
+```
+
+#### Cross the input stream with the given iterator
+
+```java
+Stream.of("A", "B", "C")
+    .gather(
+        Gatherers4j.cross(List.of(1, 2).iterator())
+    ).toList();
+
+// [Pair(A, 1), Pair(A, 2), Pair(B, 1), Pair(B, 2), Pair(C, 1), Pair(C, 2)]
+```
+
+#### Cross the input stream with the given stream
+
+```java
+Stream.of("A", "B", "C")
+    .gather(
+        Gatherers4j.cross(Stream.of(1, 2))
+    ).toList();
+
+// [Pair(A, 1), Pair(A, 2), Pair(B, 1), Pair(B, 2), Pair(C, 1), Pair(C, 2)]
+```
+
+
+#### Group identical elements
 
 ```java
 Stream.of("A", "A", "B", "B", "B", "C")
@@ -250,7 +370,7 @@ Stream.of("A", "A", "B", "B", "B", "C")
 // [["A", "A"], ["B", "B", "B"], ["C"]]
 ```
 
-### Group identical elements as measured by a function
+#### Group identical elements as measured by a function
 
 ```java
 Stream.of("A", "B", "AA", "BB", "CC", "DDD")
@@ -361,6 +481,16 @@ Stream
               +----------- Pause
 ```
 
+#### Limit stream to elements that occur a single time
+
+```java
+Stream
+    .of("A", "B", "C", "A")
+    .gather(Gatherers4j.uniquelyOccurring())
+    .toList();
+
+// ["B", "C"]
+```
 
 #### Zip two streams of together into a `Stream<Pair>`
 
@@ -402,7 +532,7 @@ Functions which modify output and are available on all `BigDecimal` gatherers (s
 
 Note that rounding mode, precision, and scale are derived from the `MathContext`.
 
-### Example of `simpleRunningAverage()`
+#### Example of `simpleRunningAverage()`
 
 This example creates a stream of `double`, converts each value to a `BigDecmial`, and takes a `simpleMovingAverage` over 10 trailing values.
 It will `includePartialValues` and sets the `MathContext` to the values given. Additionally, nulls
@@ -448,4 +578,4 @@ someStreamOfBigDecimal()
 
 Please feel free to file issues for change requests or bugs. If you would like to contribute new functionality, please contact me before starting work!
 
-Copyright © 2024 by Todd Ginsberg
+Copyright © 2024-2025 by Todd Ginsberg
