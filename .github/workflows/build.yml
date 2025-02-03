@@ -24,15 +24,6 @@ jobs:
       - name: Build
         run: ./gradlew build --no-daemon
 
-      - name: Publish
-        if: github.ref != 'refs/heads/main' && !(github.event_name == 'pull_request' && github.base_ref == 'main')
-        run: ./gradlew publish --no-daemon
-        env:
-          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-          SONATYPE_TOKEN: ${{ secrets.SONATYPE_TOKEN }}
-          SONATYPE_SIGNING_KEY: ${{ secrets.SONATYPE_SIGNING_KEY }}
-          SONATYPE_SIGNING_PASSPHRASE: ${{ secrets.SONATYPE_SIGNING_PASSPHRASE }}
-
       - name: Add coverage to PR
         if: github.event_name == 'pull_request'
         id: jacoco
