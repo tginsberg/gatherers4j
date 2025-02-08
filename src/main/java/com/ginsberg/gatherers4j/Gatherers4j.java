@@ -41,11 +41,11 @@ public abstract class Gatherers4j {
     /// @param <INPUT> Type of element in the input stream
     /// @param <CROSS> Type of element in the cross `Iterable`
     /// @param crossWith The Iterable to cross with
-    /// @return A non-null CrossGatherer
-    public static <INPUT extends @Nullable Object, CROSS extends @Nullable Object> CrossGatherer<INPUT, CROSS> cross(
+    /// @return A non-null Gatherer
+    public static <INPUT extends @Nullable Object, CROSS extends @Nullable Object> Gatherer<INPUT, ?, Pair<INPUT, CROSS>> cross(
             final Iterable<CROSS> crossWith
     ) {
-        return new CrossGatherer<>(crossWith);
+        return CrossGatherer.of(crossWith);
     }
 
     /// Cross every element of the input stream with every element of the given `Iterator`, emitting them
@@ -56,11 +56,11 @@ public abstract class Gatherers4j {
     /// @param <INPUT> Type of element in the input stream
     /// @param <CROSS> Type of element in the cross `Iterator`
     /// @param crossWith The Iterator to cross with
-    /// @return A non-null CrossGatherer
-    public static <INPUT extends @Nullable Object, CROSS extends @Nullable Object> CrossGatherer<INPUT, CROSS> cross(
+    /// @return A non-null Gatherer
+    public static <INPUT extends @Nullable Object, CROSS extends @Nullable Object> Gatherer<INPUT, ?, Pair<INPUT, CROSS>> cross(
             final Iterator<CROSS> crossWith
     ) {
-        return new CrossGatherer<>(crossWith);
+        return CrossGatherer.of(crossWith);
     }
 
     /// Cross every element of the input stream with every element of the given `Stream`, emitting them
@@ -72,11 +72,11 @@ public abstract class Gatherers4j {
     /// @param <INPUT> Type of element in the input stream
     /// @param <CROSS> Type of element in the cross `Iterator`
     /// @param crossWith The Stream to cross with
-    /// @return A non-null CrossGatherer
-    public static <INPUT extends @Nullable Object, CROSS extends @Nullable Object> CrossGatherer<INPUT, CROSS> cross(
+    /// @return A non-null Gatherer
+    public static <INPUT extends @Nullable Object, CROSS extends @Nullable Object> Gatherer<INPUT, ?, Pair<INPUT, CROSS>> cross(
             final Stream<CROSS> crossWith
     ) {
-        return new CrossGatherer<>(crossWith);
+        return CrossGatherer.of(crossWith);
     }
 
     /// Limit the number of elements in the stream to some number per period, dropping anything over the
