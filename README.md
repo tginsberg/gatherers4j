@@ -287,6 +287,16 @@ Stream.of("A", "B", "C").gather(Gatherers4j.sizeLessThanOrEqualTo(2)).toList();
 // IllegalStateException
 ```
 
+#### Filter a stream by type
+```java
+Stream.of((byte)1, (short)2, 3, (long)4, 1.0, 1.0d)
+    .gather(Gatherers.4j.filterInstanceOf(Integer.class, Short.class))
+    .toList();
+
+// [2, 3]
+```
+
+
 #### Filter a stream, knowing the index of each element
 
 ```java
