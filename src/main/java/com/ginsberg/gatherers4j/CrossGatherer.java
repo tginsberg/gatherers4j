@@ -27,29 +27,25 @@ import java.util.stream.StreamSupport;
 
 import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
 
-public class CrossGatherer<INPUT extends @Nullable Object, CROSS extends @Nullable Object>
-        implements Gatherer<INPUT, Void, Pair<INPUT, CROSS>> {
+public class CrossGatherer {
 
-    private final Iterable<CROSS> crossWith;
-
-    CrossGatherer(final Iterator<CROSS> crossWith) {
+    public static <INPUT extends @Nullable Object, CROSS extends @Nullable Object> Gatherer<INPUT, ?, Pair<INPUT, CROSS>> of(final Iterator<CROSS> crossWith) {
         mustNotBeNull(crossWith, "crossWith iterator must not be null");
-        this.crossWith = StreamSupport.stream(Spliterators.spliteratorUnknownSize(crossWith, Spliterator.ORDERED), false).toList();
+        return create(StreamSupport.stream(Spliterators.spliteratorUnknownSize(crossWith, Spliterator.ORDERED), false).toList());
     }
 
-    CrossGatherer(final Iterable<CROSS> crossWith) {
+    public static <INPUT extends @Nullable Object, CROSS extends @Nullable Object> Gatherer<INPUT, ?, Pair<INPUT, CROSS>> of(final Iterable<CROSS> crossWith) {
         mustNotBeNull(crossWith, "crossWith list must not be null");
-        this.crossWith = crossWith;
+        return create(crossWith);
     }
 
-    CrossGatherer(final Stream<CROSS> crossWith) {
+    public static <INPUT extends @Nullable Object, CROSS extends @Nullable Object> Gatherer<INPUT, ?, Pair<INPUT, CROSS>> of(final Stream<CROSS> crossWith) {
         mustNotBeNull(crossWith, "crossWith stream must not be null");
-        this.crossWith = crossWith.toList();
+        return create(crossWith.toList());
     }
 
-    @Override
-    public Integrator<Void, INPUT, Pair<INPUT, CROSS>> integrator() {
-        return Integrator.ofGreedy((_, element, downstream) -> {
+    private static <INPUT extends @Nullable Object, CROSS extends @Nullable Object> Gatherer<INPUT, ?, Pair<INPUT, CROSS>> create(final Iterable<CROSS> crossWith) {
+        return Gatherer.of((_, element, downstream) -> {
             for (final CROSS cross : crossWith) {
                 downstream.push(new Pair<>(element, cross));
             }
