@@ -29,6 +29,10 @@ public class DedupeConsecutiveGatherer<INPUT extends @Nullable Object>
     @Nullable
     private final Function<INPUT, @Nullable Object> mappingFunction;
 
+    DedupeConsecutiveGatherer() {
+        this.mappingFunction = null;
+    }
+
     DedupeConsecutiveGatherer(@Nullable final Function<INPUT, @Nullable Object> mappingFunction) {
         this.mappingFunction = mappingFunction;
     }
@@ -55,7 +59,8 @@ public class DedupeConsecutiveGatherer<INPUT extends @Nullable Object>
     }
 
     public static class State {
-        @Nullable Object value;
+        @Nullable
+        Object value;
         boolean hasValue;
     }
 }

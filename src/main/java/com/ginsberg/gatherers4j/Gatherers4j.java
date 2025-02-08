@@ -98,7 +98,7 @@ public abstract class Gatherers4j {
     /// @param <INPUT> Type of elements in both the input and output streams
     /// @return A non-null `DedupeConsecutiveGatherer`
     public static <INPUT extends @Nullable Object> DedupeConsecutiveGatherer<INPUT> dedupeConsecutive() {
-        return new DedupeConsecutiveGatherer<>(null);
+        return new DedupeConsecutiveGatherer<>();
     }
 
     /// Remove consecutive duplicates from a stream where duplication is measured by the given `function`.
