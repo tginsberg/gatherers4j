@@ -42,6 +42,7 @@ implementation("com.ginsberg:gatherers4j:0.9.0")
 | `distinctBy(fn)`               | Emit only distinct elements from the stream, as measured by `fn`                                                               |
 | `dropLast(n)`                  | Keep all but the last `n` elements of the stream                                                                               |
 | `everyNth(n)`                  | Limit the stream to every `n`<sup>th</sup> element                                                                             |
+| `filterInstanceOf(types)`      | Filter the stream to only include elements of the given type(s)                                                                |
 | `filterWithIndex(predicate)`   | Filter the stream with the given `predicate`, which takes an `element` and its `index`                                         |
 | `foldIndexed(fn)`              | Perform a fold over the input stream where each element is included along with its index                                       |
 | `grouping()`                   | Group consecutive identical elements into lists                                                                                |
@@ -285,6 +286,16 @@ Stream.of("A", "B").gather(Gatherers4j.sizeLessThanOrEqualTo(2)).toList();
 Stream.of("A", "B", "C").gather(Gatherers4j.sizeLessThanOrEqualTo(2)).toList();
 // IllegalStateException
 ```
+
+#### Filter a stream by type
+```java
+Stream.of((byte)1, (short)2, 3, (long)4, 1.0, 1.0d)
+    .gather(Gatherers.4j.filterInstanceOf(Integer.class, Short.class))
+    .toList();
+
+// [2, 3]
+```
+
 
 #### Filter a stream, knowing the index of each element
 

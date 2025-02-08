@@ -1,5 +1,5 @@
 ### 0.9.0
-+ TBD
++ GH-86: Implement `filterInstanceOf` to filter a stream by type more easily (thanks @nipafx) 
 
 ### 0.8.0 
 + Add support for `orElse()` and `orElseEmpty()` on size-based gatherers to provide a non-exceptional output stream

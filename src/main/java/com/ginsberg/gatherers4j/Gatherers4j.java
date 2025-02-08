@@ -26,6 +26,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.random.RandomGenerator;
+import java.util.stream.Gatherer;
 import java.util.stream.Stream;
 
 import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
@@ -139,6 +140,20 @@ public abstract class Gatherers4j {
     /// @return A non-null `EveryNthGatherer`
     public static <INPUT extends @Nullable Object> EveryNthGatherer<INPUT> everyNth(final int count) {
         return new EveryNthGatherer<>(count);
+    }
+
+    /// Filter the elements in the stream to only include elements of the given types.
+    /// Note, due to how generics work you may end up with some... interesting stream types as a result
+    ///
+    /// @param <INPUT> Type of elements in the input stream
+    /// @param <OUTPUT> Type of elements in the output stream
+    /// @param validTypes A non-empty array of types to filter for
+    /// @return A non-null `Gatherer`
+    @SafeVarargs
+    public static <INPUT extends @Nullable Object, OUTPUT extends @Nullable Object> Gatherer<INPUT, ?, OUTPUT> filterInstanceOf(
+            final Class<? extends OUTPUT>... validTypes
+    ) {
+        return TypeFilteringGatherer.of(validTypes);
     }
 
     /// Filter a stream according to the given `predicate`, which takes both the item being examined,
