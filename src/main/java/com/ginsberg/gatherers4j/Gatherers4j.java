@@ -617,6 +617,18 @@ public abstract class Gatherers4j {
         return new UniquelyOccurringGatherer<>();
     }
 
+    /// Create windows over the elements of the input stream that are `windowSize` in length, sliding over `stepping` number of elements
+    /// and optionally including partial windows at the end of ths stream.
+    ///
+    /// @param <INPUT> Type of elements in the input and output stream
+    /// @param windowSize Size of the window, must be greater than 0
+    /// @param stepping Number of elements to slide over each time a window has filled, must be greater than 0
+    /// @param includePartials To include left-over partial windows at the end of the stream or not
+    /// @return A non-null `WindowedGatherer`
+    public static <INPUT extends @Nullable Object> WindowedGatherer<INPUT> windowed(int windowSize, int stepping, boolean includePartials) {
+        return new WindowedGatherer<>(windowSize, stepping, includePartials);
+    }
+
     /// Maps all elements of the stream as-is along with their 0-based index.
     ///
     /// @param <INPUT> Type of elements in the input stream
