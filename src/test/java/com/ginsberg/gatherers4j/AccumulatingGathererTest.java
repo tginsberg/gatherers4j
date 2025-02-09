@@ -16,8 +16,10 @@
 
 package com.ginsberg.gatherers4j;
 
+import com.ginsberg.gatherers4j.test.StreamSource;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,11 +39,9 @@ public class AccumulatingGathererTest {
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
-        @Test
-        void foldWithIndex() {
-            // Arrange
-            final Stream<String> input = Stream.of("A", "B", "C", "D");
-
+        @ParameterizedTest(name = "{0}")
+        @StreamSource(strings = {"A", "B", "C", "D"})
+        void foldWithIndex(final String type, final Stream<String> input) {
             // Act
             final List<IndexedValue<String>> output = input
                     .gather(
@@ -89,11 +89,9 @@ public class AccumulatingGathererTest {
             assertThatThrownBy(() -> Gatherers4j.scanIndexed(() -> "", null)).isInstanceOf(IllegalArgumentException.class);
         }
 
-        @Test
-        void scanWithIndex() {
-            // Arrange
-            final Stream<String> input = Stream.of("A", "B", "C");
-
+        @ParameterizedTest(name = "{0}")
+        @StreamSource(strings = {"A", "B", "C"})
+        void scanWithIndex(final String type, final Stream<String> input) {
             // Act
             final List<String> output = input
                     .gather(Gatherers4j.scanIndexed(

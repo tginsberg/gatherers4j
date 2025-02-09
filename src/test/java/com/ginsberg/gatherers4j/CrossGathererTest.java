@@ -16,8 +16,10 @@
 
 package com.ginsberg.gatherers4j;
 
+import com.ginsberg.gatherers4j.test.StreamSource;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -38,11 +40,11 @@ class CrossGathererTest {
             assertThatThrownBy(() -> Gatherers4j.cross((Iterable<String>) null)).isInstanceOf(IllegalArgumentException.class);
         }
 
-        @Test
+        @ParameterizedTest(name = "{0}")
+        @StreamSource(strings = {"A", "B", "C"})
         @SuppressWarnings("DataFlowIssue")
-        void crossesMultipleIterables() {
+        void crossesMultipleIterables(final String type, final Stream<String> input) {
             // Arrange
-            final Stream<String> input = Stream.of("A", "B", "C");
             final Iterable<Integer> cross1 = List.of(1, 2, 3);
             final Iterable<String> cross2 = List.of("X", "Y");
 
@@ -61,10 +63,10 @@ class CrossGathererTest {
             );
         }
 
-        @Test
-        void crossesSingleIterable() {
+        @ParameterizedTest(name = "{0}")
+        @StreamSource(strings = {"A", "B", "C"})
+        void crossesSingleIterable(final String type, final Stream<String> input) {
             // Arrange
-            final Stream<String> input = Stream.of("A", "B", "C");
             final Iterable<Integer> cross = List.of(1, 2, 3);
 
             // Act
@@ -80,10 +82,10 @@ class CrossGathererTest {
             );
         }
 
-        @Test
-        void emptyCrossIterable() {
+        @ParameterizedTest(name = "{0}")
+        @StreamSource(strings = {"A", "B", "C"})
+        void emptyCrossIterable(final String type, final Stream<String> input) {
             // Arrange
-            final Stream<String> input = Stream.of("A", "B", "C");
             final Iterable<Integer> cross = emptyList();
 
             // Act
@@ -104,11 +106,11 @@ class CrossGathererTest {
             assertThatThrownBy(() -> Gatherers4j.cross((Iterator<String>) null)).isInstanceOf(IllegalArgumentException.class);
         }
 
-        @Test
+        @ParameterizedTest(name = "{0}")
+        @StreamSource(strings = {"A", "B", "C"})
         @SuppressWarnings("DataFlowIssue")
-        void crossesMultipleStreams() {
+        void crossesMultipleStreams(final String type, final Stream<String> input) {
             // Arrange
-            final Stream<String> input = Stream.of("A", "B", "C");
             final Iterator<Integer> cross1 = List.of(1, 2, 3).iterator();
             final Iterator<String> cross2 = List.of("X", "Y").iterator();
 
@@ -127,10 +129,10 @@ class CrossGathererTest {
             );
         }
 
-        @Test
-        void crossesSingleStream() {
+        @ParameterizedTest(name = "{0}")
+        @StreamSource(strings = {"A", "B", "C"})
+        void crossesSingleStream(final String type, final Stream<String> input) {
             // Arrange
-            final Stream<String> input = Stream.of("A", "B", "C");
             final Iterator<Integer> cross = List.of(1, 2, 3).iterator();
 
             // Act
@@ -146,10 +148,10 @@ class CrossGathererTest {
             );
         }
 
-        @Test
-        void emptyCrossStream() {
+        @ParameterizedTest(name = "{0}")
+        @StreamSource(strings = {"A", "B", "C"})
+        void emptyCrossStream(final String type, final Stream<String> input) {
             // Arrange
-            final Stream<String> input = Stream.of("A", "B", "C");
             final Iterator<Integer> cross = Collections.emptyIterator();
 
             // Act
@@ -170,11 +172,11 @@ class CrossGathererTest {
             assertThatThrownBy(() -> Gatherers4j.cross((Stream<String>) null)).isInstanceOf(IllegalArgumentException.class);
         }
 
-        @Test
+        @ParameterizedTest(name = "{0}")
+        @StreamSource(strings = {"A", "B", "C"})
         @SuppressWarnings("DataFlowIssue")
-        void crossesMultipleStreams() {
+        void crossesMultipleStreams(final String type, final Stream<String> input) {
             // Arrange
-            final Stream<String> input = Stream.of("A", "B", "C");
             final Stream<Integer> cross1 = Stream.of(1, 2, 3);
             final Stream<String> cross2 = Stream.of("X", "Y");
 
@@ -193,10 +195,10 @@ class CrossGathererTest {
             );
         }
 
-        @Test
-        void crossesSingleStream() {
+        @ParameterizedTest(name = "{0}")
+        @StreamSource(strings = {"A", "B", "C"})
+        void crossesSingleStream(final String type, final Stream<String> input) {
             // Arrange
-            final Stream<String> input = Stream.of("A", "B", "C");
             final Stream<Integer> cross = Stream.of(1, 2, 3);
 
             // Act
@@ -212,10 +214,10 @@ class CrossGathererTest {
             );
         }
 
-        @Test
-        void emptyCrossStream() {
+        @ParameterizedTest(name = "{0}")
+        @StreamSource(strings = {"A", "B", "C"})
+        void emptyCrossStream(final String type, final Stream<String> input) {
             // Arrange
-            final Stream<String> input = Stream.of("A", "B", "C");
             final Stream<Integer> cross = Stream.empty();
 
             // Act
