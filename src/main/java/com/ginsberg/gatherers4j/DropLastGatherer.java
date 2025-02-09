@@ -18,9 +18,8 @@ package com.ginsberg.gatherers4j;
 
 import org.jspecify.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.BiConsumer;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.function.Supplier;
 import java.util.stream.Gatherer;
 
@@ -44,20 +43,14 @@ public class DropLastGatherer<INPUT extends @Nullable Object> implements Gathere
     public Integrator<State<INPUT>, INPUT, INPUT> integrator() {
         return Integrator.ofGreedy((state, element, downstream) -> {
             state.elements.add(element);
+            if(state.elements.size() > count) {
+                downstream.push(state.elements.removeFirst());
+            }
             return !downstream.isRejecting();
         });
     }
 
-    @Override
-    public BiConsumer<State<INPUT>, Downstream<? super INPUT>> finisher() {
-        return (inputState, downstream) -> {
-            for (int i = 0; i < inputState.elements.size() - count && !downstream.isRejecting(); i++) {
-                downstream.push(inputState.elements.get(i));
-            }
-        };
-    }
-
     public static class State<INPUT> {
-        final List<INPUT> elements = new ArrayList<>();
+        final Deque<INPUT> elements = new ArrayDeque<>();
     }
 }
