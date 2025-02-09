@@ -1,5 +1,6 @@
 ### 0.9.0
 + GH-86: Implement `filterInstanceOf` to filter a stream by type more easily (thanks @nipafx) 
++ Implement `windowed` to provide more options to windowing functions, namely - ability to specify size, how many to skip each time, and whether to include partial windows
 
 ### 0.8.0 
 + Add support for `orElse()` and `orElseEmpty()` on size-based gatherers to provide a non-exceptional output stream
