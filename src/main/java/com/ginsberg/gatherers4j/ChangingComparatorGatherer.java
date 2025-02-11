@@ -25,15 +25,15 @@ import java.util.stream.Gatherer;
 
 import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
 
-public sealed class IncreasingDecreasingComparatorGatherer<INPUT>
-        implements Gatherer<INPUT, IncreasingDecreasingComparatorGatherer.State<INPUT>, List<INPUT>>
-        permits IncreasingDecreasingComparableGatherer {
+public sealed class ChangingComparatorGatherer<INPUT>
+        implements Gatherer<INPUT, ChangingComparatorGatherer.State<INPUT>, List<INPUT>>
+        permits ChangingComparableGatherer {
 
-    private final Operation operation;
+    private final ChangingOperation operation;
     private final Comparator<INPUT> comparator;
 
-    IncreasingDecreasingComparatorGatherer(
-            final Operation operation,
+    ChangingComparatorGatherer(
+            final ChangingOperation operation,
             final Comparator<INPUT> comparator
     ) {
         mustNotBeNull(operation, "Operation must not be null");
@@ -43,12 +43,12 @@ public sealed class IncreasingDecreasingComparatorGatherer<INPUT>
     }
 
     @Override
-    public Supplier<IncreasingDecreasingComparatorGatherer.State<INPUT>> initializer() {
+    public Supplier<ChangingComparatorGatherer.State<INPUT>> initializer() {
         return State::new;
     }
 
     @Override
-    public Integrator<IncreasingDecreasingComparatorGatherer.State<INPUT>, INPUT, List<INPUT>> integrator() {
+    public Integrator<ChangingComparatorGatherer.State<INPUT>, INPUT, List<INPUT>> integrator() {
         return Integrator.ofGreedy((state, element, downstream) -> {
             if (!state.currentElements.isEmpty() && !isInSameList(state.currentElements.getLast(), element)) {
                 downstream.push(List.copyOf(state.currentElements));
@@ -76,32 +76,4 @@ public sealed class IncreasingDecreasingComparatorGatherer<INPUT>
         List<INPUT> currentElements = new ArrayList<>();
     }
 
-    enum Operation {
-        Decreasing {
-            @Override
-            boolean allows(final int comparison) {
-                return comparison < 0;
-            }
-        },
-        Increasing {
-            @Override
-            boolean allows(final int comparison) {
-                return comparison > 0;
-            }
-        },
-        NonDecreasing {
-            @Override
-            boolean allows(final int comparison) {
-                return comparison >= 0;
-            }
-        },
-        NonIncreasing {
-            @Override
-            boolean allows(final int comparison) {
-                return comparison <= 0;
-            }
-        };
-
-        abstract boolean allows(final int comparison);
-    }
 }

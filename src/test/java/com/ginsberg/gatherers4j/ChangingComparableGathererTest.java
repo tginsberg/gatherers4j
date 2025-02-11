@@ -16,7 +16,6 @@
 
 package com.ginsberg.gatherers4j;
 
-import com.ginsberg.gatherers4j.IncreasingDecreasingComparatorGatherer.Operation;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +25,7 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class IncreasingDecreasingComparableGathererTest {
+class ChangingComparableGathererTest {
 
     @Nested
     class Common {
@@ -34,7 +33,7 @@ class IncreasingDecreasingComparableGathererTest {
         @Test
         void operationMustNotBeNull() {
             assertThatThrownBy(() ->
-                    new IncreasingDecreasingComparableGatherer<>(null)
+                    new ChangingComparableGatherer<>(null)
             ).isExactlyInstanceOf(IllegalArgumentException.class);
         }
 
@@ -45,7 +44,7 @@ class IncreasingDecreasingComparableGathererTest {
 
             // Act
             final List<List<Integer>> output = input
-                    .gather(new IncreasingDecreasingComparableGatherer<>(Operation.Increasing))
+                    .gather(new ChangingComparableGatherer<>(ChangingOperation.Increasing))
                     .toList();
 
             // Assert
@@ -68,7 +67,7 @@ class IncreasingDecreasingComparableGathererTest {
 
             // Act
             final List<List<Integer>> output = input
-                    .gather(Gatherers4j.decreasing())
+                    .gather(Gatherers4j.groupDecreasing())
                     .toList();
 
             // Assert
@@ -87,7 +86,7 @@ class IncreasingDecreasingComparableGathererTest {
 
             // Act
             final List<List<String>> output = input
-                    .gather(Gatherers4j.decreasing())
+                    .gather(Gatherers4j.groupDecreasing())
                     .toList();
 
             // Assert
@@ -120,7 +119,7 @@ class IncreasingDecreasingComparableGathererTest {
 
             // Act
             final List<List<String>> output = input
-                    .gather(Gatherers4j.decreasing())
+                    .gather(Gatherers4j.groupDecreasing())
                     .toList();
 
             // Assert
@@ -137,7 +136,7 @@ class IncreasingDecreasingComparableGathererTest {
 
             // Act
             final List<List<String>> output = input
-                    .gather(Gatherers4j.increasing())
+                    .gather(Gatherers4j.groupIncreasing())
                     .toList();
 
             // Assert
@@ -170,7 +169,7 @@ class IncreasingDecreasingComparableGathererTest {
 
             // Act
             final List<List<Integer>> output = input
-                    .gather(Gatherers4j.increasing())
+                    .gather(Gatherers4j.groupIncreasing())
                     .toList();
 
             // Assert
@@ -189,7 +188,7 @@ class IncreasingDecreasingComparableGathererTest {
 
             // Act
             final List<List<String>> output = input
-                    .gather(Gatherers4j.increasing())
+                    .gather(Gatherers4j.groupIncreasing())
                     .toList();
 
             // Assert
@@ -206,7 +205,7 @@ class IncreasingDecreasingComparableGathererTest {
 
             // Act
             final List<List<String>> output = input
-                    .gather(Gatherers4j.nonDecreasing())
+                    .gather(Gatherers4j.groupNonDecreasing())
                     .toList();
 
             // Assert
@@ -239,7 +238,7 @@ class IncreasingDecreasingComparableGathererTest {
 
             // Act
             final List<List<Integer>> output = input
-                    .gather(Gatherers4j.nonDecreasing())
+                    .gather(Gatherers4j.groupNonDecreasing())
                     .toList();
 
             // Assert
@@ -257,7 +256,7 @@ class IncreasingDecreasingComparableGathererTest {
 
             // Act
             final List<List<String>> output = input
-                    .gather(Gatherers4j.nonDecreasing())
+                    .gather(Gatherers4j.groupNonDecreasing())
                     .toList();
 
             // Assert
@@ -274,7 +273,7 @@ class IncreasingDecreasingComparableGathererTest {
 
             // Act
             final List<List<String>> output = input
-                    .gather(Gatherers4j.nonIncreasing())
+                    .gather(Gatherers4j.groupNonIncreasing())
                     .toList();
 
             // Assert
@@ -307,7 +306,7 @@ class IncreasingDecreasingComparableGathererTest {
 
             // Act
             final List<List<Integer>> output = input
-                    .gather(Gatherers4j.nonIncreasing())
+                    .gather(Gatherers4j.groupNonIncreasing())
                     .toList();
 
             // Assert
@@ -325,7 +324,7 @@ class IncreasingDecreasingComparableGathererTest {
 
             // Act
             final List<List<String>> output = input
-                    .gather(Gatherers4j.nonIncreasing())
+                    .gather(Gatherers4j.groupNonIncreasing())
                     .toList();
 
             // Assert

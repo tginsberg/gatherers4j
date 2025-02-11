@@ -16,10 +16,10 @@
 
 package com.ginsberg.gatherers4j;
 
-public final class IncreasingDecreasingComparableGatherer<INPUT extends Comparable<INPUT>>
-        extends IncreasingDecreasingComparatorGatherer<INPUT> {
+public final class ChangingComparableGatherer<INPUT extends Comparable<INPUT>>
+        extends ChangingComparatorGatherer<INPUT> {
 
-    IncreasingDecreasingComparableGatherer(final Operation operation) {
+    ChangingComparableGatherer(final ChangingOperation operation) {
         super(operation, Comparable::compareTo);
     }
 

@@ -28,61 +28,80 @@ Add the following dependency to `build.gradle` or `build.gradle.kts`
 implementation("com.ginsberg:gatherers4j:0.9.0")
 ```
 
+
 # Gatherers In This Library
 
 For convenience, the full list of gatherers in this library are broken into four categories:
 
 1. [General Functions](#general-functions)
+2. [Filtering Functions](#filtering-functions)
 2. [Grouping Functions](#grouping-functions)
 3. [Stream Content Checks/Validation](#stream-content-checksvalidation)
 4. [Mathematics/Statistics](#mathematicsstatistics)
 
 ## General Functions
 
+Functions that don't (yet!) fall into one of the other categories.
+
 | Function                          | Purpose                                                                                                                                    |
 |-----------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
 | `cross()`                         | Emit each element of the source stream with each element of the given `iterable`, `iterator`, or `stream` as a `Pair` to the output stream |
-| `debounce(amount, duration)`      | Limit stream elements to `amount` elements over `duration`, dropping any elements over the limit until a new `duration` starts             | 
-| `dedupeConsecutive()`             | Remove consecutive duplicates from a stream                                                                                                |
-| `dedupeConsecutiveBy(fn)`         | Remove consecutive duplicates from a stream as returned by `fn`                                                                            |
-| `distinctBy(fn)`                  | Emit only distinct elements from the stream, as measured by `fn`                                                                           |
-| `dropLast(n)`                     | Keep all but the last `n` elements of the stream                                                                                           |
-| `everyNth(n)`                     | Limit the stream to every `n`<sup>th</sup> element                                                                                         |
-| `filterInstanceOf(types)`         | Filter the stream to only include elements of the given type(s)                                                                            |
-| `filterWithIndex(predicate)`      | Filter the stream with the given `predicate`, which takes an `element` and its `index`                                                     |
 | `foldIndexed(fn)`                 | Perform a fold over the input stream where each element is included along with its index                                                   |
 | `interleave()`                    | Creates a stream of alternating objects from the input stream and the argument `iterable`, `iterator`, or `stream`                         |
-| `last(n)`                         | Constrain the stream to the last `n` values                                                                                                |
 | `orderByFrequencyAscending()`     | Returns a stream where elements are ordered from least to most frequent as `WithCount<T>` wrapper objects.                                 |
 | `orderByFrequencyDescending()`    | Returns a stream where elements are ordered from most to least frequent as `WithCount<T>` wrapper objects.                                 |
 | `reverse()`                       | Reverse the order of the stream                                                                                                            |
 | `scanIndexed(fn)`                 | Performs a scan on the input stream using the given function, and includes the index of the elements                                       |
 | `shuffle()`                       | Shuffle the stream into a random order using the platform default `RandomGenerator`                                                        |
 | `shuffle(rg)`                     | Shuffle the stream into a random order using the specified `RandomGenerator`                                                               |
-| `takeUntil(predicate)`            | Take elements from the input stream until the `predicate` is met, including the first element that matches the `preciate`                  |
 | `throttle(amount, duration)`      | Limit stream elements to `amount` elements over `duration`, pausing until a new `duration` period starts                                   |
-| `uniquelyOccurring()`             | Emit elements that occur a single time, dropping all others                                                                                |
 | `withIndex()`                     | Maps all elements of the stream as-is along with their 0-based index                                                                       |
 | `zipWith( )`                      | Creates a stream of `Pair` objects whose values come from the input stream and argument `iterable`, `iterator`, or `stream`                |
 | `zipWithNext()`                   | Creates a stream of `List` objects via a sliding window of width 2 and stepping 1                                                          |      
+
+## Filtering Functions
+
+Functions that remove elements (or retain them, depending on how you look at it) from a stream
+
+| Function                          | Purpose                                                                                                                        |
+|-----------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
+| `debounce(amount, duration)`      | Limit stream elements to `amount` elements over `duration`, dropping any elements over the limit until a new `duration` starts |
+| `dedupeConsecutive()`             | Remove consecutive duplicates from a stream                                                                                                |
+| `dedupeConsecutiveBy(fn)`         | Remove consecutive duplicates from a stream as returned by `fn`                                                                            |
+| `distinctBy(fn)`                  | Emit only distinct elements from the stream, as measured by `fn`                                                                           |
+| `dropLast(n)`                     | Keep all but the last `n` elements of the stream                                                                                           |
+| `everyNth(n)`                     | Limit the stream to every `n`<sup>th</sup> element                                                                                         |
+| `filterDecreasing()`              | Filter the input stream of `Comparable` objects so that it contains only strictly decreasing objects                           |                                                                                           |
+| `filterDecreasing(comparator)`    | Filter the input stream of objects so that it contins only strictly decreasing objects, as measured by a given `Comparator`    |
+| `filterIncreasing()`              | Filter the input stream of `Comparable` objects so that it contains only strictly increasing objects                           |
+| `filterIncreasing(comparator)`    | Filter the input stream of objects so that it contins only strictly increasing objects, as measured by a given `Comparator`    |
+| `filterNonDecreasing()`           | Filter the input stream of `Comparable` objects so that it contains only non-decreasing objects                                |
+| `filterNonDecreasing(comparator)` | Filter the input stream of objects so that it contins only non-decreasing objects, as measured by a given `Comparator`         |
+| `filterNonIncreasing()`           | Filter the input stream of `Comparable` objects so that it contains non-increasing objects                                     |
+| `filterNonIncreasing(comparator)` | Filter the input stream of objects so that it contins only non-increasing objects, as measured by a given `Comparator`         |
+| `filterInstanceOf(types)`         | Filter the stream to only include elements of the given type(s)                                                                |
+| `filterWithIndex(predicate)`      | Filter the stream with the given `predicate`, which takes an `element` and its `index`                                         |
+| `last(n)`                         | Constrain the stream to the last `n` values                                                                                                |
+| `takeUntil(predicate)`            | Take elements from the input stream until the `predicate` is met, including the first element that matches the `preciate`                  |
+| `uniquelyOccurring()`             | Emit elements that occur a single time, dropping all others                                                                                |
 
 ## Grouping Functions
 
 Functions that group input elements by varying criteria.
 
-| Function                      | Purpose                                                                                                                                            |
-|-------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| `decreasing()`                | Group decreasing `Comparable` elements in the input stream to lists in the output stream                                                           |
-| `decreasing(comparator)`      | Group decreasing elements as measured by a `Comparator` in the input stream to lists in the output stream                                          |
-| `grouping()`                  | Group consecutive identical elements into lists                                                                                                    |
-| `groupingBy(fn)`              | Group consecutive elements that are identical according to `fn` into lists                                                                         | 
-| `increasing()`                | Group increasing `Comparable` elements in the input stream to lists in the output stream                                                           |
-| `increasing(comparator)`      | Group increasing elements as measured by a `Comparator` in the input stream to lists in the output stream                                          |
-| `nonIncreasing()`             | Group non-increasing `Comparable` elements in the input stream to lists in the output stream                                                       |
-| `nonIncreasing(comparator)`   | Group non-increasing elements as measured by a `Comparator` in the input stream to lists in the output stream                                      |
-| `nonDecreasing()`             | Group non-decreasing `Comparable` elements in the input stream to lists in the output stream                                                       |
-| `nonDecreasing(comparator)`   | Group non-decreasing elements as measured by a `Comparator` in the input stream to lists in the output stream                                      |
-| `windowed(size,step,partial)` | Create windows over the input stream that are `size` elements long, sliding over `step` elements each time, optionally including `partial` windows |
+| Function                         | Purpose                                                                                                                                            |
+|----------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
+| `grouping()`                     | Group consecutive identical elements into lists                                                                                                    |
+| `groupingBy(fn)`                 | Group consecutive elements that are identical according to `fn` into lists                                                                         | 
+| `groupDecreasing()`              | Group decreasing `Comparable` elements in the input stream to lists in the output stream                                                           |
+| `groupDecreasing(comparator)`    | Group decreasing elements as measured by a `Comparator` in the input stream to lists in the output stream                                          |
+| `groupIncreasing()`              | Group increasing `Comparable` elements in the input stream to lists in the output stream                                                           |
+| `groupIncreasing(comparator)`    | Group increasing elements as measured by a `Comparator` in the input stream to lists in the output stream                                          |
+| `groupNonIncreasing()`           | Group non-increasing `Comparable` elements in the input stream to lists in the output stream                                                       |
+| `groupNonIncreasing(comparator)` | Group non-increasing elements as measured by a `Comparator` in the input stream to lists in the output stream                                      |
+| `groupNonDecreasing()`           | Group non-decreasing `Comparable` elements in the input stream to lists in the output stream                                                       |
+| `groupNonDecreasing(comparator)` | Group non-decreasing elements as measured by a `Comparator` in the input stream to lists in the output stream                                      |
+| `windowed(size,step,partial)`    | Create windows over the input stream that are `size` elements long, sliding over `step` elements each time, optionally including `partial` windows |
 
 ## Stream Content Checks/Validation
 
@@ -92,10 +111,10 @@ These gatherers check invariants about streams and fail if they are not met.
 |-----------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
 | `ensureDecreasing()`              | Ensure that the input stream of `Comparable` objects contains only strictly decreasing objects, and fail otherwise.                        |                                                                                           |
 | `ensureDecreasing(comparator)`    | Ensure that the input stream of objects contins only strictly decreasing objects, as measured by a given `Comparator`, and fail otherwise. |
-| `ensureNonDecreasing()`           | Ensure that the input stream of `Comparable` objects contains only non-decreasing objects, and fail otherwise.                             |
-| `ensureNonDecreasing(comparator)` | Ensure that the input stream of objects contins only non-decreasing objects, as measured by a given `Comparator`, and fail otherwise.      |
 | `ensureIncreasing()`              | Ensure that the input stream of `Comparable` objects contains only strictly increasing objects, and fail otherwise.                        |
 | `ensureIncreasing(comparator)`    | Ensure that the input stream of objects contins only strictly increasing objects, as measured by a given `Comparator`, and fail otherwise. |
+| `ensureNonDecreasing()`           | Ensure that the input stream of `Comparable` objects contains only non-decreasing objects, and fail otherwise.                             |
+| `ensureNonDecreasing(comparator)` | Ensure that the input stream of objects contins only non-decreasing objects, as measured by a given `Comparator`, and fail otherwise.      |
 | `ensureNonIncreasing()`           | Ensure that the input stream of `Comparable` objects contains non-increasing objects, and fail otherwise.                                  |
 | `ensureNonIncreasing(comparator)` | Ensure that the input stream of objects contins only non-increasing objects, as measured by a given `Comparator`, and fail otherwise.      |
 | `sizeExactly(n)`                  | Ensure the stream is exactly `n` elements long, or throw an `IllegalStateException`                                                        |
@@ -131,16 +150,10 @@ These gatherers check invariants about streams and fail if they are not met.
 
 ```java
 Stream
-        .of("1.0","2.0","10.0")
-    .
-
-map(BigDecimal::new)        
-    .
-
-gather(Gatherers4j.simpleRunningAverage())
-        .
-
-toList();
+    .of("1.0", "2.0", "10.0")
+    .map(BigDecimal::new)        
+    .gather(Gatherers4j.simpleRunningAverage())
+    .toList();
 
 // [1, 1.5, 4.3333333333333333]
 ```
@@ -149,16 +162,10 @@ toList();
 
 ```java
 Stream
-        .of("1.0","2.0","10.0","20.0","30.0")
-    .
-
-map(BigDecimal::new)
-    .
-
-gather(Gatherers4j.simpleMovingAverage(2))
-        .
-
-toList();
+    .of("1.0", "2.0", "10.0", "20.0", "30.0")
+    .map(BigDecimal::new)
+    .gather(Gatherers4j.simpleMovingAverage(2))
+    .toList();
 
 // [1.5, 6, 15, 25]
 ```
@@ -167,13 +174,9 @@ toList();
 
 ```java
 Stream
-        .of("A","A","A","B","B","C","C","D","A","B","C")
-    .
-
-gather(Gatherers4j.dedupeConsecutive())
-        .
-
-toList();
+    .of("A", "A", "A", "B", "B", "C", "C", "D", "A", "B", "C")
+    .gather(Gatherers4j.dedupeConsecutive())
+    .toList();
 
 // ["A", "B", "C", "D", "A", "B", "C"]
 ```
@@ -181,27 +184,16 @@ toList();
 #### Remove consecutive duplicate elements, where duplicate is measured by a function
 
 ```java
-record Person(String firstName, String lastName) {
-}
+record Person(String firstName, String lastName) {}
 
 Stream
-        .
-
-of(
+    .of(
         new Person("Todd", "Ginsberg"),
-        new
-
-Person("Emma","Ginsberg"),
-        new
-
-Person("Todd","Smith")
+        new Person("Emma", "Ginsberg"),
+        new Person("Todd", "Smith")
     )
-            .
-
-gather(Gatherers4j.dedupeConsecutiveBy(Person::lastName))
-        .
-
-toList();
+    .gather(Gatherers4j.dedupeConsecutiveBy(Person::lastName))
+    .toList();
 
 // [Person("Todd", "Ginsberg"), Person("Todd", "Smith")]
 ```
@@ -209,27 +201,16 @@ toList();
 #### Remove duplicate elements, where duplicate is measured by a function
 
 ```java
-record Person(String firstName, String lastName) {
-}
+record Person(String firstName, String lastName) {}
 
 Stream
-        .
-
-of(
+    .of(
         new Person("Todd", "Ginsberg"),
-        new
-
-Person("Emma","Ginsberg"),
-        new
-
-Person("Todd","Smith")
+        new Person("Emma", "Ginsberg"),
+        new Person("Todd", "Smith")
     )
-            .
-
-gather(Gatherers4j.distinctBy(Person::firstName))
-        .
-
-toList();
+    .gather(Gatherers4j.distinctBy(Person::firstName))
+    .toList();
 
 // [Person("Todd", "Ginsberg"), Person("Emma", "Ginsberg")]
 ```
@@ -237,13 +218,9 @@ toList();
 #### Keep all but the last `n` elements
 
 ```java
-Stream.of("A","B","C","D","E")
-    .
-
-gather(Gatherers4j.dropLast(2))
-        .
-
-toList();
+Stream.of("A", "B", "C", "D", "E")
+    .gather(Gatherers4j.dropLast(2))
+    .toList();
 
 // ["A", "B", "C"]
 ```
@@ -251,30 +228,20 @@ toList();
 #### Keep every `n`<sup>th</sup> element
 
 ```java
-Stream.of("A","B","C","D","E","F","G")
-    .
-
-gather(Gatherers4j.everyNth(3))
-        .
-
-toList();
-
+Stream.of("A", "B", "C", "D", "E", "F", "G")
+    .gather(Gatherers4j.everyNth(3))
+    .toList();
+    
 // ["A", "D", "G"]
 ```
 
 #### Take from a stream until a predicate is met, inclusive
 
 ```java
-Stream.of("A","B","C","D","E","F","G")
-    .
-
-gather(Gatherers4j.takeUntil(it ->it.
-
-equals("C")))
-        .
-
-toList()
-
+Stream.of("A", "B", "C", "D", "E", "F", "G")
+    .gather(Gatherers4j.takeUntil(it -> it.equals("C")))
+    .toList()
+    
 // ["A", "B", "C"]
 ```
 
@@ -283,64 +250,38 @@ toList()
 ```java
 // Good
 
-Stream.of("A","B","C").
-
-gather(Gatherers4j.sizeExactly(3)).
-
-toList();
+Stream.of("A", "B", "C").gather(Gatherers4j.sizeExactly(3)).toList();
 // ["A", "B", "C"]
 
 // Bad
-Stream.
-
-of("A").
-
-gather(Gatherers4j.sizeExactly(3)).
-
-toList();
+Stream.of("A").gather(Gatherers4j.sizeExactly(3)).toList();
 // IllegalStateException
 ```
 
 #### Replace stream when size check fails
 
-This applies to `sizeExactly()`, `sizeLessThan()`, `sizeLessThanOrEqualTo()`, `sizeGreaterThan()`, and
-`sizeGreaterThanOrEqualTo()`.
+This applies to `sizeExactly()`, `sizeLessThan()`, `sizeLessThanOrEqualTo()`, `sizeGreaterThan()`, and `sizeGreaterThanOrEqualTo()`.
 
 Note, this needs a type witness due to how Java generics work.
 
 ```java
 Stream.of("A")
-    .
-
-gather(Gatherers4j .<String>sizeExactly(2).
-
-orElse(() ->Stream.
-
-of("A","B")))
-        .
-
-toList();
+    .gather(Gatherers4j.<String>sizeExactly(2).orElse(() -> Stream.of("A", "B")))
+    .toList();
 
 // ["A", "B"]
 ```
 
 #### Return an empty stream when size check fails
 
-This applies to `sizeExactly()`, `sizeLessThan()`, `sizeLessThanOrEqualTo()`, `sizeGreaterThan()`, and
-`sizeGreaterThanOrEqualTo()`.
+This applies to `sizeExactly()`, `sizeLessThan()`, `sizeLessThanOrEqualTo()`, `sizeGreaterThan()`, and `sizeGreaterThanOrEqualTo()`.
 
 Note, this needs a type witness due to how Java generics work.
 
 ```java
 Stream.of("A")
-    .
-
-gather(Gatherers4j .<String>sizeExactly(2).
-
-orElseEmpty())
-        .
-
-toList();
+    .gather(Gatherers4j.<String>sizeExactly(2).orElseEmpty())
+    .toList();
 
 // []
 ```
@@ -350,21 +291,11 @@ toList();
 ```java
 // Good
 
-Stream.of("A","B","C").
-
-gather(Gatherers4j.sizeGreaterThan(2)).
-
-toList();
+Stream.of("A", "B", "C").gather(Gatherers4j.sizeGreaterThan(2)).toList();
 // ["A", "B", "C"]
 
 // Bad
-Stream.
-
-of("A","B").
-
-gather(Gatherers4j.sizeGreaterThan(2)).
-
-toList();
+Stream.of("A", "B").gather(Gatherers4j.sizeGreaterThan(2)).toList();
 // IllegalStateException
 ```
 
@@ -373,21 +304,11 @@ toList();
 ```java
 // Good
 
-Stream.of("A","B").
-
-gather(Gatherers4j.sizeGreaterThanOrEqualTo(2)).
-
-toList();
+Stream.of("A", "B").gather(Gatherers4j.sizeGreaterThanOrEqualTo(2)).toList();
 // ["A", "B"]
 
 // Bad
-Stream.
-
-of("A").
-
-gather(Gatherers4j.sizeGreaterThanOrEqualTo(2)).
-
-toList();
+Stream.of("A").gather(Gatherers4j.sizeGreaterThanOrEqualTo(2)).toList();
 // IllegalStateException
 ```
 
@@ -396,94 +317,60 @@ toList();
 ```java
 // Good
 
-Stream.of("A").
-
-gather(Gatherers4j.sizeLessThan(2)).
-
-toList();
+Stream.of("A").gather(Gatherers4j.sizeLessThan(2)).toList();
 // ["A"]
 
 // Bad
-Stream.
-
-of("A","B").
-
-gather(Gatherers4j.sizeLessThan(2)).
-
-toList();
+Stream.of("A", "B").gather(Gatherers4j.sizeLessThan(2)).toList();
 // IllegalStateException
 ```
+
 
 #### Ensure the stream is less than or equal to `n` elements long
 
 ```java
 // Good
 
-Stream.of("A","B").
-
-gather(Gatherers4j.sizeLessThanOrEqualTo(2)).
-
-toList();
+Stream.of("A", "B").gather(Gatherers4j.sizeLessThanOrEqualTo(2)).toList();
 // ["A", "B"]
 
 // Bad
-Stream.
-
-of("A","B","C").
-
-gather(Gatherers4j.sizeLessThanOrEqualTo(2)).
-
-toList();
+Stream.of("A", "B", "C").gather(Gatherers4j.sizeLessThanOrEqualTo(2)).toList();
 // IllegalStateException
 ```
 
 #### Filter a stream by type
-
 ```java
-Stream.of((byte)1,(short)2,3,(long)4,1.0,1.0d)
-        .
-
-gather(Gatherers.4j.filterInstanceOf(Integer.class, Short .class))
-        .
-
-toList();
+Stream.of((byte)1, (short)2, 3, (long)4, 1.0, 1.0d)
+    .gather(Gatherers.4j.filterInstanceOf(Integer.class, Short.class))
+    .toList();
 
 // [2, 3]
 ```
 
+
 #### Filter a stream, knowing the index of each element
 
 ```java
-Stream.of("A","B","C","D")
-      .
-
-gather(Gatherers4j.filterWithIndex((index, element) ->index %2==0||element.
-
-equals("D")))
-        .
-
-toList();
+Stream.of("A", "B", "C", "D")
+      .gather(Gatherers4j.filterWithIndex((index, element) -> index % 2 == 0 || element.equals("D")))
+      .toList();
 
 // ["A", "C", "D"]
 ```
+
 
 #### Perform a fold with access to the index of the elements
 
 ```java
 // Add even elements only
-Stream.of(1,2,3,4,5,6)
-    .
-
-gather(
+Stream.of(1, 2, 3, 4, 5, 6)
+    .gather(
         Gatherers4j.foldIndexed(
-                () ->0,
-        (index,carry,next)->index %2==0?carry +next :carry
+            () -> 0,
+            (index, carry, next) -> index % 2 == 0 ? carry + next : carry
         )
-                ).
-
-toList().
-
-getFirst();
+    ).toList().getFirst();
 
 // 9
 ```
@@ -491,17 +378,13 @@ getFirst();
 #### Perform a scan with access to the index of the elements
 
 ```java
-Stream.of("A","B","C")
-    .
-
-gather(
+Stream.of("A", "B", "C")
+    .gather(
         Gatherers4j.scanIndexed(
-                () ->"",
-        (index,carry,next)->carry +next +index
+            () -> "",
+            (index, carry, next) -> carry + next + index
         )
-                ).
-
-toList();
+    ).toList();
 
 // ["A0", "A0B1", "A0B1C2"]
 ```
@@ -509,14 +392,10 @@ toList();
 #### Cross the input stream with the given iterable
 
 ```java
-Stream.of("A","B","C")
-    .
-
-gather(
+Stream.of("A", "B", "C")
+    .gather(
         Gatherers4j.cross(List.of(1, 2))
-        ).
-
-toList();
+    ).toList();
 
 // [Pair(A, 1), Pair(A, 2), Pair(B, 1), Pair(B, 2), Pair(C, 1), Pair(C, 2)]
 ```
@@ -524,16 +403,10 @@ toList();
 #### Cross the input stream with the given iterator
 
 ```java
-Stream.of("A","B","C")
-    .
-
-gather(
-        Gatherers4j.cross(List.of(1, 2).
-
-iterator())
-        ).
-
-toList();
+Stream.of("A", "B", "C")
+    .gather(
+        Gatherers4j.cross(List.of(1, 2).iterator())
+    ).toList();
 
 // [Pair(A, 1), Pair(A, 2), Pair(B, 1), Pair(B, 2), Pair(C, 1), Pair(C, 2)]
 ```
@@ -541,28 +414,21 @@ toList();
 #### Cross the input stream with the given stream
 
 ```java
-Stream.of("A","B","C")
-    .
-
-gather(
+Stream.of("A", "B", "C")
+    .gather(
         Gatherers4j.cross(Stream.of(1, 2))
-        ).
-
-toList();
+    ).toList();
 
 // [Pair(A, 1), Pair(A, 2), Pair(B, 1), Pair(B, 2), Pair(C, 1), Pair(C, 2)]
 ```
 
+
 #### Group identical elements
 
 ```java
-Stream.of("A","A","B","B","B","C")
-    .
-
-gather(Gatherers4j.grouping())
-        .
-
-toList();
+Stream.of("A", "A", "B", "B", "B", "C")
+    .gather(Gatherers4j.grouping())
+    .toList();
 
 // [["A", "A"], ["B", "B", "B"], ["C"]]
 ```
@@ -570,16 +436,13 @@ toList();
 #### Group identical elements as measured by a function
 
 ```java
-Stream.of("A","B","AA","BB","CC","DDD")
-    .
-
-gather(Gatherers4j.groupingBy(String::length))
-        .
-
-toList();
+Stream.of("A", "B", "AA", "BB", "CC", "DDD")
+    .gather(Gatherers4j.groupingBy(String::length))
+    .toList();
 
 // [["A", "B"], ["AA", "BB", "CC"], ["DDD"]]
 ```
+
 
 #### Interleave streams of the same type into one stream
 
@@ -587,11 +450,7 @@ toList();
 final Stream<String> left = Stream.of("A", "B", "C");
 final Stream<String> right = Stream.of("D", "E", "F");
 
-left.
-
-gather(Gatherers4j.interleave(right)).
-
-toList();
+left.gather(Gatherers4j.interleave(right)).toList();
 
 // ["A", "D", "B", "E", "C", "F"]
 ```
@@ -600,13 +459,9 @@ toList();
 
 ```java
 Stream
-        .of("A","B","C","D","E","F","G")
-    .
-
-gather(Gatherers4j.last(3))
-        .
-
-toList();
+    .of("A", "B", "C", "D", "E", "F", "G")
+    .gather(Gatherers4j.last(3))
+    .toList();
 
 // ["E", "F", "G"]
 ```
@@ -614,13 +469,9 @@ toList();
 #### Order elements by frequency, ascending
 
 ```java
-Stream.of("A","A","A","B","B","C")  
-    .
-
-gather(Gatherers4j.orderByFrequencyAscending())
-        .
-
-toList()
+Stream.of("A", "A", "A", "B", "B" ,"C")  
+    .gather(Gatherers4j.orderByFrequencyAscending())
+    .toList()
 
 // [WithCount("C", 1), WithCount("B", 2), WithCount("C", 3) ]
 ```
@@ -628,13 +479,9 @@ toList()
 #### Order elements by frequency, descending
 
 ```java
-Stream.of("A","A","A","B","B","C")  
-    .
-
-gather(Gatherers4j.orderByFrequencyDescending())
-        .
-
-toList()
+Stream.of("A", "A", "A", "B", "B" ,"C")  
+    .gather(Gatherers4j.orderByFrequencyDescending())
+    .toList()
 
 // [WithCount("C", 3), WithCount("B", 2), WithCount("A", 1) ]
 ```
@@ -643,13 +490,9 @@ toList()
 
 ```java
 Stream
-        .of("A","B","C")
-    .
-
-gather(Gatherers4j.reverse())
-        .
-
-toList();
+    .of("A", "B", "C")
+    .gather(Gatherers4j.reverse())
+    .toList();
 
 // ["C", "B", "A"]
 ```
@@ -658,13 +501,9 @@ toList();
 
 ```java
 Stream
-        .of("A","B","C")
-    .
-
-gather(Gatherers4j.withIndex())
-        .
-
-toList();
+    .of("A", "B", "C")
+    .gather(Gatherers4j.withIndex())
+    .toList();
 
 // [IndexedValue(0, "A"), IndexedValue(1, "B"), IndexedValue(2, "C")]
 ```
@@ -673,13 +512,9 @@ toList();
 
 ```java
 Stream
-        .of("A","B","C","D","E")
-     .
-
-gather(Gatherers4j.shuffle())
-        .
-
-toList();
+     .of("A", "B", "C", "D" ,"E")
+     .gather(Gatherers4j.shuffle())
+     .toList();
 
 // ex: ["B", "E", "A", "C", "D"] -- or some other randomly arranged stream
 ```
@@ -688,13 +523,9 @@ toList();
 
 ```java
 Stream
-        .of("A","B","C","D","E")
-     .
-
-gather(Gatherers4j.shuffle(RandomGenerator.of("someGenerator")))
-        .
-
-toList();
+     .of("A", "B", "C", "D" ,"E")
+     .gather(Gatherers4j.shuffle(RandomGenerator.of("someGenerator")))
+     .toList();
 
 // ex: ["B", "E", "A", "C", "D"] -- or some other randomly arranged stream
 ```
@@ -703,31 +534,23 @@ toList();
 
 ```java
 Stream
-        .of("A","B","C")
-    .
-
-gather(Gatherers4j.throttle(2, Duration.ofSeconds(1))) // Two per second
-        .
-
-toList();
+    .of("A", "B", "C")
+    .gather(Gatherers4j.throttle(2, Duration.ofSeconds(1))) // Two per second
+    .toList();
 
 // ["A", "B",   "C"]
               ^
-                      |
-                      +-----------Pause
+              |
+              +----------- Pause
 ```
 
 #### Limit stream to elements that occur a single time
 
 ```java
 Stream
-        .of("A","B","C","A")
-    .
-
-gather(Gatherers4j.uniquelyOccurring())
-        .
-
-toList();
+    .of("A", "B", "C", "A")
+    .gather(Gatherers4j.uniquelyOccurring())
+    .toList();
 
 // ["B", "C"]
 ```
@@ -736,30 +559,23 @@ toList();
 
 ```java
 // Window size 3, stepping 2, without partials
-Stream.of("A","B","C","D","E","F")
-    .
-
-gather(Gatherers4j.windowed(3, 2,false))
-        .
-
-toList();
+Stream.of("A", "B", "C", "D", "E", "F")
+    .gather(Gatherers4j.windowed(3, 2, false))
+    .toList();
 
 // [ ["A", "B", "C"], ["C", "D", "E"] ]
 ```
 
 ```java
 // Window size 3, stepping 2, with partials
-Stream.of("A","B","C","D","E","F")
-    .
-
-gather(Gatherers4j.windowed(3, 2,true))
-        .
-
-toList();
+Stream.of("A", "B", "C", "D", "E", "F")
+    .gather(Gatherers4j.windowed(3, 2, true))
+    .toList();
 
 // [ ["A", "B", "C"], ["C", "D", "E"], ["E, "F"] ]
 
 ```
+
 
 #### Zip two streams of together into a `Stream<Pair>`
 
@@ -769,11 +585,7 @@ The left and right streams can be of different types.
 final Stream<String> left = Stream.of("A", "B", "C");
 final Stream<Integer> right = Stream.of(1, 2, 3);
 
-left.
-
-gather(Gatherers4j.zip(right)).
-
-toList();
+left.gather(Gatherers4j.zip(right)).toList();
 
 // [Pair("A", 1), Pair("B", 2), Pair("C", 3)] 
 
@@ -785,16 +597,13 @@ This converts a `Stream<T>` to a `Stream<List<T>>`
 
 ```java
 Stream
-        .of("A","B","C","D","E")
-     .
-
-gather(Gatherers4j.zipWitNext())
-        .
-
-toList();
+     .of("A", "B", "C", "D", "E")
+     .gather(Gatherers4j.zipWitNext())
+     .toList();
 
 // [["A", "B"], ["B", "C"], ["C", "D"], ["D", "E"]]
 ```
+
 
 #### Ensure Increasing/Decreasing Order of Stream
 
@@ -844,10 +653,10 @@ Stream.of(2,2,3)
 // thrown: IllegalStateException
 ```
 
+
 ## Streams of `BigDecimal`
 
-Functions which modify output and are available on all `BigDecimal` gatherers (simple average, moving average, and
-standard deviation).
+Functions which modify output and are available on all `BigDecimal` gatherers (simple average, moving average, and standard deviation).
 
 | Function                       | Purpose                                                                                                                                   |
 |--------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------|
@@ -860,52 +669,40 @@ Note that rounding mode, precision, and scale are derived from the `MathContext`
 
 #### Example of `simpleRunningAverage()`
 
-This example creates a stream of `double`, converts each value to a `BigDecmial`, and takes a `simpleMovingAverage` over
-10 trailing values.
+This example creates a stream of `double`, converts each value to a `BigDecmial`, and takes a `simpleMovingAverage` over 10 trailing values.
 It will `includePartialValues` and sets the `MathContext` to the values given. Additionally, nulls
 are treated as zeros, and the calculated average is returned along with the original value.
 
 ```java
 someStreamOfBigDecimal()
-    .
-
-gather(Gatherers4j
-               .simpleMovingAverage(10)
-        .
-
-includePartialValues()
-        .
-
-withMathContext(MathContext.DECIMAL32)
-        .
-
-treatNullAsZero()
-        .
-
-withOriginal()
+    .gather(Gatherers4j
+        .simpleMovingAverage(10)
+        .includePartialValues()
+        .withMathContext(MathContext.DECIMAL32)
+        .treatNullAsZero()
+        .withOriginal()
     )
-            .
-
-toList();
+    .toList();
 
 // Example output:
 [
-WithOriginal[original=0.8462487,calculated=0.8462487],
-WithOriginal[original=0.8923297,calculated=0.8692890],
-WithOriginal[original=0.2556937,calculated=0.6647573],
-WithOriginal[original=0.2901778,calculated=0.5711125],
-WithOriginal[original=0.4945578,calculated=0.5558016],
-WithOriginal[original=0.3173066,calculated=0.5160525],
-WithOriginal[original=0.6377766,calculated=0.5334417],
-WithOriginal[original=0.1729199,calculated=0.4883765],
-WithOriginal[original=0.7408201,calculated=0.5164258],
-WithOriginal[original=0.7169926,calculated=0.5364825],
-WithOriginal[original=0.5174489,calculated=0.5036025],
-WithOriginal[original=0.5895662,calculated=0.4733262],
-WithOriginal[original=0.4458275,calculated=0.4923396],
-        // etc...
-        ]
+  WithOriginal[original=0.8462487, calculated=0.8462487], 
+  WithOriginal[original=0.8923297, calculated=0.8692890], 
+  WithOriginal[original=0.2556937, calculated=0.6647573], 
+  WithOriginal[original=0.2901778, calculated=0.5711125], 
+  WithOriginal[original=0.4945578, calculated=0.5558016], 
+  WithOriginal[original=0.3173066, calculated=0.5160525], 
+  WithOriginal[original=0.6377766, calculated=0.5334417], 
+  WithOriginal[original=0.1729199, calculated=0.4883765], 
+  WithOriginal[original=0.7408201, calculated=0.5164258], 
+  WithOriginal[original=0.7169926, calculated=0.5364825], 
+  WithOriginal[original=0.5174489, calculated=0.5036025], 
+  WithOriginal[original=0.5895662, calculated=0.4733262], 
+  WithOriginal[original=0.4458275, calculated=0.4923396], 
+  // etc...
+]
 ```
+
 
 # Project Philosophy
 

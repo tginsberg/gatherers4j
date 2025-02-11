@@ -94,41 +94,6 @@ public abstract class Gatherers4j {
         return new ThrottlingGatherer<>(ThrottlingGatherer.LimitRule.Drop, amount, duration);
     }
 
-    /// Convert the input stream of `Comparable` objects into lists of strictly decreasing objects. The lists
-    /// emitted to the output stream are unmodifiable.
-    ///
-    /// ```java
-    /// Stream.of(3, 2, 1, 3, 2)
-    ///     .gather(decreasing())
-    ///     .toList();
-    ///
-    /// // [[3, 2, 1], [3, 2]]
-    /// ```
-    ///
-    /// @param <INPUT> Type of elements in the input stream
-    /// @return A non-null Gatherer
-    public static <INPUT extends Comparable<INPUT>> IncreasingDecreasingComparableGatherer<INPUT> decreasing() {
-        return new IncreasingDecreasingComparableGatherer<>(IncreasingDecreasingComparatorGatherer.Operation.Decreasing);
-    }
-
-    /// Convert the input stream of objects into lists of strictly decreasing objects, as measured by the given `Comparator`.
-    /// The lists emitted to the output stream are unmodifiable.
-    ///
-    /// ```java
-    /// Stream.of("ABC", "AB", "A", "ABC", "AB")
-    ///     .gather(decreasing(Comparator.comparingInt(String::length)))
-    ///     .toList();
-    ///
-    /// // [["ABC", "AB", "A"], ["ABC", "AB"]]
-    /// ```
-    ///
-    /// @param <INPUT> Type of elements in the input stream
-    /// @param comparator The non-null comparator used to compare stream elements
-    /// @return A non-null Gatherer
-    public static <INPUT> IncreasingDecreasingComparatorGatherer<INPUT> decreasing(final Comparator<INPUT> comparator) {
-        return new IncreasingDecreasingComparatorGatherer<>(IncreasingDecreasingComparatorGatherer.Operation.Decreasing, comparator);
-    }
-
     /// Remove consecutive duplicate elements from a stream according `Object.equals(Object)`
     ///
     /// @param <INPUT> Type of elements in both the input and output streams
@@ -174,7 +139,7 @@ public abstract class Gatherers4j {
     /// @param <INPUT> Type of elements in the input stream
     /// @return A non-null Gatherer
     public static <INPUT extends Comparable<INPUT>> Gatherer<INPUT, ?, INPUT> ensureDecreasing() {
-        return new IncreasingDecreasingComparableGatherer<INPUT>(IncreasingDecreasingComparatorGatherer.Operation.Decreasing)
+        return new ChangingComparableGatherer<INPUT>(ChangingOperation.Decreasing)
                 .andThen(new FlattenSingleOrFail<>("Elements are not strictly decreasing"));
     }
 
@@ -184,7 +149,7 @@ public abstract class Gatherers4j {
     /// @param comparator The non-null comparator used to compare stream elements
     /// @return A non-null Gatherer
     public static <INPUT> Gatherer<INPUT, ?, INPUT> ensureDecreasing(final Comparator<INPUT> comparator) {
-        return new IncreasingDecreasingComparatorGatherer<>(IncreasingDecreasingComparatorGatherer.Operation.Decreasing, comparator)
+        return new ChangingComparatorGatherer<>(ChangingOperation.Decreasing, comparator)
                 .andThen(new FlattenSingleOrFail<>("Elements are not strictly decreasing"));
     }
 
@@ -193,7 +158,7 @@ public abstract class Gatherers4j {
     /// @param <INPUT> Type of elements in the input stream
     /// @return A non-null Gatherer
     public static <INPUT extends Comparable<INPUT>> Gatherer<INPUT, ?, INPUT> ensureIncreasing() {
-        return new IncreasingDecreasingComparableGatherer<INPUT>(IncreasingDecreasingComparatorGatherer.Operation.Increasing)
+        return new ChangingComparableGatherer<INPUT>(ChangingOperation.Increasing)
                 .andThen(new FlattenSingleOrFail<>("Elements are not strictly increasing"));
     }
 
@@ -203,7 +168,7 @@ public abstract class Gatherers4j {
     /// @param comparator The non-null comparator used to compare stream elements
     /// @return A non-null Gatherer
     public static <INPUT> Gatherer<INPUT, ?, INPUT> ensureIncreasing(final Comparator<INPUT> comparator) {
-        return new IncreasingDecreasingComparatorGatherer<>(IncreasingDecreasingComparatorGatherer.Operation.Increasing, comparator)
+        return new ChangingComparatorGatherer<>(ChangingOperation.Increasing, comparator)
                 .andThen(new FlattenSingleOrFail<>("Elements are not strictly increasing"));
     }
 
@@ -213,7 +178,7 @@ public abstract class Gatherers4j {
     /// @throws IllegalStateException If the stream contains elements in a not strictly decreasing order
     /// @return A non-null Gatherer
     public static <INPUT extends Comparable<INPUT>> Gatherer<INPUT, ?, INPUT> ensureNonDecreasing() {
-        return new IncreasingDecreasingComparableGatherer<INPUT>(IncreasingDecreasingComparatorGatherer.Operation.NonDecreasing)
+        return new ChangingComparableGatherer<INPUT>(ChangingOperation.NonDecreasing)
                 .andThen(new FlattenSingleOrFail<>("Elements are decreasing"));
     }
 
@@ -224,7 +189,7 @@ public abstract class Gatherers4j {
     /// @throws IllegalStateException If the stream contains elements in a not strictly decreasing order
     /// @return A non-null Gatherer
     public static <INPUT> Gatherer<INPUT, ?, INPUT> ensureNonDecreasing(final Comparator<INPUT> comparator) {
-        return new IncreasingDecreasingComparatorGatherer<>(IncreasingDecreasingComparatorGatherer.Operation.NonDecreasing, comparator)
+        return new ChangingComparatorGatherer<>(ChangingOperation.NonDecreasing, comparator)
                 .andThen(new FlattenSingleOrFail<>("Elements are decreasing"));
     }
 
@@ -233,7 +198,7 @@ public abstract class Gatherers4j {
     /// @param <INPUT> Type of elements in the input stream
     /// @return A non-null Gatherer
     public static <INPUT extends Comparable<INPUT>> Gatherer<INPUT, ?, INPUT> ensureNonIncreasing() {
-        return new IncreasingDecreasingComparableGatherer<INPUT>(IncreasingDecreasingComparatorGatherer.Operation.NonIncreasing)
+        return new ChangingComparableGatherer<INPUT>(ChangingOperation.NonIncreasing)
                 .andThen(new FlattenSingleOrFail<>("Elements are increasing"));
     }
 
@@ -244,7 +209,7 @@ public abstract class Gatherers4j {
     /// @param comparator The non-null comparator used to compare stream elements
     /// @return A non-null Gatherer
     public static <INPUT> Gatherer<INPUT, ?, INPUT> ensureNonIncreasing(final Comparator<INPUT> comparator) {
-        return new IncreasingDecreasingComparatorGatherer<>(IncreasingDecreasingComparatorGatherer.Operation.NonIncreasing, comparator)
+        return new ChangingComparatorGatherer<>(ChangingOperation.NonIncreasing, comparator)
                 .andThen(new FlattenSingleOrFail<>("Elements are increasing"));
     }
 
@@ -257,6 +222,40 @@ public abstract class Gatherers4j {
         return new EveryNthGatherer<>(count);
     }
 
+    /// Filter the input stream so that it contains `Comparable` elements in a strictly decreasing order.
+    ///
+    /// @param <INPUT> Type of elements in the input and output stream
+    /// @return A non-null gatherer
+    public static <INPUT extends Comparable<INPUT>> Gatherer<INPUT, ?, INPUT> filterDecreasing() {
+        return new FilterChangingComparableGatherer<>(ChangingOperation.Decreasing);
+    }
+
+    /// Filter the input stream so that it contains elements in a strictly decreasing order as measured by the given `Comparator`.
+    ///
+    /// @param <INPUT> Type of elements in the input and output stream
+    /// @param comparator A non-null `Comparator` to compare stream elements
+    /// @return A non-null gatherer
+    public static <INPUT> Gatherer<INPUT, ?, INPUT> filterDecreasing(final Comparator<INPUT> comparator) {
+        return new FilterChangingComparatorGatherer<>(ChangingOperation.Decreasing, comparator);
+    }
+
+    /// Filter the input stream so that it contains `Comparable` elements in a strictly increasing order.
+    ///
+    /// @param <INPUT> Type of elements in the input and output stream
+    /// @return A non-null gatherer
+    public static <INPUT extends Comparable<INPUT>> Gatherer<INPUT, ?, INPUT> filterIncreasing() {
+        return new FilterChangingComparableGatherer<>(ChangingOperation.Increasing);
+    }
+
+    /// Filter the input stream so that it contains elements in a strictly increasing order as measured by the given `Comparator`.
+    ///
+    /// @param <INPUT> Type of elements in the input and output stream
+    /// @param comparator A non-null `Comparator` to compare stream elements
+    /// @return A non-null gatherer
+    public static <INPUT> Gatherer<INPUT, ?, INPUT> filterIncreasing(final Comparator<INPUT> comparator) {
+        return new FilterChangingComparatorGatherer<>(ChangingOperation.Increasing, comparator);
+    }
+    
     /// Filter the elements in the stream to only include elements of the given types.
     /// Note, due to how generics work you may end up with some... interesting stream types as a result
     ///
@@ -271,6 +270,40 @@ public abstract class Gatherers4j {
         return TypeFilteringGatherer.of(validTypes);
     }
 
+    /// Filter the input stream so that it contains `Comparable` elements in a non-decreasing order.
+    ///
+    /// @param <INPUT> Type of elements in the input and output stream
+    /// @return A non-null gatherer
+    public static <INPUT extends Comparable<INPUT>> Gatherer<INPUT, ?, INPUT> filterNonDecreasing() {
+        return new FilterChangingComparableGatherer<>(ChangingOperation.NonDecreasing);
+    }
+
+    /// Filter the input stream so that it contains elements in a non-decreasing order as measured by the given `Comparator`.
+    ///
+    /// @param <INPUT> Type of elements in the input and output stream
+    /// @param comparator A non-null `Comparator` to compare stream elements
+    /// @return A non-null gatherer
+    public static <INPUT> Gatherer<INPUT, ?, INPUT> filterNonDecreasing(final Comparator<INPUT> comparator) {
+        return new FilterChangingComparatorGatherer<>(ChangingOperation.NonDecreasing, comparator);
+    }
+
+    /// Filter the input stream so that it contains `Comparable` elements in a non-increasing order.
+    ///
+    /// @param <INPUT> Type of elements in the input and output stream
+    /// @return A non-null gatherer
+    public static <INPUT extends Comparable<INPUT>> Gatherer<INPUT, ?, INPUT> filterNonIncreasing() {
+        return new FilterChangingComparableGatherer<>(ChangingOperation.NonIncreasing);
+    }
+
+    /// Filter the input stream so that it contains elements in a non-increasing order as measured by the given `Comparator`.
+    ///
+    /// @param <INPUT> Type of elements in the input and output stream
+    /// @param comparator A non-null `Comparator` to compare stream elements
+    /// @return A non-null gatherer
+    public static <INPUT> Gatherer<INPUT, ?, INPUT> filterNonIncreasing(final Comparator<INPUT> comparator) {
+        return new FilterChangingComparatorGatherer<>(ChangingOperation.NonIncreasing, comparator);
+    }
+
     /// Filter a stream according to the given `predicate`, which takes both the item being examined,
     /// and its index.
     ///
@@ -283,7 +316,7 @@ public abstract class Gatherers4j {
     ) {
         return new FilteringWithIndexGatherer<>(predicate);
     }
-    
+
     ///  Perform a fold over every element in the input stream along with its index
     ///
     /// @param <INPUT>      Type of elements in the input stream
@@ -296,6 +329,146 @@ public abstract class Gatherers4j {
             final IndexedAccumulatorFunction<? super OUTPUT, ? super INPUT, ? extends OUTPUT> foldFunction
     ) {
         return new AccumulatingGatherer<>(false, initialValue, foldFunction);
+    }
+
+    /// Convert the input stream of `Comparable` objects into lists of strictly decreasing objects. The lists
+    /// emitted to the output stream are unmodifiable.
+    ///
+    /// ```java
+    /// Stream.of(3, 2, 1, 3, 2)
+    ///     .gather(groupDecreasing())
+    ///     .toList();
+    ///
+    /// // [[3, 2, 1], [3, 2]]
+    /// ```
+    ///
+    /// @param <INPUT> Type of elements in the input stream
+    /// @return A non-null Gatherer
+    public static <INPUT extends Comparable<INPUT>> ChangingComparableGatherer<INPUT> groupDecreasing() {
+        return new ChangingComparableGatherer<>(ChangingOperation.Decreasing);
+    }
+
+    /// Convert the input stream of objects into lists of strictly decreasing objects, as measured by the given `Comparator`.
+    /// The lists emitted to the output stream are unmodifiable.
+    ///
+    /// ```java
+    /// Stream.of("ABC", "AB", "A", "ABC", "AB")
+    ///     .gather(groupDecreasing(Comparator.comparingInt(String::length)))
+    ///     .toList();
+    ///
+    /// // [["ABC", "AB", "A"], ["ABC", "AB"]]
+    /// ```
+    ///
+    /// @param <INPUT> Type of elements in the input stream
+    /// @param comparator The non-null comparator used to compare stream elements
+    /// @return A non-null Gatherer
+    public static <INPUT> ChangingComparatorGatherer<INPUT> groupDecreasing(final Comparator<INPUT> comparator) {
+        return new ChangingComparatorGatherer<>(ChangingOperation.Decreasing, comparator);
+    }
+
+    /// Convert the input stream of `Comparable` objects into lists of strictly increasing objects. The lists
+    /// emitted to the output stream are unmodifiable.
+    ///
+    /// ```java
+    /// Stream.of(1, 2, 3, 2, 3)
+    ///     .gather(groupIncreasing())
+    ///     .toList();
+    ///
+    /// // [[1, 2, 3], [2, 3]]
+    /// ```
+    ///
+    /// @param <INPUT> Type of elements in the input stream
+    /// @return A non-null Gatherer
+    public static <INPUT extends Comparable<INPUT>> ChangingComparableGatherer<INPUT> groupIncreasing() {
+        return new ChangingComparableGatherer<>(ChangingOperation.Increasing);
+    }
+
+    /// Convert the input stream of objects into lists of strictly increasing objects, as measured by the given `Comparator`.
+    /// The lists emitted to the output stream are unmodifiable.
+    ///
+    /// ```java
+    /// Stream.of("A", "AB", "ABC", "AB", "ABC")
+    ///     .gather(increasing(Comparator.comparingInt(String::length)))
+    ///     .toList();
+    ///
+    /// // [["A", "AB", "ABC"], ["AB", "ABC"]]
+    /// ```
+    ///
+    /// @param <INPUT> Type of elements in the input stream
+    /// @param comparator The non-null comparator used to compare stream elements
+    /// @return A non-null Gatherer
+    public static <INPUT> ChangingComparatorGatherer<INPUT> groupIncreasing(final Comparator<INPUT> comparator) {
+        return new ChangingComparatorGatherer<>(ChangingOperation.Increasing, comparator);
+    }
+
+    /// Convert the input stream of `Comparable` objects into lists of non-decreasing objects. The lists
+    /// emitted to the output stream are unmodifiable.
+    ///
+    /// ```java
+    /// Stream.of(2, 3, 3, 2, 3)
+    ///     .gather(groupNonDecreasing())
+    ///     .toList();
+    ///
+    /// // [[2, 3, 3], [2, 3]]
+    /// ```
+    ///
+    /// @param <INPUT> Type of elements in the input stream
+    /// @return A non-null Gatherer
+    public static <INPUT extends Comparable<INPUT>> ChangingComparableGatherer<INPUT> groupNonDecreasing() {
+        return new ChangingComparableGatherer<>(ChangingOperation.NonDecreasing);
+    }
+
+    /// Convert the input stream of objects into lists of non-decreasing objects, as measured by the given `Comparator`.
+    /// The lists emitted to the output stream are unmodifiable.
+    ///
+    /// ```java
+    /// Stream.of("A", "AB", "AB", "A", "AB")
+    ///     .gather(decreasing(Comparator.comparingInt(String::length)))
+    ///     .toList();
+    ///
+    /// // [["A", "AB", "AB"], ["A", "AB"]]
+    /// ```
+    ///
+    /// @param <INPUT> Type of elements in the input stream
+    /// @param comparator The non-null comparator used to compare stream elements
+    /// @return A non-null Gatherer
+    public static <INPUT> ChangingComparatorGatherer<INPUT> groupNonDecreasing(final Comparator<INPUT> comparator) {
+        return new ChangingComparatorGatherer<>(ChangingOperation.NonDecreasing, comparator);
+    }
+
+    /// Convert the input stream of `Comparable` objects into lists of non-increasing objects. The lists
+    /// emitted to the output stream are unmodifiable.
+    ///
+    /// ```java
+    /// Stream.of(3, 2, 2, 3, 2)
+    ///     .gather(groupNonIncreasing())
+    ///     .toList();
+    ///
+    /// // [[3, 2, 2], [3, 2]]
+    /// ```
+    ///
+    /// @param <INPUT> Type of elements in the input stream
+    /// @return A non-null Gatherer
+    public static <INPUT extends Comparable<INPUT>> ChangingComparableGatherer<INPUT> groupNonIncreasing() {
+        return new ChangingComparableGatherer<>(ChangingOperation.NonIncreasing);
+    }
+
+    /// Convert the input stream of objects into lists of non-increasing objects, as measured by the given `Comparator`.
+    /// The lists emitted to the output stream are unmodifiable.
+    ///
+    /// ```java
+    /// Stream.of("ABC", "AB", "AB", "ABC", "AB")
+    ///     .gather(nonIncreasing(Comparator.comparingInt(String::length)))
+    ///     .toList();
+    ///
+    /// // [["ABC", "AB", "AB"], ["ABC", "AB"]]
+    /// ```
+    ///
+    /// @param <INPUT> Type of elements in the input stream
+    /// @param comparator The non-null comparator used to compare stream elements
+    /// @return A non-null Gatherer
+    public static <INPUT> ChangingComparatorGatherer<INPUT> groupNonIncreasing(final Comparator<INPUT> comparator) {
+        return new ChangingComparatorGatherer<>(ChangingOperation.NonIncreasing, comparator);
     }
 
     /// Turn a `Stream<INPUT>` into a `Stream<List<INPUT>>` where consecutive
@@ -317,41 +490,6 @@ public abstract class Gatherers4j {
             final Function<@Nullable INPUT, @Nullable Object> mappingFunction
     ) {
         return new GroupingByGatherer<>(mappingFunction);
-    }
-
-    /// Convert the input stream of `Comparable` objects into lists of strictly increasing objects. The lists
-    /// emitted to the output stream are unmodifiable.
-    ///
-    /// ```java
-    /// Stream.of(1, 2, 3, 2, 3)
-    ///     .gather(increasing())
-    ///     .toList();
-    ///
-    /// // [[1, 2, 3], [2, 3]]
-    /// ```
-    ///
-    /// @param <INPUT> Type of elements in the input stream
-    /// @return A non-null Gatherer
-    public static <INPUT extends Comparable<INPUT>> IncreasingDecreasingComparableGatherer<INPUT> increasing() {
-        return new IncreasingDecreasingComparableGatherer<>(IncreasingDecreasingComparatorGatherer.Operation.Increasing);
-    }
-
-    /// Convert the input stream of objects into lists of strictly increasing objects, as measured by the given `Comparator`.
-    /// The lists emitted to the output stream are unmodifiable.
-    ///
-    /// ```java
-    /// Stream.of("A", "AB", "ABC", "AB", "ABC")
-    ///     .gather(increasing(Comparator.comparingInt(String::length)))
-    ///     .toList();
-    ///
-    /// // [["A", "AB", "ABC"], ["AB", "ABC"]]
-    /// ```
-    ///
-    /// @param <INPUT> Type of elements in the input stream
-    /// @param comparator The non-null comparator used to compare stream elements
-    /// @return A non-null Gatherer
-    public static <INPUT> IncreasingDecreasingComparatorGatherer<INPUT> increasing(final Comparator<INPUT> comparator) {
-        return new IncreasingDecreasingComparatorGatherer<>(IncreasingDecreasingComparatorGatherer.Operation.Increasing, comparator);
     }
 
     /// Creates a stream of alternating objects from the input stream and the argument iterable
@@ -445,76 +583,6 @@ public abstract class Gatherers4j {
             final Function<INPUT, BigDecimal> mappingFunction
     ) {
         return new BigDecimalMovingSumGatherer<>(windowSize, mappingFunction);
-    }
-
-    /// Convert the input stream of `Comparable` objects into lists of non-decreasing objects. The lists
-    /// emitted to the output stream are unmodifiable.
-    ///
-    /// ```java
-    /// Stream.of(2, 3, 3, 2, 3)
-    ///     .gather(nonDecreasing())
-    ///     .toList();
-    ///
-    /// // [[2, 3, 3], [2, 3]]
-    /// ```
-    ///
-    /// @param <INPUT> Type of elements in the input stream
-    /// @return A non-null Gatherer
-    public static <INPUT extends Comparable<INPUT>> IncreasingDecreasingComparableGatherer<INPUT> nonDecreasing() {
-        return new IncreasingDecreasingComparableGatherer<>(IncreasingDecreasingComparatorGatherer.Operation.NonDecreasing);
-    }
-
-    /// Convert the input stream of objects into lists of non-decreasing objects, as measured by the given `Comparator`.
-    /// The lists emitted to the output stream are unmodifiable.
-    ///
-    /// ```java
-    /// Stream.of("A", "AB", "AB", "A", "AB")
-    ///     .gather(decreasing(Comparator.comparingInt(String::length)))
-    ///     .toList();
-    ///
-    /// // [["A", "AB", "AB"], ["A", "AB"]]
-    /// ```
-    ///
-    /// @param <INPUT> Type of elements in the input stream
-    /// @param comparator The non-null comparator used to compare stream elements
-    /// @return A non-null Gatherer
-    public static <INPUT> IncreasingDecreasingComparatorGatherer<INPUT> nonDecreasing(final Comparator<INPUT> comparator) {
-        return new IncreasingDecreasingComparatorGatherer<>(IncreasingDecreasingComparatorGatherer.Operation.NonDecreasing, comparator);
-    }
-
-    /// Convert the input stream of `Comparable` objects into lists of non-increasing objects. The lists
-    /// emitted to the output stream are unmodifiable.
-    ///
-    /// ```java
-    /// Stream.of(3, 2, 2, 3, 2)
-    ///     .gather(nonIncreasing())
-    ///     .toList();
-    ///
-    /// // [[3, 2, 2], [3, 2]]
-    /// ```
-    ///
-    /// @param <INPUT> Type of elements in the input stream
-    /// @return A non-null Gatherer
-    public static <INPUT extends Comparable<INPUT>> IncreasingDecreasingComparableGatherer<INPUT> nonIncreasing() {
-        return new IncreasingDecreasingComparableGatherer<>(IncreasingDecreasingComparatorGatherer.Operation.NonIncreasing);
-    }
-
-    /// Convert the input stream of objects into lists of non-increasing objects, as measured by the given `Comparator`.
-    /// The lists emitted to the output stream are unmodifiable.
-    ///
-    /// ```java
-    /// Stream.of("ABC", "AB", "AB", "ABC", "AB")
-    ///     .gather(nonIncreasing(Comparator.comparingInt(String::length)))
-    ///     .toList();
-    ///
-    /// // [["ABC", "AB", "AB"], ["ABC", "AB"]]
-    /// ```
-    ///
-    /// @param <INPUT> Type of elements in the input stream
-    /// @param comparator The non-null comparator used to compare stream elements
-    /// @return A non-null Gatherer
-    public static <INPUT> IncreasingDecreasingComparatorGatherer<INPUT> nonIncreasing(final Comparator<INPUT> comparator) {
-        return new IncreasingDecreasingComparatorGatherer<>(IncreasingDecreasingComparatorGatherer.Operation.NonIncreasing, comparator);
     }
 
     /// Emit elements in the input stream ordered by frequency from least frequently occurring
@@ -888,7 +956,7 @@ public abstract class Gatherers4j {
     ///
     /// @param other    A non-null stream to zip with
     /// @param <FIRST>  Type of object in the source stream
-    /// @param <SECOND> Type of object in the argument `Stream`
+    /// @param <SECOND> Type of object in the arNgument `Stream`
     /// @return A non-null `ZipWithGatherer`
     public static <FIRST extends @Nullable Object, SECOND extends @Nullable Object> ZipWithGatherer<FIRST, SECOND> zipWith(
             final Stream<SECOND> other
