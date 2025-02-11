@@ -70,27 +70,26 @@ For convenience, the full list of gatherers in this library are broken into four
 
 Functions that group input elements by varying criteria.
 
-| Function                     | Purpose                                                                                                                                            |
-|------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| `decreasing()`               | Group decreasing `Comparable` elements in the input stream to lists in the output stream                                                           |
-| `decreasing(comparator)`     | Group decreasing elements as measured by a `Comparator` in the input stream to lists in the output stream                                          |
-| `grouping()`                 | Group consecutive identical elements into lists                                                                                                    |
-| `groupingBy(fn)`             | Group consecutive elements that are identical according to `fn` into lists                                                                         | 
-| `increasing()`               | Group increasing `Comparable` elements in the input stream to lists in the output stream                                                           |
-| `increasing(comparator)`     | Group increasing elements as measured by a `Comparator` in the input stream to lists in the output stream                                          |
-| `nonIncreasing()`            | Group non-increasing `Comparable` elements in the input stream to lists in the output stream                                                       |
-| `nonIncreasing(comparator)`  | Group non-increasing elements as measured by a `Comparator` in the input stream to lists in the output stream                                      |
-| `nonDecreasing()`            | Group non-decreasing `Comparable` elements in the input stream to lists in the output stream                                                       |
-| `nonDecreasing(comparator)`  | Group non-decreasing elements as measured by a `Comparator` in the input stream to lists in the output stream                                      |
-| `windowed(size,step,partial) | Create windows over the input stream that are `size` elements long, sliding over `step` elements each time, optionally including `partial` windows |
-
+| Function                      | Purpose                                                                                                                                            |
+|-------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
+| `decreasing()`                | Group decreasing `Comparable` elements in the input stream to lists in the output stream                                                           |
+| `decreasing(comparator)`      | Group decreasing elements as measured by a `Comparator` in the input stream to lists in the output stream                                          |
+| `grouping()`                  | Group consecutive identical elements into lists                                                                                                    |
+| `groupingBy(fn)`              | Group consecutive elements that are identical according to `fn` into lists                                                                         | 
+| `increasing()`                | Group increasing `Comparable` elements in the input stream to lists in the output stream                                                           |
+| `increasing(comparator)`      | Group increasing elements as measured by a `Comparator` in the input stream to lists in the output stream                                          |
+| `nonIncreasing()`             | Group non-increasing `Comparable` elements in the input stream to lists in the output stream                                                       |
+| `nonIncreasing(comparator)`   | Group non-increasing elements as measured by a `Comparator` in the input stream to lists in the output stream                                      |
+| `nonDecreasing()`             | Group non-decreasing `Comparable` elements in the input stream to lists in the output stream                                                       |
+| `nonDecreasing(comparator)`   | Group non-decreasing elements as measured by a `Comparator` in the input stream to lists in the output stream                                      |
+| `windowed(size,step,partial)` | Create windows over the input stream that are `size` elements long, sliding over `step` elements each time, optionally including `partial` windows |
 
 ## Stream Content Checks/Validation
 
 These gatherers check invariants about streams and fail if they are not met.
 
-| Function                     | Purpose                                                                                                                                            |
-|------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
+| Function                          | Purpose                                                                                                                                    |
+|-----------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
 | `ensureDecreasing()`              | Ensure that the input stream of `Comparable` objects contains only strictly decreasing objects, and fail otherwise.                        |                                                                                           |
 | `ensureDecreasing(comparator)`    | Ensure that the input stream of objects contins only strictly decreasing objects, as measured by a given `Comparator`, and fail otherwise. |
 | `ensureNonDecreasing()`           | Ensure that the input stream of `Comparable` objects contains only non-decreasing objects, and fail otherwise.                             |
@@ -98,13 +97,12 @@ These gatherers check invariants about streams and fail if they are not met.
 | `ensureIncreasing()`              | Ensure that the input stream of `Comparable` objects contains only strictly increasing objects, and fail otherwise.                        |
 | `ensureIncreasing(comparator)`    | Ensure that the input stream of objects contins only strictly increasing objects, as measured by a given `Comparator`, and fail otherwise. |
 | `ensureNonIncreasing()`           | Ensure that the input stream of `Comparable` objects contains non-increasing objects, and fail otherwise.                                  |
-| `ensureNonIncreasing(comparator)` | Ensure that the input stream of objects contins only non-increasing objects, as measured by a given `Comparator`, and fail otherwise.                                                                                                                                           |
+| `ensureNonIncreasing(comparator)` | Ensure that the input stream of objects contins only non-increasing objects, as measured by a given `Comparator`, and fail otherwise.      |
 | `sizeExactly(n)`                  | Ensure the stream is exactly `n` elements long, or throw an `IllegalStateException`                                                        |
 | `sizeGreaterThan(n)`              | Ensure the stream is greater than `n` elements long, or throw an `IllegalStateException`                                                   |
 | `sizeGreaterThanOrEqualTo(n)`     | Ensure the stream is greater than or equal to `n` elements long, or throw an `IllegalStateException`                                       |
 | `sizeLessThan(n)`                 | Ensure the stream is less than `n` elements long, or throw an `IllegalStateException`                                                      |
 | `sizeLessThanOrEqualTo(n)`        | Ensure the stream is less than or equal to `n` elements long, or throw an `IllegalStateException`                                          |
-
 
 ### Mathematics/Statistics
 
