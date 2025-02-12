@@ -16,23 +16,34 @@
 
 package com.ginsberg.gatherers4j;
 
-import java.util.ArrayList;
+import org.jspecify.annotations.Nullable;
+
 import java.util.Comparator;
-import java.util.List;
-import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import java.util.stream.Gatherer;
 
 import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
 
-public sealed class ChangingComparatorGatherer<INPUT>
-        implements Gatherer<INPUT, ChangingComparatorGatherer.State<INPUT>, List<INPUT>>
-        permits ChangingComparableGatherer {
+public class FilterChangingGatherer<INPUT>
+        implements Gatherer<INPUT, FilterChangingGatherer.State<INPUT>, INPUT> {
 
     private final ChangingOperation operation;
     private final Comparator<INPUT> comparator;
 
-    ChangingComparatorGatherer(
+    static <INPUT> FilterChangingGatherer<INPUT> usingComparator(
+            final ChangingOperation operation,
+            final Comparator<INPUT> comparator
+    ) {
+        return new FilterChangingGatherer<>(operation, comparator);
+    }
+
+    static <INPUT extends Comparable<INPUT>> FilterChangingGatherer<INPUT> usingComparable(
+            final ChangingOperation operation
+    ) {
+        return new FilterChangingGatherer<>(operation, Comparable::compareTo);
+    }
+
+    FilterChangingGatherer(
             final ChangingOperation operation,
             final Comparator<INPUT> comparator
     ) {
@@ -43,37 +54,32 @@ public sealed class ChangingComparatorGatherer<INPUT>
     }
 
     @Override
-    public Supplier<ChangingComparatorGatherer.State<INPUT>> initializer() {
+    public Supplier<FilterChangingGatherer.State<INPUT>> initializer() {
         return State::new;
     }
 
     @Override
-    public Integrator<ChangingComparatorGatherer.State<INPUT>, INPUT, List<INPUT>> integrator() {
+    public Integrator<FilterChangingGatherer.State<INPUT>, INPUT, INPUT> integrator() {
         return Integrator.ofGreedy((state, element, downstream) -> {
-            if (!state.currentElements.isEmpty() && !isInSameList(state.currentElements.getLast(), element)) {
-                downstream.push(List.copyOf(state.currentElements));
-                state.currentElements = new ArrayList<>();
+            if (state.first) {
+                downstream.push(element);
+                state.previousElement = element;
+                state.first = false;
+            } else if (allow(state.previousElement, element)) {
+                downstream.push(element);
+                state.previousElement = element;
             }
-            state.currentElements.add(element);
             return !downstream.isRejecting();
         });
     }
 
-    boolean isInSameList(final INPUT previous, final INPUT next) {
+    boolean allow(final @Nullable INPUT previous, final INPUT next) {
         return operation.allows(comparator.compare(next, previous));
     }
 
-    @Override
-    public BiConsumer<State<INPUT>, Downstream<? super List<INPUT>>> finisher() {
-        return (inputState, downstream) -> {
-            if (!inputState.currentElements.isEmpty()) {
-                downstream.push(List.copyOf(inputState.currentElements));
-            }
-        };
-    }
-
     public static class State<INPUT> {
-        List<INPUT> currentElements = new ArrayList<>();
+        boolean first = true;
+        @Nullable
+        INPUT previousElement;
     }
-
 }
