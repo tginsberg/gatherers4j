@@ -12,6 +12,7 @@ dependency - the [JSpecify](https://jspecify.dev/) set of annotations for static
 Add the following dependency to `pom.xml`.
 
 ```xml
+
 <dependency>
     <groupId>com.ginsberg</groupId>
     <artifactId>gatherers4j</artifactId>
@@ -27,50 +28,100 @@ Add the following dependency to `build.gradle` or `build.gradle.kts`
 implementation("com.ginsberg:gatherers4j:0.9.0")
 ```
 
+
 # Gatherers In This Library
 
-### Streams
+For convenience, the full list of gatherers in this library are broken into four categories:
 
-| Function                       | Purpose                                                                                                                                            |
-|--------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| `cross(iterable)`              | Emit each element of the source stream with each element of the given `iterable` as a `Pair` to the output stream                                  |
-| `cross(iterator)`              | Emit each element of the source stream with each element of the given `iterator` as a `Pair` to the output stream                                  |
-| `cross(stream)`                | Emit each element of the source stream with each element of the given `stream` as a `Pair` to the output stream                                    |
-| `debounce(amount, duration)`   | Limit stream elements to `amount` elements over `duration`, dropping any elements over the limit until a new `duration` starts                     |
-| `dedupeConsecutive()`          | Remove consecutive duplicates from a stream                                                                                                        |
-| `dedupeConsecutiveBy(fn)`      | Remove consecutive duplicates from a stream as returned by `fn`                                                                                    |
-| `distinctBy(fn)`               | Emit only distinct elements from the stream, as measured by `fn`                                                                                   |
-| `dropLast(n)`                  | Keep all but the last `n` elements of the stream                                                                                                   |
-| `everyNth(n)`                  | Limit the stream to every `n`<sup>th</sup> element                                                                                                 |
-| `filterInstanceOf(types)`      | Filter the stream to only include elements of the given type(s)                                                                                    |
-| `filterWithIndex(predicate)`   | Filter the stream with the given `predicate`, which takes an `element` and its `index`                                                             |
-| `foldIndexed(fn)`              | Perform a fold over the input stream where each element is included along with its index                                                           |
-| `grouping()`                   | Group consecutive identical elements into lists                                                                                                    |
-| `groupingBy(fn)`               | Group consecutive elements that are identical according to `fn` into lists                                                                         |                                                                                                                    
-| `interleave(iterable)`         | Creates a stream of alternating objects from the input stream and the argument iterable                                                            |
-| `interleave(iterator)`         | Creates a stream of alternating objects from the input stream and the argument iterator                                                            |
-| `interleave(stream)`           | Creates a stream of alternating objects from the input stream and the argument stream                                                              |
-| `last(n)`                      | Constrain the stream to the last `n` values                                                                                                        |
-| `orderByFrequencyAscending()`  | Returns a stream where elements are ordered from least to most frequent as `WithCount<T>` wrapper objects.                                         |
-| `orderByFrequencyDescending()` | Returns a stream where elements are ordered from most to least frequent as `WithCount<T>` wrapper objects.                                         |
-| `reverse()`                    | Reverse the order of the stream                                                                                                                    |
-| `scanIndexed(fn)`              | Performs a scan on the input stream using the given function, and includes the index of the elements                                               |
-| `shuffle()`                    | Shuffle the stream into a random order using the platform default `RandomGenerator`                                                                |
-| `shuffle(rg)`                  | Shuffle the stream into a random order using the specified `RandomGenerator`                                                                       |
-| `sizeExactly(n)`               | Ensure the stream is exactly `n` elements long, or throw an `IllegalStateException`                                                                |
-| `sizeGreaterThan(n)`           | Ensure the stream is greater than `n` elements long, or throw an `IllegalStateException`                                                           |
-| `sizeGreaterThanOrEqualTo(n)`  | Ensure the stream is greater than or equal to `n` elements long, or throw an `IllegalStateException`                                               |
-| `sizeLessThan(n)`              | Ensure the stream is less than `n` elements long, or throw an `IllegalStateException`                                                              |
-| `sizeLessThanOrEqualTo(n)`     | Ensure the stream is less than or equal to `n` elements long, or throw an `IllegalStateException`                                                  |
-| `takeUntil(predicate)`         | Take elements from the input stream until the `predicate` is met, including the first element that matches the `preciate`                          |
-| `throttle(amount, duration)`   | Limit stream elements to `amount` elements over `duration`, pausing until a new `duration` period starts                                           |
-| `uniquelyOccurring()`          | Emit elements that occur a single time, dropping all others                                                                                        |
-| `windowed(size,step,partial)   | Create windows over the input stream that are `size` elements long, sliding over `step` elements each time, optionally including `partial` windows |
-| `withIndex()`                  | Maps all elements of the stream as-is along with their 0-based index                                                                               |
-| `zipWith(iterable)`            | Creates a stream of `Pair` objects whose values come from the input stream and argument iterable                                                   |
-| `zipWith(iterator)`            | Creates a stream of `Pair` objects whose values come from the input stream and argument iterator                                                   |
-| `zipWith(stream)`              | Creates a stream of `Pair` objects whose values come from the input stream and argument stream                                                     |
-| `zipWithNext()`                | Creates a stream of `List` objects via a sliding window of width 2 and stepping 1                                                                  |      
+1. [General Functions](#general-functions)
+2. [Filtering Functions](#filtering-functions)
+2. [Grouping Functions](#grouping-functions)
+3. [Stream Content Checks/Validation](#stream-content-checksvalidation)
+4. [Mathematics/Statistics](#mathematicsstatistics)
+
+## General Functions
+
+Functions that don't (yet!) fall into one of the other categories.
+
+| Function                          | Purpose                                                                                                                                    |
+|-----------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
+| `cross()`                         | Emit each element of the source stream with each element of the given `iterable`, `iterator`, or `stream` as a `Pair` to the output stream |
+| `foldIndexed(fn)`                 | Perform a fold over the input stream where each element is included along with its index                                                   |
+| `interleave()`                    | Creates a stream of alternating objects from the input stream and the argument `iterable`, `iterator`, or `stream`                         |
+| `orderByFrequencyAscending()`     | Returns a stream where elements are ordered from least to most frequent as `WithCount<T>` wrapper objects.                                 |
+| `orderByFrequencyDescending()`    | Returns a stream where elements are ordered from most to least frequent as `WithCount<T>` wrapper objects.                                 |
+| `reverse()`                       | Reverse the order of the stream                                                                                                            |
+| `scanIndexed(fn)`                 | Performs a scan on the input stream using the given function, and includes the index of the elements                                       |
+| `shuffle()`                       | Shuffle the stream into a random order using the platform default `RandomGenerator`                                                        |
+| `shuffle(rg)`                     | Shuffle the stream into a random order using the specified `RandomGenerator`                                                               |
+| `throttle(amount, duration)`      | Limit stream elements to `amount` elements over `duration`, pausing until a new `duration` period starts                                   |
+| `withIndex()`                     | Maps all elements of the stream as-is along with their 0-based index                                                                       |
+| `zipWith( )`                      | Creates a stream of `Pair` objects whose values come from the input stream and argument `iterable`, `iterator`, or `stream`                |
+| `zipWithNext()`                   | Creates a stream of `List` objects via a sliding window of width 2 and stepping 1                                                          |      
+
+## Filtering Functions
+
+Functions that remove elements (or retain them, depending on how you look at it) from a stream
+
+| Function                          | Purpose                                                                                                                        |
+|-----------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
+| `debounce(amount, duration)`      | Limit stream elements to `amount` elements over `duration`, dropping any elements over the limit until a new `duration` starts |
+| `dedupeConsecutive()`             | Remove consecutive duplicates from a stream                                                                                                |
+| `dedupeConsecutiveBy(fn)`         | Remove consecutive duplicates from a stream as returned by `fn`                                                                            |
+| `distinctBy(fn)`                  | Emit only distinct elements from the stream, as measured by `fn`                                                                           |
+| `dropLast(n)`                     | Keep all but the last `n` elements of the stream                                                                                           |
+| `everyNth(n)`                     | Limit the stream to every `n`<sup>th</sup> element                                                                                         |
+| `filterDecreasing()`              | Filter the input stream of `Comparable` objects so that it contains only strictly decreasing objects                           |                                                                                           |
+| `filterDecreasing(comparator)`    | Filter the input stream of objects so that it contins only strictly decreasing objects, as measured by a given `Comparator`    |
+| `filterIncreasing()`              | Filter the input stream of `Comparable` objects so that it contains only strictly increasing objects                           |
+| `filterIncreasing(comparator)`    | Filter the input stream of objects so that it contins only strictly increasing objects, as measured by a given `Comparator`    |
+| `filterNonDecreasing()`           | Filter the input stream of `Comparable` objects so that it contains only non-decreasing objects                                |
+| `filterNonDecreasing(comparator)` | Filter the input stream of objects so that it contins only non-decreasing objects, as measured by a given `Comparator`         |
+| `filterNonIncreasing()`           | Filter the input stream of `Comparable` objects so that it contains non-increasing objects                                     |
+| `filterNonIncreasing(comparator)` | Filter the input stream of objects so that it contins only non-increasing objects, as measured by a given `Comparator`         |
+| `filterInstanceOf(types)`         | Filter the stream to only include elements of the given type(s)                                                                |
+| `filterWithIndex(predicate)`      | Filter the stream with the given `predicate`, which takes an `element` and its `index`                                         |
+| `last(n)`                         | Constrain the stream to the last `n` values                                                                                                |
+| `takeUntil(predicate)`            | Take elements from the input stream until the `predicate` is met, including the first element that matches the `preciate`                  |
+| `uniquelyOccurring()`             | Emit elements that occur a single time, dropping all others                                                                                |
+
+## Grouping Functions
+
+Functions that group input elements by varying criteria.
+
+| Function                         | Purpose                                                                                                                                            |
+|----------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
+| `grouping()`                     | Group consecutive identical elements into lists                                                                                                    |
+| `groupingBy(fn)`                 | Group consecutive elements that are identical according to `fn` into lists                                                                         | 
+| `groupDecreasing()`              | Group decreasing `Comparable` elements in the input stream to lists in the output stream                                                           |
+| `groupDecreasing(comparator)`    | Group decreasing elements as measured by a `Comparator` in the input stream to lists in the output stream                                          |
+| `groupIncreasing()`              | Group increasing `Comparable` elements in the input stream to lists in the output stream                                                           |
+| `groupIncreasing(comparator)`    | Group increasing elements as measured by a `Comparator` in the input stream to lists in the output stream                                          |
+| `groupNonIncreasing()`           | Group non-increasing `Comparable` elements in the input stream to lists in the output stream                                                       |
+| `groupNonIncreasing(comparator)` | Group non-increasing elements as measured by a `Comparator` in the input stream to lists in the output stream                                      |
+| `groupNonDecreasing()`           | Group non-decreasing `Comparable` elements in the input stream to lists in the output stream                                                       |
+| `groupNonDecreasing(comparator)` | Group non-decreasing elements as measured by a `Comparator` in the input stream to lists in the output stream                                      |
+| `windowed(size,step,partial)`    | Create windows over the input stream that are `size` elements long, sliding over `step` elements each time, optionally including `partial` windows |
+
+## Stream Content Checks/Validation
+
+These gatherers check invariants about streams and fail if they are not met.
+
+| Function                          | Purpose                                                                                                                                    |
+|-----------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
+| `ensureDecreasing()`              | Ensure that the input stream of `Comparable` objects contains only strictly decreasing objects, and fail otherwise.                        |                                                                                           |
+| `ensureDecreasing(comparator)`    | Ensure that the input stream of objects contins only strictly decreasing objects, as measured by a given `Comparator`, and fail otherwise. |
+| `ensureIncreasing()`              | Ensure that the input stream of `Comparable` objects contains only strictly increasing objects, and fail otherwise.                        |
+| `ensureIncreasing(comparator)`    | Ensure that the input stream of objects contins only strictly increasing objects, as measured by a given `Comparator`, and fail otherwise. |
+| `ensureNonDecreasing()`           | Ensure that the input stream of `Comparable` objects contains only non-decreasing objects, and fail otherwise.                             |
+| `ensureNonDecreasing(comparator)` | Ensure that the input stream of objects contins only non-decreasing objects, as measured by a given `Comparator`, and fail otherwise.      |
+| `ensureNonIncreasing()`           | Ensure that the input stream of `Comparable` objects contains non-increasing objects, and fail otherwise.                                  |
+| `ensureNonIncreasing(comparator)` | Ensure that the input stream of objects contins only non-increasing objects, as measured by a given `Comparator`, and fail otherwise.      |
+| `sizeExactly(n)`                  | Ensure the stream is exactly `n` elements long, or throw an `IllegalStateException`                                                        |
+| `sizeGreaterThan(n)`              | Ensure the stream is greater than `n` elements long, or throw an `IllegalStateException`                                                   |
+| `sizeGreaterThanOrEqualTo(n)`     | Ensure the stream is greater than or equal to `n` elements long, or throw an `IllegalStateException`                                       |
+| `sizeLessThan(n)`                 | Ensure the stream is less than `n` elements long, or throw an `IllegalStateException`                                                      |
+| `sizeLessThanOrEqualTo(n)`        | Ensure the stream is less than or equal to `n` elements long, or throw an `IllegalStateException`                                          |
 
 ### Mathematics/Statistics
 
@@ -164,7 +215,7 @@ Stream
 // [Person("Todd", "Ginsberg"), Person("Emma", "Ginsberg")]
 ```
 
-#### Keep all but the last `n` elements 
+#### Keep all but the last `n` elements
 
 ```java
 Stream.of("A", "B", "C", "D", "E")
@@ -553,6 +604,56 @@ Stream
 // [["A", "B"], ["B", "C"], ["C", "D"], ["D", "E"]]
 ```
 
+
+#### Ensure Increasing/Decreasing Order of Stream
+
+```java
+// Success
+Stream.of(1,2,3)
+    .gather(Gatherers4j.ensureIncreasing())
+    .toList();
+
+// Success
+Stream.of(3,2,1)
+    .gather(Gatherers4j.ensureDecreasing())
+        .toList();
+
+// Success
+Stream.of(1,1,2)
+    .gather(Gatherers4j.ensureNonDecreasing())
+        .toList();
+
+// Success
+Stream.of(2,2,1)
+    .gather(Gatherers4j.ensureNonIncreasing())
+        .toList();
+
+// Fail
+Stream.of(3,2,1)
+    .gather(Gatherers4j.ensureIncreasing())
+    .toList();
+// thrown: IllegalStateException
+
+// Fail
+Stream.of(1,2,3)
+    .gather(Gatherers4j.ensureDecreasing())
+        .toList();
+// thrown: IllegalStateException
+
+// Fail
+Stream.of(2,2,1)
+    .gather(Gatherers4j.ensureNonDecreasing())
+        .toList();
+// thrown: IllegalStateException
+
+// Fail
+Stream.of(2,2,3)
+    .gather(Gatherers4j.ensureNonIncreasing())
+    .toList();
+// thrown: IllegalStateException
+```
+
+
 ## Streams of `BigDecimal`
 
 Functions which modify output and are available on all `BigDecimal` gatherers (simple average, moving average, and standard deviation).
@@ -602,14 +703,18 @@ someStreamOfBigDecimal()
 ]
 ```
 
+
 # Project Philosophy
 
-1. Consider adding a gatherer if it cannot be implemented with `map`, `filter`, or a collector without enclosing outside state.
-2. Resist the temptation to add functions that only exist to provide an alias. They seem fun/handy but add surface area to the API and must be maintained forever.
+1. Consider adding a gatherer if it cannot be implemented with `map`, `filter`, or a collector without enclosing outside
+   state.
+2. Resist the temptation to add functions that only exist to provide an alias. They seem fun/handy but add surface area
+   to the API and must be maintained forever.
 3. All features should be documented and tested.
 
 # Contributing
 
-Please feel free to file issues for change requests or bugs. If you would like to contribute new functionality, please contact me before starting work!
+Please feel free to file issues for change requests or bugs. If you would like to contribute new functionality, please
+contact me before starting work!
 
 Copyright © 2024-2025 by Todd Ginsberg
