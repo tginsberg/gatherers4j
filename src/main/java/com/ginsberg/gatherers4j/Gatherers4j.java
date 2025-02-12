@@ -256,7 +256,7 @@ public abstract class Gatherers4j {
     public static <INPUT> Gatherer<INPUT, ?, INPUT> filterIncreasing(final Comparator<INPUT> comparator) {
         return FilterChangingGatherer.usingComparator(ChangingOperation.Increasing, comparator);
     }
-    
+
     /// Filter the elements in the stream to only include elements of the given types.
     /// Note, due to how generics work you may end up with some... interesting stream types as a result
     ///
@@ -340,8 +340,8 @@ public abstract class Gatherers4j {
     ///     .gather(groupDecreasing())
     ///     .toList();
     ///
-    /// // [[3, 2, 1], [3, 2]]
-    /// ```
+    /// // [[3, 2, 1],[3, 2]]
+    ///```
     ///
     /// @param <INPUT> Type of elements in the input stream
     /// @return A non-null Gatherer
@@ -357,8 +357,8 @@ public abstract class Gatherers4j {
     ///     .gather(groupDecreasing(Comparator.comparingInt(String::length)))
     ///     .toList();
     ///
-    /// // [["ABC", "AB", "A"], ["ABC", "AB"]]
-    /// ```
+    /// // [["ABC", "AB", "A"],["ABC", "AB"]]
+    ///```
     ///
     /// @param <INPUT> Type of elements in the input stream
     /// @param comparator The non-null comparator used to compare stream elements
@@ -375,8 +375,8 @@ public abstract class Gatherers4j {
     ///     .gather(groupIncreasing())
     ///     .toList();
     ///
-    /// // [[1, 2, 3], [2, 3]]
-    /// ```
+    /// // [[1, 2, 3],[2, 3]]
+    ///```
     ///
     /// @param <INPUT> Type of elements in the input stream
     /// @return A non-null Gatherer
@@ -392,8 +392,8 @@ public abstract class Gatherers4j {
     ///     .gather(increasing(Comparator.comparingInt(String::length)))
     ///     .toList();
     ///
-    /// // [["A", "AB", "ABC"], ["AB", "ABC"]]
-    /// ```
+    /// // [["A", "AB", "ABC"],["AB", "ABC"]]
+    ///```
     ///
     /// @param <INPUT> Type of elements in the input stream
     /// @param comparator The non-null comparator used to compare stream elements
@@ -410,8 +410,8 @@ public abstract class Gatherers4j {
     ///     .gather(groupNonDecreasing())
     ///     .toList();
     ///
-    /// // [[2, 3, 3], [2, 3]]
-    /// ```
+    /// // [[2, 3, 3],[2, 3]]
+    ///```
     ///
     /// @param <INPUT> Type of elements in the input stream
     /// @return A non-null Gatherer
@@ -427,8 +427,8 @@ public abstract class Gatherers4j {
     ///     .gather(decreasing(Comparator.comparingInt(String::length)))
     ///     .toList();
     ///
-    /// // [["A", "AB", "AB"], ["A", "AB"]]
-    /// ```
+    /// // [["A", "AB", "AB"],["A", "AB"]]
+    ///```
     ///
     /// @param <INPUT> Type of elements in the input stream
     /// @param comparator The non-null comparator used to compare stream elements
@@ -445,8 +445,8 @@ public abstract class Gatherers4j {
     ///     .gather(groupNonIncreasing())
     ///     .toList();
     ///
-    /// // [[3, 2, 2], [3, 2]]
-    /// ```
+    /// // [[3, 2, 2],[3, 2]]
+    ///```
     ///
     /// @param <INPUT> Type of elements in the input stream
     /// @return A non-null Gatherer
@@ -462,8 +462,8 @@ public abstract class Gatherers4j {
     ///     .gather(nonIncreasing(Comparator.comparingInt(String::length)))
     ///     .toList();
     ///
-    /// // [["ABC", "AB", "AB"], ["ABC", "AB"]]
-    /// ```
+    /// // [["ABC", "AB", "AB"],["ABC", "AB"]]
+    ///```
     ///
     /// @param <INPUT> Type of elements in the input stream
     /// @param comparator The non-null comparator used to compare stream elements
@@ -630,6 +630,25 @@ public abstract class Gatherers4j {
     /// @return A non-null `FrequencyGatherer`
     public static <INPUT extends @Nullable Object> FrequencyGatherer<INPUT> orderByFrequencyDescending() {
         return new FrequencyGatherer<>(FrequencyGatherer.Order.Descending);
+    }
+
+    /// Repeatedly emit the input stream to the output stream a given number of times.
+    /// Note: This implementation consumes the entire input stream into memory, so it must be used on finite streams.
+    ///
+    /// @param <INPUT> Type of elements in the input and output stream
+    /// @param repeats Number of repeats, must be greater than 1
+    /// @return A non-null `RepeatingGatherer`
+    public static <INPUT extends @Nullable Object> RepeatingGatherer<INPUT> repeat(final int repeats) {
+        return RepeatingGatherer.ofFinite(repeats);
+    }
+
+    /// Repeatedly emit the input stream to the output stream infinitely.
+    /// Note: This implementation consumes the entire input stream into memory, so it must be used on finite streams.
+    ///
+    /// @param <INPUT> Type of elements in the input and output stream
+    /// @return A non-null `RepeatingGatherer`
+    public static <INPUT extends @Nullable Object> RepeatingGatherer<INPUT> repeatInfinitely() {
+        return RepeatingGatherer.ofInfinite();
     }
 
     /// Reverse the order of the input Stream.
