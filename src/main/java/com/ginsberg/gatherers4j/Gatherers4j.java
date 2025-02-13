@@ -472,8 +472,8 @@ public abstract class Gatherers4j {
         return GroupChangingGatherer.usingComparator(ChangingOperation.NonIncreasing, comparator);
     }
 
-    /// Turn a `Stream<INPUT>` into a `Stream<List<INPUT>>` where consecutive
-    /// equal elements, where equality is measured by `Object.equals(Object)`.
+    /// Turn a `Stream<INPUT>` into a `Stream<List<INPUT>>` where consecutive equal elements are in the same `List`
+    /// and equality is measured by `Object.equals(Object)`. The lists emitted to the output stream are unmodifiable.
     ///
     /// @param <INPUT> Type of elements in the input stream
     /// @return A non-null `GroupingByGatherer`
@@ -481,8 +481,8 @@ public abstract class Gatherers4j {
         return new GroupingByGatherer<>();
     }
 
-    /// Turn a `Stream<INPUT>` into a `Stream<List<INPUT>>` where consecutive
-    /// equal elements, where equality is measured by the given `mappingFunction`, are in the same `List`.
+    /// Turn a `Stream<INPUT>` into a `Stream<List<INPUT>>` where consecutive equal elements are in the same `List`
+    /// and equality is measured by the given `mappingFunction`. The lists emitted to the output stream are unmodifiable.
     ///
     /// @param mappingFunction A non-null function, the results of which are used to measure equality of consecutive elements.
     /// @param <INPUT>         Type of elements in the input stream

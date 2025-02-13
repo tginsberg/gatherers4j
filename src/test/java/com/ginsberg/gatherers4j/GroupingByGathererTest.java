@@ -74,6 +74,7 @@ class GroupingByGathererTest {
         );
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void mappingFunctionMustNotBeNull() {
         assertThatThrownBy(() -> new GroupingByGatherer<>(null)).isInstanceOf(IllegalArgumentException.class);
@@ -94,6 +95,23 @@ class GroupingByGathererTest {
                         Arrays.asList(null, null),
                         List.of("A")
                 );
+    }
+
+    @Test
+    void returnedListUnmodifiable() {
+        // Arrange
+        final Stream<String> input = Stream.of("A", "A", "B", "B", "C", "C", "C");
+
+        // Act
+        final List<List<String>> output = input.gather(Gatherers4j.grouping()).toList();
+
+        // Assert
+        assertThat(output).hasSize(3);
+        output.forEach(it ->
+                assertThatThrownBy(() ->
+                        it.add("D")
+                ).isInstanceOf(UnsupportedOperationException.class)
+        );
     }
 
     @Test
