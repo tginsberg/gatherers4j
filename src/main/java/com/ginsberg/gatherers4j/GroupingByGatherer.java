@@ -19,6 +19,7 @@ package com.ginsberg.gatherers4j;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -38,7 +39,7 @@ public class GroupingByGatherer<INPUT extends @Nullable Object> implements
         mappingFunction = null;
     }
 
-    GroupingByGatherer(Function<@Nullable INPUT, @Nullable Object> mappingFunction) {
+    GroupingByGatherer(final Function<@Nullable INPUT, @Nullable Object> mappingFunction) {
         mustNotBeNull(mappingFunction, "Mapping function must not be null");
         this.mappingFunction = mappingFunction;
     }
@@ -51,19 +52,13 @@ public class GroupingByGatherer<INPUT extends @Nullable Object> implements
     @Override
     public Integrator<State<INPUT>, INPUT, List<INPUT>> integrator() {
         return Integrator.ofGreedy((state, element, downstream) -> {
-            final Object thisMatch = mappingFunction == null ? element: mappingFunction.apply(element);
-            if (state.working == null) {
+            final Object thisMappedElement = mappingFunction == null ? element: mappingFunction.apply(element);
+            if (!state.working.isEmpty() && !safeEquals(state.previousMappedElement, thisMappedElement)) {
+                downstream.push(Collections.unmodifiableList(state.working));
                 state.working = new ArrayList<>();
-                state.working.add(element);
-                state.pastMatch = thisMatch;
-            } else if (!safeEquals(state.pastMatch, thisMatch)) {
-                downstream.push(state.working);
-                state.working = new ArrayList<>();
-                state.working.add(element);
-                state.pastMatch = thisMatch;
-            } else {
-                state.working.add(element);
             }
+            state.previousMappedElement = thisMappedElement;
+            state.working.add(element);
             return !downstream.isRejecting();
         });
     }
@@ -71,14 +66,14 @@ public class GroupingByGatherer<INPUT extends @Nullable Object> implements
     @Override
     public BiConsumer<State<INPUT>, Downstream<? super List<INPUT>>> finisher() {
         return (state, downstream) -> {
-            if (state.working != null) {
-                downstream.push(state.working);
+            if (!state.working.isEmpty()) {
+                downstream.push(Collections.unmodifiableList(state.working));
             }
         };
     }
 
     public static class State<INPUT> {
-        @Nullable Object pastMatch = null;
-        @Nullable List<INPUT> working = null;
+        @Nullable Object previousMappedElement = null;
+        List<INPUT> working = new ArrayList<>();
     }
 }
