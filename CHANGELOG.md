@@ -5,6 +5,7 @@
 + Implement `ensureIncreasing`, `ensureDecreasing`, `ensureNonIncreasing` and `ensureNonDecreasing` with both `Comparable` stream inputs or using an explicit `Comparator` to ensure the given stream meets the criteria, or fail exceptionally otherwise
 + Implement `filterIncreasing`, `filterDecreasing`, `filterNonIncreasing` and `filterNonDecreasing` with both `Comparable` stream inputs or using an explicit `Comparator` to remove non-compliant elements from the input stream
 + Implement `repeat(n)` and `repeatInfinitely()` to repeatedly emit the input stream to the output stream
++ Implement `rotateLeft(n)` and `rotateRight(n)` to rotate the stream (consumes entire stream)
 
 ### 0.8.0 
 + Add support for `orElse()` and `orElseEmpty()` on size-based gatherers to provide a non-exceptional output stream

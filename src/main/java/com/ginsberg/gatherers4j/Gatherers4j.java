@@ -662,6 +662,24 @@ public abstract class Gatherers4j {
         return new ReversingGatherer<>();
     }
 
+    /// Consume the entire stream and emit its elements rotated to the left `distance` spaces
+    ///
+    /// @param <INPUT> Type of elements in the input and output stream
+    /// @param distance Distance to rotate elements
+    /// @return A non-null RotateGatherer
+    public static <INPUT extends @Nullable Object> RotateGatherer<INPUT> rotateLeft(final int distance) {
+        return new RotateGatherer<>(RotateGatherer.Direction.Left, distance);
+    }
+
+    /// Consume the entire stream and emit its elements rotated to the right `distance` spaces
+    ///
+    /// @param <INPUT> Type of elements in the input and output stream
+    /// @param distance Distance to rotate elements
+    /// @return A non-null RotateGatherer
+    public static <INPUT extends @Nullable Object> RotateGatherer<INPUT> rotateRight(final int distance) {
+        return new RotateGatherer<>(RotateGatherer.Direction.Right, distance);
+    }
+
     /// Create a `Stream<BigDecimal>` that represents the running population standard
     /// deviation of a `Stream<BigDecimal>`.
     ///
