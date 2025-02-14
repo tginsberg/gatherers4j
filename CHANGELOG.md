@@ -42,7 +42,7 @@
 + Implement `exactSize(n)`
 
 ### 0.4.0
-+ Implement `suffle()` and `shuffle(RandomGenerator)`
++ Implement `shuffle()` and `shuffle(RandomGenerator)`
 + Implement `filterWithIndex()`
 + Implement `runningProduct()` and `runningProductBy()`
 + Implement `runningSum()` and `runningSumBy()`
