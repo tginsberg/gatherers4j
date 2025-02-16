@@ -30,7 +30,7 @@ jobs:
         uses: peaceiris/actions-hugo@v3
         with:
           hugo-version: 0.143.1
-          extended: false
+          extended: true
 
       - name: Build
         run: |
