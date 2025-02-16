@@ -1,0 +1,49 @@
+baseURL = 'https://example.org/'
+languageCode = 'en-us'
+title = 'Gatherers4j'
+
+[markup]
+  [markup.highlight]
+    noClasses = false
+  [markup.tableOfContents]
+    endLevel = 4
+    ordered = false
+    startLevel = 2
+
+[[menu.main]]
+  name = "GitHub"
+  weight = 50
+  url = "https://github.com/tginsberg/gatherers4j/"
+  pre = "<i class='fa-brands fa-github'></i>"
+
+[module]
+  proxy = "direct"
+  [module.hugoVersion]
+    extended = true
+    min = "0.73.0"
+  [[module.imports]]
+    path = "github.com/google/docsy"
+    disable = false
+
+[params]
+  copyright = "Todd Ginsberg"
+  github_repo = "https://github.com/tginsberg/gatherers4j/"
+  github_subdir = "docs/gatherers4j"
+  offlineSearch = true
+  [[params.links.developer]]
+    name = "GitHub"
+    url = "https://github.com/tginsberg/gatherers4j/"
+    icon = "fab fa-github"
+    desc = "Development takes place here!"
+  [params.ui]
+    showLightDarkModeMenu = true
+    sidebar_menu_foldable = true
+
+[security]
+  [security.funcs]
+    getenv = ['^HUGO_', '^PROJECT_VERSION$']
+
+[sitemap]
+  changefreq = "monthly"
+  filename = "sitemap.xml"
+  priority = 0.5

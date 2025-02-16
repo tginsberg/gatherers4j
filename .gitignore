@@ -27,3 +27,8 @@ replay_pid*
 .gradle/
 build/
 .idea/
+
+# Hugo
+/docs/hugo/
+/docs/gatherers4j/public/
+/docs/gatherers4j/resources/

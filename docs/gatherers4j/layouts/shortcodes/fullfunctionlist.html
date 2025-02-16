@@ -1,0 +1,22 @@
+{{- /* Collect all child pages recursively with show_in_table set to true */ -}}
+{{- $children := where .Page.RegularPagesRecursive ".Params.show_in_table" true -}}
+
+{{- /* Sort the pages by the 'description' field */ -}}
+{{- $sortedChildren := sort $children ".Params.description" -}}
+
+{{ if gt (len $sortedChildren) 0 }}
+{{ $markdown := "### Child Pages\n\n| Title | Description |\n|---|---|\n" }}
+{{- range $sortedChildren }}
+{{ $title := printf "`%s`" .Title }}  <!-- Wrap title in backticks -->
+{{ $link := printf "[%s](%s)" $title .Permalink }}
+{{ $description := .Params.description }}
+
+{{ $row := printf "| %s | %s | %s |\n" $link $description }}
+{{ $markdown = printf "%s%s" $markdown $row }}
+{{- end }}
+
+{{ markdownify $markdown }}
+
+{{ else }}
+No child pages available to display.
+{{ end }}

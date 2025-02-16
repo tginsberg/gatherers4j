@@ -95,7 +95,7 @@ public abstract class Gatherers4j {
         return new ThrottlingGatherer<>(ThrottlingGatherer.LimitRule.Drop, amount, duration);
     }
 
-    /// Remove consecutive duplicate elements from a stream according `Object.equals(Object)`
+    /// Remove consecutive duplicate elements from a stream as measured by `Object.equals(Object)`
     ///
     /// @param <INPUT> Type of elements in both the input and output streams
     /// @return A non-null `DedupeConsecutiveGatherer`

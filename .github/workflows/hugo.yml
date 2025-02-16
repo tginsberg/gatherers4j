@@ -1,0 +1,38 @@
+name: Hugo Build and Publish
+
+on: [ workflow_dispatch ]
+
+permissions:
+  contents: read
+  packages: write
+  pull-requests: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+    working-directory: ./docs/gatherers4j
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: 0.143.1
+          extended: false
+
+      - name: Build
+        run: |
+          . ./set_project_version.sh
+          hugo build --minify --logLevel debug --noBuildLock
