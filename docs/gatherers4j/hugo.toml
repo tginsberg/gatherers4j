@@ -20,7 +20,7 @@ title = 'Gatherers4j'
   proxy = "direct"
   [module.hugoVersion]
     extended = true
-    min = "0.73.0"
+    min = "0.143.1"
   [[module.imports]]
     path = "github.com/google/docsy"
     disable = false
