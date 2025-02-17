@@ -214,13 +214,28 @@ public abstract class Gatherers4j {
                 .andThen(new FlattenSingleOrFail<>("Elements are increasing"));
     }
 
-    /// Keep every nth element of the stream.
+    /// Drop every nth element of the stream.
+    ///
+    /// @param count   The number of the elements to drop, must be at least 2
+    /// @param <INPUT> Type of elements in both the input and output streams
+    /// @return A non-null `Gatherer`
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> dropEveryNth(final int count) {
+        if (count < 2) {
+            throw new IllegalArgumentException("Count must be a minimum of 2");
+        }
+        return filterWithIndex((index, _) -> index % count != 0);
+    }
+
+    /// Take every nth element of the stream.
     ///
     /// @param count   The number of the elements to keep, must be at least 2
     /// @param <INPUT> Type of elements in both the input and output streams
-    /// @return A non-null `EveryNthGatherer`
-    public static <INPUT extends @Nullable Object> EveryNthGatherer<INPUT> everyNth(final int count) {
-        return new EveryNthGatherer<>(count);
+    /// @return A non-null `Gatherer`
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> takeEveryNth(final int count) {
+        if (count < 2) {
+            throw new IllegalArgumentException("Count must be a minimum of 2");
+        }
+        return filterWithIndex((index, _) -> index % count == 0);
     }
 
     /// Filter the input stream so that it contains `Comparable` elements in a strictly decreasing order.

@@ -73,8 +73,8 @@ Functions that remove elements (or retain them, depending on how you look at it)
 | `dedupeConsecutive()`             | Remove consecutive duplicates from a stream                                                                                    |
 | `dedupeConsecutiveBy(fn)`         | Remove consecutive duplicates from a stream as returned by `fn`                                                                |
 | `distinctBy(fn)`                  | Emit only distinct elements from the stream, as measured by `fn`                                                               |
+| `dropEveryNth(n)`                 | Drop every`n`<sup>th</sup> element from the input stream                                                                       |
 | `dropLast(n)`                     | Keep all but the last `n` elements of the stream                                                                               |
-| `everyNth(n)`                     | Limit the stream to every `n`<sup>th</sup> element                                                                             |
 | `filterDecreasing()`              | Filter the input stream of `Comparable` objects so that it contains only strictly decreasing objects                           |                                                                                           |
 | `filterDecreasing(comparator)`    | Filter the input stream of objects so that it contains only strictly decreasing objects, as measured by a given `Comparator`   |
 | `filterIncreasing()`              | Filter the input stream of `Comparable` objects so that it contains only strictly increasing objects                           |
@@ -86,6 +86,7 @@ Functions that remove elements (or retain them, depending on how you look at it)
 | `filterInstanceOf(types)`         | Filter the stream to only include elements of the given type(s)                                                                |
 | `filterWithIndex(predicate)`      | Filter the stream with the given `predicate`, which takes an `element` and its `index`                                         |
 | `last(n)`                         | Constrain the stream to the last `n` values                                                                                    |
+| `takeEveryNth(n)`                 | Keep every`n`<sup>th</sup> element from the input stream                                                                       |
 | `takeUntil(predicate)`            | Take elements from the input stream until the `predicate` is met, including the first element that matches the `preciate`      |
 | `uniquelyOccurring()`             | Emit elements that occur a single time, dropping all others                                                                    |
 

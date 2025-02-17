@@ -5,7 +5,17 @@ weight: 90
 no_list: true
 ---
 
-## v0.8.0 (Current)
+## v0.9.0
++ Implement `filterInstanceOf` to filter a stream by type more easily. Addresses [#86](https://github.com/tginsberg/gatherers4j/issues/86), thanks [@nipafx](https://github.com/nipafx).
++ Implement `groupIncreasing`, `groupDecreasing`, `groupNonIncreasing`, and `groupNonDecreasing` with both `Comparable` stream inputs or using an explicit `Comparator` to appropriately group elements in the input stream to lists in the output stream. Addresses [#88](https://github.com/tginsberg/gatherers4j/issues/88), thanks [@nipafx](https://github.com/nipafx).
++ Implement `windowed` to provide more options to windowing functions, namely - ability to specify size, how many to skip each time, and whether to include partial windows
++ Implement `ensureIncreasing`, `ensureDecreasing`, `ensureNonIncreasing` and `ensureNonDecreasing` with both `Comparable` stream inputs or using an explicit `Comparator` to ensure the given stream meets the criteria, or fail exceptionally otherwise
++ Implement `filterIncreasing`, `filterDecreasing`, `filterNonIncreasing` and `filterNonDecreasing` with both `Comparable` stream inputs or using an explicit `Comparator` to remove non-compliant elements from the input stream
++ Implement `repeat(n)` and `repeatInfinitely()` to repeatedly emit the input stream to the output stream
++ Implement `rotateLeft(n)` and `rotateRight(n)` to rotate the stream (consumes entire stream)
++ Rename `everyNth(n)` to `takeEveryNth(n)` and add `dropEveryNth(n)` for completeness
+
+## v0.8.0
 [Released 2025-02-01](https://github.com/tginsberg/gatherers4j/releases/tag/v0.8.0)
 
 + Add support for `orElse()` and `orElseEmpty()` on size-based gatherers to provide a non-exceptional output stream
@@ -16,7 +26,6 @@ no_list: true
 + Implement `scanIndexed()` to perform a scan along with the index of each element
 + Implement `intersperse()` to put the given element between each element of the stream
 + Implement `cross(iterable)`, `cross(iterator)`, and `cross(stream)` to combine elements in the input stream with the given source of elements
-
 
 ## v0.7.0
 [Released 2025-01-06](https://github.com/tginsberg/gatherers4j/releases/tag/v0.7.0)
