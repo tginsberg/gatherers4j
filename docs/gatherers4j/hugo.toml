@@ -15,6 +15,7 @@ title = 'Gatherers4j'
   weight = 50
   url = "https://github.com/tginsberg/gatherers4j/"
   pre = "<i class='fa-brands fa-github'></i>"
+  ui.ul_show = 2
 
 [module]
   proxy = "direct"
