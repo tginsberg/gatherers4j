@@ -28,6 +28,7 @@ title = 'Gatherers4j'
 
 [params]
   copyright = "Todd Ginsberg"
+  jdk_url = "https://docs.oracle.com/en/java/javase/23/docs/api/"
   github_repo = "https://github.com/tginsberg/gatherers4j/"
   github_subdir = "docs/gatherers4j"
   offlineSearch = true
