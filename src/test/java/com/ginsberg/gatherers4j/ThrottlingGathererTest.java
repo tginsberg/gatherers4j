@@ -24,7 +24,6 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.concurrent.locks.LockSupport;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -132,16 +131,6 @@ class ThrottlingGathererTest {
         // Assert
         assertThat(output.get(1) - output.get(0)).isLessThan(duration.toMillis());
         assertThat(output.get(2) - output.get(0)).isGreaterThanOrEqualTo(duration.toMillis() - offset);
-    }
-
-    @Test
-    void doNotCheckIn() {
-        long start = System.currentTimeMillis();
-        IntStream.range(1, 7)
-                .boxed()
-                .gather(Gatherers4j.throttle(2, Duration.ofMillis(100)))
-                .map(it -> new Pair<>(it, System.currentTimeMillis()-start))
-                .forEach(System.out::println);
     }
 
     private static class PredictableClock extends Clock {
