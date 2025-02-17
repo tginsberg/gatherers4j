@@ -2,7 +2,8 @@
 title: "debounce()"
 linkTitle: "debounce()"
 show_in_table: true
-description: Limit the number of elements in the stream to some number per period, dropping anything over the limit during the period. 
+category: Filtering and Selection
+description: Limit the number of elements in the stream to some number per period, dropping anything over the limit during the period.
 ---
 
 

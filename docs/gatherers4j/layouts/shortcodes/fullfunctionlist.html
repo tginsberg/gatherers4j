@@ -2,10 +2,10 @@
 {{- $children := where .Page.RegularPagesRecursive ".Params.show_in_table" true -}}
 
 {{- /* Sort the pages by the 'description' field */ -}}
-{{- $sortedChildren := sort $children ".Params.description" -}}
+{{- $sortedChildren := sort $children ".Params.linkTitle" -}}
 
 {{ if gt (len $sortedChildren) 0 }}
-{{ $markdown := "### Child Pages\n\n| Title | Description |\n|---|---|\n" }}
+{{ $markdown := "| Title | Description |\n|---|---|\n" }}
 {{- range $sortedChildren }}
 {{ $title := printf "`%s`" .Title }}  <!-- Wrap title in backticks -->
 {{ $link := printf "[%s](%s)" $title .Permalink }}

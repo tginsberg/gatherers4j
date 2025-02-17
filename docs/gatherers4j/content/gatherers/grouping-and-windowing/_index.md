@@ -4,4 +4,6 @@ linkTitle: "Grouping and Windowing"
 weight: 30
 ---
 
-Todd was here
+Functions that collect elements into groups or windows
+
+{{< functiontable >}}

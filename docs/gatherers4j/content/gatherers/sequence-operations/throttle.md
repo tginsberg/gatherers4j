@@ -2,6 +2,7 @@
 title: "throttle()"
 linkTitle: "throttle()"
 show_in_table: true
+category: Sequence Operations
 description: Limit the number of elements in the stream to some number per period. When the limit is reached consumption is paused until a new period starts and the count resets.
 ---
 

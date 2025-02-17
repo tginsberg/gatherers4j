@@ -4,4 +4,6 @@ linkTitle: "Validation and Constraints"
 weight: 50
 ---
 
-Todd was here
+Functions that enforce conditions on the stream
+
+{{< functiontable >}}

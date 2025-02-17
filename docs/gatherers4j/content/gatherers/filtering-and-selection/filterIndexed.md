@@ -2,6 +2,7 @@
 title: "filterIndexed()"
 linkTitle: "filterIndexed()"
 show_in_table: true
+category: Filtering and Selection
 description: Filter a stream according to a given `predicate`, which takes both the item being examined and its index.
 ---
 

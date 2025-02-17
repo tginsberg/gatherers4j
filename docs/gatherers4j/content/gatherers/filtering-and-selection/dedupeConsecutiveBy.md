@@ -2,6 +2,7 @@
 title: "dedupeConsecutiveBy()"
 linkTitle: "dedupeConsecutiveBy()"
 show_in_table: true
+category: Filtering and Selection
 description: Remove consecutive duplicates, where equality is measured by a given function
 ---
 

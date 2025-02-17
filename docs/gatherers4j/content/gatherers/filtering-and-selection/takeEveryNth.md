@@ -2,6 +2,7 @@
 title: "takeEveryNth()"
 linkTitle: "takeEveryNth()"
 show_in_table: true
+category: Filtering and Selection
 description: Take every `n`th element of the stream.
 ---
 

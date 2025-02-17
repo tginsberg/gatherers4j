@@ -4,4 +4,6 @@ linkTitle: "Mathematical Operations"
 weight: 40
 ---
 
-Todd was here
+Functions performing calculations over the stream
+
+{{< functiontable >}}

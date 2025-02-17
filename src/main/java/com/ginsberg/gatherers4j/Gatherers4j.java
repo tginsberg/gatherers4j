@@ -929,8 +929,8 @@ public abstract class Gatherers4j {
     ///
     /// @param predicate A non-null predicate function
     /// @param <INPUT>   Type of elements in both the input and output streams
-    /// @return A non-null `TakeUntilGatherer`
-    public static <INPUT extends @Nullable Object> TakeUntilGatherer<INPUT> takeUntil(
+    /// @return A non-null `Gatherer`
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> takeUntil(
             final Predicate<INPUT> predicate
     ) {
         return new TakeUntilGatherer<>(predicate);
@@ -953,8 +953,8 @@ public abstract class Gatherers4j {
     /// Emit only those elements that occur in the input stream a single time.
     ///
     /// @param <INPUT> Type of elements in the input stream
-    /// @return A non-null `UniquelyOccurringGatherer`
-    public static <INPUT extends @Nullable Object> UniquelyOccurringGatherer<INPUT> uniquelyOccurring() {
+    /// @return A non-null `Gatherer`
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> uniquelyOccurring() {
         return new UniquelyOccurringGatherer<>();
     }
 

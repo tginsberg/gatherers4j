@@ -2,6 +2,7 @@
 title: "dropEveryNth()"
 linkTitle: "dropEveryNth()"
 show_in_table: true
+category: Filtering and Selection
 description: Drop every `n`th element of the stream.
 ---
 

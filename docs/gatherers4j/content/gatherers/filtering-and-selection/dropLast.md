@@ -2,6 +2,7 @@
 title: "dropLast()"
 linkTitle: "dropLast()"
 show_in_table: true
+category: Filtering and Selection
 description: Keep all elements except the last `count` elements of the stream.
 ---
 
