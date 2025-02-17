@@ -79,12 +79,12 @@ Functions that remove elements (or retain them, depending on how you look at it)
 | `filterDecreasing(comparator)`    | Filter the input stream of objects so that it contains only strictly decreasing objects, as measured by a given `Comparator`   |
 | `filterIncreasing()`              | Filter the input stream of `Comparable` objects so that it contains only strictly increasing objects                           |
 | `filterIncreasing(comparator)`    | Filter the input stream of objects so that it contains only strictly increasing objects, as measured by a given `Comparator`   |
+| `filterIndexed(predicate)`        | Filter the stream with the given `predicate`, which takes an `element` and its `index`                                         |
 | `filterNonDecreasing()`           | Filter the input stream of `Comparable` objects so that it contains only non-decreasing objects                                |
 | `filterNonDecreasing(comparator)` | Filter the input stream of objects so that it contains only non-decreasing objects, as measured by a given `Comparator`        |
 | `filterNonIncreasing()`           | Filter the input stream of `Comparable` objects so that it contains non-increasing objects                                     |
 | `filterNonIncreasing(comparator)` | Filter the input stream of objects so that it contains only non-increasing objects, as measured by a given `Comparator`        |
 | `filterInstanceOf(types)`         | Filter the stream to only include elements of the given type(s)                                                                |
-| `filterWithIndex(predicate)`      | Filter the stream with the given `predicate`, which takes an `element` and its `index`                                         |
 | `last(n)`                         | Constrain the stream to the last `n` values                                                                                    |
 | `takeEveryNth(n)`                 | Keep every`n`<sup>th</sup> element from the input stream                                                                       |
 | `takeUntil(predicate)`            | Take elements from the input stream until the `predicate` is met, including the first element that matches the `preciate`      |
@@ -358,7 +358,7 @@ Stream.of((byte)1, (short)2, 3, (long)4, 1.0, 1.0d)
 
 ```java
 Stream.of("A", "B", "C", "D")
-      .gather(Gatherers4j.filterWithIndex((index, element) -> index % 2 == 0 || element.equals("D")))
+      .gather(Gatherers4j.filterIndexed((index, element) -> index % 2 == 0 || element.equals("D")))
       .toList();
 
 // ["A", "C", "D"]

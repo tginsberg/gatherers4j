@@ -33,7 +33,7 @@ class FilteringWithIndexGathererTest {
 
         // Act
         final List<String> output = input
-                .gather(Gatherers4j.filterWithIndex((index, element) ->
+                .gather(Gatherers4j.filterIndexed((index, element) ->
                         index % 2 == 0 || element.equals("D"))
                 )
                 .toList();
@@ -44,7 +44,7 @@ class FilteringWithIndexGathererTest {
 
     @Test
     void predicateMustNotBeNull() {
-        assertThatThrownBy(() -> Stream.of("A").gather(Gatherers4j.filterWithIndex(null)))
+        assertThatThrownBy(() -> Stream.of("A").gather(Gatherers4j.filterIndexed(null)))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 }

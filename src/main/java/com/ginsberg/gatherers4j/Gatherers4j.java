@@ -126,6 +126,18 @@ public abstract class Gatherers4j {
         return new DistinctGatherer<>(mappingFunction);
     }
 
+    /// Drop every nth element of the stream.
+    ///
+    /// @param count   The number of the elements to drop, must be at least 2
+    /// @param <INPUT> Type of elements in both the input and output streams
+    /// @return A non-null `Gatherer`
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> dropEveryNth(final int count) {
+        if (count < 2) {
+            throw new IllegalArgumentException("Count must be a minimum of 2");
+        }
+        return filterIndexed((index, _) -> index % count != 0);
+    }
+
     /// Keep all elements except the last `count` elements of the stream.
     ///
     /// @param count   A positive number of elements to drop from the end of the stream
@@ -214,30 +226,6 @@ public abstract class Gatherers4j {
                 .andThen(new FlattenSingleOrFail<>("Elements are increasing"));
     }
 
-    /// Drop every nth element of the stream.
-    ///
-    /// @param count   The number of the elements to drop, must be at least 2
-    /// @param <INPUT> Type of elements in both the input and output streams
-    /// @return A non-null `Gatherer`
-    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> dropEveryNth(final int count) {
-        if (count < 2) {
-            throw new IllegalArgumentException("Count must be a minimum of 2");
-        }
-        return filterWithIndex((index, _) -> index % count != 0);
-    }
-
-    /// Take every nth element of the stream.
-    ///
-    /// @param count   The number of the elements to keep, must be at least 2
-    /// @param <INPUT> Type of elements in both the input and output streams
-    /// @return A non-null `Gatherer`
-    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> takeEveryNth(final int count) {
-        if (count < 2) {
-            throw new IllegalArgumentException("Count must be a minimum of 2");
-        }
-        return filterWithIndex((index, _) -> index % count == 0);
-    }
-
     /// Filter the input stream so that it contains `Comparable` elements in a strictly decreasing order.
     ///
     /// @param <INPUT> Type of elements in the input and output stream
@@ -270,6 +258,19 @@ public abstract class Gatherers4j {
     /// @return A non-null gatherer
     public static <INPUT> Gatherer<INPUT, ?, INPUT> filterIncreasing(final Comparator<INPUT> comparator) {
         return FilterChangingGatherer.usingComparator(ChangingOperation.Increasing, comparator);
+    }
+
+    /// Filter a stream according to the given `predicate`, which takes both the item being examined,
+    /// and its index.
+    ///
+    /// @param predicate A non-null `BiPredicate<Long,INPUT>` where the `Long` is the zero-based index of the element
+    ///                  being filtered, and the `INPUT` is the element itself.
+    /// @param <INPUT>   Type of elements in the input stream
+    /// @return A non-null `Gatherer`
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> filterIndexed(
+            final BiPredicate<Long, INPUT> predicate
+    ) {
+        return new FilteringWithIndexGatherer<>(predicate);
     }
 
     /// Filter the elements in the stream to only include elements of the given types.
@@ -318,19 +319,6 @@ public abstract class Gatherers4j {
     /// @return A non-null gatherer
     public static <INPUT> Gatherer<INPUT, ?, INPUT> filterNonIncreasing(final Comparator<INPUT> comparator) {
         return FilterChangingGatherer.usingComparator(ChangingOperation.NonIncreasing, comparator);
-    }
-
-    /// Filter a stream according to the given `predicate`, which takes both the item being examined,
-    /// and its index.
-    ///
-    /// @param predicate A non-null `BiPredicate<Long,INPUT>` where the `Long` is the zero-based index of the element
-    ///                  being filtered, and the `INPUT` is the element itself.
-    /// @param <INPUT>   Type of elements in the input stream
-    /// @return A non-null `FilteringWithIndexGatherer`
-    public static <INPUT extends @Nullable Object> FilteringWithIndexGatherer<INPUT> filterWithIndex(
-            final BiPredicate<Long, INPUT> predicate
-    ) {
-        return new FilteringWithIndexGatherer<>(predicate);
     }
 
     ///  Perform a fold over every element in the input stream along with its index
@@ -922,6 +910,18 @@ public abstract class Gatherers4j {
     /// @throws IllegalStateException when the input stream is not exactly `size` elements long
     public static <INPUT extends @Nullable Object> SizeGatherer<INPUT> sizeLessThanOrEqualTo(final long size) {
         return new SizeGatherer<>(SizeGatherer.Operation.LessThanOrEqualTo, size);
+    }
+
+    /// Take every nth element of the stream.
+    ///
+    /// @param count   The number of the elements to keep, must be at least 2
+    /// @param <INPUT> Type of elements in both the input and output streams
+    /// @return A non-null `Gatherer`
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> takeEveryNth(final int count) {
+        if (count < 2) {
+            throw new IllegalArgumentException("Count must be a minimum of 2");
+        }
+        return filterIndexed((index, _) -> index % count == 0);
     }
 
     /// Take elements from the input stream until the `predicate` is met, including the first element that

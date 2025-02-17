@@ -14,6 +14,7 @@ no_list: true
 + Implement `repeat(n)` and `repeatInfinitely()` to repeatedly emit the input stream to the output stream
 + Implement `rotateLeft(n)` and `rotateRight(n)` to rotate the stream (consumes entire stream)
 + Rename `everyNth(n)` to `takeEveryNth(n)` and add `dropEveryNth(n)` for completeness
++ Rename `filterWithIndex()` to `filterIndexed()` to match other indexing Gatherers
 
 ## v0.8.0
 [Released 2025-02-01](https://github.com/tginsberg/gatherers4j/releases/tag/v0.8.0)
