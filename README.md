@@ -45,7 +45,7 @@ Functions that don't (yet!) fall into one of the other categories.
 
 | Function                       | Purpose                                                                                                                                    |
 |--------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
-| `cross()`                      | Emit each element of the source stream with each element of the given `iterable`, `iterator`, or `stream` as a `Pair` to the output stream |
+| `crossWith()`                  | Emit each element of the source stream with each element of the given `iterable`, `iterator`, or `stream` as a `Pair` to the output stream |
 | `foldIndexed(fn)`              | Perform a fold over the input stream where each element is included along with its index                                                   |
 | `interleave()`                 | Creates a stream of alternating objects from the input stream and the argument `iterable`, `iterator`, or `stream`                         |
 | `orderByFrequencyAscending()`  | Returns a stream where elements are ordered from least to most frequent as `WithCount<T>` wrapper objects.                                 |
@@ -399,7 +399,7 @@ Stream.of("A", "B", "C")
 ```java
 Stream.of("A", "B", "C")
     .gather(
-        Gatherers4j.cross(List.of(1, 2))
+        Gatherers4j.crossWith(List.of(1, 2))
     ).toList();
 
 // [Pair(A, 1), Pair(A, 2), Pair(B, 1), Pair(B, 2), Pair(C, 1), Pair(C, 2)]
@@ -410,7 +410,7 @@ Stream.of("A", "B", "C")
 ```java
 Stream.of("A", "B", "C")
     .gather(
-        Gatherers4j.cross(List.of(1, 2).iterator())
+        Gatherers4j.crossWith(List.of(1, 2).iterator())
     ).toList();
 
 // [Pair(A, 1), Pair(A, 2), Pair(B, 1), Pair(B, 2), Pair(C, 1), Pair(C, 2)]
@@ -421,7 +421,7 @@ Stream.of("A", "B", "C")
 ```java
 Stream.of("A", "B", "C")
     .gather(
-        Gatherers4j.cross(Stream.of(1, 2))
+        Gatherers4j.crossWith(Stream.of(1, 2))
     ).toList();
 
 // [Pair(A, 1), Pair(A, 2), Pair(B, 1), Pair(B, 2), Pair(C, 1), Pair(C, 2)]

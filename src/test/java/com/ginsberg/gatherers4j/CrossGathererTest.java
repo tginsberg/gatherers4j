@@ -35,7 +35,7 @@ class CrossGathererTest {
         @Test
         @SuppressWarnings("DataFlowIssue")
         void crossIterableMustNotBeNull() {
-            assertThatThrownBy(() -> Gatherers4j.cross((Iterable<String>) null)).isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> Gatherers4j.crossWith((Iterable<String>) null)).isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -48,8 +48,8 @@ class CrossGathererTest {
 
             // Act
             final List<String> output = input
-                    .gather(Gatherers4j.cross(cross1))
-                    .gather(Gatherers4j.cross(cross2))
+                    .gather(Gatherers4j.crossWith(cross1))
+                    .gather(Gatherers4j.crossWith(cross2))
                     .map(pair -> pair.first().first() + pair.first().second() + pair.second())
                     .toList();
 
@@ -69,7 +69,7 @@ class CrossGathererTest {
 
             // Act
             final List<Pair<String, Integer>> output = input
-                    .gather(Gatherers4j.cross(cross))
+                    .gather(Gatherers4j.crossWith(cross))
                     .toList();
 
             // Assert
@@ -88,7 +88,7 @@ class CrossGathererTest {
 
             // Act
             final List<Pair<String, Integer>> output = input
-                    .gather(Gatherers4j.cross(cross))
+                    .gather(Gatherers4j.crossWith(cross))
                     .toList();
 
             // Assert
@@ -101,7 +101,7 @@ class CrossGathererTest {
         @Test
         @SuppressWarnings("DataFlowIssue")
         void crossIteratorMustNotBeNull() {
-            assertThatThrownBy(() -> Gatherers4j.cross((Iterator<String>) null)).isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> Gatherers4j.crossWith((Iterator<String>) null)).isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -114,8 +114,8 @@ class CrossGathererTest {
 
             // Act
             final List<String> output = input
-                    .gather(Gatherers4j.cross(cross1))
-                    .gather(Gatherers4j.cross(cross2))
+                    .gather(Gatherers4j.crossWith(cross1))
+                    .gather(Gatherers4j.crossWith(cross2))
                     .map(pair -> pair.first().first() + pair.first().second() + pair.second())
                     .toList();
 
@@ -135,7 +135,7 @@ class CrossGathererTest {
 
             // Act
             final List<Pair<String, Integer>> output = input
-                    .gather(Gatherers4j.cross(cross))
+                    .gather(Gatherers4j.crossWith(cross))
                     .toList();
 
             // Assert
@@ -154,7 +154,7 @@ class CrossGathererTest {
 
             // Act
             final List<Pair<String, Integer>> output = input
-                    .gather(Gatherers4j.cross(cross))
+                    .gather(Gatherers4j.crossWith(cross))
                     .toList();
 
             // Assert
@@ -167,7 +167,7 @@ class CrossGathererTest {
         @Test
         @SuppressWarnings("DataFlowIssue")
         void crossStreamMustNotBeNull() {
-            assertThatThrownBy(() -> Gatherers4j.cross((Stream<String>) null)).isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> Gatherers4j.crossWith((Stream<String>) null)).isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -180,8 +180,8 @@ class CrossGathererTest {
 
             // Act
             final List<String> output = input
-                    .gather(Gatherers4j.cross(cross1))
-                    .gather(Gatherers4j.cross(cross2))
+                    .gather(Gatherers4j.crossWith(cross1))
+                    .gather(Gatherers4j.crossWith(cross2))
                     .map(pair -> pair.first().first() + pair.first().second() + pair.second())
                     .toList();
 
@@ -201,7 +201,7 @@ class CrossGathererTest {
 
             // Act
             final List<Pair<String, Integer>> output = input
-                    .gather(Gatherers4j.cross(cross))
+                    .gather(Gatherers4j.crossWith(cross))
                     .toList();
 
             // Assert
@@ -220,7 +220,7 @@ class CrossGathererTest {
 
             // Act
             final List<Pair<String, Integer>> output = input
-                    .gather(Gatherers4j.cross(cross))
+                    .gather(Gatherers4j.crossWith(cross))
                     .toList();
 
             // Assert

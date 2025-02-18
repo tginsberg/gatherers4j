@@ -16,6 +16,7 @@ no_list: true
 + Renamed `everyNth(n)` to `takeEveryNth(n)` and added `dropEveryNth(n)` for completeness
 + Renamed `filterWithIndex()` to `filterIndexed()` to match other indexing Gatherers
 + Renamed many `...(comparator)` gatherers to `...By(comparator)` for consistency with other gatherers of the same nature
++ Renamed `cross()` to `crossWith()` for consistency
 
 ## v0.8.0
 [Released 2025-02-01](https://github.com/tginsberg/gatherers4j/releases/tag/v0.8.0)
