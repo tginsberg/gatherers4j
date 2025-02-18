@@ -357,7 +357,7 @@ class GroupChangingGathererTest {
 
                 // Act
                 final List<List<String>> output = input
-                        .gather(Gatherers4j.groupDecreasing(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.groupDecreasingBy(Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -376,7 +376,7 @@ class GroupChangingGathererTest {
 
                 // Act
                 final List<List<String>> output = input
-                        .gather(Gatherers4j.groupDecreasing(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.groupDecreasingBy(Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -390,7 +390,7 @@ class GroupChangingGathererTest {
 
                 // Act
                 final List<String> output = input
-                        .gather(Gatherers4j.ensureDecreasing(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.ensureDecreasingBy(Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -401,7 +401,7 @@ class GroupChangingGathererTest {
             void ensureDecreasingFailureCase() {
                 assertThatThrownBy(() ->
                         Stream.of("A", "AA")
-                                .gather(Gatherers4j.ensureDecreasing(Comparator.comparingInt(String::length)))
+                                .gather(Gatherers4j.ensureDecreasingBy(Comparator.comparingInt(String::length)))
                                 .toList()
                 ).isExactlyInstanceOf(IllegalStateException.class);
             }
@@ -413,7 +413,7 @@ class GroupChangingGathererTest {
 
                 // Act
                 final List<List<String>> output = input
-                        .gather(Gatherers4j.groupDecreasing(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.groupDecreasingBy(Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -430,7 +430,7 @@ class GroupChangingGathererTest {
 
                 // Act
                 final List<List<String>> output = input
-                        .gather(Gatherers4j.groupIncreasing(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.groupIncreasingBy(Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -444,7 +444,7 @@ class GroupChangingGathererTest {
 
                 // Act
                 final List<String> output = input
-                        .gather(Gatherers4j.ensureIncreasing(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.ensureIncreasingBy(Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -455,7 +455,7 @@ class GroupChangingGathererTest {
             void ensureIncreasingFailureCase() {
                 assertThatThrownBy(() ->
                         Stream.of("AA", "A")
-                                .gather(Gatherers4j.ensureIncreasing(Comparator.comparingInt(String::length)))
+                                .gather(Gatherers4j.ensureIncreasingBy(Comparator.comparingInt(String::length)))
                                 .toList()
                 ).isExactlyInstanceOf(IllegalStateException.class);
             }
@@ -467,7 +467,7 @@ class GroupChangingGathererTest {
 
                 // Act
                 final List<List<String>> output = input
-                        .gather(Gatherers4j.groupIncreasing(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.groupIncreasingBy(Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -486,7 +486,7 @@ class GroupChangingGathererTest {
 
                 // Act
                 final List<List<String>> output = input
-                        .gather(Gatherers4j.groupIncreasing(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.groupIncreasingBy(Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -504,7 +504,7 @@ class GroupChangingGathererTest {
 
                 // Act
                 final List<List<String>> output = input
-                        .gather(Gatherers4j.groupNonDecreasing(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.groupNonDecreasingBy(Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -518,7 +518,7 @@ class GroupChangingGathererTest {
 
                 // Act
                 final List<String> output = input
-                        .gather(Gatherers4j.ensureNonDecreasing(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.ensureNonDecreasingBy(Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -529,7 +529,7 @@ class GroupChangingGathererTest {
             void ensureNonDecreasingFailureCase() {
                 assertThatThrownBy(() ->
                         Stream.of("AA", "A")
-                                .gather(Gatherers4j.ensureNonDecreasing(Comparator.comparingInt(String::length)))
+                                .gather(Gatherers4j.ensureNonDecreasingBy(Comparator.comparingInt(String::length)))
                                 .toList()
                 ).isExactlyInstanceOf(IllegalStateException.class);
             }
@@ -541,7 +541,7 @@ class GroupChangingGathererTest {
 
                 // Act
                 final List<List<String>> output = input
-                        .gather(Gatherers4j.groupNonDecreasing(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.groupNonDecreasingBy(Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -559,7 +559,7 @@ class GroupChangingGathererTest {
 
                 // Act
                 final List<List<String>> output = input
-                        .gather(Gatherers4j.groupNonDecreasing(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.groupNonDecreasingBy(Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -576,7 +576,7 @@ class GroupChangingGathererTest {
 
                 // Act
                 final List<List<String>> output = input
-                        .gather(Gatherers4j.groupNonIncreasing(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.groupNonIncreasingBy(Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -590,7 +590,7 @@ class GroupChangingGathererTest {
 
                 // Act
                 final List<String> output = input
-                        .gather(Gatherers4j.ensureNonIncreasing(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.ensureNonIncreasingBy(Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -601,7 +601,7 @@ class GroupChangingGathererTest {
             void ensureNonIncreasingFailureCase() {
                 assertThatThrownBy(() ->
                         Stream.of("AA", "AAA")
-                                .gather(Gatherers4j.ensureNonIncreasing(Comparator.comparingInt(String::length)))
+                                .gather(Gatherers4j.ensureNonIncreasingBy(Comparator.comparingInt(String::length)))
                                 .toList()
                 ).isExactlyInstanceOf(IllegalStateException.class);
             }
@@ -613,7 +613,7 @@ class GroupChangingGathererTest {
 
                 // Act
                 final List<List<String>> output = input
-                        .gather(Gatherers4j.groupNonIncreasing(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.groupNonIncreasingBy(Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -631,7 +631,7 @@ class GroupChangingGathererTest {
 
                 // Act
                 final List<List<String>> output = input
-                        .gather(Gatherers4j.groupNonIncreasing(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.groupNonIncreasingBy(Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert

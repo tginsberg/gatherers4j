@@ -1,6 +1,6 @@
 ---
-title: "filterIncreasing(comparator)"
-linkTitle: "filterIncreasing(comparator)"
+title: "filterIncreasingBy()"
+linkTitle: "filterIncreasingBy()"
 show_in_table: true
 category: Filtering and Selection
 description: Filter the input stream so that it contains elements in a strictly increasing order as measured by the given `Comparator`.
@@ -12,7 +12,7 @@ This is suitable for streams whose elements do not implement `Comparable`. For a
 
 **Signature**
 
-`filterIncreasing(comparator)`
+`filterIncreasingBy()`
 
 * `comparator` - A non-null `Comparator` to compare stream elements
 
@@ -23,7 +23,7 @@ This is suitable for streams whose elements do not implement `Comparable`. For a
 ```java
 Stream
     .of("A", "AA", "AA", "A", "AAA");
-    .gather(Gatherers4j.filterIncreasing(Comparator.comparingInt(String::length)))
+    .gather(Gatherers4j.filterIncreasingBy(Comparator.comparingInt(String::length)))
     .toList();
 
 // ["A", "AA", "AAA"];

@@ -9,7 +9,7 @@ description: Filter the input stream so that it contains `Comparable<INPUT>` ele
 
 ### Implementation Notes
 
-This is suitable for streams whose elements implement `Comparable`. For a version that takes a `Comparator`, see [`filterDecreasing(comparator)`](/gatherers/filtering-and-selection/filterdecreasingcomparator/).
+This is suitable for streams whose elements implement `Comparable`. For a version that takes a `Comparator`, see [`filterDecreasingBy()`](/gatherers/filtering-and-selection/filterdecreasingby/).
 
 **Signature**
 

@@ -1,6 +1,6 @@
 ---
-title: "filterNonDecreasing(comparator)"
-linkTitle: "filterNonDecreasing(comparator)"
+title: "filterNonDecreasingBy()"
+linkTitle: "filterNonDecreasingBy()"
 show_in_table: true
 category: Filtering and Selection
 description: Filter the input stream so that it contains elements in a non-decreasing order as measured by the given `Comparator`
@@ -12,7 +12,7 @@ This is suitable for streams whose elements do not implement `Comparable`. For a
 
 **Signature**
 
-`filterNonDecreasing(comparator)`
+`filterNonDecreasingBy()`
 
 * `comparator` - A non-null `Comparator` to compare stream elements
 
@@ -23,7 +23,7 @@ This is suitable for streams whose elements do not implement `Comparable`. For a
 ```java
 Stream
     .of("A", "AA", "AA", "AAA", "AA");
-    .gather(Gatherers4j.filterNonDecreasing(Comparator.comparingInt(String::length)))
+    .gather(Gatherers4j.filterNonDecreasingBy(Comparator.comparingInt(String::length)))
     .toList();
 
 // ["A", "AA", "AA", "AAA"]

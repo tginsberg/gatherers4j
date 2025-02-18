@@ -31,11 +31,12 @@ we print the results.
 ```java
 long start = System.currentTimeMillis();
 
-IntStream.range(1, 7)
-        .boxed()
-        .gather(Gatherers4j.throttle(2, Duration.ofMillis(100)))
-        .map(it -> new Pair<>(it, System.currentTimeMillis()-start))
-        .forEach(System.out::println);
+IntStream
+    .range(1, 7)
+    .boxed()
+    .gather(Gatherers4j.throttle(2, Duration.ofMillis(100)))
+    .map(it -> new Pair<>(it, System.currentTimeMillis()-start))
+    .forEach(System.out::println);
 
 // Prints
 Pair[first=1, second=0]

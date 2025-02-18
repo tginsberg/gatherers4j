@@ -29,10 +29,12 @@ public class RotateGatherer<INPUT extends @Nullable Object>
 
     public enum Direction {
         Left {
+            @Override
             Direction flip() {
                 return Right;
             }
         }, Right {
+            @Override
             Direction flip() {
                 return Left;
             }

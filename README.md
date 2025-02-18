@@ -67,66 +67,66 @@ Functions that don't (yet!) fall into one of the other categories.
 
 Functions that remove elements (or retain them, depending on how you look at it) from a stream
 
-| Function                          | Purpose                                                                                                                        |
-|-----------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
-| `debounce(amount, duration)`      | Limit stream elements to `amount` elements over `duration`, dropping any elements over the limit until a new `duration` starts |
-| `dedupeConsecutive()`             | Remove consecutive duplicates from a stream                                                                                    |
-| `dedupeConsecutiveBy(fn)`         | Remove consecutive duplicates from a stream as returned by `fn`                                                                |
-| `distinctBy(fn)`                  | Emit only distinct elements from the stream, as measured by `fn`                                                               |
-| `dropEveryNth(n)`                 | Drop every`n`<sup>th</sup> element from the input stream                                                                       |
-| `dropLast(n)`                     | Keep all but the last `n` elements of the stream                                                                               |
-| `filterDecreasing()`              | Filter the input stream of `Comparable` objects so that it contains only strictly decreasing objects                           |                                                                                           |
-| `filterDecreasing(comparator)`    | Filter the input stream of objects so that it contains only strictly decreasing objects, as measured by a given `Comparator`   |
-| `filterIncreasing()`              | Filter the input stream of `Comparable` objects so that it contains only strictly increasing objects                           |
-| `filterIncreasing(comparator)`    | Filter the input stream of objects so that it contains only strictly increasing objects, as measured by a given `Comparator`   |
-| `filterIndexed(predicate)`        | Filter the stream with the given `predicate`, which takes an `element` and its `index`                                         |
-| `filterNonDecreasing()`           | Filter the input stream of `Comparable` objects so that it contains only non-decreasing objects                                |
-| `filterNonDecreasing(comparator)` | Filter the input stream of objects so that it contains only non-decreasing objects, as measured by a given `Comparator`        |
-| `filterNonIncreasing()`           | Filter the input stream of `Comparable` objects so that it contains non-increasing objects                                     |
-| `filterNonIncreasing(comparator)` | Filter the input stream of objects so that it contains only non-increasing objects, as measured by a given `Comparator`        |
-| `filterInstanceOf(types)`         | Filter the stream to only include elements of the given type(s)                                                                |
-| `last(n)`                         | Constrain the stream to the last `n` values                                                                                    |
-| `takeEveryNth(n)`                 | Keep every`n`<sup>th</sup> element from the input stream                                                                       |
-| `takeUntil(predicate)`            | Take elements from the input stream until the `predicate` is met, including the first element that matches the `preciate`      |
-| `uniquelyOccurring()`             | Emit elements that occur a single time, dropping all others                                                                    |
+| Function                     | Purpose                                                                                                                        |
+|------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
+| `debounce(amount, duration)` | Limit stream elements to `amount` elements over `duration`, dropping any elements over the limit until a new `duration` starts |
+| `dedupeConsecutive()`        | Remove consecutive duplicates from a stream                                                                                    |
+| `dedupeConsecutiveBy(fn)`    | Remove consecutive duplicates from a stream as returned by `fn`                                                                |
+| `distinctBy(fn)`             | Emit only distinct elements from the stream, as measured by `fn`                                                               |
+| `dropEveryNth(n)`            | Drop every`n`<sup>th</sup> element from the input stream                                                                       |
+| `dropLast(n)`                | Keep all but the last `n` elements of the stream                                                                               |
+| `filterDecreasing()`         | Filter the input stream of `Comparable` objects so that it contains only strictly decreasing objects                           |                                                                                           |
+| `filterDecreasingBy()`       | Filter the input stream of objects so that it contains only strictly decreasing objects, as measured by a given `Comparator`   |
+| `filterIncreasing()`         | Filter the input stream of `Comparable` objects so that it contains only strictly increasing objects                           |
+| `filterIncreasingBy() `      | Filter the input stream of objects so that it contains only strictly increasing objects, as measured by a given `Comparator`   |
+| `filterIndexed(predicate)`   | Filter the stream with the given `predicate`, which takes an `element` and its `index`                                         |
+| `filterNonDecreasing()`      | Filter the input stream of `Comparable` objects so that it contains only non-decreasing objects                                |
+| `filterNonDecreasingBy()`    | Filter the input stream of objects so that it contains only non-decreasing objects, as measured by a given `Comparator`        |
+| `filterNonIncreasing()`      | Filter the input stream of `Comparable` objects so that it contains non-increasing objects                                     |
+| `filterNonIncreasingBy()`    | Filter the input stream of objects so that it contains only non-increasing objects, as measured by a given `Comparator`        |
+| `filterInstanceOf(types)`    | Filter the stream to only include elements of the given type(s)                                                                |
+| `last(n)`                    | Constrain the stream to the last `n` values                                                                                    |
+| `takeEveryNth(n)`            | Keep every`n`<sup>th</sup> element from the input stream                                                                       |
+| `takeUntil(predicate)`       | Take elements from the input stream until the `predicate` is met, including the first element that matches the `preciate`      |
+| `uniquelyOccurring()`        | Emit elements that occur a single time, dropping all others                                                                    |
 
 ## Grouping Functions
 
 Functions that group input elements by varying criteria.
 
-| Function                         | Purpose                                                                                                                                            |
-|----------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| `grouping()`                     | Group consecutive identical elements into lists                                                                                                    |
-| `groupingBy(fn)`                 | Group consecutive elements that are identical according to `fn` into lists                                                                         | 
-| `groupDecreasing()`              | Group decreasing `Comparable` elements in the input stream to lists in the output stream                                                           |
-| `groupDecreasing(comparator)`    | Group decreasing elements as measured by a `Comparator` in the input stream to lists in the output stream                                          |
-| `groupIncreasing()`              | Group increasing `Comparable` elements in the input stream to lists in the output stream                                                           |
-| `groupIncreasing(comparator)`    | Group increasing elements as measured by a `Comparator` in the input stream to lists in the output stream                                          |
-| `groupNonIncreasing()`           | Group non-increasing `Comparable` elements in the input stream to lists in the output stream                                                       |
-| `groupNonIncreasing(comparator)` | Group non-increasing elements as measured by a `Comparator` in the input stream to lists in the output stream                                      |
-| `groupNonDecreasing()`           | Group non-decreasing `Comparable` elements in the input stream to lists in the output stream                                                       |
-| `groupNonDecreasing(comparator)` | Group non-decreasing elements as measured by a `Comparator` in the input stream to lists in the output stream                                      |
-| `windowed(size,step,partial)`    | Create windows over the input stream that are `size` elements long, sliding over `step` elements each time, optionally including `partial` windows |
+| Function                      | Purpose                                                                                                                                            |
+|-------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
+| `grouping()`                  | Group consecutive identical elements into lists                                                                                                    |
+| `groupingBy(fn)`              | Group consecutive elements that are identical according to `fn` into lists                                                                         | 
+| `groupDecreasing()`           | Group decreasing `Comparable` elements in the input stream to lists in the output stream                                                           |
+| `groupDecreasingBy()`         | Group decreasing elements as measured by a `Comparator` in the input stream to lists in the output stream                                          |
+| `groupIncreasing()`           | Group increasing `Comparable` elements in the input stream to lists in the output stream                                                           |
+| `groupIncreasingBy()`         | Group increasing elements as measured by a `Comparator` in the input stream to lists in the output stream                                          |
+| `groupNonIncreasing()`        | Group non-increasing `Comparable` elements in the input stream to lists in the output stream                                                       |
+| `groupNonIncreasingBy()`      | Group non-increasing elements as measured by a `Comparator` in the input stream to lists in the output stream                                      |
+| `groupNonDecreasing()`        | Group non-decreasing `Comparable` elements in the input stream to lists in the output stream                                                       |
+| `groupNonDecreasingBy()`      | Group non-decreasing elements as measured by a `Comparator` in the input stream to lists in the output stream                                      |
+| `windowed(size,step,partial)` | Create windows over the input stream that are `size` elements long, sliding over `step` elements each time, optionally including `partial` windows |
 
 ## Stream Content Checks/Validation
 
 These gatherers check invariants about streams and fail if they are not met.
 
-| Function                          | Purpose                                                                                                                                     |
-|-----------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
-| `ensureDecreasing()`              | Ensure that the input stream of `Comparable` objects contains only strictly decreasing objects, and fail otherwise.                         |                                                                                           |
-| `ensureDecreasing(comparator)`    | Ensure that the input stream of objects contains only strictly decreasing objects, as measured by a given `Comparator`, and fail otherwise. |
-| `ensureIncreasing()`              | Ensure that the input stream of `Comparable` objects contains only strictly increasing objects, and fail otherwise.                         |
-| `ensureIncreasing(comparator)`    | Ensure that the input stream of objects contains only strictly increasing objects, as measured by a given `Comparator`, and fail otherwise. |
-| `ensureNonDecreasing()`           | Ensure that the input stream of `Comparable` objects contains only non-decreasing objects, and fail otherwise.                              |
-| `ensureNonDecreasing(comparator)` | Ensure that the input stream of objects contains only non-decreasing objects, as measured by a given `Comparator`, and fail otherwise.      |
-| `ensureNonIncreasing()`           | Ensure that the input stream of `Comparable` objects contains non-increasing objects, and fail otherwise.                                   |
-| `ensureNonIncreasing(comparator)` | Ensure that the input stream of objects contains only non-increasing objects, as measured by a given `Comparator`, and fail otherwise.      |
-| `sizeExactly(n)`                  | Ensure the stream is exactly `n` elements long, or throw an `IllegalStateException`                                                         |
-| `sizeGreaterThan(n)`              | Ensure the stream is greater than `n` elements long, or throw an `IllegalStateException`                                                    |
-| `sizeGreaterThanOrEqualTo(n)`     | Ensure the stream is greater than or equal to `n` elements long, or throw an `IllegalStateException`                                        |
-| `sizeLessThan(n)`                 | Ensure the stream is less than `n` elements long, or throw an `IllegalStateException`                                                       |
-| `sizeLessThanOrEqualTo(n)`        | Ensure the stream is less than or equal to `n` elements long, or throw an `IllegalStateException`                                           |
+| Function                      | Purpose                                                                                                                                     |
+|-------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
+| `ensureDecreasing()`          | Ensure that the input stream of `Comparable` objects contains only strictly decreasing objects, and fail otherwise.                         |                                                                                           |
+| `ensureDecreasingBy()`        | Ensure that the input stream of objects contains only strictly decreasing objects, as measured by a given `Comparator`, and fail otherwise. |
+| `ensureIncreasing()`          | Ensure that the input stream of `Comparable` objects contains only strictly increasing objects, and fail otherwise.                         |
+| `ensureIncreasingBy()`        | Ensure that the input stream of objects contains only strictly increasing objects, as measured by a given `Comparator`, and fail otherwise. |
+| `ensureNonDecreasing()`       | Ensure that the input stream of `Comparable` objects contains only non-decreasing objects, and fail otherwise.                              |
+| `ensureNonDecreasingBy()`     | Ensure that the input stream of objects contains only non-decreasing objects, as measured by a given `Comparator`, and fail otherwise.      |
+| `ensureNonIncreasing()`       | Ensure that the input stream of `Comparable` objects contains non-increasing objects, and fail otherwise.                                   |
+| `ensureNonIncreasingBy() `    | Ensure that the input stream of objects contains only non-increasing objects, as measured by a given `Comparator`, and fail otherwise.      |
+| `sizeExactly(n)`              | Ensure the stream is exactly `n` elements long, or throw an `IllegalStateException`                                                         |
+| `sizeGreaterThan(n)`          | Ensure the stream is greater than `n` elements long, or throw an `IllegalStateException`                                                    |
+| `sizeGreaterThanOrEqualTo(n)` | Ensure the stream is greater than or equal to `n` elements long, or throw an `IllegalStateException`                                        |
+| `sizeLessThan(n)`             | Ensure the stream is less than `n` elements long, or throw an `IllegalStateException`                                                       |
+| `sizeLessThanOrEqualTo(n)`    | Ensure the stream is less than or equal to `n` elements long, or throw an `IllegalStateException`                                           |
 
 ### Mathematics/Statistics
 

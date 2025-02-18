@@ -13,8 +13,9 @@ no_list: true
 + Implement `filterIncreasing`, `filterDecreasing`, `filterNonIncreasing` and `filterNonDecreasing` with both `Comparable` stream inputs or using an explicit `Comparator` to remove non-compliant elements from the input stream
 + Implement `repeat(n)` and `repeatInfinitely()` to repeatedly emit the input stream to the output stream
 + Implement `rotateLeft(n)` and `rotateRight(n)` to rotate the stream (consumes entire stream)
-+ Rename `everyNth(n)` to `takeEveryNth(n)` and add `dropEveryNth(n)` for completeness
-+ Rename `filterWithIndex()` to `filterIndexed()` to match other indexing Gatherers
++ Renamed `everyNth(n)` to `takeEveryNth(n)` and added `dropEveryNth(n)` for completeness
++ Renamed `filterWithIndex()` to `filterIndexed()` to match other indexing Gatherers
++ Renamed many `...(comparator)` gatherers to `...By(comparator)` for consistency with other gatherers of the same nature
 
 ## v0.8.0
 [Released 2025-02-01](https://github.com/tginsberg/gatherers4j/releases/tag/v0.8.0)

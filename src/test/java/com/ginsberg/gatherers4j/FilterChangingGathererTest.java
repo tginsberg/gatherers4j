@@ -244,7 +244,7 @@ class FilterChangingGathererTest {
 
                 // Act
                 final List<String> output = input
-                        .gather(Gatherers4j.filterDecreasing(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.filterDecreasingBy(Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -258,7 +258,7 @@ class FilterChangingGathererTest {
 
                 // Act
                 final List<String> output = input
-                        .gather(Gatherers4j.filterDecreasing(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.filterDecreasingBy(Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -272,7 +272,7 @@ class FilterChangingGathererTest {
 
                 // Act
                 final List<String> output = input
-                        .gather(Gatherers4j.filterDecreasing(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.filterDecreasingBy(Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -289,7 +289,7 @@ class FilterChangingGathererTest {
 
                 // Act
                 final List<String> output = input
-                        .gather(Gatherers4j.filterIncreasing(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.filterIncreasingBy(Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -303,7 +303,7 @@ class FilterChangingGathererTest {
 
                 // Act
                 final List<String> output = input
-                        .gather(Gatherers4j.filterIncreasing(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.filterIncreasingBy(Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -317,7 +317,7 @@ class FilterChangingGathererTest {
 
                 // Act
                 final List<String> output = input
-                        .gather(Gatherers4j.filterIncreasing(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.filterIncreasingBy(Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -334,7 +334,7 @@ class FilterChangingGathererTest {
 
                 // Act
                 final List<String> output = input
-                        .gather(Gatherers4j.filterNonDecreasing(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.filterNonDecreasingBy(Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -348,7 +348,7 @@ class FilterChangingGathererTest {
 
                 // Act
                 final List<String> output = input
-                        .gather(Gatherers4j.filterNonDecreasing(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.filterNonDecreasingBy(Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -362,7 +362,7 @@ class FilterChangingGathererTest {
 
                 // Act
                 final List<String> output = input
-                        .gather(Gatherers4j.filterNonDecreasing(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.filterNonDecreasingBy(Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -379,7 +379,7 @@ class FilterChangingGathererTest {
 
                 // Act
                 final List<String> output = input
-                        .gather(Gatherers4j.filterNonIncreasing(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.filterNonIncreasingBy(Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -393,7 +393,7 @@ class FilterChangingGathererTest {
 
                 // Act
                 final List<String> output = input
-                        .gather(Gatherers4j.filterNonIncreasing(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.filterNonIncreasingBy(Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -407,7 +407,7 @@ class FilterChangingGathererTest {
 
                 // Act
                 final List<String> output = input
-                        .gather(Gatherers4j.filterNonIncreasing(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.filterNonIncreasingBy(Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
