@@ -11,7 +11,7 @@ description: Remove consecutive duplicates, where equality is measured by a give
 This function removes consecutive duplicate elements as measured by `Object.equals()`. For the purposes of this gatherer,
 nulls are equal to each other but not equal to anything else.
 
-For a version of `dedupeConsecutiveBy` that measures equality via `Object::equals`, see the [`dedupeConsecutive()`](/gatherers/filtering-and-selection/dedupeconsecutive/)Gatherer.
+For a version of `dedupeConsecutiveBy()` that measures equality via `Object::equals`, see the [`dedupeConsecutive()`](/gatherers/filtering-and-selection/dedupeconsecutive/)Gatherer.
 
 
 **Signature**

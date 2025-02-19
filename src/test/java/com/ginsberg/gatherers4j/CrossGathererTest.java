@@ -227,4 +227,68 @@ class CrossGathererTest {
             assertThat(output).isEmpty();
         }
     }
+
+
+    @Nested
+    class FromVarArgs {
+        @Test
+        @SuppressWarnings("DataFlowIssue")
+        void crossVarargsNotBeNull() {
+            assertThatThrownBy(() -> Gatherers4j.crossWith((String[]) null)).isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        @SuppressWarnings("DataFlowIssue")
+        void crossesMultipleVarargs() {
+            // Arrange
+            final Stream<String> input = Stream.of("A", "B", "C");
+
+            // Act
+            final List<String> output = input
+                    .gather(Gatherers4j.crossWith(1, 2, 3))
+                    .gather(Gatherers4j.crossWith("X", "Y"))
+                    .map(pair -> pair.first().first() + pair.first().second() + pair.second())
+                    .toList();
+
+            // Assert
+            assertThat(output).containsExactly(
+                    "A1X", "A1Y", "A2X", "A2Y", "A3X", "A3Y",
+                    "B1X", "B1Y", "B2X", "B2Y", "B3X", "B3Y",
+                    "C1X", "C1Y", "C2X", "C2Y", "C3X", "C3Y"
+            );
+        }
+
+        @Test
+        void crossesSingleVararg() {
+            // Arrange
+            final Stream<String> input = Stream.of("A", "B", "C");
+
+            // Act
+            final List<Pair<String, Integer>> output = input
+                    .gather(Gatherers4j.crossWith(1, 2, 3))
+                    .toList();
+
+            // Assert
+            assertThat(output).containsExactly(
+                    new Pair<>("A", 1), new Pair<>("A", 2), new Pair<>("A", 3),
+                    new Pair<>("B", 1), new Pair<>("B", 2), new Pair<>("B", 3),
+                    new Pair<>("C", 1), new Pair<>("C", 2), new Pair<>("C", 3)
+            );
+        }
+
+        @Test
+        void emptyCrossVararg() {
+            // Arrange
+            final Stream<String> input = Stream.of("A", "B", "C");
+            final Integer[] cross = new Integer[] {};
+
+            // Act
+            final List<Pair<String, Integer>> output = input
+                    .gather(Gatherers4j.crossWith(cross))
+                    .toList();
+
+            // Assert
+            assertThat(output).isEmpty();
+        }
+    }
 }

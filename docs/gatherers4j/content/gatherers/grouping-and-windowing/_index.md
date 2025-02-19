@@ -1,6 +1,7 @@
 ---
 title: "Grouping and Windowing"
 linkTitle: "Grouping and Windowing"
+no_list: true
 weight: 30
 ---
 

@@ -43,25 +43,25 @@ For convenience, the full list of gatherers in this library are broken into four
 
 Functions that don't (yet!) fall into one of the other categories.
 
-| Function                       | Purpose                                                                                                                                    |
-|--------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
-| `crossWith()`                  | Emit each element of the source stream with each element of the given `iterable`, `iterator`, or `stream` as a `Pair` to the output stream |
-| `foldIndexed(fn)`              | Perform a fold over the input stream where each element is included along with its index                                                   |
-| `interleave()`                 | Creates a stream of alternating objects from the input stream and the argument `iterable`, `iterator`, or `stream`                         |
-| `orderByFrequencyAscending()`  | Returns a stream where elements are ordered from least to most frequent as `WithCount<T>` wrapper objects.                                 |
-| `orderByFrequencyDescending()` | Returns a stream where elements are ordered from most to least frequent as `WithCount<T>` wrapper objects.                                 |
-| `repeat(n)`                    | Repeat the input stream `n` times to the output stream                                                                                     |
-| `repeatInfinitely()`           | Repeat the input stream to the output stream forever (or until some downstream operation stops it)                                         |
-| `rotateLeft(n)`                | Rotate the stream `n` elements to the left. Stores entire stream into memory.                                                              |
-| `rotateRight(n)`               | Rotate the stream `n` elements to the right. Stores entire stream into memory.                                                             |
-| `reverse()`                    | Reverse the order of the stream                                                                                                            |
-| `scanIndexed(fn)`              | Performs a scan on the input stream using the given function, and includes the index of the elements                                       |
-| `shuffle()`                    | Shuffle the stream into a random order using the platform default `RandomGenerator`                                                        |
-| `shuffle(rg)`                  | Shuffle the stream into a random order using the specified `RandomGenerator`                                                               |
-| `throttle(amount, duration)`   | Limit stream elements to `amount` elements over `duration`, pausing until a new `duration` period starts                                   |
-| `withIndex()`                  | Maps all elements of the stream as-is along with their 0-based index                                                                       |
-| `zipWith( )`                   | Creates a stream of `Pair` objects whose values come from the input stream and argument `iterable`, `iterator`, or `stream`                |
-| `zipWithNext()`                | Creates a stream of `List` objects via a sliding window of width 2 and stepping 1                                                          |      
+| Function                       | Purpose                                                                                                                                             |
+|--------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
+| `crossWith()`                  | Emit each element of the source stream with each element of the given `iterable`, `iterator`, `stream`, or varargs as a `Pair` to the output stream |
+| `foldIndexed(fn)`              | Perform a fold over the input stream where each element is included along with its index                                                            |
+| `interleaveWith()`             | Creates a stream of alternating objects from the input stream and the argument `iterable`, `iterator`, `stream`, or varargs                         |
+| `orderByFrequencyAscending()`  | Returns a stream where elements are ordered from least to most frequent as `WithCount<T>` wrapper objects.                                          |
+| `orderByFrequencyDescending()` | Returns a stream where elements are ordered from most to least frequent as `WithCount<T>` wrapper objects.                                          |
+| `repeat(n)`                    | Repeat the input stream `n` times to the output stream                                                                                              |
+| `repeatInfinitely()`           | Repeat the input stream to the output stream forever (or until some downstream operation stops it)                                                  |
+| `reverse()`                    | Reverse the order of the stream                                                                                                                     |
+| `rotateLeft(n)`                | Rotate the stream `n` elements to the left. Stores entire stream into memory.                                                                       |
+| `rotateRight(n)`               | Rotate the stream `n` elements to the right. Stores entire stream into memory.                                                                      |
+| `scanIndexed(fn)`              | Performs a scan on the input stream using the given function, and includes the index of the elements                                                |
+| `shuffle()`                    | Shuffle the stream into a random order using the platform default `RandomGenerator`                                                                 |
+| `shuffle(rg)`                  | Shuffle the stream into a random order using the specified `RandomGenerator`                                                                        |
+| `throttle(amount, duration)`   | Limit stream elements to `amount` elements over `duration`, pausing until a new `duration` period starts                                            |
+| `withIndex()`                  | Maps all elements of the stream as-is along with their 0-based index                                                                                |
+| `zipWith( )`                   | Creates a stream of `Pair` objects whose values come from the input stream and argument `iterable`, `iterator`, `stream`, or varargs                |
+| `zipWithNext()`                | Creates a stream of `List` objects via a sliding window of width 2 and stepping 1                                                                   |      
 
 ## Filtering Functions
 
@@ -94,19 +94,19 @@ Functions that remove elements (or retain them, depending on how you look at it)
 
 Functions that group input elements by varying criteria.
 
-| Function                      | Purpose                                                                                                                                            |
-|-------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| `grouping()`                  | Group consecutive identical elements into lists                                                                                                    |
-| `groupingBy(fn)`              | Group consecutive elements that are identical according to `fn` into lists                                                                         | 
-| `groupDecreasing()`           | Group decreasing `Comparable` elements in the input stream to lists in the output stream                                                           |
-| `groupDecreasingBy()`         | Group decreasing elements as measured by a `Comparator` in the input stream to lists in the output stream                                          |
-| `groupIncreasing()`           | Group increasing `Comparable` elements in the input stream to lists in the output stream                                                           |
-| `groupIncreasingBy()`         | Group increasing elements as measured by a `Comparator` in the input stream to lists in the output stream                                          |
-| `groupNonIncreasing()`        | Group non-increasing `Comparable` elements in the input stream to lists in the output stream                                                       |
-| `groupNonIncreasingBy()`      | Group non-increasing elements as measured by a `Comparator` in the input stream to lists in the output stream                                      |
-| `groupNonDecreasing()`        | Group non-decreasing `Comparable` elements in the input stream to lists in the output stream                                                       |
-| `groupNonDecreasingBy()`      | Group non-decreasing elements as measured by a `Comparator` in the input stream to lists in the output stream                                      |
-| `windowed(size,step,partial)` | Create windows over the input stream that are `size` elements long, sliding over `step` elements each time, optionally including `partial` windows |
+| Function                   | Purpose                                                                                                                                            |
+|----------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
+| `group()`                  | Group consecutive identical elements into lists                                                                                                    |
+| `groupBy(fn)`              | Group consecutive elements that are identical according to `fn` into lists                                                                         | 
+| `groupDecreasing()`        | Group decreasing `Comparable` elements in the input stream to lists in the output stream                                                           |
+| `groupDecreasingBy()`      | Group decreasing elements as measured by a `Comparator` in the input stream to lists in the output stream                                          |
+| `groupIncreasing()`        | Group increasing `Comparable` elements in the input stream to lists in the output stream                                                           |
+| `groupIncreasingBy()`      | Group increasing elements as measured by a `Comparator` in the input stream to lists in the output stream                                          |
+| `groupNonIncreasing()`     | Group non-increasing `Comparable` elements in the input stream to lists in the output stream                                                       |
+| `groupNonIncreasingBy()`   | Group non-increasing elements as measured by a `Comparator` in the input stream to lists in the output stream                                      |
+| `groupNonDecreasing()`     | Group non-decreasing `Comparable` elements in the input stream to lists in the output stream                                                       |
+| `groupNonDecreasingBy()`   | Group non-decreasing elements as measured by a `Comparator` in the input stream to lists in the output stream                                      |
+| `window(size,step,partial)` | Create windows over the input stream that are `size` elements long, sliding over `step` elements each time, optionally including `partial` windows |
 
 ## Stream Content Checks/Validation
 

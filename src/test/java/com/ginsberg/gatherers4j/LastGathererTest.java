@@ -16,6 +16,7 @@
 
 package com.ginsberg.gatherers4j;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -41,6 +42,23 @@ class LastGathererTest {
         // Assert
         assertThat(output).containsExactly("D", "E", "F");
     }
+
+    @Test
+    @Disabled("Broken, must fix")
+    void lastElementsNull() {
+        // Arrange
+        final Stream<String> input = Stream.of("A", "B", "C", "D", null, null);
+        final int last = 3;
+
+        // Act
+        final List<String> output = input
+                .gather(Gatherers4j.last(last))
+                .toList();
+
+        // Assert
+        assertThat(output).containsExactly("D", null, null);
+    }
+
 
     @Test
     void lastElementsUnderflow() {

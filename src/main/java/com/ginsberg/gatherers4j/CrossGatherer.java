@@ -18,6 +18,7 @@ package com.ginsberg.gatherers4j;
 
 import org.jspecify.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -42,6 +43,13 @@ public class CrossGatherer {
     public static <INPUT extends @Nullable Object, CROSS extends @Nullable Object> Gatherer<INPUT, ?, Pair<INPUT, CROSS>> of(final Stream<CROSS> source) {
         mustNotBeNull(source, "source stream must not be null");
         return create(source.toList());
+    }
+
+    @SafeVarargs
+    public static <INPUT extends @Nullable Object, CROSS extends @Nullable Object> Gatherer<INPUT, ?, Pair<INPUT, CROSS>> of(final CROSS... source) {
+        mustNotBeNull(source, "source must not be null");
+        // Note: None of the other entrypoints enforce non-empty source, so this one won't either even though it is trivial to do so
+        return create(Arrays.asList(source));
     }
 
     private static <INPUT extends @Nullable Object, CROSS extends @Nullable Object> Gatherer<INPUT, ?, Pair<INPUT, CROSS>> create(final Iterable<CROSS> source) {

@@ -18,6 +18,7 @@ package com.ginsberg.gatherers4j;
 
 import org.jspecify.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.function.BiConsumer;
@@ -49,7 +50,13 @@ public class InterleavingGatherer<INPUT extends @Nullable Object>
         otherSpliterator = other.spliterator();
     }
 
-    /// If the source stream and the argument stream/iterator/iterable provide a different
+    @SafeVarargs
+    InterleavingGatherer(final INPUT... other) {
+        mustNotBeNull(other, "Other stream must not be null");
+        otherSpliterator = Arrays.spliterator(other);
+    }
+
+    /// If the source stream and the argument stream/iterator/iterable/varargs provide a different
     /// number of elements, append all the remaining elements from either one to the output stream.
     public InterleavingGatherer<INPUT> appendLonger() {
         this.appendArgumentIfLonger = true;
@@ -57,14 +64,14 @@ public class InterleavingGatherer<INPUT extends @Nullable Object>
         return this;
     }
 
-    /// If the argument stream/iterator/iterable provides more elements than the source stream,
-    /// append all remaining elements from the argument stream/iterator/iterable to the output stream.
+    /// If the argument stream/iterator/iterable/varargs provides more elements than the source stream,
+    /// append all remaining elements from the argument stream/iterator/iterable/varargs to the output stream.
     public InterleavingGatherer<INPUT> appendArgumentIfLonger() {
         this.appendArgumentIfLonger = true;
         return this;
     }
 
-    /// If the source stream provides more elements than the argument stream/iterator/iterable,
+    /// If the source stream provides more elements than the argument stream/iterator/iterable/varargs,
     /// append all the remaining elements to the output stream.
     public InterleavingGatherer<INPUT> appendSourceIfLonger() {
         this.appendSourceIfLonger = true;

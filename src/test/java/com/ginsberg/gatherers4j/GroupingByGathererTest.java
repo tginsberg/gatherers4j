@@ -33,7 +33,7 @@ class GroupingByGathererTest {
         final Stream<String> input = Stream.empty();
 
         // Act
-        final List<List<String>> output = input.gather(Gatherers4j.groupingBy(String::length)).toList();
+        final List<List<String>> output = input.gather(Gatherers4j.groupBy(String::length)).toList();
 
         // Assert
         assertThat(output).isEmpty();
@@ -45,7 +45,7 @@ class GroupingByGathererTest {
         final Stream<String> input = Stream.of("A", "B", "AA", "BB", "CCC", "A", "BB", "CCC");
 
         // Act
-        final List<List<String>> output = input.gather(Gatherers4j.groupingBy(String::length)).toList();
+        final List<List<String>> output = input.gather(Gatherers4j.groupBy(String::length)).toList();
 
         // Assert
         assertThat(output).containsExactly(
@@ -64,7 +64,7 @@ class GroupingByGathererTest {
         final Stream<String> input = Stream.of("A", "A", "B", "B", "C", "C", "C");
 
         // Act
-        final List<List<String>> output = input.gather(Gatherers4j.grouping()).toList();
+        final List<List<String>> output = input.gather(Gatherers4j.group()).toList();
 
         // Assert
         assertThat(output).containsExactly(
@@ -87,7 +87,7 @@ class GroupingByGathererTest {
 
         // Act
         final List<List<String>> output = input
-                .gather(Gatherers4j.groupingBy(it -> it == null ? null : it.length())).toList();
+                .gather(Gatherers4j.groupBy(it -> it == null ? null : it.length())).toList();
 
         // Assert
         assertThat(output)
@@ -103,7 +103,7 @@ class GroupingByGathererTest {
         final Stream<String> input = Stream.of("A", "A", "B", "B", "C", "C", "C");
 
         // Act
-        final List<List<String>> output = input.gather(Gatherers4j.grouping()).toList();
+        final List<List<String>> output = input.gather(Gatherers4j.group()).toList();
 
         // Assert
         assertThat(output).hasSize(3);
@@ -120,7 +120,7 @@ class GroupingByGathererTest {
         final Stream<String> input = Stream.of("A");
 
         // Act
-        final List<List<String>> output = input.gather(Gatherers4j.groupingBy(String::length)).toList();
+        final List<List<String>> output = input.gather(Gatherers4j.groupBy(String::length)).toList();
 
         // Assert
         assertThat(output).containsExactly(

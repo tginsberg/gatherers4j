@@ -25,14 +25,14 @@ import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import java.util.stream.Gatherer;
 
-public class WindowedGatherer<INPUT extends @Nullable Object>
-        implements Gatherer<INPUT, WindowedGatherer.State<INPUT>, List<INPUT>> {
+public class WindowGatherer<INPUT extends @Nullable Object>
+        implements Gatherer<INPUT, WindowGatherer.State<INPUT>, List<INPUT>> {
 
     private final boolean includePartials;
     private final int stepping;
     private final int windowSize;
 
-    WindowedGatherer(final int windowSize, final int stepping, final boolean includePartials) {
+    WindowGatherer(final int windowSize, final int stepping, final boolean includePartials) {
         if (windowSize <= 0) {
             throw new IllegalArgumentException("Window size must be greater than zero");
         }

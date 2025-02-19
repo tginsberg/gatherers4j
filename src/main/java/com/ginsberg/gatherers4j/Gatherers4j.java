@@ -81,6 +81,23 @@ public abstract class Gatherers4j {
         return CrossGatherer.of(source);
     }
 
+    /// Cross every element of the input stream with every element provided, emitting them
+    /// to the output stream as a `Pair<INPUT, CROSS>`.
+    ///
+    /// Note: the Iterator is consumed fully and stored as a List in memory.
+    /// Note: The Ghostbusters warned us about this and I hereby absolve myself of any responsibility if you cause some kind of cataclysm.
+    ///
+    /// @param <INPUT> Type of element in the input stream
+    /// @param <CROSS> Type of element in the crossWith `Iterator`
+    /// @param source Elements to cross with the input stream
+    /// @return A non-null Gatherer
+    @SafeVarargs
+    public static <INPUT extends @Nullable Object, CROSS extends @Nullable Object> Gatherer<INPUT, ?, Pair<INPUT, CROSS>> crossWith(
+            final CROSS... source
+    ) {
+        return CrossGatherer.of(source);
+    }
+
     /// Limit the number of elements in the stream to some number per period, dropping anything over the
     /// limit during the period.
     ///
@@ -480,7 +497,7 @@ public abstract class Gatherers4j {
     ///
     /// @param <INPUT> Type of elements in the input stream
     /// @return A non-null `GroupingByGatherer`
-    public static <INPUT extends @Nullable Object> GroupingByGatherer<INPUT> grouping() {
+    public static <INPUT extends @Nullable Object> GroupingByGatherer<INPUT> group() {
         return new GroupingByGatherer<>();
     }
 
@@ -490,7 +507,7 @@ public abstract class Gatherers4j {
     /// @param mappingFunction A non-null function, the results of which are used to measure equality of consecutive elements.
     /// @param <INPUT>         Type of elements in the input stream
     /// @return A non-null `GroupingByGatherer`
-    public static <INPUT extends @Nullable Object> GroupingByGatherer<INPUT> groupingBy(
+    public static <INPUT extends @Nullable Object> GroupingByGatherer<INPUT> groupBy(
             final Function<@Nullable INPUT, @Nullable Object> mappingFunction
     ) {
         return new GroupingByGatherer<>(mappingFunction);
@@ -501,7 +518,7 @@ public abstract class Gatherers4j {
     /// @param other   A non-null Iterable to interleave
     /// @param <INPUT> Type of elements in both the input stream and argument iterable
     /// @return A non-null `InterleavingGatherer`
-    public static <INPUT extends @Nullable Object> InterleavingGatherer<INPUT> interleave(final Iterable<INPUT> other) {
+    public static <INPUT extends @Nullable Object> InterleavingGatherer<INPUT> interleaveWith(final Iterable<INPUT> other) {
         return new InterleavingGatherer<>(other);
     }
 
@@ -510,7 +527,7 @@ public abstract class Gatherers4j {
     /// @param other   A non-null Iterator to interleave
     /// @param <INPUT> Type of elements in both the input stream and argument iterator
     /// @return A non-null `InterleavingGatherer`
-    public static <INPUT extends @Nullable Object> InterleavingGatherer<INPUT> interleave(final Iterator<INPUT> other) {
+    public static <INPUT extends @Nullable Object> InterleavingGatherer<INPUT> interleaveWith(final Iterator<INPUT> other) {
         return new InterleavingGatherer<>(other);
     }
 
@@ -519,9 +536,20 @@ public abstract class Gatherers4j {
     /// @param other   A non-null stream to interleave
     /// @param <INPUT> Type of elements in both the input and argument streams
     /// @return A non-null `InterleavingGatherer`
-    public static <INPUT extends @Nullable Object> InterleavingGatherer<INPUT> interleave(final Stream<INPUT> other) {
+    public static <INPUT extends @Nullable Object> InterleavingGatherer<INPUT> interleaveWith(final Stream<INPUT> other) {
         return new InterleavingGatherer<>(other);
     }
+
+    /// Creates a stream of alternating objects from the input stream and the provided elements
+    ///
+    /// @param other   Non-null elements to interleave
+    /// @param <INPUT> Type of elements in both the input stream and argument iterator
+    /// @return A non-null `InterleavingGatherer`
+    @SafeVarargs
+    public static <INPUT extends @Nullable Object> InterleavingGatherer<INPUT> interleaveWith(final INPUT... other) {
+        return new InterleavingGatherer<>(other);
+    }
+
 
     /// Intersperse the given `intersperseElement` between each element of the input stream.
     ///
@@ -965,9 +993,9 @@ public abstract class Gatherers4j {
     /// @param windowSize Size of the window, must be greater than 0
     /// @param stepping Number of elements to slide over each time a window has filled, must be greater than 0
     /// @param includePartials To include left-over partial windows at the end of the stream or not
-    /// @return A non-null `WindowedGatherer`
-    public static <INPUT extends @Nullable Object> WindowedGatherer<INPUT> windowed(int windowSize, int stepping, boolean includePartials) {
-        return new WindowedGatherer<>(windowSize, stepping, includePartials);
+    /// @return A non-null `WindowGatherer`
+    public static <INPUT extends @Nullable Object> WindowGatherer<INPUT> window(int windowSize, int stepping, boolean includePartials) {
+        return new WindowGatherer<>(windowSize, stepping, includePartials);
     }
 
     /// Maps all elements of the stream as-is along with their 0-based index.
@@ -1017,11 +1045,25 @@ public abstract class Gatherers4j {
         return new ZipWithGatherer<>(other);
     }
 
+    /// Creates a stream of `Pair<FIRST,SECOND>` objects whose values come from the stream this is called on
+    /// and the argument elements provide as a varargs
+    ///
+    /// @param other    A non-zero number of elements to zip with
+    /// @param <FIRST>  Type of object in the source stream
+    /// @param <SECOND> Type of object in the argument `Stream`
+    /// @return A non-null `ZipWithGatherer`
+    @SafeVarargs
+    public static <FIRST extends @Nullable Object, SECOND extends @Nullable Object> ZipWithGatherer<FIRST, SECOND> zipWith(
+            final SECOND... other
+    ) {
+        return new ZipWithGatherer<>(other);
+    }
+
     /// Creates a stream of `List` objects which contain each two adjacent elements in the input stream.
     ///
     /// @param <INPUT> Type of elements in the input stream
-    /// @return A non-null `ZipWithNextGatherer`
-    public static <INPUT extends @Nullable Object> ZipWithNextGatherer<INPUT> zipWithNext() {
+    /// @return A non-null `Gatherer`
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, List<INPUT>> zipWithNext() {
         return new ZipWithNextGatherer<>();
     }
 }
