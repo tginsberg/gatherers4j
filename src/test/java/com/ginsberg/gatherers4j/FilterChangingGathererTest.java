@@ -16,6 +16,7 @@
 
 package com.ginsberg.gatherers4j;
 
+import com.ginsberg.gatherers4j.enums.Order;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -32,15 +33,15 @@ class FilterChangingGathererTest {
     class WithComparable {
 
         @Nested
-        class Decreasing {
+        class Descending {
             @Test
-            void decreasing() {
+            void descending() {
                 // Arrange
                 final Stream<Integer> input = Stream.of(3, 2, 2, 1);
 
                 // Act
                 final List<Integer> output = input
-                        .gather(Gatherers4j.filterDecreasing())
+                        .gather(Gatherers4j.filterOrdered(Order.Descending))
                         .toList();
 
                 // Assert
@@ -54,7 +55,7 @@ class FilterChangingGathererTest {
 
                 // Act
                 final List<Integer> output = input
-                        .gather(Gatherers4j.filterDecreasing())
+                        .gather(Gatherers4j.filterOrdered(Order.Descending))
                         .toList();
 
                 // Assert
@@ -68,7 +69,7 @@ class FilterChangingGathererTest {
 
                 // Act
                 final List<Integer> output = input
-                        .gather(Gatherers4j.filterDecreasing())
+                        .gather(Gatherers4j.filterOrdered(Order.Descending))
                         .toList();
 
                 // Assert
@@ -77,7 +78,7 @@ class FilterChangingGathererTest {
         }
 
         @Nested
-        class Increasing {
+        class Ascending {
             @Test
             void emptyStream() {
                 // Arrange
@@ -85,7 +86,7 @@ class FilterChangingGathererTest {
 
                 // Act
                 final List<Integer> output = input
-                        .gather(Gatherers4j.filterIncreasing())
+                        .gather(Gatherers4j.filterOrdered(Order.Ascending))
                         .toList();
 
                 // Assert
@@ -93,13 +94,13 @@ class FilterChangingGathererTest {
             }
 
             @Test
-            void increasing() {
+            void ascending() {
                 // Arrange
                 final Stream<Integer> input = Stream.of(1, 2, 2, 3);
 
                 // Act
                 final List<Integer> output = input
-                        .gather(Gatherers4j.filterIncreasing())
+                        .gather(Gatherers4j.filterOrdered(Order.Ascending))
                         .toList();
 
                 // Assert
@@ -113,7 +114,7 @@ class FilterChangingGathererTest {
 
                 // Act
                 final List<Integer> output = input
-                        .gather(Gatherers4j.filterIncreasing())
+                        .gather(Gatherers4j.filterOrdered(Order.Ascending))
                         .toList();
 
                 // Assert
@@ -122,7 +123,7 @@ class FilterChangingGathererTest {
         }
 
         @Nested
-        class NonDecreasing {
+        class AscendingOrEqual {
             @Test
             void emptyStream() {
                 // Arrange
@@ -130,7 +131,7 @@ class FilterChangingGathererTest {
 
                 // Act
                 final List<Integer> output = input
-                        .gather(Gatherers4j.filterNonDecreasing())
+                        .gather(Gatherers4j.filterOrdered(Order.AscendingOrEqual))
                         .toList();
 
                 // Assert
@@ -138,13 +139,13 @@ class FilterChangingGathererTest {
             }
 
             @Test
-            void nonDecreasing() {
+            void ascendingOrEqual() {
                 // Arrange
                 final Stream<Integer> input = Stream.of(1, 2, 2, 3, 2);
 
                 // Act
                 final List<Integer> output = input
-                        .gather(Gatherers4j.filterNonDecreasing())
+                        .gather(Gatherers4j.filterOrdered(Order.AscendingOrEqual))
                         .toList();
 
                 // Assert
@@ -158,7 +159,7 @@ class FilterChangingGathererTest {
 
                 // Act
                 final List<Integer> output = input
-                        .gather(Gatherers4j.filterNonDecreasing())
+                        .gather(Gatherers4j.filterOrdered(Order.AscendingOrEqual))
                         .toList();
 
                 // Assert
@@ -167,7 +168,7 @@ class FilterChangingGathererTest {
         }
 
         @Nested
-        class NonIncreasing {
+        class DescendingOrEqual {
             @Test
             void emptyStream() {
                 // Arrange
@@ -175,7 +176,7 @@ class FilterChangingGathererTest {
 
                 // Act
                 final List<Integer> output = input
-                        .gather(Gatherers4j.filterNonIncreasing())
+                        .gather(Gatherers4j.filterOrdered(Order.DescendingOrEqual))
                         .toList();
 
                 // Assert
@@ -183,13 +184,13 @@ class FilterChangingGathererTest {
             }
 
             @Test
-            void nonIncreasing() {
+            void descendingOrEqual() {
                 // Arrange
                 final Stream<Integer> input = Stream.of(3, 2, 2, 1, 2);
 
                 // Act
                 final List<Integer> output = input
-                        .gather(Gatherers4j.filterNonIncreasing())
+                        .gather(Gatherers4j.filterOrdered(Order.DescendingOrEqual))
                         .toList();
 
                 // Assert
@@ -203,7 +204,7 @@ class FilterChangingGathererTest {
 
                 // Act
                 final List<Integer> output = input
-                        .gather(Gatherers4j.filterNonIncreasing())
+                        .gather(Gatherers4j.filterOrdered(Order.DescendingOrEqual))
                         .toList();
 
                 // Assert
@@ -221,7 +222,7 @@ class FilterChangingGathererTest {
             @Test
             void comparatorMustNotBeNull() {
                 assertThatThrownBy(() ->
-                        new FilterChangingGatherer<>(ChangingOperation.Increasing, null)
+                        new FilterChangingGatherer<>(Order.Ascending, null)
                 ).isExactlyInstanceOf(IllegalArgumentException.class);
             }
 
@@ -236,15 +237,15 @@ class FilterChangingGathererTest {
         }
 
         @Nested
-        class Decreasing {
+        class Descending {
             @Test
-            void decreasing() {
+            void descending() {
                 // Arrange
                 final Stream<String> input = Stream.of("AAA", "AA", "AA", "A");
 
                 // Act
                 final List<String> output = input
-                        .gather(Gatherers4j.filterDecreasingBy(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.filterOrderedBy(Order.Descending, Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -258,7 +259,7 @@ class FilterChangingGathererTest {
 
                 // Act
                 final List<String> output = input
-                        .gather(Gatherers4j.filterDecreasingBy(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.filterOrderedBy(Order.Descending, Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -272,7 +273,7 @@ class FilterChangingGathererTest {
 
                 // Act
                 final List<String> output = input
-                        .gather(Gatherers4j.filterDecreasingBy(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.filterOrderedBy(Order.Descending, Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -281,7 +282,7 @@ class FilterChangingGathererTest {
         }
 
         @Nested
-        class Increasing {
+        class Ascending {
             @Test
             void emptyStream() {
                 // Arrange
@@ -289,7 +290,7 @@ class FilterChangingGathererTest {
 
                 // Act
                 final List<String> output = input
-                        .gather(Gatherers4j.filterIncreasingBy(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.filterOrderedBy(Order.Ascending, Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -297,13 +298,13 @@ class FilterChangingGathererTest {
             }
 
             @Test
-            void increasing() {
+            void ascending() {
                 // Arrange
                 final Stream<String> input = Stream.of("A", "AA", "AA", "AAA");
 
                 // Act
                 final List<String> output = input
-                        .gather(Gatherers4j.filterIncreasingBy(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.filterOrderedBy(Order.Ascending, Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -317,7 +318,7 @@ class FilterChangingGathererTest {
 
                 // Act
                 final List<String> output = input
-                        .gather(Gatherers4j.filterIncreasingBy(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.filterOrderedBy(Order.Ascending, Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -326,7 +327,7 @@ class FilterChangingGathererTest {
         }
 
         @Nested
-        class NonDecreasing {
+        class AscendingOrEqual {
             @Test
             void emptyStream() {
                 // Arrange
@@ -334,7 +335,7 @@ class FilterChangingGathererTest {
 
                 // Act
                 final List<String> output = input
-                        .gather(Gatherers4j.filterNonDecreasingBy(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.filterOrderedBy(Order.AscendingOrEqual, Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -342,13 +343,13 @@ class FilterChangingGathererTest {
             }
 
             @Test
-            void nonDecreasing() {
+            void ascendingOrEqual() {
                 // Arrange
                 final Stream<String> input = Stream.of("A", "AA", "AA", "AAA", "AA");
 
                 // Act
                 final List<String> output = input
-                        .gather(Gatherers4j.filterNonDecreasingBy(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.filterOrderedBy(Order.AscendingOrEqual, Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -362,7 +363,7 @@ class FilterChangingGathererTest {
 
                 // Act
                 final List<String> output = input
-                        .gather(Gatherers4j.filterNonDecreasingBy(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.filterOrderedBy(Order.AscendingOrEqual, Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -371,7 +372,7 @@ class FilterChangingGathererTest {
         }
 
         @Nested
-        class NonIncreasing {
+        class DescendingOrEqual {
             @Test
             void emptyStream() {
                 // Arrange
@@ -379,7 +380,7 @@ class FilterChangingGathererTest {
 
                 // Act
                 final List<String> output = input
-                        .gather(Gatherers4j.filterNonIncreasingBy(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.filterOrderedBy(Order.DescendingOrEqual, Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -387,13 +388,13 @@ class FilterChangingGathererTest {
             }
 
             @Test
-            void nonIncreasing() {
+            void descendingOrEqual() {
                 // Arrange
                 final Stream<String> input = Stream.of("AAA", "AA", "AA", "A", "AA");
 
                 // Act
                 final List<String> output = input
-                        .gather(Gatherers4j.filterNonIncreasingBy(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.filterOrderedBy(Order.DescendingOrEqual, Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -407,7 +408,7 @@ class FilterChangingGathererTest {
 
                 // Act
                 final List<String> output = input
-                        .gather(Gatherers4j.filterNonIncreasingBy(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.filterOrderedBy(Order.DescendingOrEqual, Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert

@@ -3,7 +3,7 @@ title: "groupBy()"
 linkTitle: "groupBy()"
 show_in_table: true
 category: Grouping and Windowing
-description: Turn a `Stream<INPUT>` into a `Stream<List<INPUT>>` where consecutive equal elements are in the same `List` and equality is measured by the given `mappingFunction`.
+description: Turn a `Stream<INPUT>` into a `Stream<List<INPUT>>` where adjacent equal elements are in the same `List` and equality is measured by the given `mappingFunction`.
 ---
 
 
@@ -26,21 +26,10 @@ For a version of `groupBy()` that measures equality with `Object::equals()`, see
 
 ```java
 Stream
-    .of("A", "A", "A", "B", "B", "C",  "D", "D")
-    .gather(Gatherers4j.group())
+    .of("A", "B", "C", "BB", "BBB", "C", "DD", "DD")
+    .gather(Gatherers4j.groupBy(String::length))
     .toList();
 
-// [ ["A", "A", "A"] ["B", "B"], ["C"], ["D", "D"] ]
+// [ ["A", "B", "C"] ["BB"], ["C"], ["DD", "DD"] ]
 ```
 
-
-#### Group consecutive equal elements, showing treatment of `null`
-
-```java
-Stream
-    .of(null, null, "A", "A")
-    .gather(Gatherers4j.group())
-    .toList();
-
-// [ [ null, null], ["A", "A"] ]
-```

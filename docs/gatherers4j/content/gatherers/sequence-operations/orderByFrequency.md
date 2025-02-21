@@ -1,9 +1,9 @@
 ---
-title: "orderByFrequencyDescending()"
-linkTitle: "orderByFrequencyDescending()"
+title: "orderByFrequency()"
+linkTitle: "orderByFrequency()"
 show_in_table: true
 category: Sequence Operations
-description: Emit elements in the input stream ordered by frequency from most frequently occurring to least frequently occurring.
+description: Emit elements in the input stream ordered by the specified frequency.
 
 ---
 
@@ -11,12 +11,11 @@ description: Emit elements in the input stream ordered by frequency from most fr
 
 This implementation reads the entire stream before emitting any results making it inappropriate for infinite streams. Since this Gatherer
 is not order dependent it has a parallel-capable implementation. All results are wrapped in a [`WithCount`](https://github.com/tginsberg/gatherers4j/blob/main/src/main/java/com/ginsberg/gatherers4j/WithCount.java)record.
-Object equality is measured with `Object::equals()`. See [`orderByFrequencyAscending()`](/gatherers/sequence-operations/orderbyfrequencyascending/)for a
-version of this Gatherer that sorts in the opposite direction.
 
 **Signature**
 
-`orderByFrequencyDescending()`
+`orderByFrequency(Frequency order)`
+* `order` - Either `Ascending` or `Descending`
 
 
 ### Examples
@@ -26,9 +25,20 @@ version of this Gatherer that sorts in the opposite direction.
 ```java
 Stream
     .of("A", "A", "A", "B", "B", "B", "B", "C", "C");
-    .gather(Gatherers4j.orderByFrequencyDescending())
+    .gather(Gatherers4j.orderByFrequency(Frequency.Ascending))
     .toList();
+    
+// [ WithCount("C", 2), WithCount("A", 3), WithCount("B", 4) ]
+```
 
+#### Order elements by frequency, descending
+
+```java
+Stream
+    .of("A", "A", "A", "B", "B", "B", "B", "C", "C");
+    .gather(Gatherers4j.orderByFrequency(Frequency.Descending))
+    .toList();
+    
 // [ WithCount("B", 4), WithCount("A", 3), WithCount("C", 2) ]
 ```
 

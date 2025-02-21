@@ -14,33 +14,40 @@
  * limitations under the License.
  */
 
-package com.ginsberg.gatherers4j;
+package com.ginsberg.gatherers4j.enums;
 
-enum ChangingOperation {
-    Decreasing {
+public enum Order {
+
+    Ascending {
         @Override
-        boolean allows(final int comparison) {
-            return comparison < 0;
-        }
-    },
-    Increasing {
-        @Override
-        boolean allows(final int comparison) {
+        public boolean allows(final int comparison) {
             return comparison > 0;
         }
     },
-    NonDecreasing {
+    AscendingOrEqual {
         @Override
-        boolean allows(final int comparison) {
+        public boolean allows(final int comparison) {
             return comparison >= 0;
         }
     },
-    NonIncreasing {
+    Descending {
         @Override
-        boolean allows(final int comparison) {
+        public boolean allows(final int comparison) {
+            return comparison < 0;
+        }
+    },
+    DescendingOrEqual {
+        @Override
+        public boolean allows(final int comparison) {
             return comparison <= 0;
+        }
+    },
+    Equal {
+        @Override
+        public boolean allows(final int comparison) {
+            return comparison == 0;
         }
     };
 
-    abstract boolean allows(final int comparison);
+    public abstract boolean allows(final int comparison);
 }

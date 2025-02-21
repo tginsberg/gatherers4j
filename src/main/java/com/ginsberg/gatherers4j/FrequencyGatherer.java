@@ -16,6 +16,7 @@
 
 package com.ginsberg.gatherers4j;
 
+import com.ginsberg.gatherers4j.enums.Frequency;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Comparator;
@@ -31,13 +32,9 @@ import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
 public class FrequencyGatherer<INPUT extends @Nullable Object>
         implements Gatherer<INPUT, FrequencyGatherer.State<INPUT>, WithCount<INPUT>> {
 
-    public enum Order {
-        Ascending,
-        Descending
-    }
-    private final Order order;
+    private final Frequency order;
 
-    FrequencyGatherer(final Order order) {
+    FrequencyGatherer(final Frequency order) {
         mustNotBeNull(order, "Order must be specified");
         this.order = order;
     }
@@ -73,7 +70,7 @@ public class FrequencyGatherer<INPUT extends @Nullable Object>
     }
 
     private Comparator<WithCount<INPUT>> comparator() {
-        if(order == Order.Descending) {
+        if(order == Frequency.Descending) {
             return (o1, o2) -> (int)(o2.count() - o1.count());
         } else {
             return (o1, o2) -> (int)(o1.count() - o2.count());

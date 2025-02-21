@@ -16,6 +16,7 @@
 
 package com.ginsberg.gatherers4j;
 
+import com.ginsberg.gatherers4j.enums.Size;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -31,10 +32,10 @@ public class SizeGatherer<INPUT extends @Nullable Object>
         implements Gatherer<INPUT, SizeGatherer.State<INPUT>, INPUT> {
 
     private final long targetSize;
-    private final Operation operation;
+    private final Size operation;
     private Supplier<Stream<INPUT>> orElse;
 
-    SizeGatherer(final Operation operation, final long targetSize) {
+    SizeGatherer(final Size operation, final long targetSize) {
         if (targetSize < 0) {
             throw new IllegalArgumentException("Target size cannot be negative");
         }
@@ -50,7 +51,7 @@ public class SizeGatherer<INPUT extends @Nullable Object>
     ///
     /// Note: You will need a type witness when using this:
     ///
-    /// `source.gather(Gatherers4j.<String>sizeExactly(2).orElse(() -> Stream.of("A", "B")))`
+    /// `source.gather(Gatherers4j.<String>ensureSizeExactly(2).orElse(() -> Stream.of("A", "B")))`
     ///
     /// @param orElse - A non-null `Supplier`, the results of which will be used instead of the input stream.
     public SizeGatherer<INPUT> orElse(final Supplier<Stream<INPUT>> orElse) {
@@ -64,7 +65,7 @@ public class SizeGatherer<INPUT extends @Nullable Object>
     ///
     /// Note: You will need a type witness when using this:
     ///
-    /// `source.gather(Gatherers4j.<String>sizeExactly(2).orElseEmpty())`
+    /// `source.gather(Gatherers4j.<String>ensureSizeExactly(2).orElseEmpty())`
     ///
     public SizeGatherer<INPUT> orElseEmpty() {
         this.orElse = Stream::empty;
@@ -97,52 +98,6 @@ public class SizeGatherer<INPUT extends @Nullable Object>
             }
             return !state.failed || !downstream.isRejecting();
         };
-    }
-
-    enum Operation {
-        Equals {
-            @Override
-            boolean tryAccept(long length, long target) {
-                return length <= target;
-            }
-
-            @Override
-            boolean accept(long length, long target) {
-                return length == target;
-            }
-        },
-        GreaterThan {
-            @Override
-            boolean accept(long length, long target) {
-                return length > target;
-            }
-        },
-        GreaterThanOrEqualTo {
-            @Override
-            boolean accept(long length, long target) {
-                return length >= target;
-            }
-        },
-        LessThan {
-            @Override
-            boolean tryAccept(long length, long target) {
-                return length < target;
-            }
-        },
-        LessThanOrEqualTo {
-            @Override
-            boolean tryAccept(long length, long target) {
-                return length <= target;
-            }
-        };
-
-        boolean accept(long length, long target) {
-            return true;
-        }
-
-        boolean tryAccept(long length, long target) {
-            return true;
-        }
     }
 
     public static class State<INPUT> {

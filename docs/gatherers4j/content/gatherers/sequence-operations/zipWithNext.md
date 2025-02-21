@@ -9,7 +9,8 @@ description: Creates a stream of `List` objects which contain each two adjacent 
 
 ### Implementation Notes
 
-This is syntactic sugar on [`window()`](/gatherers/grouping-and-windowing/window/). By definition, each `List` is two elements long. 
+This is syntactic sugar on [`window()`](/gatherers/grouping-and-windowing/window/). By definition, each `List` is two elements long.
+The lists returned from this Gatherer are unmodifiable.
 
 **Signature**
 

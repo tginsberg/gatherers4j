@@ -16,9 +16,11 @@
 
 package com.ginsberg.gatherers4j;
 
+import com.ginsberg.gatherers4j.enums.Order;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
@@ -29,18 +31,158 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class GroupChangingGathererTest {
 
     @Nested
+    class Equals {
+
+        @Test
+        void emptyStream() {
+            // Arrange
+            final Stream<String> input = Stream.empty();
+
+            // Act
+            final List<List<String>> output = input.gather(Gatherers4j.group()).toList();
+
+            // Assert
+            assertThat(output).isEmpty();
+        }
+
+
+        @Test
+        void groupingByIdentity() {
+            // Arrange
+            final Stream<String> input = Stream.of("A", "A", "B", "B", "C", "C", "C");
+
+            // Act
+            final List<List<String>> output = input.gather(Gatherers4j.group()).toList();
+
+            // Assert
+            assertThat(output).containsExactly(
+                    List.of("A", "A"),
+                    List.of("B", "B"),
+                    List.of("C", "C", "C")
+            );
+        }
+
+        @Test
+        void nullsMatch() {
+            // Arrange
+            final Stream<String> input = Stream.of(null, null, "A");
+
+            // Act
+            final List<List<String>> output = input
+                    .gather(Gatherers4j.group()).toList();
+
+            // Assert
+            assertThat(output)
+                    .containsExactly(
+                            Arrays.asList(null, null),
+                            List.of("A")
+                    );
+        }
+
+        @Test
+        void returnedListUnmodifiable() {
+            // Arrange
+            final Stream<String> input = Stream.of("A", "A", "B", "B", "C", "C", "C");
+
+            // Act
+            final List<List<String>> output = input.gather(Gatherers4j.group()).toList();
+
+            // Assert
+            assertThat(output).hasSize(3);
+            output.forEach(it ->
+                    assertThatThrownBy(() ->
+                            it.add("D")
+                    ).isInstanceOf(UnsupportedOperationException.class)
+            );
+        }
+
+    }
+
+    @Nested
+    class EqualsBy {
+
+        @Test
+        void emptyStream() {
+            // Arrange
+            final Stream<String> input = Stream.empty();
+
+            // Act
+            final List<List<String>> output = input.gather(Gatherers4j.groupBy(String::length)).toList();
+
+            // Assert
+            assertThat(output).isEmpty();
+        }
+
+        @Test
+        void groupingByFunction() {
+            // Arrange
+            final Stream<String> input = Stream.of("A", "B", "AA", "BB", "CCC", "A", "BB", "CCC");
+
+            // Act
+            final List<List<String>> output = input.gather(Gatherers4j.groupBy(String::length)).toList();
+
+            // Assert
+            assertThat(output).containsExactly(
+                    List.of("A", "B"),
+                    List.of("AA", "BB"),
+                    List.of("CCC"),
+                    List.of("A"),
+                    List.of("BB"),
+                    List.of("CCC")
+            );
+        }
+
+        @SuppressWarnings("DataFlowIssue")
+        @Test
+        void mappingFunctionMustNotBeNull() {
+            assertThatThrownBy(() -> Gatherers4j.groupBy(null)).isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        void nullsMatch() {
+            // Arrange
+            final Stream<String> input = Stream.of(null, null, "A");
+
+            // Act
+            final List<List<String>> output = input
+                    .gather(Gatherers4j.groupBy(it -> it == null ? null : it.length())).toList();
+
+            // Assert
+            assertThat(output)
+                    .containsExactly(
+                            Arrays.asList(null, null),
+                            List.of("A")
+                    );
+        }
+
+        @Test
+        void singleElementStream() {
+            // Arrange
+            final Stream<String> input = Stream.of("A");
+
+            // Act
+            final List<List<String>> output = input.gather(Gatherers4j.groupBy(String::length)).toList();
+
+            // Assert
+            assertThat(output).containsExactly(
+                    List.of("A")
+            );
+        }
+    }
+
+    @Nested
     class WithComparable {
         @Nested
-        class Decreasing {
+        class Descending {
 
             @Test
-            void decreasing() {
+            void descending() {
                 // Arrange
                 final Stream<Integer> input = Stream.of(3, 2, 1, 2, 2, 1);
 
                 // Act
                 final List<List<Integer>> output = input
-                        .gather(Gatherers4j.groupDecreasing())
+                        .gather(Gatherers4j.groupOrdered(Order.Descending))
                         .toList();
 
                 // Assert
@@ -59,7 +201,7 @@ class GroupChangingGathererTest {
 
                 // Act
                 final List<List<String>> output = input
-                        .gather(Gatherers4j.groupDecreasing())
+                        .gather(Gatherers4j.groupOrdered(Order.Descending))
                         .toList();
 
                 // Assert
@@ -67,21 +209,21 @@ class GroupChangingGathererTest {
             }
 
             @Test
-            void ensureDecreasing() {
+            void ensureDescending() {
                 // Arrange
                 final Stream<Integer> input = Stream.of(4, 3, 2, 1);
 
                 // Act
-                final List<Integer> output = input.gather(Gatherers4j.ensureDecreasing()).toList();
+                final List<Integer> output = input.gather(Gatherers4j.ensureOrdered(Order.Descending)).toList();
 
                 // Assert
                 assertThat(output).containsExactly(4, 3, 2, 1);
             }
 
             @Test
-            void ensureDecreasingFailureCase() {
+            void ensureDescendingFailureCase() {
                 assertThatThrownBy(() ->
-                        Stream.of(1, 1).gather(Gatherers4j.ensureDecreasing()).toList()
+                        Stream.of(1, 1).gather(Gatherers4j.ensureOrdered(Order.Descending)).toList()
                 ).isExactlyInstanceOf(IllegalStateException.class);
             }
 
@@ -92,7 +234,7 @@ class GroupChangingGathererTest {
 
                 // Act
                 final List<List<String>> output = input
-                        .gather(Gatherers4j.groupDecreasing())
+                        .gather(Gatherers4j.groupOrdered(Order.Descending))
                         .toList();
 
                 // Assert
@@ -101,7 +243,7 @@ class GroupChangingGathererTest {
         }
 
         @Nested
-        class Increasing {
+        class Ascending {
             @Test
             void emptyStream() {
                 // Arrange
@@ -109,7 +251,7 @@ class GroupChangingGathererTest {
 
                 // Act
                 final List<List<String>> output = input
-                        .gather(Gatherers4j.groupIncreasing())
+                        .gather(Gatherers4j.groupOrdered(Order.Ascending))
                         .toList();
 
                 // Assert
@@ -117,32 +259,32 @@ class GroupChangingGathererTest {
             }
 
             @Test
-            void ensureIncreasing() {
+            void ensureAscending() {
                 // Arrange
                 final Stream<Integer> input = Stream.of(1, 2, 3, 4);
 
                 // Act
-                final List<Integer> output = input.gather(Gatherers4j.ensureIncreasing()).toList();
+                final List<Integer> output = input.gather(Gatherers4j.ensureOrdered(Order.Ascending)).toList();
 
                 // Assert
                 assertThat(output).containsExactly(1, 2, 3, 4);
             }
 
             @Test
-            void ensureIncreasingFailureCase() {
+            void ensureAscendingFailureCase() {
                 assertThatThrownBy(() ->
-                        Stream.of(1, 1).gather(Gatherers4j.ensureIncreasing()).toList()
+                        Stream.of(1, 1).gather(Gatherers4j.ensureOrdered(Order.Ascending)).toList()
                 ).isExactlyInstanceOf(IllegalStateException.class);
             }
 
             @Test
-            void increasing() {
+            void ascending() {
                 // Arrange
                 final Stream<Integer> input = Stream.of(1, 2, 3, 3, 2, 3);
 
                 // Act
                 final List<List<Integer>> output = input
-                        .gather(Gatherers4j.groupIncreasing())
+                        .gather(Gatherers4j.groupOrdered(Order.Ascending))
                         .toList();
 
                 // Assert
@@ -161,7 +303,7 @@ class GroupChangingGathererTest {
 
                 // Act
                 final List<List<String>> output = input
-                        .gather(Gatherers4j.groupIncreasing())
+                        .gather(Gatherers4j.groupOrdered(Order.Ascending))
                         .toList();
 
                 // Assert
@@ -170,7 +312,7 @@ class GroupChangingGathererTest {
         }
 
         @Nested
-        class NonDecreasing {
+        class AscendingOrEqual {
             @Test
             void emptyStream() {
                 // Arrange
@@ -178,7 +320,7 @@ class GroupChangingGathererTest {
 
                 // Act
                 final List<List<String>> output = input
-                        .gather(Gatherers4j.groupNonDecreasing())
+                        .gather(Gatherers4j.groupOrdered(Order.AscendingOrEqual))
                         .toList();
 
                 // Assert
@@ -186,32 +328,32 @@ class GroupChangingGathererTest {
             }
 
             @Test
-            void ensureNonDecreasing() {
+            void ensureAscendingOrEqual() {
                 // Arrange
                 final Stream<Integer> input = Stream.of(4, 4, 5, 6);
 
                 // Act
-                final List<Integer> output = input.gather(Gatherers4j.ensureNonDecreasing()).toList();
+                final List<Integer> output = input.gather(Gatherers4j.ensureOrdered(Order.AscendingOrEqual)).toList();
 
                 // Assert
                 assertThat(output).containsExactly(4, 4, 5, 6);
             }
 
             @Test
-            void ensureNonDecreasingFailureCase() {
+            void ensureAscendingOrEqualFailureCase() {
                 assertThatThrownBy(() ->
-                        Stream.of(1, 0).gather(Gatherers4j.ensureNonDecreasing()).toList()
+                        Stream.of(1, 0).gather(Gatherers4j.ensureOrdered(Order.AscendingOrEqual)).toList()
                 ).isExactlyInstanceOf(IllegalStateException.class);
             }
 
             @Test
-            void nonDecreasing() {
+            void ascendingOrEqual() {
                 // Arrange
                 final Stream<Integer> input = Stream.of(1, 2, 3, 3, 2, 3);
 
                 // Act
                 final List<List<Integer>> output = input
-                        .gather(Gatherers4j.groupNonDecreasing())
+                        .gather(Gatherers4j.groupOrdered(Order.AscendingOrEqual))
                         .toList();
 
                 // Assert
@@ -229,7 +371,7 @@ class GroupChangingGathererTest {
 
                 // Act
                 final List<List<String>> output = input
-                        .gather(Gatherers4j.groupNonDecreasing())
+                        .gather(Gatherers4j.groupOrdered(Order.AscendingOrEqual))
                         .toList();
 
                 // Assert
@@ -238,7 +380,7 @@ class GroupChangingGathererTest {
         }
 
         @Nested
-        class NonIncreasing {
+        class DescendingOrEqual {
             @Test
             void emptyStream() {
                 // Arrange
@@ -246,7 +388,7 @@ class GroupChangingGathererTest {
 
                 // Act
                 final List<List<String>> output = input
-                        .gather(Gatherers4j.groupNonIncreasing())
+                        .gather(Gatherers4j.groupOrdered(Order.DescendingOrEqual))
                         .toList();
 
                 // Assert
@@ -254,32 +396,32 @@ class GroupChangingGathererTest {
             }
 
             @Test
-            void ensureNonIncreasing() {
+            void ensureDescendingOrEqual() {
                 // Arrange
                 final Stream<Integer> input = Stream.of(4, 3, 2, 2);
 
                 // Act
-                final List<Integer> output = input.gather(Gatherers4j.ensureNonIncreasing()).toList();
+                final List<Integer> output = input.gather(Gatherers4j.ensureOrdered(Order.DescendingOrEqual)).toList();
 
                 // Assert
                 assertThat(output).containsExactly(4, 3, 2, 2);
             }
 
             @Test
-            void ensureNonIncreasingFailureCase() {
+            void ensureDescendingOrEqualFailureCase() {
                 assertThatThrownBy(() ->
-                        Stream.of(1, 2).gather(Gatherers4j.ensureNonIncreasing()).toList()
+                        Stream.of(1, 2).gather(Gatherers4j.ensureOrdered(Order.DescendingOrEqual)).toList()
                 ).isExactlyInstanceOf(IllegalStateException.class);
             }
 
             @Test
-            void nonIncreasing() {
+            void descendingOrEqual() {
                 // Arrange
                 final Stream<Integer> input = Stream.of(3, 2, 1, 2, 2, 1);
 
                 // Act
                 final List<List<Integer>> output = input
-                        .gather(Gatherers4j.groupNonIncreasing())
+                        .gather(Gatherers4j.groupOrdered(Order.DescendingOrEqual))
                         .toList();
 
                 // Assert
@@ -297,7 +439,7 @@ class GroupChangingGathererTest {
 
                 // Act
                 final List<List<String>> output = input
-                        .gather(Gatherers4j.groupNonIncreasing())
+                        .gather(Gatherers4j.groupOrdered(Order.DescendingOrEqual))
                         .toList();
 
                 // Assert
@@ -316,7 +458,7 @@ class GroupChangingGathererTest {
             @Test
             void comparatorMustNotBeNull() {
                 assertThatThrownBy(() ->
-                        new GroupChangingGatherer<>(ChangingOperation.Increasing, null)
+                        new GroupChangingGatherer<>(Order.Ascending, null)
                 ).isExactlyInstanceOf(IllegalArgumentException.class);
             }
 
@@ -335,7 +477,7 @@ class GroupChangingGathererTest {
 
                 // Act
                 final List<List<String>> output = input
-                        .gather(new GroupChangingGatherer<>(ChangingOperation.Increasing, Comparator.comparing(String::length)))
+                        .gather(new GroupChangingGatherer<>(Order.Ascending, Comparator.comparing(String::length)))
                         .toList();
 
                 // Assert
@@ -349,15 +491,15 @@ class GroupChangingGathererTest {
         }
 
         @Nested
-        class Decreasing {
+        class Descending {
             @Test
-            void decreasing() {
+            void descending() {
                 // Arrange
                 final Stream<String> input = Stream.of("AAA", "AA", "A", "AA", "AA", "A");
 
                 // Act
                 final List<List<String>> output = input
-                        .gather(Gatherers4j.groupDecreasingBy(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.groupOrderedBy(Order.Descending, Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -376,7 +518,7 @@ class GroupChangingGathererTest {
 
                 // Act
                 final List<List<String>> output = input
-                        .gather(Gatherers4j.groupDecreasingBy(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.groupOrderedBy(Order.Descending, Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -384,26 +526,26 @@ class GroupChangingGathererTest {
             }
 
             @Test
-            void ensureDecreasing() {
+            void ensureDecreasingFailureCase() {
+                assertThatThrownBy(() ->
+                        Stream.of("A", "AA")
+                                .gather(Gatherers4j.ensureOrderedBy(Order.Descending, Comparator.comparingInt(String::length)))
+                                .toList()
+                ).isExactlyInstanceOf(IllegalStateException.class);
+            }
+
+            @Test
+            void ensureOrderedDescending() {
                 // Arrange
                 final Stream<String> input = Stream.of("AAA", "AA", "A");
 
                 // Act
                 final List<String> output = input
-                        .gather(Gatherers4j.ensureDecreasingBy(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.ensureOrderedBy(Order.Descending, Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
                 assertThat(output).containsExactly("AAA", "AA", "A");
-            }
-
-            @Test
-            void ensureDecreasingFailureCase() {
-                assertThatThrownBy(() ->
-                        Stream.of("A", "AA")
-                                .gather(Gatherers4j.ensureDecreasingBy(Comparator.comparingInt(String::length)))
-                                .toList()
-                ).isExactlyInstanceOf(IllegalStateException.class);
             }
 
             @Test
@@ -413,7 +555,7 @@ class GroupChangingGathererTest {
 
                 // Act
                 final List<List<String>> output = input
-                        .gather(Gatherers4j.groupDecreasingBy(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.groupOrderedBy(Order.Descending, Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -422,7 +564,7 @@ class GroupChangingGathererTest {
         }
 
         @Nested
-        class Increasing {
+        class Ascending {
             @Test
             void emptyStream() {
                 // Arrange
@@ -430,7 +572,7 @@ class GroupChangingGathererTest {
 
                 // Act
                 final List<List<String>> output = input
-                        .gather(Gatherers4j.groupIncreasingBy(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.groupOrderedBy(Order.Ascending, Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -438,13 +580,13 @@ class GroupChangingGathererTest {
             }
 
             @Test
-            void ensureIncreasing() {
+            void ensureAscending() {
                 // Arrange
                 final Stream<String> input = Stream.of("A", "AA", "AAA");
 
                 // Act
                 final List<String> output = input
-                        .gather(Gatherers4j.ensureIncreasingBy(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.ensureOrderedBy(Order.Ascending, Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -452,22 +594,22 @@ class GroupChangingGathererTest {
             }
 
             @Test
-            void ensureIncreasingFailureCase() {
+            void ensureAscendingFailureCase() {
                 assertThatThrownBy(() ->
                         Stream.of("AA", "A")
-                                .gather(Gatherers4j.ensureIncreasingBy(Comparator.comparingInt(String::length)))
+                                .gather(Gatherers4j.ensureOrderedBy(Order.Ascending, Comparator.comparingInt(String::length)))
                                 .toList()
                 ).isExactlyInstanceOf(IllegalStateException.class);
             }
 
             @Test
-            void increasing() {
+            void ascending() {
                 // Arrange
                 final Stream<String> input = Stream.of("A", "AA", "AAA", "AAA", "AA", "AAA");
 
                 // Act
                 final List<List<String>> output = input
-                        .gather(Gatherers4j.groupIncreasingBy(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.groupOrderedBy(Order.Ascending, Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -486,7 +628,7 @@ class GroupChangingGathererTest {
 
                 // Act
                 final List<List<String>> output = input
-                        .gather(Gatherers4j.groupIncreasingBy(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.groupOrderedBy(Order.Ascending, Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -495,7 +637,7 @@ class GroupChangingGathererTest {
         }
 
         @Nested
-        class NonDecreasing {
+        class AscendingOrEqual {
 
             @Test
             void emptyStream() {
@@ -504,7 +646,7 @@ class GroupChangingGathererTest {
 
                 // Act
                 final List<List<String>> output = input
-                        .gather(Gatherers4j.groupNonDecreasingBy(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.groupOrderedBy(Order.AscendingOrEqual, Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -512,13 +654,13 @@ class GroupChangingGathererTest {
             }
 
             @Test
-            void ensureNonDecreasing() {
+            void ensureAscendingOrEqual() {
                 // Arrange
                 final Stream<String> input = Stream.of("A", "A", "A");
 
                 // Act
                 final List<String> output = input
-                        .gather(Gatherers4j.ensureNonDecreasingBy(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.ensureOrderedBy(Order.AscendingOrEqual, Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -526,10 +668,10 @@ class GroupChangingGathererTest {
             }
 
             @Test
-            void ensureNonDecreasingFailureCase() {
+            void ensureAscendingOrEqualFailureCase() {
                 assertThatThrownBy(() ->
                         Stream.of("AA", "A")
-                                .gather(Gatherers4j.ensureNonDecreasingBy(Comparator.comparingInt(String::length)))
+                                .gather(Gatherers4j.ensureOrderedBy(Order.AscendingOrEqual, Comparator.comparingInt(String::length)))
                                 .toList()
                 ).isExactlyInstanceOf(IllegalStateException.class);
             }
@@ -541,7 +683,7 @@ class GroupChangingGathererTest {
 
                 // Act
                 final List<List<String>> output = input
-                        .gather(Gatherers4j.groupNonDecreasingBy(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.groupOrderedBy(Order.AscendingOrEqual, Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -559,7 +701,7 @@ class GroupChangingGathererTest {
 
                 // Act
                 final List<List<String>> output = input
-                        .gather(Gatherers4j.groupNonDecreasingBy(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.groupOrderedBy(Order.AscendingOrEqual, Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -568,7 +710,7 @@ class GroupChangingGathererTest {
         }
 
         @Nested
-        class NonIncreasing {
+        class DescendingOrEqual {
             @Test
             void emptyStream() {
                 // Arrange
@@ -576,7 +718,7 @@ class GroupChangingGathererTest {
 
                 // Act
                 final List<List<String>> output = input
-                        .gather(Gatherers4j.groupNonIncreasingBy(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.groupOrderedBy(Order.DescendingOrEqual, Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -584,13 +726,13 @@ class GroupChangingGathererTest {
             }
 
             @Test
-            void ensureNonIncreasing() {
+            void ensureDescendingOrEqual() {
                 // Arrange
                 final Stream<String> input = Stream.of("A", "A", "A");
 
                 // Act
                 final List<String> output = input
-                        .gather(Gatherers4j.ensureNonIncreasingBy(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.ensureOrderedBy(Order.DescendingOrEqual, Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -598,22 +740,22 @@ class GroupChangingGathererTest {
             }
 
             @Test
-            void ensureNonIncreasingFailureCase() {
+            void ensureDescendingOrEqualFailureCase() {
                 assertThatThrownBy(() ->
                         Stream.of("AA", "AAA")
-                                .gather(Gatherers4j.ensureNonIncreasingBy(Comparator.comparingInt(String::length)))
+                                .gather(Gatherers4j.ensureOrderedBy(Order.DescendingOrEqual, Comparator.comparingInt(String::length)))
                                 .toList()
                 ).isExactlyInstanceOf(IllegalStateException.class);
             }
 
             @Test
-            void nonIncreasing() {
+            void descendingOrEqual() {
                 // Arrange
                 final Stream<String> input = Stream.of("AAA", "AA", "A", "AA", "AA", "A");
 
                 // Act
                 final List<List<String>> output = input
-                        .gather(Gatherers4j.groupNonIncreasingBy(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.groupOrderedBy(Order.DescendingOrEqual, Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert
@@ -631,7 +773,7 @@ class GroupChangingGathererTest {
 
                 // Act
                 final List<List<String>> output = input
-                        .gather(Gatherers4j.groupNonIncreasingBy(Comparator.comparingInt(String::length)))
+                        .gather(Gatherers4j.groupOrderedBy(Order.DescendingOrEqual, Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert

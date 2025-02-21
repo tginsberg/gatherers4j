@@ -16,7 +16,10 @@
 
 package com.ginsberg.gatherers4j;
 
+import com.ginsberg.gatherers4j.enums.Order;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -28,24 +31,24 @@ import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
 public class GroupChangingGatherer<INPUT>
         implements Gatherer<INPUT, GroupChangingGatherer.State<INPUT>, List<INPUT>> {
 
-    private final ChangingOperation operation;
+    private final Order operation;
     private final Comparator<INPUT> comparator;
 
     static <INPUT> GroupChangingGatherer<INPUT> usingComparator(
-            final ChangingOperation operation,
+            final Order operation,
             final Comparator<INPUT> comparator
     ) {
         return new GroupChangingGatherer<>(operation, comparator);
     }
 
     static <INPUT extends Comparable<INPUT>> GroupChangingGatherer<INPUT> usingComparable(
-            final ChangingOperation operation
+            final Order operation
     ) {
         return new GroupChangingGatherer<>(operation, Comparable::compareTo);
     }
 
     GroupChangingGatherer(
-            final ChangingOperation operation,
+            final Order operation,
             final Comparator<INPUT> comparator
     ) {
         mustNotBeNull(operation, "Operation must not be null");
@@ -63,7 +66,7 @@ public class GroupChangingGatherer<INPUT>
     public Integrator<GroupChangingGatherer.State<INPUT>, INPUT, List<INPUT>> integrator() {
         return Integrator.ofGreedy((state, element, downstream) -> {
             if (!state.currentElements.isEmpty() && !isInSameList(state.currentElements.getLast(), element)) {
-                downstream.push(List.copyOf(state.currentElements));
+                downstream.push(Collections.unmodifiableList(state.currentElements));
                 state.currentElements = new ArrayList<>();
             }
             state.currentElements.add(element);
@@ -79,7 +82,7 @@ public class GroupChangingGatherer<INPUT>
     public BiConsumer<State<INPUT>, Downstream<? super List<INPUT>>> finisher() {
         return (inputState, downstream) -> {
             if (!inputState.currentElements.isEmpty()) {
-                downstream.push(List.copyOf(inputState.currentElements));
+                downstream.push(Collections.unmodifiableList(inputState.currentElements));
             }
         };
     }
