@@ -5,7 +5,7 @@ weight: 2
 menu: {main: {weight: 20}}
 ---
 
-Gatherers4j can be used by including it in your build dependencies. There are no additional configuration steps required.
+Gatherers4j releases are published to Maven Central, the latest version is {{< env "PROJECT_VERSION" >}}.
 
 ### Maven
 
@@ -28,7 +28,10 @@ implementation('com.ginsberg:gatherers4j:{{< env "PROJECT_VERSION" >}}')
 
 ### Example Usage
 
-Here's a simple example that imports `Gatherers4j`, sets up a `Stream<String>`, keeps the last three elements, and puts them in a `List<String>`:
+The `Gatherers4j` class is the main entrypoint for this library. 
+
+Here's a simple example that imports `Gatherers4j`, sets up a `Stream<String>`, 
+keeps the last three elements, and puts them in a `List<String>`:
 
 ```java
 import com.ginsberg.gatherers4j.Gatherers4j;
@@ -39,5 +42,4 @@ Stream.of("A", "B", "C", "D", "E")
     .toList();
 
 // Returns: [ "C", "D", "E" ]
-
 ```
