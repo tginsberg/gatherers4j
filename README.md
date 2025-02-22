@@ -43,43 +43,42 @@ For convenience, the full list of gatherers in this library are broken into four
 
 Functions that don't (yet!) fall into one of the other categories.
 
-| Function                     | Purpose                                                                                                                                            |
-|------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
+| Function                     | Purpose                                                                                                                                             |
+|------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
 | `crossWith()`                | Emit each element of the source stream with each element of the given `iterable`, `iterator`, `stream`, or varargs as a `Pair` to the output stream |
-| `foldIndexed(fn)`            | Perform a fold over the input stream where each element is included along with its index                                                           |
-| `interleaveWith()`           | Creates a stream of alternating objects from the input stream and the argument `iterable`, `iterator`, `stream`, or varargs                        |
-| `orderByFrequency()`         | Returns a stream where elements are ordered in either ascending or descending frequency contained in `WithCount<T>` wrapper objects.               |
-| `repeat(n)`                  | Repeat the input stream `n` times to the output stream                                                                                             |
-| `repeatInfinitely()`         | Repeat the input stream to the output stream forever (or until some downstream operation stops it)                                                 |
-| `reverse()`                  | Reverse the order of the stream                                                                                                                    |
-| `rotateLeft(n)`              | Rotate the stream `n` elements to the left. Stores entire stream into memory.                                                                      |
-| `rotateRight(n)`             | Rotate the stream `n` elements to the right. Stores entire stream into memory.                                                                     |
-| `scanIndexed(fn)`            | Performs a scan on the input stream using the given function, and includes the index of the elements                                               |
-| `shuffle()`                  | Shuffle the stream into a random order using the platform default `RandomGenerator`                                                                |
-| `shuffle(rg)`                | Shuffle the stream into a random order using the specified `RandomGenerator`                                                                       |
-| `throttle(amount, duration)` | Limit stream elements to `amount` elements over `duration`, pausing until a new `duration` period starts                                           |
-| `withIndex()`                | Maps all elements of the stream as-is along with their 0-based index                                                                               |
-| `zipWith( )`                 | Creates a stream of `Pair` objects whose values come from the input stream and argument `iterable`, `iterator`, `stream`, or varargs               |
-| `zipWithNext()`              | Creates a stream of `List` objects via a sliding window of width 2 and stepping 1                                                                  |      
+| `foldIndexed(fn)`            | Perform a fold over the input stream where each element is included along with its index                                                            |
+| `interleaveWith()`           | Creates a stream of alternating objects from the input stream and the argument `iterable`, `iterator`, `stream`, or varargs                         |
+| `orderByFrequency()`         | Returns a stream where elements are ordered in either ascending or descending frequency contained in `WithCount<T>` wrapper objects.                |
+| `repeat(n)`                  | Repeat the input stream `n` times to the output stream                                                                                              |
+| `repeatInfinitely()`         | Repeat the input stream to the output stream forever (or until some downstream operation stops it)                                                  |
+| `reverse()`                  | Reverse the order of the stream                                                                                                                     |
+| `rotate(direction, n)`       | Rotate the stream `n` elements to direction specified. Stores entire stream into memory.                                                            |
+| `scanIndexed(fn)`            | Performs a scan on the input stream using the given function, and includes the index of the elements                                                |
+| `shuffle()`                  | Shuffle the stream into a random order using the platform default `RandomGenerator`                                                                 |
+| `shuffle(rg)`                | Shuffle the stream into a random order using the specified `RandomGenerator`                                                                        |
+| `throttle(amount, duration)` | Limit stream elements to `amount` elements over `duration`, pausing until a new `duration` period starts                                            |
+| `withIndex()`                | Maps all elements of the stream as-is along with their 0-based index                                                                                |
+| `zipWith( )`                 | Creates a stream of `Pair` objects whose values come from the input stream and argument `iterable`, `iterator`, `stream`, or varargs                |
+| `zipWithNext()`              | Creates a stream of `List` objects via a sliding window of width 2 and stepping 1                                                                   |      
 
 ## Filtering Functions
 
 Functions that remove elements (or retain them, depending on how you look at it) from a stream
 
-| Function                             | Purpose                                                                                                                        |
-|--------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
+| Function                             | Purpose                                                                                                                       |
+|--------------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
 | `debounce(amount, duration)`         | Limit stream elements to `amount` elements over `duration`, dropping any elements over the limit until a new `duration` starts |
-| `dedupeConsecutive()`                | Remove consecutive duplicates from a stream                                                                                    |
-| `dedupeConsecutiveBy(fn)`            | Remove consecutive duplicates from a stream as returned by `fn`                                                                |
-| `distinctBy(fn)`                     | Emit only distinct elements from the stream, as measured by `fn`                                                               |
-| `dropEveryNth(n)`                    | Drop every`n`<sup>th</sup> element from the input stream                                                                       |
-| `dropLast(n)`                        | Keep all but the last `n` elements of the stream                                                                               |
-| `filterOrdered(order)`               | Filter the input stream of `Comparable` objects so that is strictly in the given `order`                                       |                                                                                           |
+| `dedupeConsecutive()`                | Remove consecutive duplicates from a stream                                                                                   |
+| `dedupeConsecutiveBy(fn)`            | Remove consecutive duplicates from a stream as returned by `fn`                                                               |
+| `distinctBy(fn)`                     | Emit only distinct elements from the stream, as measured by `fn`                                                              |
+| `dropEveryNth(n)`                    | Drop every`n`<sup>th</sup> element from the input stream                                                                      |
+| `dropLast(n)`                        | Keep all but the last `n` elements of the stream                                                                              |
+| `filterOrdered(order)`               | Filter the input stream of `Comparable` objects so that is strictly in the given `order`                                      |                                                                                           |
 | `filterOrderedBy(order, comparator)` | Filter the input stream of objects so that it contains only elements in the given `order`, as measured by a given `Comparator` |
-| `last(n)`                            | Constrain the stream to the last `n` values                                                                                    |
-| `takeEveryNth(n)`                    | Keep every`n`<sup>th</sup> element from the input stream                                                                       |
-| `takeUntil(predicate)`               | Take elements from the input stream until the `predicate` is met, including the first element that matches the `preciate`      |
-| `uniquelyOccurring()`                | Emit elements that occur a single time, dropping all others                                                                    |
+| `takeEveryNth(n)`                    | Keep every`n`<sup>th</sup> element from the input stream                                                                      |
+| `takeLast(n)`                        | Emit the last `n` values                                                                                    |
+| `takeUntil(predicate)`               | Take elements from the input stream until the `predicate` is met, including the first element that matches the `preciate`     |
+| `uniquelyOccurring()`                | Emit elements that occur a single time, dropping all others                                                                   |
 
 ## Grouping Functions
 

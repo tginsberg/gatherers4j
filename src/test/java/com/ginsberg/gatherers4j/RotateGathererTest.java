@@ -16,6 +16,7 @@
 
 package com.ginsberg.gatherers4j;
 
+import com.ginsberg.gatherers4j.enums.Rotate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -40,7 +41,7 @@ class RotateGathererTest {
 
             // Act
             final List<String> output = input
-                    .gather(Gatherers4j.rotateLeft(1))
+                    .gather(Gatherers4j.rotate(Rotate.Left, 1))
                     .toList();
 
             // Assert
@@ -55,7 +56,7 @@ class RotateGathererTest {
 
             // Act
             final List<String> output = input
-                    .gather(Gatherers4j.rotateLeft(rotateSize))
+                    .gather(Gatherers4j.rotate(Rotate.Left,rotateSize))
                     .toList();
 
             // Assert
@@ -84,7 +85,7 @@ class RotateGathererTest {
 
             // Act
             final List<String> output = input.stream()
-                    .gather(Gatherers4j.rotateLeft(0))
+                    .gather(Gatherers4j.rotate(Rotate.Left,0))
                     .toList();
 
             // Assert
@@ -117,7 +118,7 @@ class RotateGathererTest {
 
             // Act
             final List<String> output = input
-                    .gather(Gatherers4j.rotateRight(1))
+                    .gather(Gatherers4j.rotate(Rotate.Right, 1))
                     .toList();
 
             // Assert
@@ -133,7 +134,7 @@ class RotateGathererTest {
 
             // Act
             final List<String> output = input
-                    .gather(Gatherers4j.rotateRight(rotateSize))
+                    .gather(Gatherers4j.rotate(Rotate.Right, rotateSize))
                     .toList();
 
             // Assert
@@ -147,7 +148,7 @@ class RotateGathererTest {
 
             // Act
             final List<String> output = input.stream()
-                    .gather(Gatherers4j.rotateRight(0))
+                    .gather(Gatherers4j.rotate(Rotate.Right, 0))
                     .toList();
 
             // Assert

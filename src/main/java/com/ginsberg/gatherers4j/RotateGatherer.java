@@ -16,6 +16,7 @@
 
 package com.ginsberg.gatherers4j;
 
+import com.ginsberg.gatherers4j.enums.Rotate;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -27,25 +28,10 @@ import java.util.stream.Gatherer;
 public class RotateGatherer<INPUT extends @Nullable Object>
         implements Gatherer<INPUT, RotateGatherer.State<INPUT>, INPUT> {
 
-    public enum Direction {
-        Left {
-            @Override
-            Direction flip() {
-                return Right;
-            }
-        }, Right {
-            @Override
-            Direction flip() {
-                return Left;
-            }
-        };
-        abstract Direction flip();
-    }
-
-    private final Direction direction;
+    private final Rotate direction;
     private final int distance;
 
-    public RotateGatherer(final Direction direction, final int distance) {
+    public RotateGatherer(final Rotate direction, final int distance) {
         if (distance < 0) {
             this.distance = -distance;
             this.direction = direction.flip();
@@ -81,7 +67,7 @@ public class RotateGatherer<INPUT extends @Nullable Object>
             }
             final int rotateDistance = distance % size;
             for (int i = 0; i < size; i++) {
-                if (direction == Direction.Left) {
+                if (direction == Rotate.Left) {
                     downstream.push(inputState.fullStream.get((i + rotateDistance) % size));
                 } else {
                     downstream.push(inputState.fullStream.get((i - rotateDistance + size) % size));

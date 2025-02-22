@@ -35,7 +35,7 @@ import com.ginsberg.gatherers4j.Gatherers4j;
 import java.util.stream.Stream;
 
 Stream.of("A", "B", "C", "D", "E")
-    .gather(Gatherers4j.last(3))
+    .gather(Gatherers4j.takeLast(3))
     .toList();
 
 // Returns: [ "C", "D", "E" ]

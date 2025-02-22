@@ -7,19 +7,18 @@ no_list: true
 
 ## v0.9.0
 + Implement `filterInstanceOf` to filter a stream by type more easily. Addresses [#86](https://github.com/tginsberg/gatherers4j/issues/86), thanks [@nipafx](https://github.com/nipafx).
-+ Implement `groupIncreasing`, `groupDecreasing`, `groupNonIncreasing`, and `groupNonDecreasing` with both `Comparable` stream inputs or using an explicit `Comparator` to appropriately group elements in the input stream to lists in the output stream. Addresses [#88](https://github.com/tginsberg/gatherers4j/issues/88), thanks [@nipafx](https://github.com/nipafx).
-+ Implement `windowed` to provide more options to windowing functions, namely - ability to specify size, how many to skip each time, and whether to include partial windows
-+ Implement `ensureIncreasing`, `ensureDecreasing`, `ensureNonIncreasing` and `ensureNonDecreasing` with both `Comparable` stream inputs or using an explicit `Comparator` to ensure the given stream meets the criteria, or fail exceptionally otherwise
-+ Implement `filterIncreasing`, `filterDecreasing`, `filterNonIncreasing` and `filterNonDecreasing` with both `Comparable` stream inputs or using an explicit `Comparator` to remove non-compliant elements from the input stream
++ Implement `groupOrdered()`, and `groupOrderedBy()` to appropriately group elements in the input stream to lists in the output stream. Addresses [#88](https://github.com/tginsberg/gatherers4j/issues/88), thanks [@nipafx](https://github.com/nipafx).
++ Implement `ensureOrdred()` and `ensureOrderedBy()` to ensure the given stream meets an ordering criteria, or fail exceptionally otherwise
++ Implement `filterOrdered` and `filterOrderedBy()` to remove non-ordered elements from the input stream
++ Implement `window()` to provide more options to windowing functions, namely - ability to specify size, how many to skip each time, and whether to include partial windows
 + Implement `repeat(n)` and `repeatInfinitely()` to repeatedly emit the input stream to the output stream
 + Implement `rotateLeft(n)` and `rotateRight(n)` to rotate the stream (consumes entire stream)
 + Renamed `everyNth(n)` to `takeEveryNth(n)` and added `dropEveryNth(n)` for completeness
 + Renamed `filterWithIndex()` to `filterIndexed()` to match other indexing Gatherers
-+ Renamed many `...(comparator)` gatherers to `...By(comparator)` for consistency with other gatherers of the same nature
 + Renamed `cross()` to `crossWith()` for consistency
 + Renamed `interleave()` to `interleaveWith()` for consistency
 + Renamed `grouping()` to `group()` and `groupingBy()` to `groupBy()` for consistency
-+ Renamed `windowed()` to `window()` for consistency
++ Renamed `last()` to `takeLast()` to match `dropLast()`
 
 ## v0.8.0
 [Released 2025-02-01](https://github.com/tginsberg/gatherers4j/releases/tag/v0.8.0)

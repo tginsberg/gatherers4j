@@ -18,6 +18,7 @@ package com.ginsberg.gatherers4j;
 
 import com.ginsberg.gatherers4j.enums.Frequency;
 import com.ginsberg.gatherers4j.enums.Order;
+import com.ginsberg.gatherers4j.enums.Rotate;
 import com.ginsberg.gatherers4j.enums.Size;
 import org.jspecify.annotations.Nullable;
 
@@ -349,12 +350,12 @@ public abstract class Gatherers4j {
         return new IntersperseGatherer<>(intersperseElement);
     }
 
-    /// Remove all but the last `count` elements from the stream.
+    /// Emit the last `count` elements from the stream. If there are fewer than `count` elements they are all emitted.
     ///
     /// @param count   A non-negative integer, the number of elements to return
     /// @param <INPUT> Type of elements in the input stream
     /// @return A non-null `LastGatherer`
-    public static <INPUT> LastGatherer<INPUT> last(final int count) {
+    public static <INPUT> LastGatherer<INPUT> takeLast(final int count) {
         return new LastGatherer<>(count);
     }
 
@@ -459,22 +460,14 @@ public abstract class Gatherers4j {
         return new ReversingGatherer<>();
     }
 
-    /// Consume the entire stream and emit its elements rotated to the left `distance` spaces
+    /// Consume the entire stream and emit its elements rotated in the direction specified `distance` number of spaces
     ///
     /// @param <INPUT> Type of elements in the input and output stream
+    /// @param direction Which direction to rotate the stream in
     /// @param distance Distance to rotate elements
     /// @return A non-null RotateGatherer
-    public static <INPUT extends @Nullable Object> RotateGatherer<INPUT> rotateLeft(final int distance) {
-        return new RotateGatherer<>(RotateGatherer.Direction.Left, distance);
-    }
-
-    /// Consume the entire stream and emit its elements rotated to the right `distance` spaces
-    ///
-    /// @param <INPUT> Type of elements in the input and output stream
-    /// @param distance Distance to rotate elements
-    /// @return A non-null RotateGatherer
-    public static <INPUT extends @Nullable Object> RotateGatherer<INPUT> rotateRight(final int distance) {
-        return new RotateGatherer<>(RotateGatherer.Direction.Right, distance);
+    public static <INPUT extends @Nullable Object> RotateGatherer<INPUT> rotate(final Rotate direction, final int distance) {
+        return new RotateGatherer<>(direction, distance);
     }
 
     /// Create a `Stream<BigDecimal>` that represents the running population standard
