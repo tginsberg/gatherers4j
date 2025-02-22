@@ -229,7 +229,8 @@ public abstract class Gatherers4j {
         return TypeFilteringGatherer.of(validTypes);
     }
 
-    /// Filter the input stream so that it contains `Comparable` elements in a strictly decreasing order.
+    /// Filter the input stream so that it contains `Comparable` elements in the `order` specified. Anything not matching
+    /// that order is removed as it is encountered.
     ///
     /// @param <INPUT> Type of elements in the input and output stream
     /// @return A non-null gatherer
@@ -237,7 +238,8 @@ public abstract class Gatherers4j {
         return FilterChangingGatherer.usingComparable(order);
     }
 
-    /// Filter the input stream so that it contains elements in a strictly decreasing order as measured by the given `Comparator`.
+    /// Filter the input stream so that it contains elements in the `order` specified as measured by the given `Comparator`.
+    /// Anything not matching that order is removed as it is encountered.
     ///
     /// @param <INPUT> Type of elements in the input and output stream
     /// @param comparator A non-null `Comparator` to compare stream elements
@@ -260,7 +262,7 @@ public abstract class Gatherers4j {
         return new AccumulatingGatherer<>(false, initialValue, foldFunction);
     }
 
-    /// Turn a `Stream<INPUT>` into a `Stream<List<INPUT>>` where consecutive equal elements are in the same `List`
+    /// Turn a `Stream<INPUT>` into a `Stream<List<INPUT>>` where adjacent equal elements are in the same `List`
     /// and equality is measured by `Object.equals(Object)`. The lists emitted to the output stream are unmodifiable.
     ///
     /// @param <INPUT> Type of elements in the input stream
@@ -269,7 +271,7 @@ public abstract class Gatherers4j {
         return GroupChangingGatherer.usingComparator(Order.Equal, equalityOnlyComparator());
     }
 
-    /// Turn a `Stream<INPUT>` into a `Stream<List<INPUT>>` where consecutive equal elements are in the same `List`
+    /// Turn a `Stream<INPUT>` into a `Stream<List<INPUT>>` where adjacent equal elements are in the same `List`
     /// and equality is measured by the given `mappingFunction`. The lists emitted to the output stream are unmodifiable.
     ///
     /// @param mappingFunction A non-null function, the results of which are used to measure equality of consecutive elements.
@@ -282,21 +284,21 @@ public abstract class Gatherers4j {
         return GroupChangingGatherer.usingComparator(Order.Equal, equalityOnlyComparator(mappingFunction));
     }
 
-    /// Turn a `Stream<INPUT>` into a `Stream<List<INPUT>>` where consecutive equal elements are in the same `List`
-    /// and equality is measured by `Object.equals(Object)`. The lists emitted to the output stream are unmodifiable.
+    /// Turn a `Stream<Comparable>` into a `Stream<List<>>` where adjacent equal elements are in the same `List`
+    /// and order is measured by the order imposed by the `Comparable`. The lists emitted to the output stream are unmodifiable.
     ///
-    /// @param <INPUT> Type of elements in the input stream
-    /// @return A non-null `GroupingByGatherer`
+    /// @param <INPUT> Type of elements in the input stream, implementing `Comparable`
+    /// @return A non-null `Gatherer`
     public static <INPUT extends @Nullable Comparable<INPUT>> Gatherer<INPUT, ?, List<INPUT>> groupOrdered(final Order order) {
         return GroupChangingGatherer.usingComparable(order);
     }
 
-    /// Turn a `Stream<INPUT>` into a `Stream<List<INPUT>>` where consecutive equal elements are in the same `List`
-    /// and equality is measured by the given `mappingFunction`. The lists emitted to the output stream are unmodifiable.
+    /// Turn a `Stream<INPUT>` into a `Stream<List<INPUT>>` where adjacent equal elements are in the same `List`
+    /// and order is measured by the given `Comparator`. The lists emitted to the output stream are unmodifiable.
     ///
     /// @param comparator A non-null function, the results of which are used to measure equality of consecutive elements.
     /// @param <INPUT>         Type of elements in the input stream
-    /// @return A non-null `GroupingByGatherer`
+    /// @return A non-null `Gatherer`
     public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, List<INPUT>> groupOrderedBy(
             final Order order,
             final Comparator<INPUT> comparator
@@ -350,15 +352,6 @@ public abstract class Gatherers4j {
         return new IntersperseGatherer<>(intersperseElement);
     }
 
-    /// Emit the last `count` elements from the stream. If there are fewer than `count` elements they are all emitted.
-    ///
-    /// @param count   A non-negative integer, the number of elements to return
-    /// @param <INPUT> Type of elements in the input stream
-    /// @return A non-null `LastGatherer`
-    public static <INPUT> LastGatherer<INPUT> takeLast(final int count) {
-        return new LastGatherer<>(count);
-    }
-
     /// Create a Stream that represents the moving product of a `Stream<BigDecimal>` looking
     /// back `windowSize` number of elements.
     ///
@@ -407,29 +400,18 @@ public abstract class Gatherers4j {
         return new BigDecimalMovingSumGatherer<>(windowSize, mappingFunction);
     }
 
-    /// Emit elements in the input stream ordered by frequency from least frequently occurring
-    /// to most frequently occurring. Elements are emitted wrapped in `WithCount<INPUT>` objects
-    /// that carry the element and the number of occurrences.
-    ///
-    /// Example:
-    /// ```
-    /// Stream.of("A", "A", "A", "B", "B", "C")
-    ///       .gather(orderByFrequencyAscending())
-    ///       .toList();
-    ///
-    /// // Produces:
-    ///[WithCount("C", 1), WithCount("B", 2), WithCount("A", 4)]
-    ///```
-    ///
     /// Note: This consumes the entire stream and holds it in memory, so it will not work on infinite
     /// streams and may cause memory pressure on very large streams.
     ///
     /// @param <INPUT> Type of elements in the input stream
-    /// @return A non-null `FrequencyGatherer`
-    public static <INPUT extends @Nullable Object> FrequencyGatherer<INPUT> orderByFrequency(final Frequency order) {
+    /// @return A non-null `Gatherer`
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, WithCount<INPUT>> orderByFrequency(final Frequency order) {
         return new FrequencyGatherer<>(order);
     }
 
+    /// Emit elements in the input stream ordered by frequency in the direction specified. Elements are emitted wrapped
+    /// in `WithCount<INPUT>` objects that carry the element and the number of occurrences.
+    ///
     /// Repeatedly emit the input stream to the output stream a given number of times.
     /// Note: This implementation consumes the entire input stream into memory, so it must be used on finite streams.
     ///
@@ -654,6 +636,15 @@ public abstract class Gatherers4j {
             throw new IllegalArgumentException("Count must be a minimum of 2");
         }
         return filterIndexed((index, _) -> index % count == 0);
+    }
+
+    /// Emit the last `count` elements from the stream. If there are fewer than `count` elements they are all emitted.
+    ///
+    /// @param count   A non-negative integer, the number of elements to return
+    /// @param <INPUT> Type of elements in the input stream
+    /// @return A non-null `LastGatherer`
+    public static <INPUT> LastGatherer<INPUT> takeLast(final int count) {
+        return new LastGatherer<>(count);
     }
 
     /// Take elements from the input stream until the `predicate` is met, including the first element that
