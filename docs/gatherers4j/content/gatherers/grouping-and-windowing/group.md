@@ -21,15 +21,13 @@ For a version of `group()` that measures equality with a user-provided function,
 
 ### Examples
 
-#### Group consecutive equal elements according to a function
-
-The function groups consecutive elements of equal length
+#### Group adjacent equal elements
 
 ```java
 Stream
-    .of("A", "B", "AA", "BB", "CCC", "AAA");
-    .gather(Gatherers4j.groupBy(String::length))
+    .of("A", "A", "BB", "BB", "CCC", "A");
+    .gather(Gatherers4j.group())
     .toList();
 
-// [ ["A", "B"], ["AA", "BB"], ["CCC", "AAA"] ]
+// [ ["A", "A"], ["BB", "BB"], ["CCC"], ["A"] ]
 ```
