@@ -33,3 +33,4 @@ build/
 /docs/gatherers4j/public/
 /docs/gatherers4j/resources/
 /docs/gatherers4j/node_modules/
+/docs/gatherers4j/.hugo_build.lock
