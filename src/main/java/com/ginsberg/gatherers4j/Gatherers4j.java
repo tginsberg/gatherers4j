@@ -763,6 +763,6 @@ public abstract class Gatherers4j {
     /// @param <INPUT> Type of elements in the input stream
     /// @return A non-null `Gatherer`
     public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, List<INPUT>> zipWithNext() {
-        return new ZipWithNextGatherer<>();
+        return window(2, 1, false);
     }
 }
