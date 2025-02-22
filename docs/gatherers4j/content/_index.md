@@ -39,18 +39,18 @@ This library aims to provide a comprehensive and useful set of Gatherers (interm
 
 ## Shortcuts
 
-* [Getting Started](/start) - The quickstart guide will show you how to add Gatherers4j to your project.
+* [Getting Started](/gatherers4j/start) - The quickstart guide will show you how to add Gatherers4j to your project.
 
 * Gatherers are organied into five categories for easier seaching:
-  * [Sequence Operations](/gatherers/sequence-operations/) - Reorder, combine, or manipulate the sequence of elements.
+  * [Sequence Operations](/gatherers4j/gatherers/sequence-operations/) - Reorder, combine, or manipulate the sequence of elements.
 
-  * [Filtering and Selection](/gatherers/filtering-and-selection/) - Select or remove elements based on some criteria.
+  * [Filtering and Selection](/gatherers4j/gatherers/filtering-and-selection/) - Select or remove elements based on some criteria.
 
-  * [Grouping and Windowing](/gatherers/grouping-and-windowing/) - Collect elements into groups or windows.
+  * [Grouping and Windowing](/gatherers4j/gatherers/grouping-and-windowing/) - Collect elements into groups or windows.
 
-  * [Mathematical Operations](/gatherers/mathematical/) - Perform calculations over the stream.
+  * [Mathematical Operations](/gatherers4j/gatherers/mathematical/) - Perform calculations over the stream.
 
-  * [Validation and Constraints](/gatherers/validation-and-constraints/) - Enforce conditions on the stream.
+  * [Validation and Constraints](/gatherers4j/gatherers/validation-and-constraints/) - Enforce conditions on the stream.
 
 ## Features
 

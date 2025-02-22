@@ -9,7 +9,7 @@ description: Filter the input stream so that it contains elements the order spec
 ### Implementation Notes
 
 This is suitable for streams whose elements do not implement `Comparable`. For a version that uses the natural order of 
-elements that implement `Comparable`, see [`filterOrdered()`](/gatherers/filtering-and-selection/filterordered/).
+elements that implement `Comparable`, see [`filterOrdered()`](/gatherers4j/gatherers/filtering-and-selection/filterordered/).
 
 **Signature**
 

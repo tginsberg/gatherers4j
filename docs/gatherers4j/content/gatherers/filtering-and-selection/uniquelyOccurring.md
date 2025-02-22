@@ -13,7 +13,7 @@ The implementation does not emit anything until the full input stream has been e
 Encounter order of uniquely occurring elements is preserved. 
 
 Note that `uniquelyOccurring()` is semantically different from the JDK's {{< jdklink linkName="Stream::distinct()" package="java.base/java/util/stream/Stream.html#distinct()" >}}or 
-Gatherer4j's [`distinctBy()`](/gatherers/filtering-and-selection/distinctby/)because only elements that are already distinct are emitted, rather than emitting all elements only once.
+Gatherer4j's [`distinctBy()`](/gatherers4j/gatherers/filtering-and-selection/distinctby/)because only elements that are already distinct are emitted, rather than emitting all elements only once.
 
 **Signature**
 

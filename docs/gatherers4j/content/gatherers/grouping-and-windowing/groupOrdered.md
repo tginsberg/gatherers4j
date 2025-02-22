@@ -9,7 +9,7 @@ description: Convert the input stream of `Comparable` objects into lists of orde
 
 ### Implementation Notes
 
-This is suitable for streams whose elements implement `Comparable`. For a version that takes a `Comparator`, see [`groupOrderedBy()`](/gatherers/grouping-and-windowing/grouporderedby/).
+This is suitable for streams whose elements implement `Comparable`. For a version that takes a `Comparator`, see [`groupOrderedBy()`](/gatherers4j/gatherers/grouping-and-windowing/grouporderedby/).
 The lists emitted from this Gatherer are unmodifiable. 
 
 **Signature**

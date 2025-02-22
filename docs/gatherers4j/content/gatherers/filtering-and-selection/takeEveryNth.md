@@ -9,8 +9,8 @@ description: Take every `n`th element of the stream.
 
 ### Implementation Notes
 
-This is syntactic sugar on top of [`filterIndexed()`](/gatherers/filtering-and-selection/filterindexed). For a version
-of this gatherer that drops every n{{< sup "th" >}} element instead of taking them, see the [`dropEveryNth()`](/gatherers/filtering-and-selection/dropeverynth/)Gatherer.
+This is syntactic sugar on top of [`filterIndexed()`](/gatherers4j/gatherers/filtering-and-selection/filterindexed). For a version
+of this gatherer that drops every n{{< sup "th" >}} element instead of taking them, see the [`dropEveryNth()`](/gatherers4j/gatherers/filtering-and-selection/dropeverynth/)Gatherer.
 
 **Signature**
 

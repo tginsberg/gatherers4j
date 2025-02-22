@@ -10,7 +10,7 @@ description: Remove all but the last `count` elements from the stream
 ### Implementation Notes
 
 Holds at most `count` number of elements in memory before emitting them once the input stream is fully exhausted. This 
-Gatherer is not suitable for infinite streams. For a version that drops the last `count` elements, see [`dropLast()`](/gatherers/filtering-and-selection/droplast/).
+Gatherer is not suitable for infinite streams. For a version that drops the last `count` elements, see [`dropLast()`](/gatherers4j/gatherers/filtering-and-selection/droplast/).
 
 **Signature**
 

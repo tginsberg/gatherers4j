@@ -10,7 +10,7 @@ description: Filter the input stream so that it contains `Comparable<INPUT>` ele
 ### Implementation Notes
 
 This is suitable for streams whose elements implement `Comparable`. For a version that takes a `Comparator`, 
-see [`filterOrderedBy()`](/gatherers/filtering-and-selection/filterorderedby/).
+see [`filterOrderedBy()`](/gatherers4j/gatherers/filtering-and-selection/filterorderedby/).
 
 **Signature**
 

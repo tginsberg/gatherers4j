@@ -10,7 +10,7 @@ description: Limit the number of elements in the stream to some number per perio
 ### Implementation Notes
 
 Time is measured on a best-effort basis and may not be suitable for cases where a high precision clock is required.
-For a version of this that drops elements from the stream instead of pausing, see the [`debounce()`](/gatherers/filtering-and-selection/debounce/)Gatherer. 
+For a version of this that drops elements from the stream instead of pausing, see the [`debounce()`](/gatherers4j/gatherers/filtering-and-selection/debounce/)Gatherer. 
 
 **Signature**
 

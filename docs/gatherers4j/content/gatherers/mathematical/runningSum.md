@@ -8,7 +8,7 @@ description: Calculate the running sum of a `Stream<BigDecimal>`.
 ---
 
 ### Implementation Notes
-This implementation is suitable for `Stream<BigDecimal>`, for a version that takes user-specified mapping function see [`runningSumBy()`](/gatherers/mathematical/runningsumby/).
+This implementation is suitable for `Stream<BigDecimal>`, for a version that takes user-specified mapping function see [`runningSumBy()`](/gatherers4j/gatherers/mathematical/runningsumby/).
 By default, nulls are ignored and play no part in calculations, see `treatNullAs()` and `treatNullZero()` below for ways to change this behavior. The default `MathContext`
 for all calculations is {{< jdklink linkName="MathContext.DECIMAL64" package="java.base/java/math/MathContext.html#DECIMAL64" >}}, but this can be overridden (see `withMathContext()`, below).
 

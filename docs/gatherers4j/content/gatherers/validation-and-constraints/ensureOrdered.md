@@ -7,7 +7,7 @@ description: Ensure that the `Comparable` elements in the input stream are in th
 ---
 
 ### Implementation Notes
-This is suitable for streams whose elements implement `Comparable`. For a version that takes a `Comparator`, see [`ensureOrderedBy()`](/gatherers/validation-and-constraints/ensureorderedby/).
+This is suitable for streams whose elements implement `Comparable`. For a version that takes a `Comparator`, see [`ensureOrderedBy()`](/gatherers4j/gatherers/validation-and-constraints/ensureorderedby/).
 This gatherer is all-or-nothing, meaning it will not emit any intermediate results to its downstream in the event that it detects a failure case.
 
 **Signature**

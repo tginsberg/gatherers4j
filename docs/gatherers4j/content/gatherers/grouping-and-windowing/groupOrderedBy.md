@@ -8,7 +8,7 @@ description: Convert the input stream of objects into lists of ordered objects, 
 
 ### Implementation Notes
 
-This is suitable for streams whose elements do not implement `Comparable`. For a version that uses the natural order of elements that implement `Comparable`, see [`groupOrdered()`](/gatherers/grouping-and-windowing/groupordered/).
+This is suitable for streams whose elements do not implement `Comparable`. For a version that uses the natural order of elements that implement `Comparable`, see [`groupOrdered()`](/gatherers4j/gatherers/grouping-and-windowing/groupordered/).
 The lists emitted from this Gatherer are unmodifiable.
 
 **Signature**

@@ -12,7 +12,7 @@ description: Perform a fold over every element in the input stream along with it
 Performs an ordered reduction over the input stream, along with the index of the element being reduced/folded. Because
 this implementation produces a single result, it is probably not suitable to apply to infinite input streams. This 
 implementation attempts to behave like the non-indexing {{< jdklink linkName="Gatherers::fold()" package="java.base/java/util/stream/Gatherers.html#fold(java.util.function.Supplier,java.util.function.BiFunction)" >}}in
-the JDK. For a scanning version of this Gatherer, see [`scanIndexed()`](/gatherers/sequence-operations/scanindexed/).
+the JDK. For a scanning version of this Gatherer, see [`scanIndexed()`](/gatherers4j/gatherers/sequence-operations/scanindexed/).
 
 **Signature**
 

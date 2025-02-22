@@ -13,7 +13,7 @@ This function groups adjacent equal elements as measured by `Object::equals()` i
 The lists returned from this Gatherer are unmodifiable.
 For the purposes of this gatherer, nulls are equal to each other but not equal to anything else. 
 
-For a version of `group()` that measures equality with a user-provided function, see the [`groupBy()`](/gatherers/grouping-and-windowing/groupby/)Gatherer.
+For a version of `group()` that measures equality with a user-provided function, see the [`groupBy()`](/gatherers4j/gatherers/grouping-and-windowing/groupby/)Gatherer.
 
 **Signature**
 

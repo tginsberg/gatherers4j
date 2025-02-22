@@ -10,7 +10,7 @@ description: Limit the number of elements in the stream to some number per perio
 ### Implementation Notes
 
 Time is measured on a best-effort basis and may not be suitable for cases where a high precision clock is required.
-For a version of this that pauses the stream instead of dropping elements, see the [`throttle()`](/gatherers/sequence-operations/throttle/)Gatherer. 
+For a version of this that pauses the stream instead of dropping elements, see the [`throttle()`](/gatherers4j/gatherers/sequence-operations/throttle/)Gatherer. 
 
 **Signature**
 

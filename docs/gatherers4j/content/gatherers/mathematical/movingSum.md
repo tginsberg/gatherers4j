@@ -8,7 +8,7 @@ description: Calculate the moving sum of a `Stream<BigDecimal>` looking back `wi
 ---
 
 ### Implementation Notes
-This implementation is suitable for `Stream<BigDecimal>`, for a version that takes user-specified mapping function see [`movingSumBy()`](/gatherers/mathematical/movingsumby/).
+This implementation is suitable for `Stream<BigDecimal>`, for a version that takes user-specified mapping function see [`movingSumBy()`](/gatherers4j/gatherers/mathematical/movingsumby/).
 By default, nulls are ignored and play no part in calculations, see `treatNullAs()` and `treatNullAsZero()` below for ways to change this behavior. The default `MathContext`
 for all calculations is {{< jdklink linkName="MathContext.DECIMAL64" package="java.base/java/math/MathContext.html#DECIMAL64" >}}, but this can be overridden (see `withMathContext()`, below).
 

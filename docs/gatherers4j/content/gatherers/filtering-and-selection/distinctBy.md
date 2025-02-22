@@ -13,7 +13,7 @@ This gatherer uses `Object::equals()` to measure equality of objects returned fr
 order is preserved, so the first instance of a non-distinct element is the one that will be emitted to the output stream.
 
 For a version of this function that measures distinctiveness based on `Object::equals()` alone, see the {{< jdklink linkName="Stream::distinct()" package="java.base/java/util/stream/Stream.html#distinct()" >}}in the JDK.
-See also [`uniquelyOccurring()`](/gatherers/filtering-and-selection/uniquelyoccurring/) which emits elements that only exist once in the input stream.
+See also [`uniquelyOccurring()`](/gatherers4j/gatherers/filtering-and-selection/uniquelyoccurring/) which emits elements that only exist once in the input stream.
 
 **Signature**
 

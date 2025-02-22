@@ -10,7 +10,7 @@ description: Repeatedly emit the input stream to the output stream a given numbe
 ### Implementation Notes
 
 This implementation reads the entire stream before emitting any results making it inappropriate for infinite streams.
-For a version of this Gatherer that repeats infinitely, see [`repeatInfinitely()`](/gatherers/sequence-operations/repeatinfinitely/).
+For a version of this Gatherer that repeats infinitely, see [`repeatInfinitely()`](/gatherers4j/gatherers/sequence-operations/repeatinfinitely/).
 
 **Signature**
 

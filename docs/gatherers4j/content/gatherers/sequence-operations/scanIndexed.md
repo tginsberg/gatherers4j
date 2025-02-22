@@ -11,7 +11,7 @@ description: Perform a scan over every element in the input stream along with it
 
 Performs an ordered scan over the input stream, along with the index of the element being scanned/accumulated. This 
 implementation attempts to behave like the non-indexing {{< jdklink linkName="Gatherers::scan()" package="java.base/java/util/stream/Gatherers.html#scan(java.util.function.Supplier,java.util.function.BiFunction)" >}}in
-the JDK. For a folding version of this Gatherer, see [`foldIndexed()`](/gatherers/sequence-operations/foldindexed/).
+the JDK. For a folding version of this Gatherer, see [`foldIndexed()`](/gatherers4j/gatherers/sequence-operations/foldindexed/).
 
 **Signature**
 

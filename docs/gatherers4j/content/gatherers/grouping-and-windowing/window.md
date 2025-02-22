@@ -11,7 +11,7 @@ description: Create windows over the elements of the input stream that are `wind
 
 The lists returned from this Gatherer are unmodifiable. The `stepping` may be larger than the `windowSize`, in which case elements are skipped.
 
-Fun fact: calling `window(2, 1, true)` or `window(2, 1, false`) is the same as [`zipWithNext()`](/gatherers/sequence-operations/zipwithnext/)!
+Fun fact: calling `window(2, 1, true)` or `window(2, 1, false`) is the same as [`zipWithNext()`](/gatherers4j/gatherers/sequence-operations/zipwithnext/)!
 
 **Signature**
 

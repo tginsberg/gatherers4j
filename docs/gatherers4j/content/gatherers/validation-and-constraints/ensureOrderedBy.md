@@ -7,7 +7,7 @@ description: Ensure that the elements in the input stream are in the order speci
 ---
 
 ### Implementation Notes
-This is suitable for streams whose elements do not implement `Comparable`. For a version that uses the natural order of elements that implement `Comparable`, see [`ensureOrdered()`](/gatherers/validation-and-constraints/ensureordered/).
+This is suitable for streams whose elements do not implement `Comparable`. For a version that uses the natural order of elements that implement `Comparable`, see [`ensureOrdered()`](/gatherers4j/gatherers/validation-and-constraints/ensureordered/).
 This gatherer is all-or-nothing, meaning it will not emit any intermediate results to its downstream in the event that it detects a failure case.
 
 **Signature**
