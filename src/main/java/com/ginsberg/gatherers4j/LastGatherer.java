@@ -18,8 +18,6 @@ package com.ginsberg.gatherers4j;
 
 import org.jspecify.annotations.Nullable;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.Iterator;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
@@ -49,7 +47,7 @@ public class LastGatherer<INPUT extends @Nullable Object>
 
     @Override
     public Supplier<State<INPUT>> initializer() {
-        return State::new;
+        return () -> new State<>(lastCount);
     }
 
     @Override
@@ -64,6 +62,9 @@ public class LastGatherer<INPUT extends @Nullable Object>
     }
 
     public static class State<INPUT> {
-        final Deque<INPUT> elements = new ArrayDeque<>();
+        final CircularBuffer<INPUT> elements;
+        State(int capacity) {
+            elements = new CircularBuffer<>(capacity);
+        }
     }
 }

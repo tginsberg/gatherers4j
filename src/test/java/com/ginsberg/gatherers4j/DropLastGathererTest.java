@@ -16,7 +16,6 @@
 
 package com.ginsberg.gatherers4j;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -47,7 +46,6 @@ class DropLastGathererTest {
     }
 
     @Test
-    @Disabled("Broken, need to fix")
     void dropLastNulls() {
         // Arrange
         final Stream<String> input = Stream.of("A", null, null);

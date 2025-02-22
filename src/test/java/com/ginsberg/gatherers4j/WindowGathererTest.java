@@ -16,7 +16,6 @@
 
 package com.ginsberg.gatherers4j;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -133,7 +132,6 @@ class WindowGathererTest {
     }
 
     @Test
-    @Disabled("This is a bug I need to fix later")
     void windowNulls() {
         // Arrange
         final Stream<String> input = Stream.of(null, null, null, null, null);
