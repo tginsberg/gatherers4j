@@ -18,8 +18,6 @@ package com.ginsberg.gatherers4j;
 
 import org.jspecify.annotations.Nullable;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
@@ -46,7 +44,7 @@ public class WindowGatherer<INPUT extends @Nullable Object>
 
     @Override
     public Supplier<State<INPUT>> initializer() {
-        return State::new;
+        return () -> new State<>(windowSize);
     }
 
     @Override
@@ -58,16 +56,9 @@ public class WindowGatherer<INPUT extends @Nullable Object>
                 state.stepDelta--;
             }
             if (state.window.size() == windowSize) {
-                downstream.push(List.copyOf(state.window));
+                downstream.push(state.window.asList());
                 state.stepDelta = Math.max(0, stepping - windowSize);
-
-                if (stepping >= windowSize) {
-                    state.window.clear();
-                } else {
-                    for (int i = 0; i < stepping; i++) {
-                        state.window.removeFirst();
-                    }
-                }
+                state.window.removeFirst(stepping);
             }
             return !downstream.isRejecting();
         });
@@ -77,13 +68,16 @@ public class WindowGatherer<INPUT extends @Nullable Object>
     public BiConsumer<State<INPUT>, Downstream<? super List<INPUT>>> finisher() {
         return (inputState, downstream) -> {
             if (includePartials && !inputState.window.isEmpty()) {
-                downstream.push(List.copyOf(inputState.window));
+                downstream.push(inputState.window.asList());
             }
         };
     }
 
     public static class State<INPUT> {
         int stepDelta = 0;
-        final Deque<INPUT> window = new ArrayDeque<>();
+        final CircularBuffer<INPUT> window;
+        State(int capacity) {
+            this.window = new CircularBuffer<>(capacity);
+        }
     }
 }
