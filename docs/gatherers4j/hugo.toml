@@ -17,6 +17,12 @@ title = 'Gatherers4j'
   pre = "<i class='fa-brands fa-github'></i>"
   ui.ul_show = 2
 
+[[menu.main]]
+  name = "API"
+  weight = 30
+  url = "https://javadoc.io/doc/com.ginsberg/gatherers4j/latest/com/ginsberg/gatherers4j/Gatherers4j.html"
+  ui.ul_show = 2
+
 [module]
   proxy = "direct"
   [module.hugoVersion]
@@ -38,8 +44,10 @@ title = 'Gatherers4j'
     icon = "fab fa-github"
     desc = "Development takes place here!"
   [params.ui]
+    navbar_logo = false
     showLightDarkModeMenu = true
     sidebar_menu_foldable = true
+
 
 [security]
   [security.funcs]

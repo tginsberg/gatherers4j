@@ -42,6 +42,10 @@ import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
 /// are created from static methods on this class.
 public abstract class Gatherers4j {
 
+    private Gatherers4j() {
+        // No
+    }
+
     /// Cross every element of the input stream with every element of the given `Iterable`, emitting them
     /// to the output stream as a `Pair<INPUT, CROSS>`.
     ///
