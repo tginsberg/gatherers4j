@@ -48,12 +48,12 @@ jobs:
         run: |
           npm ci
           . ./set_project_version.sh
-          hugo build --minify --logLevel debug --noBuildLock
+          hugo --gc --minify --logLevel debug --baseURL "${{ steps.pages.outputs.base_url }}/"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: public
+          path: ./public
 
   deploy:
     environment:
