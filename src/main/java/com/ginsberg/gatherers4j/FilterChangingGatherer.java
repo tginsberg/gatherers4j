@@ -16,6 +16,7 @@
 
 package com.ginsberg.gatherers4j;
 
+import com.ginsberg.gatherers4j.enums.Order;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Comparator;
@@ -27,24 +28,24 @@ import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
 public class FilterChangingGatherer<INPUT>
         implements Gatherer<INPUT, FilterChangingGatherer.State<INPUT>, INPUT> {
 
-    private final ChangingOperation operation;
+    private final Order operation;
     private final Comparator<INPUT> comparator;
 
     static <INPUT> FilterChangingGatherer<INPUT> usingComparator(
-            final ChangingOperation operation,
+            final Order operation,
             final Comparator<INPUT> comparator
     ) {
         return new FilterChangingGatherer<>(operation, comparator);
     }
 
     static <INPUT extends Comparable<INPUT>> FilterChangingGatherer<INPUT> usingComparable(
-            final ChangingOperation operation
+            final Order operation
     ) {
         return new FilterChangingGatherer<>(operation, Comparable::compareTo);
     }
 
     FilterChangingGatherer(
-            final ChangingOperation operation,
+            final Order operation,
             final Comparator<INPUT> comparator
     ) {
         mustNotBeNull(operation, "Operation must not be null");

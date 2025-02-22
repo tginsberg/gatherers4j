@@ -16,6 +16,7 @@
 
 package com.ginsberg.gatherers4j;
 
+import com.ginsberg.gatherers4j.enums.Frequency;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -32,7 +33,7 @@ class FrequencyGathererTest {
         final Stream<String> input = Stream.of("A", "A", "A", "B", "B", "B", "B", "C", "C");
 
         // Act
-        final List<WithCount<String>> output = input.gather(Gatherers4j.orderByFrequencyAscending()).toList();
+        final List<WithCount<String>> output = input.gather(Gatherers4j.orderByFrequency(Frequency.Ascending)).toList();
 
         // Assert
         assertThat(output)
@@ -49,7 +50,7 @@ class FrequencyGathererTest {
         final Stream<String> input = Stream.of("A", "A", "A", "B", "B", "B", "B", "C", "C");
 
         // Act
-        final List<WithCount<String>> output = input.parallel().gather(Gatherers4j.orderByFrequencyAscending()).toList();
+        final List<WithCount<String>> output = input.parallel().gather(Gatherers4j.orderByFrequency(Frequency.Ascending)).toList();
 
         // Assert
         assertThat(output)
@@ -66,7 +67,7 @@ class FrequencyGathererTest {
         final Stream<String> input = Stream.of("A", "A", "A", "B", "B", "B", "B", "C", "C");
 
         // Act
-        final List<WithCount<String>> output = input.gather(Gatherers4j.orderByFrequencyDescending()).toList();
+        final List<WithCount<String>> output = input.gather(Gatherers4j.orderByFrequency(Frequency.Descending)).toList();
 
         // Assert
         assertThat(output)
@@ -83,7 +84,7 @@ class FrequencyGathererTest {
         final Stream<String> input = Stream.of("A", "A", "A", "B", "B", "B", "B", "C", "C");
 
         // Act
-        final List<WithCount<String>> output = input.parallel().gather(Gatherers4j.orderByFrequencyDescending()).toList();
+        final List<WithCount<String>> output = input.parallel().gather(Gatherers4j.orderByFrequency(Frequency.Descending)).toList();
 
         // Assert
         assertThat(output)

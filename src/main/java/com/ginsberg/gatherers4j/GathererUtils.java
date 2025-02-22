@@ -17,6 +17,9 @@ package com.ginsberg.gatherers4j;
 
 import org.jspecify.annotations.Nullable;
 
+import java.util.Comparator;
+import java.util.function.Function;
+
 abstract class GathererUtils {
 
     final static long NANOS_PER_MILLISECOND = 1_000_000;
@@ -34,5 +37,19 @@ abstract class GathererUtils {
             return false;
         }
         return left.equals(right);
+    }
+
+    // Yes, I realize this is not to contract, but I only want it to measure equality in a narrow case
+    // in which I only care about certain outputs.
+    @SuppressWarnings("ComparatorMethodParameterNotUsed")
+    static <T> Comparator<T> equalityOnlyComparator() {
+        return (o1, o2) -> safeEquals(o1, o2) ? 0 : -1;
+    }
+
+    // Yes, I realize this is not to contract, but I only want it to measure equality in a narrow case
+    // in which I only care about certain outputs.
+    @SuppressWarnings("ComparatorMethodParameterNotUsed")
+    static <T,R> Comparator<T> equalityOnlyComparator(final Function<T, R> mappingFunction) {
+        return (o1, o2) -> safeEquals(mappingFunction.apply(o1), mappingFunction.apply(o2)) ? 0 : -1;
     }
 }

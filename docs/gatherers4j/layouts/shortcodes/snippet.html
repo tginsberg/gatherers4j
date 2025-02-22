@@ -1,0 +1,22 @@
+{{- /*  Initialize. */}}
+{{- $asset := "" }}
+
+{{- /* Get params. */}}
+{{- with (.Get 0) }}
+{{- $asset = . }}
+{{- else }}
+{{- errorf "The %q shortcode requires a single positional parameter; the relative path to a file in the assets directory. See %s" .Name .Position}}
+{{- end }}
+
+{{- /* Get resource. */}}
+{{- $r := "" }}
+{{- with resources.Get $asset }}
+{{- $r = . }}
+{{- else }}
+{{- errorf "The %q shortcode was unable to find %q. See %s" .Name $asset .Position}}
+{{- end }}
+
+{{- /* Render resource content. */}}
+{{- $r.Content | .Page.RenderString }}
+
+{{- /* Chomp trailing newlines. */ -}}

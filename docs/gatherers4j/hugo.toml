@@ -1,0 +1,59 @@
+baseURL = 'https://example.org/'
+languageCode = 'en-us'
+title = 'Gatherers4j'
+
+[markup]
+  [markup.highlight]
+    noClasses = false
+  [markup.tableOfContents]
+    endLevel = 4
+    ordered = false
+    startLevel = 2
+
+[[menu.main]]
+  name = "GitHub"
+  weight = 50
+  url = "https://github.com/tginsberg/gatherers4j/"
+  pre = "<i class='fa-brands fa-github'></i>"
+  ui.ul_show = 2
+
+[[menu.main]]
+  name = "API"
+  weight = 30
+  url = "https://javadoc.io/doc/com.ginsberg/gatherers4j/latest/com/ginsberg/gatherers4j/Gatherers4j.html"
+  ui.ul_show = 2
+
+[module]
+  proxy = "direct"
+  [module.hugoVersion]
+    extended = true
+    min = "0.143.1"
+  [[module.imports]]
+    path = "github.com/google/docsy"
+    disable = false
+
+[params]
+  copyright = "Todd Ginsberg"
+  jdk_url = "https://docs.oracle.com/en/java/javase/23/docs/api/"
+  github_repo = "https://github.com/tginsberg/gatherers4j/"
+  github_subdir = "docs/gatherers4j"
+  offlineSearch = true
+  [[params.links.developer]]
+    name = "GitHub"
+    url = "https://github.com/tginsberg/gatherers4j/"
+    icon = "fab fa-github"
+    desc = "Development takes place here!"
+  [params.ui]
+    navbar_logo = false
+    showLightDarkModeMenu = true
+    sidebar_menu_foldable = true
+
+
+[security]
+  [security.funcs]
+    getenv = ['^HUGO_', '^PROJECT_VERSION$']
+
+[sitemap]
+  changefreq = "monthly"
+  filename = "sitemap.xml"
+  priority = 0.5

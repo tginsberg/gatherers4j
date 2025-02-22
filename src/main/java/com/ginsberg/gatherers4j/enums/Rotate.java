@@ -14,33 +14,20 @@
  * limitations under the License.
  */
 
-package com.ginsberg.gatherers4j;
+package com.ginsberg.gatherers4j.enums;
 
-enum ChangingOperation {
-    Decreasing {
+public enum Rotate {
+    Left {
         @Override
-        boolean allows(final int comparison) {
-            return comparison < 0;
+        public Rotate flip() {
+            return Right;
         }
-    },
-    Increasing {
+    }, Right {
         @Override
-        boolean allows(final int comparison) {
-            return comparison > 0;
-        }
-    },
-    NonDecreasing {
-        @Override
-        boolean allows(final int comparison) {
-            return comparison >= 0;
-        }
-    },
-    NonIncreasing {
-        @Override
-        boolean allows(final int comparison) {
-            return comparison <= 0;
+        public Rotate flip() {
+            return Left;
         }
     };
 
-    abstract boolean allows(final int comparison);
+    public abstract Rotate flip();
 }

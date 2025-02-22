@@ -62,6 +62,7 @@ public class RepeatingGatherer<INPUT extends @Nullable Object>
     public BiConsumer<RepeatingGatherer.State<INPUT>, Downstream<? super INPUT>> finisher() {
         return (inputState, downstream) -> {
             while (!downstream.isRejecting() && (inputState.repeatsRemaining == INFINITE || inputState.repeatsRemaining > 0)) {
+
                 inputState.theStream.forEach(downstream::push);
                 if (inputState.repeatsRemaining != INFINITE) {
                     inputState.repeatsRemaining--;

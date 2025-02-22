@@ -16,17 +16,19 @@
 
 package com.ginsberg.gatherers4j;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class WindowedGathererTest {
+class WindowGathererTest {
 
     @Test
     void emptyStream() {
@@ -35,7 +37,7 @@ class WindowedGathererTest {
 
         // Act
         final List<List<String>> output = input.gather(
-                Gatherers4j.windowed(1, 1, true)
+                Gatherers4j.window(1, 1, true)
         ).toList();
 
         // Assert
@@ -49,7 +51,7 @@ class WindowedGathererTest {
 
         // Act
         final List<List<String>> output = input.gather(
-                Gatherers4j.windowed(2, 2, false)
+                Gatherers4j.window(2, 2, false)
         ).toList();
 
         // Assert
@@ -67,7 +69,7 @@ class WindowedGathererTest {
 
         // Act
         final List<List<String>> output = input.gather(
-                Gatherers4j.windowed(2, 2, true)
+                Gatherers4j.window(2, 2, true)
         ).toList();
 
         // Assert
@@ -82,14 +84,14 @@ class WindowedGathererTest {
     @ParameterizedTest
     @ValueSource(ints = {-1, 0})
     void steppingMustBePositive(int stepping) {
-        assertThatThrownBy(() -> new WindowedGatherer<>(1, stepping, true))
+        assertThatThrownBy(() -> new WindowGatherer<>(1, stepping, true))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @ParameterizedTest
     @ValueSource(ints = {-1, 0})
     void windowSizeMustBePositive(int windowSize) {
-        assertThatThrownBy(() -> new WindowedGatherer<>(windowSize, 1, true))
+        assertThatThrownBy(() -> new WindowGatherer<>(windowSize, 1, true))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -100,7 +102,7 @@ class WindowedGathererTest {
 
         // Act
         final List<List<String>> output = input.gather(
-                Gatherers4j.windowed(3, 2, true)
+                Gatherers4j.window(3, 2, true)
         ).toList();
 
         // Assert
@@ -119,7 +121,7 @@ class WindowedGathererTest {
 
         // Act
         final List<List<String>> output = input.gather(
-                Gatherers4j.windowed(2, 3, true)
+                Gatherers4j.window(2, 3, true)
         ).toList();
 
         // Assert
@@ -127,6 +129,25 @@ class WindowedGathererTest {
                 .containsExactly(
                         List.of("A", "B"),
                         List.of("D", "E")
+                );
+    }
+
+    @Test
+    @Disabled("This is a bug I need to fix later")
+    void windowNulls() {
+        // Arrange
+        final Stream<String> input = Stream.of(null, null, null, null, null);
+
+        // Act
+        final List<List<String>> output = input.gather(
+                Gatherers4j.window(2, 2, false)
+        ).toList();
+
+        // Assert
+        assertThat(output)
+                .containsExactly(
+                        Arrays.asList(null, null),
+                        Arrays.asList(null, null)
                 );
     }
 

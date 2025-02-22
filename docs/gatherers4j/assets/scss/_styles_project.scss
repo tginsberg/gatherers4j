@@ -1,0 +1,20 @@
+@import "td/code-dark";
+
+.td-page-meta--child { display: none !important; }
+.td-page-meta--edit { display: none !important; }
+
+[data-bs-theme="light"] .dark-img {
+  display: none;
+}
+
+[data-bs-theme="light"] .light-img {
+  display: block;
+}
+
+[data-bs-theme="dark"] .dark-img {
+  display: block;
+}
+
+[data-bs-theme="dark"] .light-img {
+  display: none;
+}

@@ -49,6 +49,13 @@ class ZipWithGathererTest {
     }
 
     @Test
+    void argumentVarargsMustNotBeNull() {
+        assertThatThrownBy(() -> Stream.of("A")
+                .gather(Gatherers4j.zipWith((String[]) null)).toList()
+        ).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
     void argumentWhenSourceLongerFunctionMustNotBeNull() {
         assertThatThrownBy(() -> Stream.of("A")
                 .gather(Gatherers4j.zipWith(List.of("A")).argumentWhenSourceLonger(null)).toList()
@@ -61,6 +68,7 @@ class ZipWithGathererTest {
                 .gather(Gatherers4j.zipWith(List.of("A")).sourceWhenArgumentLonger(null)).toList()
         ).isInstanceOf(IllegalArgumentException.class);
     }
+
 
     @Test
     void zipWhenArgumentIsLongerFromFunction() {
@@ -229,6 +237,25 @@ class ZipWithGathererTest {
         // Act
         final List<Pair<String, Integer>> output = left
                 .gather(Gatherers4j.zipWith(right))
+                .toList();
+
+        // Assert
+        assertThat(output)
+                .containsExactly(
+                        new Pair<>("A", 1),
+                        new Pair<>("B", 2),
+                        new Pair<>("C", 3)
+                );
+    }
+
+    @Test
+    void zipWithVarargs() {
+        // Arrange
+        final Stream<String> left = Stream.of("A", "B", "C");
+
+        // Act
+        final List<Pair<String, Integer>> output = left
+                .gather(Gatherers4j.zipWith(1, 2, 3))
                 .toList();
 
         // Assert

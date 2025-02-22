@@ -1,0 +1,17 @@
+{{- $children := where .Page.Pages ".Params.show_in_table" true -}}
+
+{{ if gt (len $children) 0 }}
+    {{ $markdown := "### Gatherers\n\n| Function | Description |\n|---|---|\n" }}
+
+    {{- range $children }}
+        {{/* $title := printf "`%s`" .Title */}} <!-- Wrap title in backticks -->
+        {{ $title := .Title }}
+        {{ $link := printf "[%s](%s)" $title .Permalink }}
+        {{ $description := .Params.description }}
+
+    {{ $row := printf "| %s | %s | %s |\n" $link $description }}
+    {{ $markdown = printf "%s%s" $markdown $row }}
+    {{- end }}
+
+    {{ markdownify $markdown }}
+{{ end }}

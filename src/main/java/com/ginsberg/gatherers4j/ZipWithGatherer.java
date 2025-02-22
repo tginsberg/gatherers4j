@@ -18,6 +18,7 @@ package com.ginsberg.gatherers4j;
 
 import org.jspecify.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.function.BiConsumer;
@@ -47,6 +48,12 @@ public class ZipWithGatherer<FIRST extends @Nullable Object, SECOND extends @Nul
     ZipWithGatherer(final Stream<SECOND> other) {
         mustNotBeNull(other, "Other stream must not be null");
         otherSpliterator = other.spliterator();
+    }
+
+    @SafeVarargs
+    ZipWithGatherer(final SECOND... other) {
+        mustNotBeNull(other, "Other stream must not be null");
+        otherSpliterator = Arrays.spliterator(other);
     }
 
     /// When the argument `Iterable`, `Iterator` or `Stream` runs out of elements before the source stream does,
