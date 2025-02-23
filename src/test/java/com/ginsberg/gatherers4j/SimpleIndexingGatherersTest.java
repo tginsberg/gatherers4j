@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.stream.Gatherers;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
