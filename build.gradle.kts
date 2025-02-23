@@ -42,7 +42,7 @@ dependencies {
         because("Starting in Gradle 9.0, this needs to be an explicitly declared dependency")
     }
 
-    testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.12.0")
 
     testImplementation("org.assertj:assertj-core:3.27.2") {
         because("These assertions are clearer than JUnit+Hamcrest")
