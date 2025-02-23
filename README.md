@@ -18,7 +18,7 @@ Add the following dependency to `pom.xml`.
 <dependency>
     <groupId>com.ginsberg</groupId>
     <artifactId>gatherers4j</artifactId>
-    <version>0.9.0</version>
+    <version>0.10.0</version>
 </dependency>
 ```
 
@@ -27,7 +27,7 @@ Add the following dependency to `pom.xml`.
 Add the following dependency to `build.gradle` or `build.gradle.kts`
 
 ```groovy
-implementation("com.ginsberg:gatherers4j:0.9.0")
+implementation("com.ginsberg:gatherers4j:0.10.0")
 ```
 
 
@@ -127,7 +127,6 @@ Functions performing calculations over the stream.
 | [`simpleMovingAverageBy(window, fn)`](https://tginsberg.github.io/gatherers4j/gatherers/mathematical/simplemovingaverageby/)                       | Create a moving average of `BigDecimal` values over the previous `window` values, as mapped via `fn`.                              |
 | [`simpleRunningAverage()`](https://tginsberg.github.io/gatherers4j/gatherers/mathematical/simplerunningaverage/)                                   | Create a running average of `BigDecimal` values. See below for options.                                                            |
 | [`simpleRunningAverageBy(fn)`](https://tginsberg.github.io/gatherers4j/gatherers/mathematical/simplerunningaverageby/)                             | Create a running average of `BigDecimal` values as mapped via `fn`.                                                                |
-
 
 # Contributing
 
