@@ -6,13 +6,15 @@ no_list: true
 ---
 
 ## v0.9.0
-+ Implement `filterInstanceOf` to filter a stream by type more easily. Addresses [#86](https://github.com/tginsberg/gatherers4j/issues/86), thanks [@nipafx](https://github.com/nipafx).
+[Released 2025-02-23](https://github.com/tginsberg/gatherers4j/releases/tag/v0.9.0)
+
++ Implement `filterInstanceOf()` to filter a stream by type more easily. Addresses [#86](https://github.com/tginsberg/gatherers4j/issues/86), thanks [@nipafx](https://github.com/nipafx).
 + Implement `groupOrdered()`, and `groupOrderedBy()` to appropriately group elements in the input stream to lists in the output stream. Addresses [#88](https://github.com/tginsberg/gatherers4j/issues/88), thanks [@nipafx](https://github.com/nipafx).
 + Implement `ensureOrdred()` and `ensureOrderedBy()` to ensure the given stream meets an ordering criteria, or fail exceptionally otherwise
 + Implement `filterOrdered()` and `filterOrderedBy()` to remove non-ordered elements from the input stream
 + Implement `window()` to provide more options to windowing functions, namely - ability to specify size, how many to skip each time, and whether to include partial windows
 + Implement `repeat(n)` and `repeatInfinitely()` to repeatedly emit the input stream to the output stream
-+ Implement `rotateLeft(n)` and `rotateRight(n)` to rotate the stream (consumes entire stream)
++ Implement `rotate(n)` rotate the stream either left or right (consumes entire stream)
 + Renamed `everyNth(n)` to `takeEveryNth(n)` and added `dropEveryNth(n)` for completeness
 + Renamed `filterWithIndex()` to `filterIndexed()` to match other indexing Gatherers
 + Renamed `cross()` to `crossWith()` for consistency
