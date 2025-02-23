@@ -5,6 +5,10 @@ weight: 90
 no_list: true
 ---
 
+## v0.10.0
+
++ Implement `mapIndexed()`
+
 ## v0.9.0
 [Released 2025-02-23](https://github.com/tginsberg/gatherers4j/releases/tag/v0.9.0)
 

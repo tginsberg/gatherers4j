@@ -35,11 +35,11 @@ Stream
     .gather(
         Gatherers4j.foldIndexed(
             () -> "", // initialValue
-            (index, carry, next) -> carry + String.format("%s%d ", next, index)
+            (index, carry, next) -> carry + String.format("%s%d", next, index)
         )
      )
      .forEach(System.out::println);
 
-// A0 B1 C2 D3
+// A0B1C2D3
 ```
 
