@@ -33,7 +33,7 @@ implementation("com.ginsberg:gatherers4j:0.9.0")
 
 # Gatherers In This Library
 
-For convenience, the full list of gatherers in this library are broken into four categories:
+For convenience, the full list of gatherers in this library are broken into five categories:
 
 1. [Sequence Operations](#sequence-operations)
 2. [Filtering and Selection](#filtering-and-selection)
@@ -105,7 +105,7 @@ Functions that enforce conditions on the stream.
 | [`ensureOrderedBy(orderType)`](https://tginsberg.github.io/gatherers4j/gatherers/validation-and-constraints/ensureorderedby/) | Ensure that the input stream of objects is ordered according to the `orderType` (increasing, decreasing, non-increasing, non-decreasing), as measured by a given `Comparator`, and fail otherwise. |
 | [`ensureSize(sizeType, n)`](https://tginsberg.github.io/gatherers4j/gatherers/validation-and-constraints/ensuresize/)         | Ensure the stream is `n` elements long with reference to `sizeType` (equals, less/greater than, less/greater than or equal to), and fail otherwise.                                                |
 
-### Mathematical Operations
+## Mathematical Operations
 
 Functions performing calculations over the stream.
 
