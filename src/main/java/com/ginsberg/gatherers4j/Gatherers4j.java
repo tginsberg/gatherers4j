@@ -27,6 +27,7 @@ import java.time.Duration;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -216,7 +217,7 @@ public abstract class Gatherers4j {
     public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> filterIndexed(
             final BiPredicate<Long, INPUT> predicate
     ) {
-        return new FilteringWithIndexGatherer<>(predicate);
+        return SimpleIndexingGatherers.filterIndexed(predicate);
     }
 
     /// Filter the elements in the stream to only include elements of the given types.
@@ -354,6 +355,18 @@ public abstract class Gatherers4j {
     /// @return A non-null IntersperseGatherer
     public static <INPUT extends @Nullable Object> IntersperseGatherer<INPUT> intersperse(final INPUT intersperseElement) {
         return new IntersperseGatherer<>(intersperseElement);
+    }
+
+    /// Perform a mapping operation given the element being mapped and its zero-based index.
+    ///
+    /// @param <INPUT> The type of elements in the input stream
+    /// @param <OUTPUT> The type of elements in the output stream
+    /// @param mappingFunction A non-null function to map input to output, given an input and its index
+    /// @return A non-null Gatherer
+    public static <INPUT extends @Nullable Object, OUTPUT extends @Nullable Object> Gatherer<INPUT, ?, OUTPUT> mapIndexed(
+            final BiFunction<Long, INPUT, OUTPUT> mappingFunction)
+    {
+        return SimpleIndexingGatherers.mapIndexed(mappingFunction);
     }
 
     /// Create a Stream that represents the moving product of a `Stream<BigDecimal>` looking
@@ -700,9 +713,9 @@ public abstract class Gatherers4j {
     /// Maps all elements of the stream as-is along with their 0-based index.
     ///
     /// @param <INPUT> Type of elements in the input stream
-    /// @return A non-null `IndexingGatherer`
-    public static <INPUT extends @Nullable Object> IndexingGatherer<INPUT> withIndex() {
-        return new IndexingGatherer<>();
+    /// @return A non-null `SimpleIndexingGatherers`
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, IndexedValue<INPUT>> withIndex() {
+        return SimpleIndexingGatherers.withIndex();
     }
 
     /// Creates a stream of `Pair<FIRST,SECOND>` objects whose values come from the stream this is called on
