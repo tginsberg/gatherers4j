@@ -35,12 +35,28 @@ class LastGathererTest {
 
         // Act
         final List<String> output = input
-                .gather(Gatherers4j.last(last))
+                .gather(Gatherers4j.takeLast(last))
                 .toList();
         
         // Assert
         assertThat(output).containsExactly("D", "E", "F");
     }
+
+    @Test
+    void lastElementsNull() {
+        // Arrange
+        final Stream<String> input = Stream.of("A", "B", "C", "D", null, null);
+        final int last = 3;
+
+        // Act
+        final List<String> output = input
+                .gather(Gatherers4j.takeLast(last))
+                .toList();
+
+        // Assert
+        assertThat(output).containsExactly("D", null, null);
+    }
+
 
     @Test
     void lastElementsUnderflow() {
@@ -50,7 +66,7 @@ class LastGathererTest {
 
         // Act
         final List<String> output = input
-                .gather(Gatherers4j.last(last))
+                .gather(Gatherers4j.takeLast(last))
                 .toList();
 
         // Assert
@@ -65,7 +81,7 @@ class LastGathererTest {
 
         // Act/Assert
         assertThatThrownBy(() ->
-                input.gather(Gatherers4j.last(last))
+                input.gather(Gatherers4j.takeLast(last))
         ).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
@@ -77,7 +93,7 @@ class LastGathererTest {
 
         // Act/Assert
         final List<String> output = input
-                .gather(Gatherers4j.last(last))
+                .gather(Gatherers4j.takeLast(last))
                 .limit(1)
                 .toList();
 

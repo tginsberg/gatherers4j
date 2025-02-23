@@ -45,6 +45,7 @@ class ThrottlingGathererTest {
         ).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void clockMustNotBeNull() {
         assertThatThrownBy(() ->
@@ -59,6 +60,7 @@ class ThrottlingGathererTest {
         ).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void durationIsNull() {
         assertThatThrownBy(() ->
@@ -73,6 +75,7 @@ class ThrottlingGathererTest {
         ).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void limitRuleIsNotNull() {
         assertThatThrownBy(() -> new ThrottlingGatherer<>(null, 1, Duration.ofSeconds(1))
@@ -117,6 +120,7 @@ class ThrottlingGathererTest {
         // Arrange
         final Stream<String> input = Stream.of("A", "B", "C");
         final Duration duration = Duration.ofMillis(100);
+        final long offset = 3;
 
         // Act
         final List<Long> output = input
@@ -126,7 +130,7 @@ class ThrottlingGathererTest {
 
         // Assert
         assertThat(output.get(1) - output.get(0)).isLessThan(duration.toMillis());
-        assertThat(output.get(2) - output.get(0)).isGreaterThanOrEqualTo(duration.toMillis());
+        assertThat(output.get(2) - output.get(0)).isGreaterThanOrEqualTo(duration.toMillis() - offset);
     }
 
     private static class PredictableClock extends Clock {

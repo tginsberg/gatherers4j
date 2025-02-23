@@ -18,6 +18,7 @@ package com.ginsberg.gatherers4j;
 
 import org.jspecify.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -27,30 +28,33 @@ import java.util.stream.StreamSupport;
 
 import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
 
-public class CrossGatherer<INPUT extends @Nullable Object, CROSS extends @Nullable Object>
-        implements Gatherer<INPUT, Void, Pair<INPUT, CROSS>> {
+public class CrossGatherer {
 
-    private final Iterable<CROSS> crossWith;
-
-    CrossGatherer(final Iterator<CROSS> crossWith) {
-        mustNotBeNull(crossWith, "crossWith iterator must not be null");
-        this.crossWith = StreamSupport.stream(Spliterators.spliteratorUnknownSize(crossWith, Spliterator.ORDERED), false).toList();
+    public static <INPUT extends @Nullable Object, CROSS extends @Nullable Object> Gatherer<INPUT, ?, Pair<INPUT, CROSS>> of(final Iterator<CROSS> source) {
+        mustNotBeNull(source, "source iterator must not be null");
+        return create(StreamSupport.stream(Spliterators.spliteratorUnknownSize(source, Spliterator.ORDERED), false).toList());
     }
 
-    CrossGatherer(final Iterable<CROSS> crossWith) {
-        mustNotBeNull(crossWith, "crossWith list must not be null");
-        this.crossWith = crossWith;
+    public static <INPUT extends @Nullable Object, CROSS extends @Nullable Object> Gatherer<INPUT, ?, Pair<INPUT, CROSS>> of(final Iterable<CROSS> source) {
+        mustNotBeNull(source, "source list must not be null");
+        return create(source);
     }
 
-    CrossGatherer(final Stream<CROSS> crossWith) {
-        mustNotBeNull(crossWith, "crossWith stream must not be null");
-        this.crossWith = crossWith.toList();
+    public static <INPUT extends @Nullable Object, CROSS extends @Nullable Object> Gatherer<INPUT, ?, Pair<INPUT, CROSS>> of(final Stream<CROSS> source) {
+        mustNotBeNull(source, "source stream must not be null");
+        return create(source.toList());
     }
 
-    @Override
-    public Integrator<Void, INPUT, Pair<INPUT, CROSS>> integrator() {
-        return Integrator.ofGreedy((_, element, downstream) -> {
-            for (final CROSS cross : crossWith) {
+    @SafeVarargs
+    public static <INPUT extends @Nullable Object, CROSS extends @Nullable Object> Gatherer<INPUT, ?, Pair<INPUT, CROSS>> of(final CROSS... source) {
+        mustNotBeNull(source, "source must not be null");
+        // Note: None of the other entrypoints enforce non-empty source, so this one won't either even though it is trivial to do so
+        return create(Arrays.asList(source));
+    }
+
+    private static <INPUT extends @Nullable Object, CROSS extends @Nullable Object> Gatherer<INPUT, ?, Pair<INPUT, CROSS>> create(final Iterable<CROSS> source) {
+        return Gatherer.of((_, element, downstream) -> {
+            for (final CROSS cross : source) {
                 downstream.push(new Pair<>(element, cross));
             }
             return !downstream.isRejecting();
