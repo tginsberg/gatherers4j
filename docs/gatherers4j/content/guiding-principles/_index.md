@@ -21,6 +21,6 @@ weight: 90
 
 * `...By()` - Perform the action on the output of the given function (usually a `Function` or `Comparator`)
 
-* `ensure...` - Make sure something is true and fail if it isn't
+* `ensure...()` - Make sure something about the stream is true and fail if it isn't
 
-* `...withIndex` - Perform the action, including the zero-based index of the element in the stream
+* `...Indexed()` - Perform the action, including the zero-based index of the element in the stream
