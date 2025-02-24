@@ -10,7 +10,7 @@ description: Creates a stream of `Pair<FIRST,SECOND>` objects whose values come 
 ### Implementation Notes
 
 This gatherer pairs elements from the input stream together with elements from some other source to the output stream. The default implementation assumes that
-both input stream and argument source are of the same length. By default, the gatherer stops emitting elements when it exhusts either the source or argument. Additional methods to alter
+both input stream and argument source are of the same length. By default, the gatherer stops emitting elements when it exhausts either the source or argument. Additional methods to alter
 this behavior are available, see "Additional Methods" below.
 
 **Signatures**

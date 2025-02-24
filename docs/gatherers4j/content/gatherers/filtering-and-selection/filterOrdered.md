@@ -53,7 +53,7 @@ Stream
 // [1, 2, 2, 3]
 ```
 
-#### Filter the stream such that it is decending or equal
+#### Filter the stream such that it is descending or equal
 
 ```java
 Stream
