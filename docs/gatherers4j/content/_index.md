@@ -41,7 +41,7 @@ This library aims to provide a comprehensive and useful set of Gatherers (interm
 
 * [Getting Started](/gatherers4j/start) - The quickstart guide will show you how to add Gatherers4j to your project.
 
-* Gatherers are organied into five categories for easier seaching:
+* Gatherers are organized into five categories for easier searching:
   * [Sequence Operations](/gatherers4j/gatherers/sequence-operations/) - Reorder, combine, or manipulate the sequence of elements.
 
   * [Filtering and Selection](/gatherers4j/gatherers/filtering-and-selection/) - Select or remove elements based on some criteria.
