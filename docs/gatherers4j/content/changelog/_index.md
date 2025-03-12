@@ -7,7 +7,7 @@ no_list: true
 
 ## v0.10.0
 
-+ Implement `mapIndexed()`
++ Implement `mapIndexed()` to perform a mapping operation given the element being mapped and its zero-based index
 
 ## v0.9.0
 [Released 2025-02-23](https://github.com/tginsberg/gatherers4j/releases/tag/v0.9.0)

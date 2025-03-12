@@ -47,7 +47,7 @@ public class FrequencyGatherer<INPUT extends @Nullable Object>
     @Override
     public Integrator<State<INPUT>, INPUT, WithCount<INPUT>> integrator() {
         return Integrator.ofGreedy((state, element, downstream) -> {
-            state.counts.compute(element, (_, count) -> count == null ? 1 : count + 1);
+            state.counts.merge(element, 1L, Long::sum);
             return !downstream.isRejecting();
         });
     }
