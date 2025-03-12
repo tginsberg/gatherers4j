@@ -18,7 +18,7 @@ package com.ginsberg.gatherers4j;
 
 import org.jspecify.annotations.Nullable;
 
-public record IndexedValue<TYPE>(
+public record WithIndex<TYPE>(
         long index,
         @Nullable TYPE value
 ) {

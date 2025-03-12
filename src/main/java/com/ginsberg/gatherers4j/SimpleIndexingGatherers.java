@@ -53,8 +53,8 @@ public class SimpleIndexingGatherers {
         );
     }
 
-    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, IndexedValue<INPUT>> withIndex() {
-        return mapIndexed(IndexedValue::new);
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, WithIndex<INPUT>> withIndex() {
+        return mapIndexed(WithIndex::new);
     }
 
     private static class State {

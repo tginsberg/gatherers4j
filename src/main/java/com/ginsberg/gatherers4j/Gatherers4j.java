@@ -715,7 +715,7 @@ public abstract class Gatherers4j {
     ///
     /// @param <INPUT> Type of elements in the input stream
     /// @return A non-null `SimpleIndexingGatherers`
-    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, IndexedValue<INPUT>> withIndex() {
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, WithIndex<INPUT>> withIndex() {
         return SimpleIndexingGatherers.withIndex();
     }
 
