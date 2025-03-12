@@ -125,8 +125,8 @@ public abstract class Gatherers4j {
     /// Remove consecutive duplicate elements from a stream as measured by `Object.equals(Object)`
     ///
     /// @param <INPUT> Type of elements in both the input and output streams
-    /// @return A non-null `DedupeConsecutiveGatherer`
-    public static <INPUT extends @Nullable Object> DedupeConsecutiveGatherer<INPUT> dedupeConsecutive() {
+    /// @return A non-null `Gatherer`
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> dedupeConsecutive() {
         return new DedupeConsecutiveGatherer<>();
     }
 
@@ -134,8 +134,8 @@ public abstract class Gatherers4j {
     ///
     /// @param mappingFunction A non-null function, the results of which will be used to check for consecutive duplication.
     /// @param <INPUT>         Type of elements in both the input and output streams
-    /// @return A non-null `DedupeConsecutiveGatherer`
-    public static <INPUT extends @Nullable Object> DedupeConsecutiveGatherer<INPUT> dedupeConsecutiveBy(
+    /// @return A non-null `Gatherer`
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> dedupeConsecutiveBy(
             final Function<INPUT, Object> mappingFunction
     ) {
         mustNotBeNull(mappingFunction, "Mapping function must not be null");
@@ -146,8 +146,8 @@ public abstract class Gatherers4j {
     ///
     /// @param mappingFunction A non-null mapping function, the results of which will be used to check for distinct elements
     /// @param <INPUT>         Type of elements in both the input and output streams
-    /// @return A non-null `DistinctGatherer`
-    public static <INPUT extends @Nullable Object> DistinctGatherer<INPUT> distinctBy(
+    /// @return A non-null `Gatherer`
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> distinctBy(
             final Function<INPUT, @Nullable Object> mappingFunction
     ) {
         return new DistinctGatherer<>(mappingFunction);
@@ -169,8 +169,8 @@ public abstract class Gatherers4j {
     ///
     /// @param count   A positive number of elements to drop from the end of the stream
     /// @param <INPUT> Type of elements in both the input and output streams
-    /// @return A non-null `DropLastGatherer`
-    public static <INPUT extends @Nullable Object> DropLastGatherer<INPUT> dropLast(final int count) {
+    /// @return A non-null `Gatherer`
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> dropLast(final int count) {
         return new DropLastGatherer<>(count);
     }
 
@@ -259,8 +259,8 @@ public abstract class Gatherers4j {
     /// @param <OUTPUT>     Type elements are folded to (the accumulated value)
     /// @param initialValue Initial value of the fold
     /// @param foldFunction Function that performs the fold given an element, its index, and the carry value
-    /// @return A non-null AccumulatingGatherer
-    public static <INPUT extends @Nullable Object, OUTPUT extends @Nullable Object> AccumulatingGatherer<INPUT, OUTPUT> foldIndexed(
+    /// @return A non-null Gatherer
+    public static <INPUT extends @Nullable Object, OUTPUT extends @Nullable Object> Gatherer<INPUT, ?, OUTPUT> foldIndexed(
             final Supplier<OUTPUT> initialValue,
             final IndexedAccumulatorFunction<? super OUTPUT, ? super INPUT, ? extends OUTPUT> foldFunction
     ) {
@@ -352,8 +352,8 @@ public abstract class Gatherers4j {
     ///
     /// @param intersperseElement The element to intersperse, which may be null
     /// @param <INPUT> The type of elements in the stream and the element to intersperse
-    /// @return A non-null IntersperseGatherer
-    public static <INPUT extends @Nullable Object> IntersperseGatherer<INPUT> intersperse(final INPUT intersperseElement) {
+    /// @return A non-null Gatherer
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> intersperse(final INPUT intersperseElement) {
         return new IntersperseGatherer<>(intersperseElement);
     }
 
@@ -417,6 +417,9 @@ public abstract class Gatherers4j {
         return new BigDecimalMovingSumGatherer<>(windowSize, mappingFunction);
     }
 
+    /// Emit elements in the input stream ordered by frequency in the direction specified. Elements are emitted wrapped
+    /// in `WithCount<INPUT>` objects that carry the element and the number of occurrences.
+    ///
     /// Note: This consumes the entire stream and holds it in memory, so it will not work on infinite
     /// streams and may cause memory pressure on very large streams.
     ///
@@ -426,16 +429,14 @@ public abstract class Gatherers4j {
         return new FrequencyGatherer<>(order);
     }
 
-    /// Emit elements in the input stream ordered by frequency in the direction specified. Elements are emitted wrapped
-    /// in `WithCount<INPUT>` objects that carry the element and the number of occurrences.
-    ///
+
     /// Repeatedly emit the input stream to the output stream a given number of times.
     /// Note: This implementation consumes the entire input stream into memory, so it must be used on finite streams.
     ///
     /// @param <INPUT> Type of elements in the input and output stream
     /// @param repeats Number of repeats, must be greater than 1
-    /// @return A non-null `RepeatingGatherer`
-    public static <INPUT extends @Nullable Object> RepeatingGatherer<INPUT> repeat(final int repeats) {
+    /// @return A non-null `Gatherer`
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> repeat(final int repeats) {
         return RepeatingGatherer.ofFinite(repeats);
     }
 
@@ -443,8 +444,8 @@ public abstract class Gatherers4j {
     /// Note: This implementation consumes the entire input stream into memory, so it must be used on finite streams.
     ///
     /// @param <INPUT> Type of elements in the input and output stream
-    /// @return A non-null `RepeatingGatherer`
-    public static <INPUT extends @Nullable Object> RepeatingGatherer<INPUT> repeatInfinitely() {
+    /// @return A non-null `Gatherer`
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> repeatInfinitely() {
         return RepeatingGatherer.ofInfinite();
     }
 
@@ -454,8 +455,8 @@ public abstract class Gatherers4j {
     /// streams and may cause memory pressure on very large streams.
     ///
     /// @param <INPUT> Type of elements in the input stream
-    /// @return A non-null `ReversingGatherer`
-    public static <INPUT extends @Nullable Object> ReversingGatherer<INPUT> reverse() {
+    /// @return A non-null `Gatherer`
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> reverse() {
         return new ReversingGatherer<>();
     }
 
@@ -464,8 +465,8 @@ public abstract class Gatherers4j {
     /// @param <INPUT> Type of elements in the input and output stream
     /// @param direction Which direction to rotate the stream in
     /// @param distance Distance to rotate elements
-    /// @return A non-null RotateGatherer
-    public static <INPUT extends @Nullable Object> RotateGatherer<INPUT> rotate(final Rotate direction, final int distance) {
+    /// @return A non-null Gatherer
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> rotate(final Rotate direction, final int distance) {
         return new RotateGatherer<>(direction, distance);
     }
 
@@ -568,8 +569,8 @@ public abstract class Gatherers4j {
     /// @param <OUTPUT>     Type elements are accumulated to
     /// @param initialValue Initial value of the scan
     /// @param scanFunction Function that performs the accumulation given an element, its index, and the carry value
-    /// @return A non-null AccumulatingGatherer
-    public static <INPUT extends @Nullable Object, OUTPUT extends @Nullable Object> AccumulatingGatherer<INPUT, OUTPUT> scanIndexed(
+    /// @return A non-null Gatherer
+    public static <INPUT extends @Nullable Object, OUTPUT extends @Nullable Object> Gatherer<INPUT, ?, OUTPUT> scanIndexed(
             final Supplier<OUTPUT> initialValue,
             final IndexedAccumulatorFunction<OUTPUT, INPUT, OUTPUT> scanFunction
     ) {
@@ -582,8 +583,8 @@ public abstract class Gatherers4j {
     /// streams and may cause memory pressure on very large streams.
     ///
     /// @param <INPUT> Type of elements in the input stream
-    /// @return A non-null `ShufflingGatherer`
-    public static <INPUT extends @Nullable Object> ShufflingGatherer<INPUT> shuffle() {
+    /// @return A non-null `Gatherer`
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> shuffle() {
         return new ShufflingGatherer<>(RandomGenerator.getDefault());
     }
 
@@ -594,8 +595,8 @@ public abstract class Gatherers4j {
     ///
     /// @param randomGenerator A non-null `RandomGenerator` to use as a random source for the shuffle
     /// @param <INPUT>         Type of elements in the input stream
-    /// @return A non-null `ShufflingGatherer`
-    public static <INPUT extends @Nullable Object> ShufflingGatherer<INPUT> shuffle(final RandomGenerator randomGenerator) {
+    /// @return A non-null `Gatherer`
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> shuffle(final RandomGenerator randomGenerator) {
         return new ShufflingGatherer<>(randomGenerator);
     }
 
@@ -659,8 +660,8 @@ public abstract class Gatherers4j {
     ///
     /// @param count   A non-negative integer, the number of elements to return
     /// @param <INPUT> Type of elements in the input stream
-    /// @return A non-null `LastGatherer`
-    public static <INPUT> LastGatherer<INPUT> takeLast(final int count) {
+    /// @return A non-null `Gatherer`
+    public static <INPUT> Gatherer<INPUT, ?, INPUT> takeLast(final int count) {
         return new LastGatherer<>(count);
     }
 
@@ -705,8 +706,8 @@ public abstract class Gatherers4j {
     /// @param windowSize Size of the window, must be greater than 0
     /// @param stepping Number of elements to slide over each time a window has filled, must be greater than 0
     /// @param includePartials To include left-over partial windows at the end of the stream or not
-    /// @return A non-null `WindowGatherer`
-    public static <INPUT extends @Nullable Object> WindowGatherer<INPUT> window(int windowSize, int stepping, boolean includePartials) {
+    /// @return A non-null `Gatherer`
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, List<INPUT>> window(int windowSize, int stepping, boolean includePartials) {
         return new WindowGatherer<>(windowSize, stepping, includePartials);
     }
 
