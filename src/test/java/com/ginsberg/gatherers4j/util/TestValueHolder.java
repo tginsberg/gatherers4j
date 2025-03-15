@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Todd Ginsberg
+ * Copyright 2025 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,9 @@
  * limitations under the License.
  */
 
-package com.ginsberg.gatherers4j;
-
-import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
+package com.ginsberg.gatherers4j.util;
 
 import java.math.BigDecimal;
 
-public class TestUtils {
-
-    public static final RecursiveComparisonConfiguration BIG_DECIMAL_RECURSIVE_COMPARISON = RecursiveComparisonConfiguration
-            .builder()
-            .withComparatorForType(BigDecimal::compareTo, BigDecimal.class)
-            .build();
+public record TestValueHolder(int id, BigDecimal value) {
 }

@@ -17,6 +17,7 @@
 package com.ginsberg.gatherers4j;
 
 import com.ginsberg.gatherers4j.dto.WithOriginal;
+import com.ginsberg.gatherers4j.util.TestValueHolder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -25,7 +26,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static com.ginsberg.gatherers4j.TestUtils.BIG_DECIMAL_RECURSIVE_COMPARISON;
+import static com.ginsberg.gatherers4j.util.TestUtils.BIG_DECIMAL_RECURSIVE_COMPARISON;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 

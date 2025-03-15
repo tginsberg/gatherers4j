@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Todd Ginsberg
+ * Copyright 2025 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package com.ginsberg.gatherers4j;
+package com.ginsberg.gatherers4j.util;
 
-import com.ginsberg.gatherers4j.util.GathererUtils;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
