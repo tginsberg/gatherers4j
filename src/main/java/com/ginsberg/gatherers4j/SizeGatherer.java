@@ -26,7 +26,7 @@ import java.util.function.Supplier;
 import java.util.stream.Gatherer;
 import java.util.stream.Stream;
 
-import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
+import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
 
 public class SizeGatherer<INPUT extends @Nullable Object>
         implements Gatherer<INPUT, SizeGatherer.State<INPUT>, INPUT> {

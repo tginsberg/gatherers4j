@@ -21,7 +21,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Gatherer;
 
-import static com.ginsberg.gatherers4j.GathererUtils.safeEquals;
+import static com.ginsberg.gatherers4j.util.GathererUtils.safeEquals;
 
 public class DedupeConsecutiveGatherer<INPUT extends @Nullable Object>
         implements Gatherer<INPUT, DedupeConsecutiveGatherer.State, INPUT> {

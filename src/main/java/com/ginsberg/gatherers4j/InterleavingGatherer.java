@@ -25,7 +25,7 @@ import java.util.function.BiConsumer;
 import java.util.stream.Gatherer;
 import java.util.stream.Stream;
 
-import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
+import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
 
 public class InterleavingGatherer<INPUT extends @Nullable Object>
         implements Gatherer<INPUT, Void, INPUT> {

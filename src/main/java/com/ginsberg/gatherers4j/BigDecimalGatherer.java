@@ -23,7 +23,7 @@ import java.math.MathContext;
 import java.util.function.Function;
 import java.util.stream.Gatherer;
 
-import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
+import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
 
 abstract public class BigDecimalGatherer<INPUT extends @Nullable Object>
         implements Gatherer<INPUT, BigDecimalGatherer.State, BigDecimal> {

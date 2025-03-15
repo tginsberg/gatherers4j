@@ -16,6 +16,7 @@
 
 package com.ginsberg.gatherers4j;
 
+import com.ginsberg.gatherers4j.dto.WithCount;
 import com.ginsberg.gatherers4j.enums.Frequency;
 import org.jspecify.annotations.Nullable;
 
@@ -27,7 +28,7 @@ import java.util.function.BinaryOperator;
 import java.util.function.Supplier;
 import java.util.stream.Gatherer;
 
-import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
+import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
 
 public class FrequencyGatherer<INPUT extends @Nullable Object>
         implements Gatherer<INPUT, FrequencyGatherer.State<INPUT>, WithCount<INPUT>> {

@@ -26,7 +26,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import java.util.stream.Gatherer;
 
-import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
+import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
 
 public class GroupChangingGatherer<INPUT>
         implements Gatherer<INPUT, GroupChangingGatherer.State<INPUT>, List<INPUT>> {

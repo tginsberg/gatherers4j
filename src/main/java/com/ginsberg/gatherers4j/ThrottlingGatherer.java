@@ -24,8 +24,8 @@ import java.util.concurrent.locks.LockSupport;
 import java.util.function.Supplier;
 import java.util.stream.Gatherer;
 
-import static com.ginsberg.gatherers4j.GathererUtils.NANOS_PER_MILLISECOND;
-import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
+import static com.ginsberg.gatherers4j.util.GathererUtils.NANOS_PER_MILLISECOND;
+import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
 
 public class ThrottlingGatherer<INPUT extends @Nullable Object>
         implements Gatherer<INPUT, ThrottlingGatherer.State, INPUT> {
