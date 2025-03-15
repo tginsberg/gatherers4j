@@ -16,6 +16,7 @@
 
 package com.ginsberg.gatherers4j;
 
+import com.ginsberg.gatherers4j.util.GathererUtils;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;

@@ -23,7 +23,7 @@ import java.math.MathContext;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
+import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
 
 public final class BigDecimalStandardDeviationGatherer<INPUT extends @Nullable Object> extends BigDecimalGatherer<INPUT> {
 

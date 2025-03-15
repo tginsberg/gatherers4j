@@ -16,13 +16,14 @@
 
 package com.ginsberg.gatherers4j;
 
+import com.ginsberg.gatherers4j.util.GathererUtils;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
+import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
 import static org.assertj.core.api.Assertions.*;
 
 

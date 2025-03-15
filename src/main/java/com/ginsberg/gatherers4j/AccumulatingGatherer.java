@@ -22,7 +22,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import java.util.stream.Gatherer;
 
-import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
+import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
 
 public class AccumulatingGatherer<INPUT extends @Nullable Object, OUTPUT extends @Nullable Object>
         implements Gatherer<INPUT, AccumulatingGatherer.State<OUTPUT>, OUTPUT> {

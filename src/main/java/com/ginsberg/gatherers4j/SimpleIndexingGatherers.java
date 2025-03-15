@@ -22,7 +22,7 @@ import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.stream.Gatherer;
 
-import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
+import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
 
 public class SimpleIndexingGatherers {
 

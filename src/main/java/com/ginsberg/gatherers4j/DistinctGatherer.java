@@ -24,7 +24,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Gatherer;
 
-import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
+import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
 
 public class DistinctGatherer<INPUT extends @Nullable Object>
         implements Gatherer<INPUT, DistinctGatherer.State, INPUT> {

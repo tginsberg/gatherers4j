@@ -18,7 +18,7 @@ package com.ginsberg.gatherers4j;
 
 import java.util.stream.Gatherer;
 
-import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
+import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
 
 abstract class TypeFilteringGatherer {
 

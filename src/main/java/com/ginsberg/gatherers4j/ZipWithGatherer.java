@@ -26,7 +26,7 @@ import java.util.function.Function;
 import java.util.stream.Gatherer;
 import java.util.stream.Stream;
 
-import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
+import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
 
 public class ZipWithGatherer<FIRST extends @Nullable Object, SECOND extends @Nullable Object>
         implements Gatherer<FIRST, Void, Pair<FIRST, SECOND>> {

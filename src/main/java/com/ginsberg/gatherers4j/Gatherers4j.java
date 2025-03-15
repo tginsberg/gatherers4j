@@ -36,8 +36,8 @@ import java.util.random.RandomGenerator;
 import java.util.stream.Gatherer;
 import java.util.stream.Stream;
 
-import static com.ginsberg.gatherers4j.GathererUtils.equalityOnlyComparator;
-import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
+import static com.ginsberg.gatherers4j.util.GathererUtils.equalityOnlyComparator;
+import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
 
 /// This is the main entry-point for the Gatherers4j library. All available gatherers
 /// are created from static methods on this class.

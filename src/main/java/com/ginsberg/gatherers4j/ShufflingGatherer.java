@@ -25,7 +25,7 @@ import java.util.function.Supplier;
 import java.util.random.RandomGenerator;
 import java.util.stream.Gatherer;
 
-import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
+import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
 
 public class ShufflingGatherer<INPUT extends @Nullable Object> implements
         Gatherer<INPUT, ShufflingGatherer.State<INPUT>, INPUT> {
