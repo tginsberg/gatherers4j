@@ -98,16 +98,16 @@ class SimpleIndexingGatherersTest {
             final Stream<String> input = Stream.of("A", "B", "C");
 
             // Act
-            final List<com.ginsberg.gatherers4j.WithIndex<String>> output = input
+            final List<com.ginsberg.gatherers4j.dto.WithIndex<String>> output = input
                     .gather(Gatherers4j.withIndex())
                     .toList();
 
             // Assert
             assertThat(output)
                     .containsExactly(
-                            new com.ginsberg.gatherers4j.WithIndex<>(0, "A"),
-                            new com.ginsberg.gatherers4j.WithIndex<>(1, "B"),
-                            new com.ginsberg.gatherers4j.WithIndex<>(2, "C")
+                            new com.ginsberg.gatherers4j.dto.WithIndex<>(0, "A"),
+                            new com.ginsberg.gatherers4j.dto.WithIndex<>(1, "B"),
+                            new com.ginsberg.gatherers4j.dto.WithIndex<>(2, "C")
                     );
         }
 
@@ -117,16 +117,16 @@ class SimpleIndexingGatherersTest {
             final Stream<Integer> input = Stream.of(1, 2, 3);
 
             // Act
-            final List<com.ginsberg.gatherers4j.WithIndex<Integer>> output = input
+            final List<com.ginsberg.gatherers4j.dto.WithIndex<Integer>> output = input
                     .gather(Gatherers4j.withIndex())
                     .toList();
 
             // Assert
             assertThat(output)
                     .containsExactly(
-                            new com.ginsberg.gatherers4j.WithIndex<>(0, 1),
-                            new com.ginsberg.gatherers4j.WithIndex<>(1, 2),
-                            new com.ginsberg.gatherers4j.WithIndex<>(2, 3)
+                            new com.ginsberg.gatherers4j.dto.WithIndex<>(0, 1),
+                            new com.ginsberg.gatherers4j.dto.WithIndex<>(1, 2),
+                            new com.ginsberg.gatherers4j.dto.WithIndex<>(2, 3)
                     );
         }
     }

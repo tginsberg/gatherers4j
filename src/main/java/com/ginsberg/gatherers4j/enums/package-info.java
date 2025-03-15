@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package com.ginsberg.gatherers4j;
+/// A library of useful Stream Gatherers (custom intermediate operations) for Java.
+///
+/// @author Todd Ginsberg (todd@ginsberg.com)
+@NullMarked
+package com.ginsberg.gatherers4j.enums;
 
-import org.jspecify.annotations.Nullable;
-
-public record WithCount<VALUE>(
-        @Nullable VALUE value,
-        long count
-) {
-}
+import org.jspecify.annotations.NullMarked;

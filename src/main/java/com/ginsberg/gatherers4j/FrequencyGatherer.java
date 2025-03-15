@@ -16,6 +16,7 @@
 
 package com.ginsberg.gatherers4j;
 
+import com.ginsberg.gatherers4j.dto.WithCount;
 import com.ginsberg.gatherers4j.enums.Frequency;
 import org.jspecify.annotations.Nullable;
 

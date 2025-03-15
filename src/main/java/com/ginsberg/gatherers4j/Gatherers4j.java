@@ -16,6 +16,9 @@
 
 package com.ginsberg.gatherers4j;
 
+import com.ginsberg.gatherers4j.dto.Pair;
+import com.ginsberg.gatherers4j.dto.WithCount;
+import com.ginsberg.gatherers4j.dto.WithIndex;
 import com.ginsberg.gatherers4j.enums.Frequency;
 import com.ginsberg.gatherers4j.enums.Order;
 import com.ginsberg.gatherers4j.enums.Rotate;

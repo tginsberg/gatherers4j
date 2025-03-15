@@ -16,6 +16,7 @@
 
 package com.ginsberg.gatherers4j;
 
+import com.ginsberg.gatherers4j.dto.WithOriginal;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;

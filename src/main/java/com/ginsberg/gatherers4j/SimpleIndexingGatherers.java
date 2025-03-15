@@ -16,6 +16,7 @@
 
 package com.ginsberg.gatherers4j;
 
+import com.ginsberg.gatherers4j.dto.WithIndex;
 import org.jspecify.annotations.Nullable;
 
 import java.util.function.BiFunction;

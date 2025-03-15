@@ -16,6 +16,7 @@
 
 package com.ginsberg.gatherers4j;
 
+import com.ginsberg.gatherers4j.dto.Pair;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Arrays;

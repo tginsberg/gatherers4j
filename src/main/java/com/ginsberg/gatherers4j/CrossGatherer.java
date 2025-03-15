@@ -16,6 +16,7 @@
 
 package com.ginsberg.gatherers4j;
 
+import com.ginsberg.gatherers4j.dto.Pair;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Arrays;
@@ -48,7 +49,7 @@ public class CrossGatherer {
     @SafeVarargs
     public static <INPUT extends @Nullable Object, CROSS extends @Nullable Object> Gatherer<INPUT, ?, Pair<INPUT, CROSS>> of(final CROSS... source) {
         mustNotBeNull(source, "source must not be null");
-        // Note: None of the other entrypoints enforce non-empty source, so this one won't either even though it is trivial to do so
+        // Note: None of the other entry points enforce non-empty source, so this one won't either even though it is trivial to do so
         return create(Arrays.asList(source));
     }
 
