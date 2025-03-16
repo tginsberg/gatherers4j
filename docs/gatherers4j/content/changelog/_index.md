@@ -9,6 +9,8 @@ no_list: true
 
 + Implement `mapIndexed()` to perform a mapping operation given the element being mapped and its zero-based index
 + Implement `peekIndexed()` to peek at each element and its zero-based index
++ Implement `sampleFixedSize()` to randomly sample a fixed number of elements from a stream
++ Implement `samplePercentage()` to randomly sample a percentage of the stream elements
 + Rename `IndexedValue` to `WithIndex`, for consistency (matching `WithCount` and `WithOriginal`)
 
 ## v0.9.0
