@@ -23,6 +23,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import java.util.stream.Gatherer;
 
+import static com.ginsberg.gatherers4j.util.GathererUtils.pushAll;
+
 /// Note: "Single" in this case means at most one. The naming of this more precisely seemed clumsy.
 class FlattenSingleOrFail<INPUT extends Collection<OUTPUT>, OUTPUT>
         implements Gatherer<INPUT, FlattenSingleOrFail.State<INPUT>, OUTPUT> {
@@ -55,7 +57,7 @@ class FlattenSingleOrFail<INPUT extends Collection<OUTPUT>, OUTPUT>
     public BiConsumer<State<INPUT>, Downstream<? super OUTPUT>> finisher() {
         return (inputState, downstream) -> {
             if(inputState.firstCollection != null) {
-                inputState.firstCollection.forEach(downstream::push);
+                pushAll(inputState.firstCollection, downstream);
             }
         };
     }

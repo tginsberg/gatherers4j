@@ -23,6 +23,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.function.Function;
 import java.util.stream.Gatherer;
+import java.util.stream.Stream;
 
 abstract public class GathererUtils {
 
@@ -62,7 +63,22 @@ abstract public class GathererUtils {
             final Collection<T> elements,
             final Gatherer.Downstream<? super T> downstream
     ) {
-        final Iterator<T> iterator = elements.iterator();
+        pushAll(elements.iterator(), downstream);
+    }
+
+    // Push all elements in the collection to the downstream, taking care to listen for a stop signal.
+    public static <T extends @Nullable Object> void pushAll(
+            final Stream<T> elements,
+            final Gatherer.Downstream<? super T> downstream
+    ) {
+        pushAll(elements.iterator(), downstream);
+    }
+
+    // Push all elements in the collection to the downstream, taking care to listen for a stop signal.
+    public static <T extends @Nullable Object> void pushAll(
+            final Iterator<T> iterator,
+            final Gatherer.Downstream<? super T> downstream
+    ) {
         while (iterator.hasNext() && !downstream.isRejecting()) {
             downstream.push(iterator.next());
         }
