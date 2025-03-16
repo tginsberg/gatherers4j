@@ -27,6 +27,7 @@ import java.util.stream.Gatherer;
 import java.util.stream.Stream;
 
 import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
+import static com.ginsberg.gatherers4j.util.GathererUtils.pushAll;
 
 public class SizeGatherer<INPUT extends @Nullable Object>
         implements Gatherer<INPUT, SizeGatherer.State<INPUT>, INPUT> {
@@ -76,9 +77,9 @@ public class SizeGatherer<INPUT extends @Nullable Object>
     public BiConsumer<State<INPUT>, Downstream<? super INPUT>> finisher() {
         return (state, downstream) -> {
             if (!state.failed && operation.accept(state.elements.size(), targetSize)) {
-                state.elements.forEach(downstream::push);
+                pushAll(state.elements, downstream);
             } else {
-                orElse.get().forEach(downstream::push);
+                pushAll(orElse.get(), downstream);
             }
         };
     }
