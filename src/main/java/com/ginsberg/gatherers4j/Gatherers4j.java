@@ -577,6 +577,28 @@ public abstract class Gatherers4j {
         return new BigDecimalSumGatherer<>(mappingFunction);
     }
 
+    /// Perform a fixed size sampling over the input stream. This method uses the Reservoir method internally, which
+    /// should guarantee the correct number of elements returned. If the stream is shorter than the specified `sampleSize`
+    /// then all elements are emitted. Elements will be emitted in the order in which they are encountered.
+    ///
+    /// @param sampleSize Number of elements to sample.
+    /// @param <INPUT> Type of elements in the input and output stream
+    /// @return A non-null Gatherer
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> sampleFixedSize(final int sampleSize) {
+        return new SampleFixedSizeGatherer<>(sampleSize);
+    }
+
+    /// Perform a percentage-based sampling over the input stream. This method uses Poisson sampling internally, so
+    /// the number of elements emitted to the downstream may not be strictly in line with the given `percentage`.
+    /// Elements will be emitted in the order in which they are encountered.
+    ///
+    /// @param percentage Percentage of elements that should be sampled, on average.
+    /// @param <INPUT> Type of elements in the input and output stream
+    /// @return A non-null Gatherer
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> samplePercentage(final double percentage) {
+        return SamplePercentageGatherers.poisson(percentage);
+    }
+
     ///  Perform a scan over every element in the input stream along with its index
     ///
     /// @param <INPUT>      Type of elements in the input stream

@@ -42,8 +42,12 @@ dependencies {
         because("Starting in Gradle 9.0, this needs to be an explicitly declared dependency")
     }
 
-    testImplementation("org.junit.jupiter:junit-jupiter:5.12.0")
-
+    testImplementation("org.apache.commons:commons-statistics-inference:1.1") {
+        because("We use this to measure if random sampling methods actually work")
+    }
+    testImplementation("org.junit.jupiter:junit-jupiter:5.12.0") {
+        because("We need this to run tests")
+    }
     testImplementation("org.assertj:assertj-core:3.27.2") {
         because("These assertions are clearer than JUnit+Hamcrest")
     }
