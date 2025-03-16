@@ -19,6 +19,7 @@ package com.ginsberg.gatherers4j;
 import com.ginsberg.gatherers4j.dto.WithIndex;
 import org.jspecify.annotations.Nullable;
 
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.stream.Gatherer;
@@ -50,6 +51,20 @@ public class SimpleIndexingGatherers {
                 State::new,
                 Gatherer.Integrator.ofGreedy((state, element, downstream) ->
                         downstream.push(mappingFunction.apply(state.index++, element))
+                )
+        );
+    }
+
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> peekIndexed(
+            final BiConsumer<Long, @Nullable INPUT> peekingConsumer
+    ) {
+        mustNotBeNull(peekingConsumer, "peekingConsumer must not be null");
+        return Gatherer.ofSequential(
+                State::new,
+                Gatherer.Integrator.ofGreedy((state, element, downstream) -> {
+                    peekingConsumer.accept(state.index++, element);
+                            return downstream.push(element);
+                        }
                 )
         );
     }
