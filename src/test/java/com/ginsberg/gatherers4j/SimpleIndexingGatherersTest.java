@@ -16,9 +16,11 @@
 
 package com.ginsberg.gatherers4j;
 
+import com.ginsberg.gatherers4j.dto.WithIndex;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -60,7 +62,7 @@ class SimpleIndexingGatherersTest {
         @Test
         void mappingFunctionMustNotBeNull() {
             assertThatThrownBy(() ->
-                Gatherers4j.mapIndexed(null)
+                    Gatherers4j.mapIndexed(null)
             ).isExactlyInstanceOf(IllegalArgumentException.class);
         }
 
@@ -82,7 +84,7 @@ class SimpleIndexingGatherersTest {
             final Stream<String> input = Stream.of("A", "B", "C");
 
             // Act
-            final List<String> output = input.gather(Gatherers4j.mapIndexed((index, element) -> element+index)).toList();
+            final List<String> output = input.gather(Gatherers4j.mapIndexed((index, element) -> element + index)).toList();
 
             // Assert
             assertThat(output).containsExactly("A0", "B1", "C2");
@@ -91,23 +93,63 @@ class SimpleIndexingGatherersTest {
     }
 
     @Nested
-    class WithIndex {
+    class PeekIndexed {
+        @SuppressWarnings("DataFlowIssue")
+        @Test
+        void peekingFunctionMustNotBeNull() {
+            assertThatThrownBy(() ->
+                    Gatherers4j.peekIndexed(null)
+            ).isExactlyInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        void peekIndexedEmpty() {
+            // Arrange
+            final Stream<String> input = Stream.empty();
+            final List<String> peeked = new ArrayList<>();
+
+            // Act
+            final List<String> output = input.gather(Gatherers4j.peekIndexed((index, element) -> peeked.add(element + index))).toList();
+
+            // Assert
+            assertThat(output).isEmpty();
+            assertThat(peeked).isEmpty();
+        }
+
+        @Test
+        void peekIndexed() {
+            // Arrange
+            final Stream<String> input = Stream.of("A", "B", "C");
+            final List<String> peeked = new ArrayList<>();
+
+            // Act
+            final List<String> output = input.gather(Gatherers4j.peekIndexed((index, element) -> peeked.add(element + index))).toList();
+
+            // Assert
+            assertThat(output).containsExactly("A", "B", "C");
+            assertThat(peeked).containsExactly("A0", "B1", "C2");
+        }
+
+    }
+
+    @Nested
+    class WithIndexes {
         @Test
         void objectWithIndex() {
             // Arrange
             final Stream<String> input = Stream.of("A", "B", "C");
 
             // Act
-            final List<com.ginsberg.gatherers4j.dto.WithIndex<String>> output = input
+            final List<WithIndex<String>> output = input
                     .gather(Gatherers4j.withIndex())
                     .toList();
 
             // Assert
             assertThat(output)
                     .containsExactly(
-                            new com.ginsberg.gatherers4j.dto.WithIndex<>(0, "A"),
-                            new com.ginsberg.gatherers4j.dto.WithIndex<>(1, "B"),
-                            new com.ginsberg.gatherers4j.dto.WithIndex<>(2, "C")
+                            new WithIndex<>(0, "A"),
+                            new WithIndex<>(1, "B"),
+                            new WithIndex<>(2, "C")
                     );
         }
 
@@ -117,16 +159,16 @@ class SimpleIndexingGatherersTest {
             final Stream<Integer> input = Stream.of(1, 2, 3);
 
             // Act
-            final List<com.ginsberg.gatherers4j.dto.WithIndex<Integer>> output = input
+            final List<WithIndex<Integer>> output = input
                     .gather(Gatherers4j.withIndex())
                     .toList();
 
             // Assert
             assertThat(output)
                     .containsExactly(
-                            new com.ginsberg.gatherers4j.dto.WithIndex<>(0, 1),
-                            new com.ginsberg.gatherers4j.dto.WithIndex<>(1, 2),
-                            new com.ginsberg.gatherers4j.dto.WithIndex<>(2, 3)
+                            new WithIndex<>(0, 1),
+                            new WithIndex<>(1, 2),
+                            new WithIndex<>(2, 3)
                     );
         }
     }

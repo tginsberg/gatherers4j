@@ -30,6 +30,7 @@ import java.time.Duration;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
@@ -432,6 +433,16 @@ public abstract class Gatherers4j {
         return new FrequencyGatherer<>(order);
     }
 
+    /// Peek at each element along with its zero-based index.
+    ///
+    /// @param <INPUT> The type of elements in the input stream
+    /// @param peekingConsumer A non-null consumer to peek at each element and its index
+    /// @return A non-null Gatherer
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> peekIndexed(
+            final BiConsumer<Long, INPUT> peekingConsumer)
+    {
+        return SimpleIndexingGatherers.peekIndexed(peekingConsumer);
+    }
 
     /// Repeatedly emit the input stream to the output stream a given number of times.
     /// Note: This implementation consumes the entire input stream into memory, so it must be used on finite streams.
