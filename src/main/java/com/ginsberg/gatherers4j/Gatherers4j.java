@@ -580,6 +580,7 @@ public abstract class Gatherers4j {
     /// Perform a fixed size sampling over the input stream. This method uses the Reservoir method internally, which
     /// should guarantee the correct number of elements returned. If the stream is shorter than the specified `sampleSize`
     /// then all elements are emitted. Elements will be emitted in the order in which they are encountered.
+    /// This implementation reads the entire stream before emitting any results making it inappropriate for infinite streams.
     ///
     /// @param sampleSize Number of elements to sample.
     /// @param <INPUT> Type of elements in the input and output stream

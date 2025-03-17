@@ -1,6 +1,6 @@
 ---
-title: "sampleFixed()"
-linkTitle: "sampleFixed()"
+title: "sampleFixedSize()"
+linkTitle: "sampleFixedSize()"
 show_in_table: true
 category: Filtering and Selection
 description: Perform a fixed size sampling over the input stream.
@@ -11,10 +11,11 @@ description: Perform a fixed size sampling over the input stream.
 
 This uses the reservoir method internally and guarantees to have exactly `sampleSize` number of elements
 for streams at least `sampleSize` in length. Elements will be emitted in the order in which they are encountered.
+This implementation reads the entire stream before emitting any results making it inappropriate for infinite streams.
 
 **Signature**
 
-`sampleFixed(int sampleSize)`
+`sampleFixedSize(int sampleSize)`
 
 * `sampleSize` - A positive number of elements to sample from the stream, randomly
 
@@ -25,7 +26,7 @@ for streams at least `sampleSize` in length. Elements will be emitted in the ord
 ```java
 Stream
     .of("A", "B", "C", "D", "E")
-    .gather(Gatherers4j.sampleFixed(2))
+    .gather(Gatherers4j.sampleFixedSize(2))
     .toList();
 
 // Possibly: ["A", "D"]
