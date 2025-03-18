@@ -1,6 +1,6 @@
 # Gatherers4j
 
-A library of useful [Stream Gatherers](https://openjdk.org/jeps/485) (custom intermediate operations) for Java 23+.
+A library of useful [Stream Gatherers](https://openjdk.org/jeps/485) (custom intermediate operations) for Java 24+.
 
 See [the full set of documentation](https://tginsberg.github.io/gatherers4j/) for information on how to use Gatherers4j.
 
