@@ -6,6 +6,7 @@ no_list: true
 ---
 
 ## v0.10.0
+[Released 2025-03-19](https://github.com/tginsberg/gatherers4j/releases/tag/v0.10.0)
 
 + Upgrade the minimum Java version from 23 to 24
 + Implement `mapIndexed()` to perform a mapping operation given the element being mapped and its zero-based index
