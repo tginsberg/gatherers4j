@@ -5,7 +5,7 @@ import java.net.URI
 
 plugins {
     id("com.adarshr.test-logger") version "4.0.0"
-    // TODO When JaCoCo Upgrades: id("jacoco")
+    id("jacoco")
     id("java-library")
     id("maven-publish")
     id("net.ltgt.errorprone") version "4.1.0"
@@ -17,8 +17,8 @@ group = "com.ginsberg"
 version = file("VERSION.txt").readLines().first()
 
 val gitBranch = gitBranch()
-val gatherers4jVersion = if(gitBranch == "main" || gitBranch.startsWith("release/")) version.toString()
-                         else "${gitBranch.substringAfterLast("/")}-SNAPSHOT"
+val gatherers4jVersion = if (gitBranch == "main" || gitBranch.startsWith("release/")) version.toString()
+else "${gitBranch.substringAfterLast("/")}-SNAPSHOT"
 
 java {
     toolchain {
@@ -30,6 +30,10 @@ java {
 
 repositories {
     mavenCentral()
+    maven {
+        url = uri("https://oss.sonatype.org/content/repositories/snapshots")
+        description = "For JaCoCo, until 0.8.13 is released"
+    }
 }
 
 dependencies {
@@ -94,8 +98,10 @@ publishing {
     }
     repositories {
         maven {
-            url = if(version.toString().endsWith("-SNAPSHOT")) URI("https://oss.sonatype.org/content/repositories/snapshots/")
-                  else URI("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+            url = if (version.toString()
+                    .endsWith("-SNAPSHOT")
+            ) URI("https://oss.sonatype.org/content/repositories/snapshots/")
+            else URI("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
             credentials {
                 username = System.getenv("SONATYPE_USERNAME")
                 password = System.getenv("SONATYPE_TOKEN")
@@ -121,10 +127,9 @@ tasks {
             }
         }
     }
-    /*
-    TODO When JaCoCo Upgrades, restore this
+
     jacoco {
-       toolVersion = "0.8.13 "
+        toolVersion = "0.8.13-SNAPSHOT"
     }
     jacocoTestReport {
         dependsOn(test)
@@ -132,7 +137,7 @@ tasks {
             xml.required = true
         }
     }
-    */
+
     jar {
         manifest {
             attributes(
@@ -155,7 +160,7 @@ tasks {
         }
     }
     test {
-        // TODO When JaCoCo Upgrades: finalizedBy(jacocoTestReport)
+        finalizedBy(jacocoTestReport)
         useJUnitPlatform()
     }
 
