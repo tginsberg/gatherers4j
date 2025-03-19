@@ -16,15 +16,13 @@ description = "An extra set of helpful Stream Gatherers for Java"
 group = "com.ginsberg"
 version = file("VERSION.txt").readLines().first()
 
-@Suppress("PropertyName")
-val ENABLE_PREVIEW = "--enable-preview"
 val gitBranch = gitBranch()
-val gatherers4jVersion = if(gitBranch == "main" || gitBranch.startsWith("release/")) version.toString()
-                         else "${gitBranch.substringAfterLast("/")}-SNAPSHOT"
+val gatherers4jVersion = if (gitBranch == "main" || gitBranch.startsWith("release/")) version.toString()
+else "${gitBranch.substringAfterLast("/")}-SNAPSHOT"
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(23)
+        languageVersion = JavaLanguageVersion.of(24)
     }
     withJavadocJar()
     withSourcesJar()
@@ -32,6 +30,10 @@ java {
 
 repositories {
     mavenCentral()
+    maven {
+        url = uri("https://oss.sonatype.org/content/repositories/snapshots")
+        description = "For JaCoCo, until 0.8.13 is released"
+    }
 }
 
 dependencies {
@@ -96,8 +98,10 @@ publishing {
     }
     repositories {
         maven {
-            url = if(version.toString().endsWith("-SNAPSHOT")) URI("https://oss.sonatype.org/content/repositories/snapshots/")
-                  else URI("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+            url = if (version.toString()
+                    .endsWith("-SNAPSHOT")
+            ) URI("https://oss.sonatype.org/content/repositories/snapshots/")
+            else URI("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
             credentials {
                 username = System.getenv("SONATYPE_USERNAME")
                 password = System.getenv("SONATYPE_TOKEN")
@@ -113,7 +117,6 @@ signing {
 
 tasks {
     withType<JavaCompile> {
-        options.compilerArgs.add(ENABLE_PREVIEW)
         options.errorprone {
             check("NullAway", CheckSeverity.ERROR)
             option("NullAway:AnnotatedPackages", "com.ginsberg.gatherers4j")
@@ -125,12 +128,16 @@ tasks {
         }
     }
 
+    jacoco {
+        toolVersion = "0.8.13-SNAPSHOT"
+    }
     jacocoTestReport {
         dependsOn(test)
         reports {
             xml.required = true
         }
     }
+
     jar {
         manifest {
             attributes(
@@ -154,7 +161,6 @@ tasks {
     }
     test {
         finalizedBy(jacocoTestReport)
-        jvmArgs(ENABLE_PREVIEW)
         useJUnitPlatform()
     }
 

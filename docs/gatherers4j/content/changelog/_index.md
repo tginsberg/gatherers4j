@@ -7,6 +7,7 @@ no_list: true
 
 ## v0.10.0
 
++ Upgrade the minimum Java version from 23 to 24
 + Implement `mapIndexed()` to perform a mapping operation given the element being mapped and its zero-based index
 + Implement `peekIndexed()` to peek at each element and its zero-based index
 + Implement `sampleFixedSize()` to randomly sample a fixed number of elements from a stream
