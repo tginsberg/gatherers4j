@@ -23,7 +23,7 @@ import java.util.Comparator;
 import java.util.function.Supplier;
 import java.util.stream.Gatherer;
 
-import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
+import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
 
 public class FilterChangingGatherer<INPUT>
         implements Gatherer<INPUT, FilterChangingGatherer.State<INPUT>, INPUT> {

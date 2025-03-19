@@ -23,8 +23,6 @@ matter but will look funny if you have type hinting on in your IDE)
 #### Filter a `Stream<Number>` to only contain `Short` and `Integer`
 
 ```java
-#### Filter a stream by type
-```java
 Stream
     .of((byte)1, (short)2, 3, (long)4, 1.0, 1.0d)
     .gather(Gatherers4j.filterInstanceOf(Integer.class, Short.class))

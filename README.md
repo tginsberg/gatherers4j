@@ -1,6 +1,6 @@
 # Gatherers4j
 
-A library of useful [Stream Gatherers](https://openjdk.org/jeps/485) (custom intermediate operations) for Java 23+.
+A library of useful [Stream Gatherers](https://openjdk.org/jeps/485) (custom intermediate operations) for Java 24+.
 
 See [the full set of documentation](https://tginsberg.github.io/gatherers4j/) for information on how to use Gatherers4j.
 
@@ -18,7 +18,7 @@ Add the following dependency to `pom.xml`.
 <dependency>
     <groupId>com.ginsberg</groupId>
     <artifactId>gatherers4j</artifactId>
-    <version>0.9.0</version>
+    <version>0.10.0</version>
 </dependency>
 ```
 
@@ -27,7 +27,7 @@ Add the following dependency to `pom.xml`.
 Add the following dependency to `build.gradle` or `build.gradle.kts`
 
 ```groovy
-implementation("com.ginsberg:gatherers4j:0.9.0")
+implementation("com.ginsberg:gatherers4j:0.10.0")
 ```
 
 
@@ -48,9 +48,11 @@ Gatherers that reorder, combine, or manipulate the sequence of elements.
 | Function                                                                                                        | Purpose                                                                                                                                             |
 |-----------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
 | [`crossWith()`](https://tginsberg.github.io/gatherers4j/gatherers/sequence-operations/crosswith/)               | Emit each element of the source stream with each element of the given `iterable`, `iterator`, `stream`, or varargs as a `Pair` to the output stream |
-| [`foldIndexed(fn)`](https://tginsberg.github.io/gatherers4j/gatherers/sequence-operations/foldindexed/)         | Perform a fold over the input stream where each element is included along with its index                                                            |
+| [`foldIndexed(fn)`](https://tginsberg.github.io/gatherers4j/gatherers/sequence-operations/foldindexed/)         | Perform a fold over the input stream where each element is included along with its zero-based index                                                 |
 | [`interleaveWith()`](https://tginsberg.github.io/gatherers4j/gatherers/sequence-operations/interleavewith/)     | Creates a stream of alternating objects from the input stream and the argument `iterable`, `iterator`, `stream`, or varargs                         |
+| [`mapIndexed()`](https://tginsberg.github.io/gatherers4j/gatherers/sequence-operations/mapindexed/)             | Perform a mapping operation given the element being mapped and its zero-based index.                                                                |
 | [`orderByFrequency()`](https://tginsberg.github.io/gatherers4j/gatherers/sequence-operations/orderbyfrequency/) | Returns a stream where elements are ordered in either ascending or descending frequency contained in `WithCount<T>` wrapper objects.                |
+| [`peekIndexed()`](https://tginsberg.github.io/gatherers4j/gatherers/sequence-operations/peekindexed/)           | Peek at each element of the stream along with its zero-based index                                                                                  |
 | [`repeat(n)`](https://tginsberg.github.io/gatherers4j/gatherers/sequence-operations/repeat/)                    | Repeat the input stream `n` times to the output stream                                                                                              |
 | [`repeatInfinitely()`](https://tginsberg.github.io/gatherers4j/gatherers/sequence-operations/repeatinfinitely/) | Repeat the input stream to the output stream forever (or until some downstream operation stops it)                                                  |
 | [`reverse()`](https://tginsberg.github.io/gatherers4j/gatherers/sequence-operations/reverse/)                   | Reverse the order of the stream                                                                                                                     |
@@ -74,10 +76,12 @@ Gatherers that select or remove elements based on some criteria.
 | [`distinctBy(fn)`](https://tginsberg.github.io/gatherers4j/gatherers/filtering-and-selection/distinctby/)                          | Emit only distinct elements from the stream, as measured by `fn`                                                               |
 | [`dropEveryNth(n)`](https://tginsberg.github.io/gatherers4j/gatherers/filtering-and-selection/dropeverynth/)                       | Drop every`n`<sup>th</sup> element from the input stream                                                                       |
 | [`dropLast(n)`](https://tginsberg.github.io/gatherers4j/gatherers/filtering-and-selection/droplast/)                               | Keep all but the last `n` elements of the stream                                                                               |
-| [`filterIndexed()`](https://tginsberg.github.io/gatherers4j/gatherers/filtering-and-selection/filterindexed/)                      | Filter a stream according to a given predicate, which takes both the item being examined and its index.                        
+| [`filterIndexed()`](https://tginsberg.github.io/gatherers4j/gatherers/filtering-and-selection/filterindexed/)                      | Filter a stream according to a given predicate, which takes both the item being examined and its zero-based index.             |
 | [`filterInstanceOf`](https://tginsberg.github.io/gatherers4j/gatherers/filtering-and-selection/filterinstanceof/)                  | Filter the elements in the stream to only include elements of the given types.                                                 |
 | [`filterOrdered(order)`](https://tginsberg.github.io/gatherers4j/gatherers/filtering-and-selection/filterordered/)                 | Filter the input stream of `Comparable` objects so that is strictly in the given `order`                                       |                                                                                           |
 | [`filterOrderedBy(order, comparator)`](https://tginsberg.github.io/gatherers4j/gatherers/filtering-and-selection/filterorderedby/) | Filter the input stream of objects so that it contains only elements in the given `order`, as measured by a given `Comparator` |
+| [`sampleFixedSize(n)`](https://tginsberg.github.io/gatherers4j/gatherers/filtering-and-selection/samplefixedsize/)                 | Perform a fixed size sampling over the input stream.                                                                           |
+| [`samplePercentage(d)`](https://tginsberg.github.io/gatherers4j/gatherers/filtering-and-selection/samplepercentage/)               | Perform a percentage-based sampling over the input stream.                                                                     |                                                                                                                               | 
 | [`takeEveryNth(n)`](https://tginsberg.github.io/gatherers4j/gatherers/filtering-and-selection/takeeverynth/)                       | Keep every`n`<sup>th</sup> element from the input stream                                                                       |
 | [`takeLast(n)`](https://tginsberg.github.io/gatherers4j/gatherers/filtering-and-selection/takelast/)                               | Emit the last `n` values                                                                                                       |
 | [`takeUntil(predicate)`](https://tginsberg.github.io/gatherers4j/gatherers/filtering-and-selection/takeuntil/)                     | Take elements from the input stream until the `predicate` is met, including the first element that matches the `preciate`      |
@@ -127,7 +131,6 @@ Functions performing calculations over the stream.
 | [`simpleMovingAverageBy(window, fn)`](https://tginsberg.github.io/gatherers4j/gatherers/mathematical/simplemovingaverageby/)                       | Create a moving average of `BigDecimal` values over the previous `window` values, as mapped via `fn`.                              |
 | [`simpleRunningAverage()`](https://tginsberg.github.io/gatherers4j/gatherers/mathematical/simplerunningaverage/)                                   | Create a running average of `BigDecimal` values. See below for options.                                                            |
 | [`simpleRunningAverageBy(fn)`](https://tginsberg.github.io/gatherers4j/gatherers/mathematical/simplerunningaverageby/)                             | Create a running average of `BigDecimal` values as mapped via `fn`.                                                                |
-
 
 # Contributing
 

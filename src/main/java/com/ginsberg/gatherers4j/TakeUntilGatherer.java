@@ -22,7 +22,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Gatherer;
 
-import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
+import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
 
 public class TakeUntilGatherer<INPUT extends @Nullable Object>
         implements Gatherer<INPUT, TakeUntilGatherer.State, INPUT> {

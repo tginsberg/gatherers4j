@@ -23,12 +23,9 @@ import java.math.MathContext;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
-
 public final class BigDecimalSimpleAverageGatherer<INPUT extends @Nullable Object> extends BigDecimalGatherer<INPUT> {
 
     BigDecimalSimpleAverageGatherer(final Function<INPUT, @Nullable BigDecimal> mappingFunction) {
-        mustNotBeNull(mappingFunction, "Mapping function must not be null");
         super(mappingFunction);
     }
 

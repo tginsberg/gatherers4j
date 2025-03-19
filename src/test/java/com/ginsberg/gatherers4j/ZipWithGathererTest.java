@@ -16,6 +16,7 @@
 
 package com.ginsberg.gatherers4j;
 
+import com.ginsberg.gatherers4j.dto.Pair;
 import org.junit.jupiter.api.Test;
 
 import java.util.Iterator;

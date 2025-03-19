@@ -16,6 +16,7 @@
 
 package com.ginsberg.gatherers4j;
 
+import com.ginsberg.gatherers4j.dto.WithCount;
 import com.ginsberg.gatherers4j.enums.Frequency;
 import org.jspecify.annotations.Nullable;
 
@@ -27,7 +28,8 @@ import java.util.function.BinaryOperator;
 import java.util.function.Supplier;
 import java.util.stream.Gatherer;
 
-import static com.ginsberg.gatherers4j.GathererUtils.mustNotBeNull;
+import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
+import static com.ginsberg.gatherers4j.util.GathererUtils.pushAll;
 
 public class FrequencyGatherer<INPUT extends @Nullable Object>
         implements Gatherer<INPUT, FrequencyGatherer.State<INPUT>, WithCount<INPUT>> {
@@ -47,7 +49,7 @@ public class FrequencyGatherer<INPUT extends @Nullable Object>
     @Override
     public Integrator<State<INPUT>, INPUT, WithCount<INPUT>> integrator() {
         return Integrator.ofGreedy((state, element, downstream) -> {
-            state.counts.compute(element, (_, count) -> count == null ? 1 : count + 1);
+            state.counts.merge(element, 1L, Long::sum);
             return !downstream.isRejecting();
         });
     }
@@ -62,18 +64,20 @@ public class FrequencyGatherer<INPUT extends @Nullable Object>
 
     @Override
     public BiConsumer<State<INPUT>, Downstream<? super WithCount<INPUT>>> finisher() {
-        return (inputState, downstream) -> inputState.counts
-                .entrySet()
-                .stream().map(it -> new WithCount<>(it.getKey(), it.getValue()))
-                .sorted(comparator())
-                .forEach(downstream::push);
+        return (inputState, downstream) -> {
+            var counts = inputState.counts
+                    .entrySet()
+                    .stream().map(it -> new WithCount<>(it.getKey(), it.getValue()))
+                    .sorted(comparator());
+            pushAll(counts, downstream);
+        };
     }
 
     private Comparator<WithCount<INPUT>> comparator() {
-        if(order == Frequency.Descending) {
-            return (o1, o2) -> (int)(o2.count() - o1.count());
+        if (order == Frequency.Descending) {
+            return (o1, o2) -> (int) (o2.count() - o1.count());
         } else {
-            return (o1, o2) -> (int)(o1.count() - o2.count());
+            return (o1, o2) -> (int) (o1.count() - o2.count());
         }
     }
 

@@ -25,6 +25,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import java.util.stream.Gatherer;
 
+import static com.ginsberg.gatherers4j.util.GathererUtils.pushAll;
+
 public class UniquelyOccurringGatherer<INPUT extends @Nullable Object>
         implements Gatherer<INPUT, UniquelyOccurringGatherer.State<INPUT>, INPUT> {
 
@@ -54,7 +56,7 @@ public class UniquelyOccurringGatherer<INPUT extends @Nullable Object>
 
     @Override
     public BiConsumer<State<INPUT>, Downstream<? super INPUT>> finisher() {
-        return (inputState, downstream) -> inputState.found.forEach(downstream::push);
+        return (inputState, downstream) -> pushAll(inputState.found, downstream);
     }
 
     public static class State<INPUT> {

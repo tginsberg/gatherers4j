@@ -14,16 +14,10 @@
  * limitations under the License.
  */
 
-package com.ginsberg.gatherers4j;
+/// A library of useful Stream Gatherers (custom intermediate operations) for Java.
+///
+/// @author Todd Ginsberg (todd@ginsberg.com)
+@NullMarked
+package com.ginsberg.gatherers4j.dto;
 
-import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
-
-import java.math.BigDecimal;
-
-public class TestUtils {
-
-    public static final RecursiveComparisonConfiguration BIG_DECIMAL_RECURSIVE_COMPARISON = RecursiveComparisonConfiguration
-            .builder()
-            .withComparatorForType(BigDecimal::compareTo, BigDecimal.class)
-            .build();
-}
+import org.jspecify.annotations.NullMarked;

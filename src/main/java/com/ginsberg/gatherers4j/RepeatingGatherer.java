@@ -24,6 +24,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import java.util.stream.Gatherer;
 
+import static com.ginsberg.gatherers4j.util.GathererUtils.pushAll;
+
 public class RepeatingGatherer<INPUT extends @Nullable Object>
         implements Gatherer<INPUT, RepeatingGatherer.State<INPUT>, INPUT> {
 
@@ -63,7 +65,7 @@ public class RepeatingGatherer<INPUT extends @Nullable Object>
         return (inputState, downstream) -> {
             while (!downstream.isRejecting() && (inputState.repeatsRemaining == INFINITE || inputState.repeatsRemaining > 0)) {
 
-                inputState.theStream.forEach(downstream::push);
+                pushAll(inputState.theStream, downstream);
                 if (inputState.repeatsRemaining != INFINITE) {
                     inputState.repeatsRemaining--;
                 }

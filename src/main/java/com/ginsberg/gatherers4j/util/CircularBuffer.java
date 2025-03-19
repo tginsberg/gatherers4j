@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ginsberg.gatherers4j;
+package com.ginsberg.gatherers4j.util;
 
 import org.jspecify.annotations.Nullable;
 

@@ -10,11 +10,11 @@ It contains quite a good explanation as to why we need Gatherers and details of 
 are interested in the history of this proposal, there are previous versions available (note the "History" sections, which 
 will explain what changed): [JEP-473 (Second Preview)](https://openjdk.org/jeps/473) and  [JEP-462 (First Preview)](https://openjdk.org/jeps/461).
 
-### JSpecify
+### JSpecify2
 [JSpecify](https://jspecify.dev/) is an open-source Java tool that adds nullness annotations to improve static analysis and prevent null-related runtime errors. It helps developers identify potential null pointer issues at compile-time, ensuring safer and more reliable code.
 
 Gatherers4j annotates all methods and types with JSpecify to help you write better code.
 
 ### Gatherers Overview and Examples
 
-[Some guidance](https://docs.oracle.com/en/java/javase/23/core/stream-gatherers.html) from Oracle on what Stream Gatherers are and how to create them.
+[Some guidance](https://docs.oracle.com/en/java/javase/24/core/stream-gatherers.html) from Oracle on what Stream Gatherers are and how to create them.

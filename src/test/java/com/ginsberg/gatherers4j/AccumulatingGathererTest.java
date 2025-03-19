@@ -16,6 +16,7 @@
 
 package com.ginsberg.gatherers4j;
 
+import com.ginsberg.gatherers4j.dto.WithIndex;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -43,13 +44,13 @@ public class AccumulatingGathererTest {
             final Stream<String> input = Stream.of("A", "B", "C", "D");
 
             // Act
-            final List<IndexedValue<String>> output = input
+            final List<WithIndex<String>> output = input
                     .gather(
                             Gatherers4j.foldIndexed(
-                                    () -> new ArrayList<IndexedValue<String>>(),
+                                    () -> new ArrayList<WithIndex<String>>(),
                                     (index, carry, next) -> {
                                         assert carry != null;
-                                        carry.add(new IndexedValue<>(index, next));
+                                        carry.add(new WithIndex<>(index, next));
                                         return carry;
                                     }
                             )
@@ -60,10 +61,10 @@ public class AccumulatingGathererTest {
             // Assert
             assertThat(output)
                     .containsExactly(
-                            new IndexedValue<>(0, "A"),
-                            new IndexedValue<>(1, "B"),
-                            new IndexedValue<>(2, "C"),
-                            new IndexedValue<>(3, "D")
+                            new WithIndex<>(0, "A"),
+                            new WithIndex<>(1, "B"),
+                            new WithIndex<>(2, "C"),
+                            new WithIndex<>(3, "D")
                     );
         }
 

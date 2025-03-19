@@ -16,6 +16,7 @@
 
 package com.ginsberg.gatherers4j;
 
+import com.ginsberg.gatherers4j.util.CircularBuffer;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;

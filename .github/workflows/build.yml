@@ -14,6 +14,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+        # Used by gradle toolchain to actually build
+      - name: Set up JDK 24
+        uses: actions/setup-java@v4
+        with:
+          java-version: '24'
+          distribution: 'corretto'
+          cache: 'gradle'
+
+        # Because gradle 8.13 only supports Java 23, run the build with 23 and
+        # use the 24 version as a toolchain
       - name: Set up JDK 23
         uses: actions/setup-java@v4
         with:

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Todd Ginsberg
+ * Copyright 2025 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-package com.ginsberg.gatherers4j;
+package com.ginsberg.gatherers4j.util;
 
-import org.jspecify.annotations.Nullable;
+import java.math.BigDecimal;
 
-public record Pair<FIRST, SECOND>(
-        @Nullable FIRST first,
-        @Nullable SECOND second
-) {
+public record TestValueHolder(int id, BigDecimal value) {
 }
