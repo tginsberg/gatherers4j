@@ -22,7 +22,7 @@ does not provide a `mapWithIndex()` functionality but that is on the roadmap.
 
 ```java
 Stream
-    .of("A", "B", "C");
+    .of("A", "B", "C")
     .gather(Gatherers4j.withIndex())
     .toList();
 

@@ -23,7 +23,7 @@ The lists returned from this Gatherer are unmodifiable.
 
 ```java
 Stream
-    .of("A", "B", "C", "D");
+    .of("A", "B", "C", "D")
     .gather(Gatherers4j.zipWithNext())
     .toList();
     

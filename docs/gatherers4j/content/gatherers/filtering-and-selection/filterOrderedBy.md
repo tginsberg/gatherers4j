@@ -23,7 +23,7 @@ elements that implement `Comparable`, see [`filterOrdered()`](/gatherers4j/gathe
 
 ```java
 Stream
-    .of("AAA", "AA", "AA", "AAA", "A");
+    .of("AAA", "AA", "AA", "AAA", "A")
     .gather(Gatherers4j.filterOrderedBy(Order.Descending, Comparator.comparingInt(String::length)))
     .toList();
 
