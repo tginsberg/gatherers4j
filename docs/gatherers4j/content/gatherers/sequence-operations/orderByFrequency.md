@@ -24,7 +24,7 @@ is not order dependent it has a parallel-capable implementation. All results are
 
 ```java
 Stream
-    .of("A", "A", "A", "B", "B", "B", "B", "C", "C");
+    .of("A", "A", "A", "B", "B", "B", "B", "C", "C")
     .gather(Gatherers4j.orderByFrequency(Frequency.Ascending))
     .toList();
     
@@ -35,7 +35,7 @@ Stream
 
 ```java
 Stream
-    .of("A", "A", "A", "B", "B", "B", "B", "C", "C");
+    .of("A", "A", "A", "B", "B", "B", "B", "C", "C")
     .gather(Gatherers4j.orderByFrequency(Frequency.Descending))
     .toList();
     
