@@ -23,7 +23,7 @@ The lists emitted from this Gatherer are unmodifiable.
 
 ```java
 Stream
-    .of("AAA", "AA", "A", "AA", "AA", "A");
+    .of("AAA", "AA", "A", "AA", "AA", "A")
     .gather(Gatherers4j
         .groupOrderedBy(
             Order.Descending, 
@@ -39,7 +39,7 @@ Stream
 
 ```java
 Stream
-    .of("A", "AA", "AAA", "A", "AA", "AA");
+    .of("A", "AA", "AAA", "A", "AA", "AA")
     .gather(Gatherers4j
         .groupOrderedBy(
             Order.Ascending, 
