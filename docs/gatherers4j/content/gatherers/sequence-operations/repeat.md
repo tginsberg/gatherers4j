@@ -24,7 +24,7 @@ For a version of this Gatherer that repeats infinitely, see [`repeatInfinitely()
 
 ```java
 Stream
-    .of("A", "B", "C");
+    .of("A", "B", "C")
     .gather(Gatherers4j.repeat(3))
     .toList();
     

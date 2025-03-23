@@ -23,7 +23,7 @@ For a version of this Gatherer that repeats a finite number of times, see [`repe
 
 ```java
 Stream
-    .of("A", "B", "C");
+    .of("A", "B", "C")
     .gather(Gatherers4j.repeatInfinitely())
     .toList();
     

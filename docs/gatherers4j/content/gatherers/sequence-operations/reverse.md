@@ -23,7 +23,7 @@ This implementation reads the entire stream before emitting any results making i
 
 ```java
 Stream
-    .of("A", "B", "C");
+    .of("A", "B", "C")
     .gather(Gatherers4j.reverse())
     .toList();
     
