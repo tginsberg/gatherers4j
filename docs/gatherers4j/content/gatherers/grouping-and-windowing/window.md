@@ -28,7 +28,7 @@ The function groups consecutive elements of equal length
 
 ```java
 Stream
-    .of("A", "B", "C", "D", "E", "F", "G");
+    .of("A", "B", "C", "D", "E", "F", "G")
     .gather(Gatherers4j.window(2, 2, false))
     .toList();
 
