@@ -30,7 +30,7 @@ This example joins the index and the input strings to show how this works.
 
 ```java
 Stream
-    .of("A", "B", "C");
+    .of("A", "B", "C")
     .gather(
         Gatherers4j.scanIndexed(
             () -> "",
