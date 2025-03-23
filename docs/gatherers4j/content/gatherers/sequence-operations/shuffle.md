@@ -27,7 +27,7 @@ specify a `RandomGenerator`.
 
 ```java
 Stream
-    .of("A", "B", "C", "D", "E", "F", "G");
+    .of("A", "B", "C", "D", "E", "F", "G")
     .gather(Gatherers4j.shuffle(new Random(42)))
     .toList();
     
