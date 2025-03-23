@@ -25,7 +25,7 @@ For a version of `group()` that measures equality with a user-provided function,
 
 ```java
 Stream
-    .of("A", "A", "BB", "BB", "CCC", "A");
+    .of("A", "A", "BB", "BB", "CCC", "A")
     .gather(Gatherers4j.group())
     .toList();
 
