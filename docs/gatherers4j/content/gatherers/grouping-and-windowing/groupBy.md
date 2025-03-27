@@ -30,6 +30,6 @@ Stream
     .gather(Gatherers4j.groupBy(String::length))
     .toList();
 
-// [ ["A", "B", "C"] ["BB"], ["C"], ["DD", "DD"] ]
+// [ ["A", "B", "C"], ["BB"], ["C"], ["DD", "DD"] ]
 ```
 
