@@ -21,7 +21,7 @@ description: Filter a stream according to a given `predicate`, which takes both 
 ```java
 Stream
     .of("A", "B", "C", "T")
-    .gather(Gatherers4j.filterWithIndex((index, element) -> index % 2 == 0 || element.equals("T")))
+    .gather(Gatherers4j.filterIndexed((index, element) -> index % 2 == 0 || element.equals("T")))
     .toList();
 
 // ["A", "C", "T"]
