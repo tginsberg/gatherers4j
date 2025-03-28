@@ -114,6 +114,26 @@ class WindowGathererTest {
     }
 
     @Test
+    void windowWithSteppingAndMultiplePartials() {
+        // Arrange
+        final Stream<String> input = Stream.of("A", "B", "C", "D", "E", "F", "G");
+
+        // Act
+        final List<List<String>> output = input.gather(
+                Gatherers4j.window(5, 2, true)
+        ).toList();
+
+        // Assert
+        assertThat(output)
+                .containsExactly(
+                        List.of("A", "B", "C", "D", "E"),
+                        List.of("C", "D", "E", "F", "G"),
+                        List.of("E", "F", "G"),
+                        List.of("G")
+                );
+    }
+
+    @Test
     void windowWithSteppingThatSkips() {
         // Arrange
         final Stream<String> input = Stream.of("A", "B", "C", "D", "E", "F");

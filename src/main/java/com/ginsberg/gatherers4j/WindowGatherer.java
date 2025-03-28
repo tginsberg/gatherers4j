@@ -68,9 +68,12 @@ public class WindowGatherer<INPUT extends @Nullable Object>
     @Override
     public BiConsumer<State<INPUT>, Downstream<? super List<INPUT>>> finisher() {
         return (inputState, downstream) -> {
-            if (includePartials && !inputState.window.isEmpty()) {
-                downstream.push(inputState.window.asList());
-            }
+            if (includePartials)
+                while (!inputState.window.isEmpty()) {
+                    downstream.push(inputState.window.asList());
+                    inputState.window.removeFirst(stepping);
+                    inputState.stepDelta--;
+                }
         };
     }
 
