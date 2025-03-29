@@ -15,7 +15,7 @@ For a version of this Gatherer that repeats infinitely, see [`repeatInfinitely()
 **Signature**
 
 `repeat(count)`
-* `count` - A positive number of times the input stream is emitted to the output stream
+* `count` - The number of times the input stream is emitted to the output stream
 
 
 ### Examples
