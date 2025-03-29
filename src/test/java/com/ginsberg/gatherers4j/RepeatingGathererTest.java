@@ -47,6 +47,20 @@ class RepeatingGathererTest {
     }
 
     @Test
+    void flatMapIntegration() {
+        // Arrange
+        final Stream<Integer> input = Stream.of(0, 1, 2, 3);
+
+        // Act
+        final List<Integer> output = input
+                .flatMap(n -> Stream.of(n).gather(Gatherers4j.repeat(n)))
+                .toList();
+
+        // Assert
+        assertThat(output).isEqualTo(List.of(1, 2, 2, 3, 3, 3));
+    }
+
+    @Test
     void infiniteRepeats() {
         // Arrange
         final Stream<String> input = Stream.of("A", "B", "C");
@@ -64,8 +78,8 @@ class RepeatingGathererTest {
     }
 
     @ParameterizedTest(name = "With {0} repeats")
-    @ValueSource(ints = {-1, 0, 1})
-    void numberOfRepeatsMustBeGreaterThanOne(int repeats) {
+    @ValueSource(ints = {Integer.MIN_VALUE, -1})
+    void numberOfRepeatsMustBeNegative(int repeats) {
         assertThatThrownBy(() ->
                 RepeatingGatherer.ofFinite(repeats)
         ).isExactlyInstanceOf(IllegalArgumentException.class);
