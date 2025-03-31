@@ -22,7 +22,7 @@ This gatherer is all-or-nothing, meaning it will not emit any intermediate resul
 ```java
 Stream
     .of(3, 2, 1)
-    .gather(Gatherers4j.ensureOrdred(Order.Descending))
+    .gather(Gatherers4j.ensureOrdered(Order.Descending))
     .toList();
 
 // [3, 2, 1]
@@ -33,7 +33,7 @@ Stream
 ```java
 Stream
     .of(3, 2, 2)
-    .gather(Gatherers4j.ensureOrdred(Order.Descending))
+    .gather(Gatherers4j.ensureOrdered(Order.Descending))
     .toList();
 
 // java.lang.IllegalStateException: ensureDecreasing detected non-decreasing element
