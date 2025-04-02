@@ -30,10 +30,6 @@ java {
 
 repositories {
     mavenCentral()
-    maven {
-        url = uri("https://oss.sonatype.org/content/repositories/snapshots")
-        description = "For JaCoCo, until 0.8.13 is released"
-    }
 }
 
 dependencies {
@@ -129,7 +125,7 @@ tasks {
     }
 
     jacoco {
-        toolVersion = "0.8.13-SNAPSHOT"
+        toolVersion = "0.8.13"
     }
     jacocoTestReport {
         dependsOn(test)
