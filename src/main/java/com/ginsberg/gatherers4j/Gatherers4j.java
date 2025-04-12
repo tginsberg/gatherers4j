@@ -243,7 +243,7 @@ public abstract class Gatherers4j {
     }
 
     /// Create a Stream that represents the exponential moving average of a `BigDecimal` objects mapped from a `Stream<T>`
-    /// via a `mappingFunction` over given number of `periods`.
+    /// via a `mappingFunction` over the given number of `periods`.
     ///
     /// @param periods The number of periods to use in the EMA calculation.
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
