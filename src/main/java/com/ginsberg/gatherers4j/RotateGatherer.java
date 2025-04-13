@@ -51,6 +51,8 @@ public class RotateGatherer<INPUT extends @Nullable Object>
         return Integrator.ofGreedy((state, element, downstream) -> {
             if (distance == 0) {
                 downstream.push(element);
+            } else if(direction == Rotate.Left && state.fullStream.size() == distance) {
+                downstream.push(element);
             } else {
                 state.fullStream.add(element);
             }
