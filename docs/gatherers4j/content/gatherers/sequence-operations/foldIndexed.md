@@ -19,7 +19,7 @@ the JDK. For a scanning version of this Gatherer, see [`scanIndexed()`](/gathere
 `foldIndexed(Supplier<OUTPUT> initialValue, IndexedAccumulatorFunction<OUTPUT, INPUT, OUTPUT> foldFunction)`
 
 * `initialValue` - A non-null `Supplier` to provide the seed value for the fold (this implementation does not assume the first element is the seed)
-* `foldFunction` - [`IndexedAccumulatorFunction`](https://github.com/tginsberg/gatherers4j/blob/main/src/main/java/com/ginsberg/gatherers4j/IndexedAccumulatorFunction.java) is a variation on a `BiFunction` which injects the `long` index of each element. This function does the actual fold/reduction work.
+* `foldFunction` - [`IndexedAccumulatorFunction`](https://github.com/tginsberg/gatherers4j/blob/main/src/main/java/com/ginsberg/gatherers4j/IndexedAccumulatorFunction.java) is a variation on a `BiFunction` which injects the `int` index of each element. This function does the actual fold/reduction work.
 
 
 
