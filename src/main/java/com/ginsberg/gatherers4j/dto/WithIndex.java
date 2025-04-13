@@ -19,7 +19,7 @@ package com.ginsberg.gatherers4j.dto;
 import org.jspecify.annotations.Nullable;
 
 public record WithIndex<TYPE>(
-        long index,
+        int index,
         @Nullable TYPE value
 ) {
 }

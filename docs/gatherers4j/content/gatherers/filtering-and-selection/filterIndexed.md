@@ -10,9 +10,9 @@ description: Filter a stream according to a given `predicate`, which takes both 
 
 **Signature**
 
-`filterIndexed(BiPredicate<Long, INPUT> predicate)`
+`filterIndexed(BiPredicate<Integer, INPUT> predicate)`
 
-* `predicate` - A non-null `BiPredicate<Long,INPUT>` where the `Long` is the zero-based index of the element being filtered, and the `INPUT` is the element itself.
+* `predicate` - A non-null `BiPredicate<Integer,INPUT>` where the `Integer` is the zero-based index of the element being filtered, and the `INPUT` is the element itself.
 
 ### Examples
 

@@ -130,7 +130,7 @@ class BigDecimalExponentialMovingAverageGathererTest {
         // Arrange
         final Stream<TestValueHolder> input = Stream.of("10.5", "15.2", "8.7", "12.0", "9.8")
                 .map(BigDecimal::new)
-                .map(it -> new TestValueHolder(0, it));
+                .gather(Gatherers4j.mapIndexed(TestValueHolder::new));
 
         // Act
         final List<BigDecimal> output = input

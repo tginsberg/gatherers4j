@@ -9,6 +9,7 @@ no_list: true
 [Released 2025-??-??](https://github.com/tginsberg/gatherers4j/releases/tag/v0.11.0)
 + Fix and document behavior of `window()` when there are multiple partial groupings at the end. Addresses [#135](https://github.com/tginsberg/gatherers4j/issues/135), thanks [@paulk-asert](https://github.com/paulk-asert)!
 + Implement exponential moving averages with `exponentialMovingAverageWithAlpha()`, `exponentialMovingAverageWithAlphaBy()`,`exponentialMovingAverageWithPeriod()`, and `exponentialMovingAverageWithPeriodBy()`,
++ Change index to be an `int` rather than a `long` in `filterIndexed()`, `foldIndexed()`, `mapIndexed()`, `peekIndexed()`, `scanIndexed()` and `withIndex()`. Addresses [#140](https://github.com/tginsberg/gatherers4j/issues/140). 
 
 ## v0.10.0
 [Released 2025-03-19](https://github.com/tginsberg/gatherers4j/releases/tag/v0.10.0)

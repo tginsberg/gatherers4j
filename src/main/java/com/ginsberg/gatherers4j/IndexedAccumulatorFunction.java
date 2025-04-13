@@ -30,5 +30,5 @@ public interface IndexedAccumulatorFunction<
     /// @param carry the accumulated value
     /// @param next  the next value to accumulate
     /// @return the function result
-    R apply(long index, @Nullable A carry, @Nullable B next);
+    R apply(int index, @Nullable A carry, @Nullable B next);
 }

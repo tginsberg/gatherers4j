@@ -29,7 +29,7 @@ import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
 public class SimpleIndexingGatherers {
 
     public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> filterIndexed(
-            final BiPredicate<Long, @Nullable INPUT> predicate
+            final BiPredicate<Integer, @Nullable INPUT> predicate
     ) {
         mustNotBeNull(predicate, "Predicate must not be null");
         return Gatherer.ofSequential(
@@ -44,7 +44,7 @@ public class SimpleIndexingGatherers {
     }
 
     public static <INPUT extends @Nullable Object, OUTPUT extends @Nullable Object> Gatherer<INPUT, ?, OUTPUT> mapIndexed(
-            final BiFunction<Long, @Nullable INPUT, @Nullable OUTPUT> mappingFunction
+            final BiFunction<Integer, @Nullable INPUT, @Nullable OUTPUT> mappingFunction
     ) {
         mustNotBeNull(mappingFunction, "mappingFunction must not be null");
         return Gatherer.ofSequential(
@@ -56,7 +56,7 @@ public class SimpleIndexingGatherers {
     }
 
     public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> peekIndexed(
-            final BiConsumer<Long, @Nullable INPUT> peekingConsumer
+            final BiConsumer<Integer, @Nullable INPUT> peekingConsumer
     ) {
         mustNotBeNull(peekingConsumer, "peekingConsumer must not be null");
         return Gatherer.ofSequential(
@@ -74,6 +74,6 @@ public class SimpleIndexingGatherers {
     }
 
     private static class State {
-        long index;
+        int index;
     }
 }
