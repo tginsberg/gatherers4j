@@ -42,7 +42,7 @@ public class DropLastGatherer<INPUT extends @Nullable Object> implements Gathere
     public Integrator<State<INPUT>, INPUT, INPUT> integrator() {
         return Integrator.ofGreedy((state, element, downstream) -> {
             if(state.elements.size() == count) {
-                downstream.push(state.elements.removeFirst());
+                    downstream.push(state.elements.removeFirst());
             }
             state.elements.add(element);
             return !downstream.isRejecting();
