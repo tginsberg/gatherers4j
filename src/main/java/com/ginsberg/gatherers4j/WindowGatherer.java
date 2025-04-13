@@ -59,7 +59,7 @@ public class WindowGatherer<INPUT extends @Nullable Object>
             if (state.window.size() == windowSize) {
                 downstream.push(state.window.asList());
                 state.stepDelta = Math.max(0, stepping - windowSize);
-                state.window.removeFirst(stepping);
+                state.window.drop(stepping);
             }
             return !downstream.isRejecting();
         });
@@ -71,7 +71,7 @@ public class WindowGatherer<INPUT extends @Nullable Object>
             if (includePartials) {
                 while (!inputState.window.isEmpty()) {
                     downstream.push(inputState.window.asList());
-                    inputState.window.removeFirst(stepping);
+                    inputState.window.drop(stepping);
                 }
             }
         };

@@ -31,11 +31,14 @@ public class CircularBuffer<T extends @Nullable Object> implements Iterable<T>{
     private int tail = 0;
 
     @SuppressWarnings("unchecked")
-    public CircularBuffer(int capacity) {
+    public CircularBuffer(final int capacity) {
+        if(capacity < 1) {
+            throw new IllegalArgumentException("capacity must be greater than zero");
+        }
         buffer = (T[]) new Object[capacity];
     }
 
-    public void add(T element) {
+    public void add(final T element) {
         buffer[tail] = element;
         tail = (tail + 1) % buffer.length;
 
@@ -57,7 +60,7 @@ public class CircularBuffer<T extends @Nullable Object> implements Iterable<T>{
         return element;
     }
 
-    public void removeFirst(final int n) {
+    public void drop(final int n) {
         if (n <= 0) {
             return;
         }
@@ -114,7 +117,6 @@ public class CircularBuffer<T extends @Nullable Object> implements Iterable<T>{
                 }
 
                 final T element = buffer[(head + index++) % buffer.length];
-                //index++;
                 remaining--;
                 return element;
             }
