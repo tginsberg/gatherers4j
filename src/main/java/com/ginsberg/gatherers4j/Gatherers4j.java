@@ -211,6 +211,52 @@ public abstract class Gatherers4j {
         return new SizeGatherer<>(size, length);
     }
 
+    /// Create a Stream that represents the exponential moving average of a `Stream<BigDecimal>`, with the given `alpha`.
+    ///
+    /// @param alpha The alpha value to use in the EMA calculation.
+    /// @return A non-null `BigDecimalExponentialMovingAverageGatherer`
+    public static BigDecimalExponentialMovingAverageGatherer<@Nullable BigDecimal> exponentialMovingAverageWithAlpha(final double alpha) {
+        return BigDecimalExponentialMovingAverageGatherer.withAlpha(alpha, Function.identity());
+    }
+
+    /// Create a Stream that represents the exponential moving average of a `BigDecimal` objects mapped from a `Stream<T>`
+    /// via a `mappingFunction` and using the given `alpha`.
+    ///
+    /// @param alpha The alpha value to use in the EMA calculation.
+    /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
+    ///                        in the exponential average calculation
+    /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
+    /// @return A non-null `BigDecimalExponentialMovingAverageGatherer`
+    public static <INPUT extends @Nullable Object> BigDecimalExponentialMovingAverageGatherer<INPUT> exponentialMovingAverageWithAlphaBy(
+            final double alpha,
+            final Function<INPUT, BigDecimal> mappingFunction
+    ) {
+        return BigDecimalExponentialMovingAverageGatherer.withAlpha(alpha, mappingFunction);
+    }
+
+    /// Create a Stream that represents the exponential moving average of a `Stream<BigDecimal>`, over the given number of `periods`.
+    ///
+    /// @param periods The number of periods to use in the EMA calculation.
+    /// @return A non-null `BigDecimalExponentialMovingAverageGatherer`
+    public static BigDecimalExponentialMovingAverageGatherer<@Nullable BigDecimal> exponentialMovingAverageWithPeriod(final int periods) {
+        return BigDecimalExponentialMovingAverageGatherer.withPeriod(periods, Function.identity());
+    }
+
+    /// Create a Stream that represents the exponential moving average of a `BigDecimal` objects mapped from a `Stream<T>`
+    /// via a `mappingFunction` over the given number of `periods`.
+    ///
+    /// @param periods The number of periods to use in the EMA calculation.
+    /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
+    ///                        in the exponential average calculation
+    /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
+    /// @return A non-null `BigDecimalExponentialMovingAverageGatherer`
+    public static <INPUT extends @Nullable Object> BigDecimalExponentialMovingAverageGatherer<INPUT> exponentialMovingAverageWithPeriodBy(
+            final int periods,
+            final Function<INPUT, BigDecimal> mappingFunction
+    ) {
+        return BigDecimalExponentialMovingAverageGatherer.withPeriod(periods, mappingFunction);
+    }
+
     /// Filter a stream according to the given `predicate`, which takes both the item being examined,
     /// and its index.
     ///
