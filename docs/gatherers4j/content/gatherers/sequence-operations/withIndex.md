@@ -9,7 +9,7 @@ description: Maps all elements of the stream as-is along with their 0-based inde
 
 ### Implementation Notes
 
-Each element of the input stream is mapped to a [`WithIndex`](https://github.com/tginsberg/gatherers4j/blob/main/src/main/java/com/ginsberg/gatherers4j/WithIndex.java)record along with its zero-based index. 
+Each element of the input stream is mapped to a [`WithIndex`](https://github.com/tginsberg/gatherers4j/blob/main/src/main/java/com/ginsberg/gatherers4j/dto/WithIndex.java)record along with its zero-based index.
 
 **Signature**
 
