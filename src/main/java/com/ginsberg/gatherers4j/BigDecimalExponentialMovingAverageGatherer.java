@@ -68,7 +68,7 @@ public class BigDecimalExponentialMovingAverageGatherer<INPUT extends @Nullable 
         }
 
         @Override
-        public BigDecimal calculate() {
+        public BigDecimal calculate(final MathContext mathContext) {
             return ema;
         }
     }

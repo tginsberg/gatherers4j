@@ -43,7 +43,7 @@ public class BigDecimalSumGatherer<INPUT extends @Nullable Object> extends BigDe
         }
 
         @Override
-        public BigDecimal calculate() {
+        public BigDecimal calculate(final MathContext mathContext) {
             return sum;
         }
     }

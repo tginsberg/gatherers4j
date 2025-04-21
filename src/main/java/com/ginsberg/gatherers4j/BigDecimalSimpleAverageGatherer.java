@@ -45,7 +45,7 @@ public final class BigDecimalSimpleAverageGatherer<INPUT extends @Nullable Objec
         }
 
         @Override
-        public BigDecimal calculate() {
+        public BigDecimal calculate(final MathContext mathContext) {
             return average;
         }
     }

@@ -43,7 +43,7 @@ abstract public class BigDecimalGatherer<INPUT extends @Nullable Object>
             if (mappedElement != null) {
                 state.add(mappedElement, mathContext);
                 if (state.canCalculate()) {
-                    return downstream.push(state.calculate());
+                    return downstream.push(state.calculate(mathContext));
                 }
             }
             return !downstream.isRejecting();
@@ -92,7 +92,7 @@ abstract public class BigDecimalGatherer<INPUT extends @Nullable Object>
             return true;
         }
 
-        BigDecimal calculate();
+        BigDecimal calculate(MathContext mathContext);
     }
 
 }

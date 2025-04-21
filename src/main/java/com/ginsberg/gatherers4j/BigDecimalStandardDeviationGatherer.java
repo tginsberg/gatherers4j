@@ -75,7 +75,7 @@ public final class BigDecimalStandardDeviationGatherer<INPUT extends @Nullable O
         }
 
         @Override
-        public BigDecimal calculate() {
+        public BigDecimal calculate(final MathContext mathContext) {
             return stdDev;
         }
     }

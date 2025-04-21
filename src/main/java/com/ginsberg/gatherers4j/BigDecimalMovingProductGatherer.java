@@ -87,7 +87,7 @@ public class BigDecimalMovingProductGatherer<INPUT extends @Nullable Object>
         }
 
         @Override
-        public BigDecimal calculate() {
+        public BigDecimal calculate(final MathContext mathContext) {
             return product;
         }
     }

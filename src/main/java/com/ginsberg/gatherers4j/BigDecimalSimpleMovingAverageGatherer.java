@@ -87,7 +87,7 @@ public final class BigDecimalSimpleMovingAverageGatherer<INPUT extends @Nullable
         }
 
         @Override
-        public BigDecimal calculate() {
+        public BigDecimal calculate(final MathContext mathContext) {
             return average;
         }
     }
