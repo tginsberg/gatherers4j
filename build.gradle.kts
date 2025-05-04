@@ -92,10 +92,19 @@ publishing {
             }
         }
     }
+    repositories {
+        maven {
+            url = uri(layout.buildDirectory.dir("staging-deploy").get().asFile)
+        }
+    }
 }
 
 signing {
-    useInMemoryPgpKeys(System.getenv("SONATYPE_SIGNING_KEY"), System.getenv("SONATYPE_SIGNING_PASSPHRASE"))
+    useInMemoryPgpKeys(
+        file("../g4jkey.asc").readText(),
+        //System.getenv("SONATYPE_SIGNING_KEY"),
+        System.getenv("SONATYPE_SIGNING_PASSPHRASE")
+    )
     sign(publishing.publications["gatherers4j"])
 }
 
@@ -148,6 +157,48 @@ tasks {
         useJUnitPlatform()
     }
 
+}
+jreleaser {
+    project {
+        name.set("gatherers4j")
+        authors.add("Todd Ginsberg")
+        license.set("Apache-2.0")
+
+        links {
+            homepage.set("https://github.com/tginsberg/gatherers4j")
+        }
+    }
+
+    signing {
+        active.set(org.jreleaser.model.Active.NEVER)
+        armored.set(true)
+    }
+
+    deploy {
+        maven {
+            mavenCentral {
+                create("release-deploy") {
+                    active.set(org.jreleaser.model.Active.RELEASE)
+                    url = "https://central.sonatype.com/api/v1/publisher"
+                    stagingRepository("build/staging-deploy")
+                }
+            }
+            nexus2 {
+                create("snapshot-deploy") {
+                    active.set(org.jreleaser.model.Active.SNAPSHOT)
+                    snapshotUrl = "https://central.sonatype.com/repository/maven-snapshots"
+                    url = "https://central.sonatype.com/repository/maven-snapshots"
+                    sign = false
+                    applyMavenCentralRules = true
+                    snapshotSupported = true
+                    closeRepository = false
+                    releaseRepository = false
+                    stagingRepository("build/staging-deploy")
+                }
+            }
+        }
+
+    }
 }
 
 fun gitBranch(): String =
