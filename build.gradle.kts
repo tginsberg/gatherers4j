@@ -1,12 +1,12 @@
 import net.ltgt.gradle.errorprone.CheckSeverity
 import net.ltgt.gradle.errorprone.errorprone
 import java.io.IOException
-import java.net.URI
 
 plugins {
     id("com.adarshr.test-logger") version "4.0.0"
     id("jacoco")
     id("java-library")
+    id("org.jreleaser") version "1.18.0"
     id("maven-publish")
     id("net.ltgt.errorprone") version "4.1.0"
     id("signing")
@@ -89,18 +89,6 @@ publishing {
                     developerConnection = "scm:git:https://github.com/tginsberg/gatherers4j.git"
                     url = "https://github.com/tginsberg/gatherers4j"
                 }
-            }
-        }
-    }
-    repositories {
-        maven {
-            url = if (version.toString()
-                    .endsWith("-SNAPSHOT")
-            ) URI("https://oss.sonatype.org/content/repositories/snapshots/")
-            else URI("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
-            credentials {
-                username = System.getenv("SONATYPE_USERNAME")
-                password = System.getenv("SONATYPE_TOKEN")
             }
         }
     }
