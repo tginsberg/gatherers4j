@@ -33,9 +33,11 @@ jobs:
           cache: 'gradle'
 
       - name: Publish
-        run: ./gradlew clean check publishToMavenLocal jreleaserDeploy --no-daemon
+        run: ./gradlew clean build check publish jreleaserDeploy --no-daemon
         env:
-          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
+          JRELEASER_DEPLOY_MAVEN_MAVENCENTRAL_RELEASE_DEPLOY_TOKEN: ${{ secrets.OSSRH_TOKEN }}
+          JRELEASER_DEPLOY_MAVEN_MAVENCENTRAL_RELEASE_DEPLOY_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          JRELEASER_DEPLOY_MAVEN_NEXUS2_SNAPSHOT_DEPLOY_TOKEN: ${{ secrets.OSSRH_TOKEN }}
+          JRELEASER_DEPLOY_MAVEN_NEXUS2_SNAPSHOT_DEPLOY_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           SONATYPE_SIGNING_KEY: ${{ secrets.SONATYPE_SIGNING_KEY }}
           SONATYPE_SIGNING_PASSPHRASE: ${{ secrets.SONATYPE_SIGNING_PASSPHRASE }}
