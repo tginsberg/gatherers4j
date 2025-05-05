@@ -16,20 +16,10 @@ jobs:
 
       - uses: gradle/actions/wrapper-validation@v4
 
-        # Used by gradle toolchain to actually build
       - name: Set up JDK 24
         uses: actions/setup-java@v4
         with:
           java-version: '24'
-          distribution: 'temurin'
-          cache: 'gradle'
-
-        # Because gradle 8.13 only supports Java 23, run the build with 21 and
-        # use the 24 version as a toolchain
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
           distribution: 'temurin'
           cache: 'gradle'
 
