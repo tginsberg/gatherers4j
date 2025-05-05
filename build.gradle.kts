@@ -77,6 +77,8 @@ jreleaser {
                     active.set(org.jreleaser.model.Active.RELEASE)
                     url = "https://central.sonatype.com/api/v1/publisher"
                     stagingRepository("build/staging-deploy")
+                    sign = false
+                    applyMavenCentralRules = true
                 }
             }
             nexus2 {
