@@ -11,7 +11,7 @@ description: Perform a mapping operation given the element being mapped and its 
 
 **Signature**
 
-`mapIndexed(BiFunction<Long, INPUT, OUTPUT> mappingFunction)`
+`mapIndexed(BiFunction<Integer, INPUT, OUTPUT> mappingFunction)`
 
 * `mappingFunction` - A non-null function to convert input elements and their indexes to output elements.
 

@@ -211,15 +211,61 @@ public abstract class Gatherers4j {
         return new SizeGatherer<>(size, length);
     }
 
+    /// Create a Stream that represents the exponential moving average of a `Stream<BigDecimal>`, with the given `alpha`.
+    ///
+    /// @param alpha The alpha value to use in the EMA calculation.
+    /// @return A non-null `BigDecimalExponentialMovingAverageGatherer`
+    public static BigDecimalExponentialMovingAverageGatherer<@Nullable BigDecimal> exponentialMovingAverageWithAlpha(final double alpha) {
+        return BigDecimalExponentialMovingAverageGatherer.withAlpha(alpha, Function.identity());
+    }
+
+    /// Create a Stream that represents the exponential moving average of a `BigDecimal` objects mapped from a `Stream<T>`
+    /// via a `mappingFunction` and using the given `alpha`.
+    ///
+    /// @param alpha The alpha value to use in the EMA calculation.
+    /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
+    ///                        in the exponential average calculation
+    /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
+    /// @return A non-null `BigDecimalExponentialMovingAverageGatherer`
+    public static <INPUT extends @Nullable Object> BigDecimalExponentialMovingAverageGatherer<INPUT> exponentialMovingAverageWithAlphaBy(
+            final double alpha,
+            final Function<INPUT, BigDecimal> mappingFunction
+    ) {
+        return BigDecimalExponentialMovingAverageGatherer.withAlpha(alpha, mappingFunction);
+    }
+
+    /// Create a Stream that represents the exponential moving average of a `Stream<BigDecimal>`, over the given number of `periods`.
+    ///
+    /// @param periods The number of periods to use in the EMA calculation.
+    /// @return A non-null `BigDecimalExponentialMovingAverageGatherer`
+    public static BigDecimalExponentialMovingAverageGatherer<@Nullable BigDecimal> exponentialMovingAverageWithPeriod(final int periods) {
+        return BigDecimalExponentialMovingAverageGatherer.withPeriod(periods, Function.identity());
+    }
+
+    /// Create a Stream that represents the exponential moving average of a `BigDecimal` objects mapped from a `Stream<T>`
+    /// via a `mappingFunction` over the given number of `periods`.
+    ///
+    /// @param periods The number of periods to use in the EMA calculation.
+    /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
+    ///                        in the exponential average calculation
+    /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
+    /// @return A non-null `BigDecimalExponentialMovingAverageGatherer`
+    public static <INPUT extends @Nullable Object> BigDecimalExponentialMovingAverageGatherer<INPUT> exponentialMovingAverageWithPeriodBy(
+            final int periods,
+            final Function<INPUT, BigDecimal> mappingFunction
+    ) {
+        return BigDecimalExponentialMovingAverageGatherer.withPeriod(periods, mappingFunction);
+    }
+
     /// Filter a stream according to the given `predicate`, which takes both the item being examined,
     /// and its index.
     ///
-    /// @param predicate A non-null `BiPredicate<Long,INPUT>` where the `Long` is the zero-based index of the element
+    /// @param predicate A non-null `BiPredicate<Integer,INPUT>` where the `Integer` is the zero-based index of the element
     ///                  being filtered, and the `INPUT` is the element itself.
     /// @param <INPUT>   Type of elements in the input stream
     /// @return A non-null `Gatherer`
     public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> filterIndexed(
-            final BiPredicate<Long, INPUT> predicate
+            final BiPredicate<Integer, INPUT> predicate
     ) {
         return SimpleIndexingGatherers.filterIndexed(predicate);
     }
@@ -368,7 +414,7 @@ public abstract class Gatherers4j {
     /// @param mappingFunction A non-null function to map input to output, given an input and its index
     /// @return A non-null Gatherer
     public static <INPUT extends @Nullable Object, OUTPUT extends @Nullable Object> Gatherer<INPUT, ?, OUTPUT> mapIndexed(
-            final BiFunction<Long, INPUT, OUTPUT> mappingFunction)
+            final BiFunction<Integer, INPUT, OUTPUT> mappingFunction)
     {
         return SimpleIndexingGatherers.mapIndexed(mappingFunction);
     }
@@ -439,7 +485,7 @@ public abstract class Gatherers4j {
     /// @param peekingConsumer A non-null consumer to peek at each element and its index
     /// @return A non-null Gatherer
     public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> peekIndexed(
-            final BiConsumer<Long, INPUT> peekingConsumer)
+            final BiConsumer<Integer, INPUT> peekingConsumer)
     {
         return SimpleIndexingGatherers.peekIndexed(peekingConsumer);
     }

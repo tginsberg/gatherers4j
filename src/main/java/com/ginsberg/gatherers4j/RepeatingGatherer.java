@@ -37,8 +37,8 @@ public class RepeatingGatherer<INPUT extends @Nullable Object>
     }
 
     public static <INPUT> RepeatingGatherer<INPUT> ofFinite(final int repeats) {
-        if (repeats <= 1) {
-            throw new IllegalArgumentException("Number of repeats must be greater than 1");
+        if (repeats < 0) {
+            throw new IllegalArgumentException("Number of repeats must not be negative");
         }
         return new RepeatingGatherer<>(repeats);
     }
@@ -56,7 +56,7 @@ public class RepeatingGatherer<INPUT extends @Nullable Object>
     public Integrator<RepeatingGatherer.State<INPUT>, INPUT, INPUT> integrator() {
         return Integrator.ofGreedy((state, element, downstream) -> {
             state.theStream.add(element);
-            return !downstream.isRejecting();
+            return repeats != 0 && !downstream.isRejecting();
         });
     }
 

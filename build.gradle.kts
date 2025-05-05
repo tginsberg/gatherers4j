@@ -1,12 +1,12 @@
 import net.ltgt.gradle.errorprone.CheckSeverity
 import net.ltgt.gradle.errorprone.errorprone
 import java.io.IOException
-import java.net.URI
 
 plugins {
     id("com.adarshr.test-logger") version "4.0.0"
     id("jacoco")
     id("java-library")
+    id("org.jreleaser") version "1.18.0"
     id("maven-publish")
     id("net.ltgt.errorprone") version "4.1.0"
     id("signing")
@@ -54,6 +54,49 @@ dependencies {
     errorprone("com.uber.nullaway:nullaway:0.12.3")
 }
 
+jreleaser {
+    project {
+        name.set("gatherers4j")
+        authors.add("Todd Ginsberg")
+        license.set("Apache-2.0")
+
+        links {
+            homepage.set("https://github.com/tginsberg/gatherers4j")
+        }
+    }
+
+    signing {
+        active.set(org.jreleaser.model.Active.NEVER)
+        armored.set(true)
+    }
+
+    deploy {
+        maven {
+            mavenCentral {
+                create("release-deploy") {
+                    active.set(org.jreleaser.model.Active.RELEASE)
+                    url = "https://central.sonatype.com/api/v1/publisher"
+                    stagingRepository("build/staging-deploy")
+                }
+            }
+            nexus2 {
+                create("snapshot-deploy") {
+                    active.set(org.jreleaser.model.Active.SNAPSHOT)
+                    snapshotUrl = "https://central.sonatype.com/repository/maven-snapshots"
+                    url = "https://central.sonatype.com/repository/maven-snapshots"
+                    sign = false
+                    applyMavenCentralRules = true
+                    snapshotSupported = true
+                    closeRepository = false
+                    releaseRepository = false
+                    stagingRepository("build/staging-deploy")
+                }
+            }
+        }
+
+    }
+}
+
 publishing {
     publications {
         create<MavenPublication>("gatherers4j") {
@@ -94,20 +137,17 @@ publishing {
     }
     repositories {
         maven {
-            url = if (version.toString()
-                    .endsWith("-SNAPSHOT")
-            ) URI("https://oss.sonatype.org/content/repositories/snapshots/")
-            else URI("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
-            credentials {
-                username = System.getenv("SONATYPE_USERNAME")
-                password = System.getenv("SONATYPE_TOKEN")
-            }
+            url = uri(layout.buildDirectory.dir("staging-deploy").get().asFile)
         }
     }
 }
 
 signing {
-    useInMemoryPgpKeys(System.getenv("SONATYPE_SIGNING_KEY"), System.getenv("SONATYPE_SIGNING_PASSPHRASE"))
+    useInMemoryPgpKeys(
+        // local: file("../g4jkey.asc").readText(),
+        System.getenv("SONATYPE_SIGNING_KEY"),
+        System.getenv("SONATYPE_SIGNING_PASSPHRASE")
+    )
     sign(publishing.publications["gatherers4j"])
 }
 

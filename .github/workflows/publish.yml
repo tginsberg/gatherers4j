@@ -13,27 +13,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-        # Used by gradle toolchain to actually build
+      - uses: gradle/actions/wrapper-validation@v4
+
       - name: Set up JDK 24
         uses: actions/setup-java@v4
         with:
           java-version: '24'
-          distribution: 'corretto'
-          cache: 'gradle'
-
-        # Because gradle 8.13 only supports Java 23, run the build with 23 and
-        # use the 24 version as a toolchain
-      - name: Set up JDK 23
-        uses: actions/setup-java@v4
-        with:
-          java-version: '23'
           distribution: 'temurin'
           cache: 'gradle'
 
       - name: Publish
-        run: ./gradlew build publish -x test --no-daemon
+        run: ./gradlew clean build check publish jreleaserDeploy --no-daemon
         env:
-          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-          SONATYPE_TOKEN: ${{ secrets.SONATYPE_TOKEN }}
+          JRELEASER_DEPLOY_MAVEN_MAVENCENTRAL_RELEASE_DEPLOY_TOKEN: ${{ secrets.OSSRH_TOKEN }}
+          JRELEASER_DEPLOY_MAVEN_MAVENCENTRAL_RELEASE_DEPLOY_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          JRELEASER_DEPLOY_MAVEN_NEXUS2_SNAPSHOT_DEPLOY_TOKEN: ${{ secrets.OSSRH_TOKEN }}
+          JRELEASER_DEPLOY_MAVEN_NEXUS2_SNAPSHOT_DEPLOY_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           SONATYPE_SIGNING_KEY: ${{ secrets.SONATYPE_SIGNING_KEY }}
           SONATYPE_SIGNING_PASSPHRASE: ${{ secrets.SONATYPE_SIGNING_PASSPHRASE }}

@@ -70,11 +70,13 @@ class RotateGathererTest {
                     Arguments.arguments(3, List.of("D", "E", "A", "B", "C")),
                     Arguments.arguments(4, List.of("E", "A", "B", "C", "D")),
                     Arguments.arguments(5, List.of("A", "B", "C", "D", "E")),
+                    Arguments.arguments(6, List.of("B", "C", "D", "E", "A")),
                     Arguments.arguments(-1, List.of("E", "A", "B", "C", "D")),
                     Arguments.arguments(-2, List.of("D", "E", "A", "B", "C")),
                     Arguments.arguments(-3, List.of("C", "D", "E", "A", "B")),
                     Arguments.arguments(-4, List.of("B", "C", "D", "E", "A")),
-                    Arguments.arguments(-5, List.of("A", "B", "C", "D", "E"))
+                    Arguments.arguments(-5, List.of("A", "B", "C", "D", "E")),
+                    Arguments.arguments(-6, List.of("E", "A", "B", "C", "D"))
             );
         }
 

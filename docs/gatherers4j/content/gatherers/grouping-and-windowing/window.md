@@ -45,3 +45,21 @@ Stream
 
 // [ ["A", "B"], ["D", "E"], ["G"] ]
 ```
+
+#### Window size 5, stepping 2, including partials
+
+This demonstrates the behavior of multiple partials.
+
+```java
+Stream
+     .of("A", "B", "C", "D", "E", "F", "G");
+     .gather(Gatherers4j.window(5, 2, true))
+     .toList();
+
+// [ 
+//   ["A", "B", "C", "D", "E"]
+//   ["C", "D", "E", "F", "G"]
+//   ["E", "F", "G"]
+//   ["G"]
+// ]
+```
