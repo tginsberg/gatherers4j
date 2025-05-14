@@ -5,6 +5,9 @@ weight: 90
 no_list: true
 ---
 
+## v0.12.0
+[Released 2025-??-??](https://github.com/tginsberg/gatherers4j/releases/tag/v0.12.0)
+
 ## v0.11.0
 [Released 2025-05-05](https://github.com/tginsberg/gatherers4j/releases/tag/v0.11.0)
 + Fix and document behavior of `window()` when there are multiple partial groupings at the end. Addresses [#135](https://github.com/tginsberg/gatherers4j/issues/135), thanks [@paulk-asert](https://github.com/paulk-asert)!
