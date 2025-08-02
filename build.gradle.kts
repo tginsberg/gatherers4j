@@ -6,9 +6,9 @@ plugins {
     id("com.adarshr.test-logger") version "4.0.0"
     id("jacoco")
     id("java-library")
-    id("org.jreleaser") version "1.18.0"
+    id("org.jreleaser") version "1.19.0"
     id("maven-publish")
-    id("net.ltgt.errorprone") version "4.2.0"
+    id("net.ltgt.errorprone") version "4.3.0"
     id("signing")
 }
 
@@ -43,14 +43,14 @@ dependencies {
     testImplementation("org.apache.commons:commons-statistics-inference:1.1") {
         because("We use this to measure if random sampling methods actually work")
     }
-    testImplementation("org.junit.jupiter:junit-jupiter:5.13.1") {
+    testImplementation("org.junit.jupiter:junit-jupiter:5.13.4") {
         because("We need this to run tests")
     }
     testImplementation("org.assertj:assertj-core:3.27.3") {
         because("These assertions are clearer than JUnit+Hamcrest")
     }
 
-    errorprone("com.google.errorprone:error_prone_core:2.38.0")
+    errorprone("com.google.errorprone:error_prone_core:2.41.0")
     errorprone("com.uber.nullaway:nullaway:0.12.7")
 }
 
