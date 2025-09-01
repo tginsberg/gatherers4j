@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.BiConsumer;
+import java.util.function.BinaryOperator;
 import java.util.function.Supplier;
 import java.util.stream.Gatherer;
 
@@ -55,11 +56,33 @@ public class UniquelyOccurringGatherer<INPUT extends @Nullable Object>
     }
 
     @Override
+    public BinaryOperator<State<INPUT>> combiner() {
+        return (left, right) -> {
+            for (INPUT element : right.duplicates) {
+                left.duplicates.add(element);
+                left.found.remove(element);
+            }
+
+            for (INPUT element : right.found) {
+                if (!left.duplicates.contains(element)) {
+                    if (left.found.contains(element)) {
+                        left.found.remove(element);
+                        left.duplicates.add(element);
+                    } else {
+                        left.found.add(element);
+                    }
+                }
+            }
+            return left;
+        };
+    }
+
+    @Override
     public BiConsumer<State<INPUT>, Downstream<? super INPUT>> finisher() {
         return (inputState, downstream) -> pushAll(inputState.found, downstream);
     }
 
-    public static class State<INPUT> {
+    public static class State<INPUT extends @Nullable Object> {
         final Set<INPUT> duplicates = new HashSet<>();
         final Set<INPUT> found = new LinkedHashSet<>();
     }
