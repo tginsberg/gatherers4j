@@ -23,7 +23,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 
 class GathererUtilsTest {
@@ -72,35 +74,4 @@ class GathererUtilsTest {
             assertThatNoException().isThrownBy(() -> mustNotBeNull("NonNull", "123"));
         }
     }
-
-    @SuppressWarnings("ConstantValue")
-    @Nested
-    class SafeEquals {
-
-        @Test
-        void withTwoNulls() {
-            assertThat(GathererUtils.safeEquals(null, null)).isTrue();
-        }
-
-        @Test
-        void withTwoNonNullsThatAreEqual() {
-            assertThat(GathererUtils.safeEquals("A", "A")).isTrue();
-        }
-
-        @Test
-        void withTwoNonNullsThatAreNotEqual() {
-            assertThat(GathererUtils.safeEquals("A", "B")).isFalse();
-        }
-
-        @Test
-        void withLeftNullRightNotNull() {
-            assertThat(GathererUtils.safeEquals(null, "A")).isFalse();
-        }
-
-        @Test
-        void withLeftNotNullRightNull() {
-            assertThat(GathererUtils.safeEquals("A", null)).isFalse();
-        }
-    }
-
 }

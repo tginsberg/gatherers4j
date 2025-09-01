@@ -18,6 +18,7 @@ package com.ginsberg.gatherers4j;
 
 import com.ginsberg.gatherers4j.dto.WithCount;
 import com.ginsberg.gatherers4j.enums.Frequency;
+import com.ginsberg.gatherers4j.test.ParallelAndSequentialTest;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -28,11 +29,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class FrequencyGathererTest {
 
-    @Test
-    void ascending() {
-        // Arrange
-        final Stream<String> input = Stream.of("A", "A", "A", "B", "B", "B", "B", "C", "C");
-
+    @ParallelAndSequentialTest(values = {"A", "A", "A", "B", "B", "B", "B", "C", "C"})
+    void ascending(final Stream<String> input) {
         // Act
         final List<WithCount<String>> output = input.gather(Gatherers4j.orderByFrequency(Frequency.Ascending)).toList();
 
@@ -45,47 +43,12 @@ class FrequencyGathererTest {
                 );
     }
 
-    @Test
-    void ascendingParallel() {
-        // Arrange
-        final Stream<String> input = Stream.of("A", "A", "A", "B", "B", "B", "B", "C", "C");
 
-        // Act
-        final List<WithCount<String>> output = input.parallel().gather(Gatherers4j.orderByFrequency(Frequency.Ascending)).toList();
-
-        // Assert
-        assertThat(output)
-                .containsExactly(
-                        new WithCount<>("C", 2),
-                        new WithCount<>("A", 3),
-                        new WithCount<>("B", 4)
-                );
-    }
-
-    @Test
-    void descending() {
-        // Arrange
-        final Stream<String> input = Stream.of("A", "A", "A", "B", "B", "B", "B", "C", "C");
+    @ParallelAndSequentialTest(values = {"A", "A", "A", "B", "B", "B", "B", "C", "C"})
+    void descending(final Stream<String> input) {
 
         // Act
         final List<WithCount<String>> output = input.gather(Gatherers4j.orderByFrequency(Frequency.Descending)).toList();
-
-        // Assert
-        assertThat(output)
-                .containsExactly(
-                        new WithCount<>("B", 4),
-                        new WithCount<>("A", 3),
-                        new WithCount<>("C", 2)
-                );
-    }
-
-    @Test
-    void descendingParallel() {
-        // Arrange
-        final Stream<String> input = Stream.of("A", "A", "A", "B", "B", "B", "B", "C", "C");
-
-        // Act
-        final List<WithCount<String>> output = input.parallel().gather(Gatherers4j.orderByFrequency(Frequency.Descending)).toList();
 
         // Assert
         assertThat(output)
