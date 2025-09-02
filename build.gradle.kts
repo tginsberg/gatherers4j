@@ -6,7 +6,7 @@ plugins {
     id("com.adarshr.test-logger") version "4.0.0"
     id("jacoco")
     id("java-library")
-    id("org.jreleaser") version "1.19.0"
+    id("org.jreleaser") version "1.20.0"
     id("maven-publish")
     id("net.ltgt.errorprone") version "4.3.0"
     id("signing")
@@ -36,7 +36,8 @@ dependencies {
     api("org.jspecify:jspecify:1.0.0") {
         because("Annotating with JSpecify makes static analysis more accurate")
     }
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher") {
+
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.13.4") {
         because("Starting in Gradle 9.0, this needs to be an explicitly declared dependency")
     }
 
@@ -46,12 +47,16 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.13.4") {
         because("We need this to run tests")
     }
-    testImplementation("org.assertj:assertj-core:3.27.3") {
+    testImplementation("org.assertj:assertj-core:3.27.4") {
         because("These assertions are clearer than JUnit+Hamcrest")
     }
 
-    errorprone("com.google.errorprone:error_prone_core:2.41.0")
-    errorprone("com.uber.nullaway:nullaway:0.12.7")
+    errorprone("com.google.errorprone:error_prone_core:2.41.0") {
+        because("This helps us eliminate bugs during the development cycle")
+    }
+    errorprone("com.uber.nullaway:nullaway:0.12.9") {
+        because("It helps us find nullability issues, along with JSpecify")
+    }
 }
 
 jreleaser {
