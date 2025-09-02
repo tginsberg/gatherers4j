@@ -21,6 +21,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Gatherer;
+import java.util.stream.Stream;
 
 import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -72,6 +74,69 @@ class GathererUtilsTest {
         @Test
         void whenNotNull() {
             assertThatNoException().isThrownBy(() -> mustNotBeNull("NonNull", "123"));
+        }
+    }
+
+    @Nested
+    class PushAllShortCircuiting {
+
+        private static final class CountingDownstream<INPUT> implements Gatherer.Downstream<INPUT> {
+            final int maxAccept;
+            int pushes = 0;
+
+            CountingDownstream(final int maxAccept) {
+                this.maxAccept = maxAccept;
+            }
+
+            @Override
+            public boolean push(final INPUT item) {
+                pushes++;
+                return !isRejecting();
+            }
+
+            @Override
+            public boolean isRejecting() {
+                return pushes >= maxAccept;
+            }
+        }
+
+        @Test
+        void pushAllCollectionStopsWhenDownstreamRejects() {
+            // Arrange
+            final List<String> elements = List.of("A", "B", "C", "D");
+            final CountingDownstream<String> downstream = new CountingDownstream<>(2);
+
+            // Act
+            GathererUtils.pushAll(elements, downstream);
+
+            // Assert
+            assertThat(downstream.pushes).isEqualTo(2);
+        }
+
+        @Test
+        void pushAllIteratorStopsWhenDownstreamRejects() {
+            // Arrange
+            final List<String> elements = List.of("A", "B", "C", "D");
+            final CountingDownstream<String> downstream = new CountingDownstream<>(2);
+
+            // Act
+            GathererUtils.pushAll(elements.iterator(), downstream);
+
+            // Assert
+            assertThat(downstream.pushes).isEqualTo(2);
+        }
+
+        @Test
+        void pushAllStreamStopsWhenDownstreamRejects() {
+            // Arrange
+            final Stream<String> elements = Stream.of("A", "B", "C", "D");
+            final CountingDownstream<String> downstream = new CountingDownstream<>(2);
+
+            // Act
+            GathererUtils.pushAll(elements, downstream);
+
+            // Assert
+            assertThat(downstream.pushes).isEqualTo(2);
         }
     }
 }

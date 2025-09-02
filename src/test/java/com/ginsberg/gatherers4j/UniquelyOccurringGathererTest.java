@@ -16,20 +16,40 @@
 
 package com.ginsberg.gatherers4j;
 
-import org.junit.jupiter.api.Test;
+import com.ginsberg.gatherers4j.test.ParallelAndSequentialTest;
 
 import java.util.List;
 import java.util.stream.Stream;
 
+import static com.ginsberg.gatherers4j.test.ParallelAndSequentialTest.NULL;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class UniquelyOccurringGathererTest {
 
-    @Test
-    void allowsUniqueNull() {
-        // Arrange
-        final Stream<String> input = Stream.of(null, "B", "B");
+    @ParallelAndSequentialTest(values = {NULL, NULL})
+    void allNullsNonUnique(final Stream<String> input) {
+        // Act
+        final List<String> output = input
+                .gather(Gatherers4j.uniquelyOccurring())
+                .toList();
 
+        // Assert
+        assertThat(output).isEmpty();
+    }
+
+    @ParallelAndSequentialTest(values = {"A", NULL, "B", "C"})
+    void allUniqueAreEmittedInOrder(final Stream<String> input) {
+        // Act
+        final List<String> output = input
+                .gather(Gatherers4j.uniquelyOccurring())
+                .toList();
+
+        // Assert
+        assertThat(output).containsExactly("A", null, "B", "C");
+    }
+
+    @ParallelAndSequentialTest(values = {NULL, "B", "B", "C", "C", "D", "D"})
+    void allowsUniqueNull(final Stream<String> input) {
         //Act
         final List<String> output = input.gather(Gatherers4j.uniquelyOccurring()).toList();
 
@@ -37,11 +57,19 @@ class UniquelyOccurringGathererTest {
         assertThat(output).hasSize(1).containsNull();
     }
 
-    @Test
-    void emitsEmptyOnNoUniqueItems() {
-        // Arrange
-        final Stream<String> input = Stream.of("A", "A");
+    @ParallelAndSequentialTest
+    void emitsEmptyOnEmptyStream(final Stream<String> input) {
+        // Act
+        final List<String> output = input
+                .gather(Gatherers4j.uniquelyOccurring())
+                .toList();
 
+        // Assert
+        assertThat(output).isEmpty();
+    }
+
+    @ParallelAndSequentialTest(values = {"A", "A", "B", "B", "C", "C", "D", "D"})
+    void emitsEmptyOnNoUniqueItems(final Stream<String> input) {
         //Act
         final List<String> output = input.gather(Gatherers4j.uniquelyOccurring()).toList();
 
@@ -49,11 +77,8 @@ class UniquelyOccurringGathererTest {
         assertThat(output).isEmpty();
     }
 
-    @Test
-    void emitsInEncounterOrder() {
-        // Arrange
-        final Stream<String> input = Stream.of("A", "B", "C", "D", "B", "C");
-
+    @ParallelAndSequentialTest(values = {"A", "B", "C", "D", "B", "C"})
+    void emitsInEncounterOrder(final Stream<String> input) {
         //Act
         final List<String> output = input.gather(Gatherers4j.uniquelyOccurring()).toList();
 
@@ -61,11 +86,8 @@ class UniquelyOccurringGathererTest {
         assertThat(output).containsExactly("A", "D");
     }
 
-    @Test
-    void filtersOutNonUnique() {
-        // Arrange
-        final Stream<String> input = Stream.of("A", "B", "A", "A");
-
+    @ParallelAndSequentialTest(values = {"A", "B", "A", "A"})
+    void filtersOutNonUnique(final Stream<String> input) {
         //Act
         final List<String> output = input.gather(Gatherers4j.uniquelyOccurring()).toList();
 
@@ -73,16 +95,57 @@ class UniquelyOccurringGathererTest {
         assertThat(output).containsExactly("B");
     }
 
-    @Test
-    void filtersOutNonUniqueNull() {
-        // Arrange
-        final Stream<String> input = Stream.of(null, "B", null, null);
-
+    @ParallelAndSequentialTest(values = {NULL, "B", NULL, NULL})
+    void filtersOutNonUniqueNull(final Stream<String> input) {
         //Act
         final List<String> output = input.gather(Gatherers4j.uniquelyOccurring()).toList();
 
         // Assert
         assertThat(output).containsExactly("B");
+    }
+
+    @ParallelAndSequentialTest(values = {NULL, "A", "B", "B", "C", NULL, "D", "E", "E"})
+    void mixtureWithSeveralUniquesIncludingNull(final Stream<String> input) {
+        // Act
+        final List<String> output = input
+                .gather(Gatherers4j.uniquelyOccurring())
+                .toList();
+
+        // Assert
+        assertThat(output).containsExactly("A", "C", "D");
+    }
+
+    @ParallelAndSequentialTest(values = "A")
+    void singleElementIsUnique(final Stream<String> input) {
+        // Act
+        final List<String> output = input
+                .gather(Gatherers4j.uniquelyOccurring())
+                .toList();
+
+        // Assert
+        assertThat(output).containsExactly("A");
+    }
+
+    @ParallelAndSequentialTest(values = NULL)
+    void singleNullIsUnique(final Stream<String> input) {
+        // Act
+        final List<String> output = input
+                .gather(Gatherers4j.uniquelyOccurring())
+                .toList();
+
+        // Assert
+        assertThat(output).hasSize(1).containsNull();
+    }
+
+    @ParallelAndSequentialTest(values = {"A", "B", "C", "A"})
+    void uniqueThatBecomesDuplicateIsRemoved(final Stream<String> input) {
+        // Act
+        final List<String> output = input
+                .gather(Gatherers4j.uniquelyOccurring())
+                .toList();
+
+        // Assert
+        assertThat(output).containsExactly("B", "C");
     }
 
 }
