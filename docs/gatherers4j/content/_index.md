@@ -27,7 +27,7 @@ cascade:
 
 ## Why Are We Here?
 
-Since Streams were fist introduced in Java 8, there has been a way for us to write our own terminal operations 
+Since Streams were first introduced in Java 8, there has been a way for us to write our own terminal operations 
 with Collectors. However, there has not been a convenient way to write our own intermediate operations. Also, there
 are a lot of intermediate operations that seem like they would be good additions ot the JDK, but
 adding all of them to the Stream API would make it more difficult to learn and maintain.
