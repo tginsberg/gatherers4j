@@ -39,7 +39,7 @@ public class StreamSourceArgumentProvider
     public void accept(final ParallelAndSequentialTest streamSource) {
         this.array = Arrays
                 .stream(streamSource.values())
-                .map(it -> Objects.equals(it, NULL) ? null : streamSource.type().mapper.apply(it))
+                .map(it -> Objects.equals(it, NULL) ? null : streamSource.type().applyMapper(it))
                 .toArray();
     }
 

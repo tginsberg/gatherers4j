@@ -16,15 +16,18 @@
 
 package com.ginsberg.gatherers4j.test;
 
-import java.util.function.Function;
+import java.math.BigDecimal;
 
 public enum StreamElementType {
-    BigDecimal(java.math.BigDecimal::new),
-    String(it -> it);
+    BigDecimal {
+        @Override
+        public Object applyMapper(final String input) {
+            return new BigDecimal(input);
+        }
+    },
+    String;
 
-    final Function<String, Object> mapper;
-
-    StreamElementType(final Function<String, Object> mapper) {
-        this.mapper = mapper;
+    public Object applyMapper(final String input) {
+        return input;
     }
 }

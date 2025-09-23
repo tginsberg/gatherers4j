@@ -22,7 +22,7 @@ else "${gitBranch.substringAfterLast("/")}-SNAPSHOT"
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(24)
+        languageVersion = JavaLanguageVersion.of(25)
     }
     withJavadocJar()
     withSourcesJar()
@@ -41,20 +41,20 @@ dependencies {
         because("Starting in Gradle 9.0, this needs to be an explicitly declared dependency")
     }
 
-    testImplementation("org.apache.commons:commons-statistics-inference:1.1") {
+    testImplementation("org.apache.commons:commons-statistics-inference:1.2") {
         because("We use this to measure if random sampling methods actually work")
     }
     testImplementation("org.junit.jupiter:junit-jupiter:5.13.4") {
         because("We need this to run tests")
     }
-    testImplementation("org.assertj:assertj-core:3.27.4") {
+    testImplementation("org.assertj:assertj-core:3.27.5") {
         because("These assertions are clearer than JUnit+Hamcrest")
     }
 
-    errorprone("com.google.errorprone:error_prone_core:2.41.0") {
+    errorprone("com.google.errorprone:error_prone_core:2.42.0") {
         because("This helps us eliminate bugs during the development cycle")
     }
-    errorprone("com.uber.nullaway:nullaway:0.12.9") {
+    errorprone("com.uber.nullaway:nullaway:0.12.10") {
         because("It helps us find nullability issues, along with JSpecify")
     }
 }
