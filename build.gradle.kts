@@ -8,6 +8,7 @@ plugins {
     id("java-library")
     id("org.jreleaser") version "1.20.0"
     id("maven-publish")
+    id("me.champeau.jmh") version "0.7.3"
     id("net.ltgt.errorprone") version "4.3.0"
     id("signing")
 }
