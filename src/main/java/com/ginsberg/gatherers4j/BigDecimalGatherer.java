@@ -32,8 +32,7 @@ abstract public class BigDecimalGatherer<INPUT extends @Nullable Object>
     private @Nullable BigDecimal nullReplacement;
 
     BigDecimalGatherer(final Function<INPUT, @Nullable BigDecimal> mappingFunction) {
-        mustNotBeNull(mappingFunction, "Mapping function must not be null");
-        this.mappingFunction = mappingFunction;
+        this.mappingFunction = mustNotBeNull(mappingFunction, "Mapping function must not be null");
     }
 
     @Override
@@ -75,8 +74,7 @@ abstract public class BigDecimalGatherer<INPUT extends @Nullable Object>
     ///
     /// @param mathContext A non-null `MathContext`
     public BigDecimalGatherer<INPUT> withMathContext(final MathContext mathContext) {
-        mustNotBeNull(mathContext, "MathContext must not be null");
-        this.mathContext = mathContext;
+        this.mathContext = mustNotBeNull(mathContext, "MathContext must not be null");
         return this;
     }
 

@@ -32,8 +32,7 @@ public class DistinctGatherer<INPUT extends @Nullable Object>
     private final Function<INPUT, Object> mappingFunction;
 
     DistinctGatherer(final Function<INPUT, @Nullable Object> mappingFunction) {
-        mustNotBeNull(mappingFunction, "Mapping function must not be null");
-        this.mappingFunction = mappingFunction;
+        this.mappingFunction = mustNotBeNull(mappingFunction, "Mapping function must not be null");
     }
 
     @Override
