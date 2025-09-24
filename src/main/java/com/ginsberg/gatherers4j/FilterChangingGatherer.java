@@ -48,10 +48,8 @@ public class FilterChangingGatherer<INPUT>
             final Order operation,
             final Comparator<INPUT> comparator
     ) {
-        mustNotBeNull(operation, "Operation must not be null");
-        mustNotBeNull(comparator, "Comparator must not be null");
-        this.operation = operation;
-        this.comparator = comparator;
+        this.operation = mustNotBeNull(operation, "Operation must not be null");
+        this.comparator = mustNotBeNull(comparator, "Comparator must not be null");
     }
 
     @Override

@@ -30,10 +30,11 @@ abstract public class GathererUtils {
 
     public static final long NANOS_PER_MILLISECOND = Duration.ofMillis(1).toNanos();
 
-    public static void mustNotBeNull(@Nullable final Object subject, final String message) {
+    public static <T> T mustNotBeNull(@Nullable final T subject, final String message) {
         if (subject == null) {
             throw new IllegalArgumentException(message);
         }
+        return subject;
     }
 
     // Yes, I realize this is not to contract, but I only want it to measure equality in a narrow case

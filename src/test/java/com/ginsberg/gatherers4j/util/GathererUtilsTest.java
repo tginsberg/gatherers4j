@@ -75,6 +75,19 @@ class GathererUtilsTest {
         void whenNotNull() {
             assertThatNoException().isThrownBy(() -> mustNotBeNull("NonNull", "123"));
         }
+
+
+        @Test
+        void returnsValueWhenNotNull() {
+            // Arrange
+            final String input = "A";
+
+            // Act
+            final String output = mustNotBeNull(input, "Error");
+
+            // Assert
+            assertThat(input).isEqualTo(output);
+        }
     }
 
     @Nested

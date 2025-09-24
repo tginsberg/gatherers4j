@@ -37,8 +37,7 @@ public class FrequencyGatherer<INPUT extends @Nullable Object>
     private final Frequency order;
 
     FrequencyGatherer(final Frequency order) {
-        mustNotBeNull(order, "Order must be specified");
-        this.order = order;
+        this.order = mustNotBeNull(order, "Order must be specified");
     }
 
     @Override
