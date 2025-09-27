@@ -43,5 +43,5 @@ jobs:
         with:
           name: jmh-reports
           path: |
-            build/reports/jmh/**
+            build/results/jmh/**
           if-no-files-found: warn
