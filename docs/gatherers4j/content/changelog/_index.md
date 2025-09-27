@@ -6,8 +6,8 @@ no_list: true
 ---
 
 ## v0.12.0
-[Released 2025-??-??](https://github.com/tginsberg/gatherers4j/releases/tag/v0.12.0)
-+ Move target Java version to 25 (was 24) Addresses [#164](https://github.com/tginsberg/gatherers4j/issues/164)
+[Released 2025-09-27](https://github.com/tginsberg/gatherers4j/releases/tag/v0.12.0)
++ Move Java version to 25 (was 24) Addresses [#164](https://github.com/tginsberg/gatherers4j/issues/164)
 + Support Java Modularization. Addresses [#156](https://github.com/tginsberg/gatherers4j/issues/156), thanks [@Goldmensch](https://github.com/Goldmensch)! 
 + Support parallelization in UniquelyOccurringGatherer
 
