@@ -33,8 +33,7 @@ public class ShufflingGatherer<INPUT extends @Nullable Object> implements
     private final RandomGenerator randomGenerator;
 
     ShufflingGatherer(final RandomGenerator randomGenerator) {
-        mustNotBeNull(randomGenerator, "RandomGenerator must not be null");
-        this.randomGenerator = randomGenerator;
+        this.randomGenerator = mustNotBeNull(randomGenerator, "RandomGenerator must not be null");
     }
 
     @Override

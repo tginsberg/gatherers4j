@@ -1,6 +1,6 @@
 # Gatherers4j
 
-A library of useful [Stream Gatherers](https://openjdk.org/jeps/485) (custom intermediate operations) for Java 24+.
+A library of useful [Stream Gatherers](https://openjdk.org/jeps/485) (custom intermediate operations) for Java 25+.
 
 See [the full set of documentation](https://tginsberg.github.io/gatherers4j/) for information on how to use Gatherers4j.
 
@@ -18,7 +18,7 @@ Add the following dependency to `pom.xml`.
 <dependency>
     <groupId>com.ginsberg</groupId>
     <artifactId>gatherers4j</artifactId>
-    <version>0.11.0</version>
+    <version>0.12.0</version>
 </dependency>
 ```
 
@@ -27,7 +27,7 @@ Add the following dependency to `pom.xml`.
 Add the following dependency to `build.gradle` or `build.gradle.kts`
 
 ```groovy
-implementation("com.ginsberg:gatherers4j:0.11.0")
+implementation("com.ginsberg:gatherers4j:0.12.0")
 ```
 
 

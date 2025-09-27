@@ -54,15 +54,12 @@ public class LastGatherer<INPUT extends @Nullable Object>
     @Override
     public Integrator<State<INPUT>, INPUT, INPUT> integrator() {
         return Integrator.ofGreedy((state, element, downstream) -> {
-            if (state.elements.size() == lastCount) {
-                state.elements.removeFirst();
-            }
             state.elements.add(element);
             return !downstream.isRejecting();
         });
     }
 
-    public static class State<INPUT> {
+    public static class State<INPUT extends @Nullable Object> {
         final CircularBuffer<INPUT> elements;
         State(int capacity) {
             elements = new CircularBuffer<>(capacity);

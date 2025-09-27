@@ -41,7 +41,6 @@ public class ThrottlingGatherer<INPUT extends @Nullable Object>
     private Clock clock = Clock.systemUTC();
 
     ThrottlingGatherer(final LimitRule limitRule, final int allowed, final Duration duration) {
-        mustNotBeNull(limitRule, "LimitRule must not be null");
         mustNotBeNull(duration, "Duration must not be null");
         if (duration.toMillis() < 1) {
             throw new IllegalArgumentException("Minimum duration is 1ms");
@@ -49,14 +48,13 @@ public class ThrottlingGatherer<INPUT extends @Nullable Object>
         if (allowed <= 0) {
             throw new IllegalArgumentException("Allowed must be positive");
         }
-        this.limitRule = limitRule;
+        this.limitRule = mustNotBeNull(limitRule, "LimitRule must not be null");
         this.duration = duration;
         this.allowed = allowed;
     }
 
     public ThrottlingGatherer<INPUT> withClock(final Clock clock) {
-        mustNotBeNull(clock, "Clock must not be null");
-        this.clock = clock;
+        this.clock = mustNotBeNull(clock, "Clock must not be null");
         return this;
     }
 

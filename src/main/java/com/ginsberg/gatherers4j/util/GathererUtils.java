@@ -21,6 +21,7 @@ import java.time.Duration;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Gatherer;
 import java.util.stream.Stream;
@@ -29,33 +30,25 @@ abstract public class GathererUtils {
 
     public static final long NANOS_PER_MILLISECOND = Duration.ofMillis(1).toNanos();
 
-    public static void mustNotBeNull(@Nullable final Object subject, final String message) {
+    public static <T> T mustNotBeNull(@Nullable final T subject, final String message) {
         if (subject == null) {
             throw new IllegalArgumentException(message);
         }
-    }
-
-    public static boolean safeEquals(@Nullable final Object left, @Nullable final Object right) {
-        if (left == null && right == null) {
-            return true;
-        } else if (left == null || right == null) {
-            return false;
-        }
-        return left.equals(right);
+        return subject;
     }
 
     // Yes, I realize this is not to contract, but I only want it to measure equality in a narrow case
     // in which I only care about certain outputs.
     @SuppressWarnings("ComparatorMethodParameterNotUsed")
     public static <T> Comparator<T> equalityOnlyComparator() {
-        return (o1, o2) -> safeEquals(o1, o2) ? 0 : -1;
+        return (o1, o2) -> Objects.equals(o1, o2) ? 0 : -1;
     }
 
     // Yes, I realize this is not to contract, but I only want it to measure equality in a narrow case
     // in which I only care about certain outputs.
     @SuppressWarnings("ComparatorMethodParameterNotUsed")
     public static <T, R> Comparator<T> equalityOnlyComparator(final Function<T, R> mappingFunction) {
-        return (o1, o2) -> safeEquals(mappingFunction.apply(o1), mappingFunction.apply(o2)) ? 0 : -1;
+        return (o1, o2) -> Objects.equals(mappingFunction.apply(o1), mappingFunction.apply(o2)) ? 0 : -1;
     }
 
     // Push all elements in the collection to the downstream, taking care to listen for a stop signal.

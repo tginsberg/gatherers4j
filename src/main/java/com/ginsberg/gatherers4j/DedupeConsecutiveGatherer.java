@@ -17,11 +17,10 @@ package com.ginsberg.gatherers4j;
 
 import org.jspecify.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Gatherer;
-
-import static com.ginsberg.gatherers4j.util.GathererUtils.safeEquals;
 
 public class DedupeConsecutiveGatherer<INPUT extends @Nullable Object>
         implements Gatherer<INPUT, DedupeConsecutiveGatherer.State, INPUT> {
@@ -50,7 +49,7 @@ public class DedupeConsecutiveGatherer<INPUT extends @Nullable Object>
                 state.hasValue = true;
                 state.value = mapped;
                 return downstream.push(element);
-            } else if (!safeEquals(state.value, mapped)) {
+            } else if (!Objects.equals(state.value, mapped)) {
                 state.value = mapped;
                 return downstream.push(element);
             }

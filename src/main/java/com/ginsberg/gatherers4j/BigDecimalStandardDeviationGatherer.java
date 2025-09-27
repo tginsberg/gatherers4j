@@ -38,8 +38,7 @@ public final class BigDecimalStandardDeviationGatherer<INPUT extends @Nullable O
             final Mode mode,
             final Function<INPUT, @Nullable BigDecimal> mappingFunction) {
         super(mappingFunction);
-        mustNotBeNull(mode, "Mode must not be null");
-        this.mode = mode;
+        this.mode = mustNotBeNull(mode, "Mode must not be null");
     }
 
     @Override

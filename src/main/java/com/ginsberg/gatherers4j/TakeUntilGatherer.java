@@ -30,8 +30,7 @@ public class TakeUntilGatherer<INPUT extends @Nullable Object>
     private final Predicate<INPUT> predicate;
 
     TakeUntilGatherer(final Predicate<INPUT> predicate) {
-        mustNotBeNull(predicate, "Predicate must not be null");
-        this.predicate = predicate;
+        this.predicate = mustNotBeNull(predicate, "Predicate must not be null");
     }
 
     @Override

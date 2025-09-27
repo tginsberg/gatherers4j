@@ -6,9 +6,10 @@ plugins {
     id("com.adarshr.test-logger") version "4.0.0"
     id("jacoco")
     id("java-library")
-    id("org.jreleaser") version "1.18.0"
+    id("org.jreleaser") version "1.20.0"
     id("maven-publish")
-    id("net.ltgt.errorprone") version "4.1.0"
+    id("me.champeau.jmh") version "0.7.3"
+    id("net.ltgt.errorprone") version "4.3.0"
     id("signing")
 }
 
@@ -22,7 +23,7 @@ else "${gitBranch.substringAfterLast("/")}-SNAPSHOT"
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(24)
+        languageVersion = JavaLanguageVersion.of(25)
     }
     withJavadocJar()
     withSourcesJar()
@@ -36,22 +37,27 @@ dependencies {
     api("org.jspecify:jspecify:1.0.0") {
         because("Annotating with JSpecify makes static analysis more accurate")
     }
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher") {
+
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.13.4") {
         because("Starting in Gradle 9.0, this needs to be an explicitly declared dependency")
     }
 
-    testImplementation("org.apache.commons:commons-statistics-inference:1.1") {
+    testImplementation("org.apache.commons:commons-statistics-inference:1.2") {
         because("We use this to measure if random sampling methods actually work")
     }
-    testImplementation("org.junit.jupiter:junit-jupiter:5.12.0") {
+    testImplementation("org.junit.jupiter:junit-jupiter:5.13.4") {
         because("We need this to run tests")
     }
-    testImplementation("org.assertj:assertj-core:3.27.2") {
+    testImplementation("org.assertj:assertj-core:3.27.5") {
         because("These assertions are clearer than JUnit+Hamcrest")
     }
 
-    errorprone("com.google.errorprone:error_prone_core:2.36.0")
-    errorprone("com.uber.nullaway:nullaway:0.12.3")
+    errorprone("com.google.errorprone:error_prone_core:2.42.0") {
+        because("This helps us eliminate bugs during the development cycle")
+    }
+    errorprone("com.uber.nullaway:nullaway:0.12.10") {
+        because("It helps us find nullability issues, along with JSpecify")
+    }
 }
 
 jreleaser {
@@ -119,7 +125,7 @@ publishing {
                 licenses {
                     license {
                         name = "The Apache License, Version 2.0"
-                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                        url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
                     }
                 }
                 developers {
@@ -146,7 +152,6 @@ publishing {
 
 signing {
     useInMemoryPgpKeys(
-        // local: file("../g4jkey.asc").readText(),
         System.getenv("SONATYPE_SIGNING_KEY"),
         System.getenv("SONATYPE_SIGNING_PASSPHRASE")
     )

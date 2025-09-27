@@ -37,8 +37,7 @@ public class CrossGatherer {
     }
 
     public static <INPUT extends @Nullable Object, CROSS extends @Nullable Object> Gatherer<INPUT, ?, Pair<INPUT, CROSS>> of(final Iterable<CROSS> source) {
-        mustNotBeNull(source, "source list must not be null");
-        return create(source);
+        return create(mustNotBeNull(source, "source list must not be null"));
     }
 
     public static <INPUT extends @Nullable Object, CROSS extends @Nullable Object> Gatherer<INPUT, ?, Pair<INPUT, CROSS>> of(final Stream<CROSS> source) {

@@ -36,10 +36,8 @@ public class AccumulatingGatherer<INPUT extends @Nullable Object, OUTPUT extends
             final Supplier<OUTPUT> initialValue,
             final IndexedAccumulatorFunction<? super OUTPUT, ? super INPUT, ? extends OUTPUT> foldFunction
     ) {
-        mustNotBeNull(initialValue, "Initial value supplier must not be null");
-        mustNotBeNull(foldFunction, "Accumulator function must not be null");
-        this.accumulatorFunction = foldFunction;
-        this.initialValue = initialValue;
+        this.accumulatorFunction = mustNotBeNull(foldFunction, "Accumulator function must not be null");
+        this.initialValue = mustNotBeNull(initialValue, "Initial value supplier must not be null");
         this.running = running;
     }
 

@@ -56,8 +56,7 @@ public class SizeGatherer<INPUT extends @Nullable Object>
     ///
     /// @param orElse - A non-null `Supplier`, the results of which will be used instead of the input stream.
     public SizeGatherer<INPUT> orElse(final Supplier<Stream<INPUT>> orElse) {
-        mustNotBeNull(orElse, "The orElse function must not be null");
-        this.orElse = orElse;
+        this.orElse = mustNotBeNull(orElse, "The orElse function must not be null");
         return this;
     }
 

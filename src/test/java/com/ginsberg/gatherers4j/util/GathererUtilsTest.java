@@ -21,9 +21,13 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Gatherer;
+import java.util.stream.Stream;
 
 import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 
 class GathererUtilsTest {
@@ -71,36 +75,81 @@ class GathererUtilsTest {
         void whenNotNull() {
             assertThatNoException().isThrownBy(() -> mustNotBeNull("NonNull", "123"));
         }
+
+
+        @Test
+        void returnsValueWhenNotNull() {
+            // Arrange
+            final String input = "A";
+
+            // Act
+            final String output = mustNotBeNull(input, "Error");
+
+            // Assert
+            assertThat(input).isEqualTo(output);
+        }
     }
 
-    @SuppressWarnings("ConstantValue")
     @Nested
-    class SafeEquals {
+    class PushAllShortCircuiting {
 
-        @Test
-        void withTwoNulls() {
-            assertThat(GathererUtils.safeEquals(null, null)).isTrue();
+        private static final class CountingDownstream<INPUT> implements Gatherer.Downstream<INPUT> {
+            final int maxAccept;
+            int pushes = 0;
+
+            CountingDownstream(final int maxAccept) {
+                this.maxAccept = maxAccept;
+            }
+
+            @Override
+            public boolean push(final INPUT item) {
+                pushes++;
+                return !isRejecting();
+            }
+
+            @Override
+            public boolean isRejecting() {
+                return pushes >= maxAccept;
+            }
         }
 
         @Test
-        void withTwoNonNullsThatAreEqual() {
-            assertThat(GathererUtils.safeEquals("A", "A")).isTrue();
+        void pushAllCollectionStopsWhenDownstreamRejects() {
+            // Arrange
+            final List<String> elements = List.of("A", "B", "C", "D");
+            final CountingDownstream<String> downstream = new CountingDownstream<>(2);
+
+            // Act
+            GathererUtils.pushAll(elements, downstream);
+
+            // Assert
+            assertThat(downstream.pushes).isEqualTo(2);
         }
 
         @Test
-        void withTwoNonNullsThatAreNotEqual() {
-            assertThat(GathererUtils.safeEquals("A", "B")).isFalse();
+        void pushAllIteratorStopsWhenDownstreamRejects() {
+            // Arrange
+            final List<String> elements = List.of("A", "B", "C", "D");
+            final CountingDownstream<String> downstream = new CountingDownstream<>(2);
+
+            // Act
+            GathererUtils.pushAll(elements.iterator(), downstream);
+
+            // Assert
+            assertThat(downstream.pushes).isEqualTo(2);
         }
 
         @Test
-        void withLeftNullRightNotNull() {
-            assertThat(GathererUtils.safeEquals(null, "A")).isFalse();
-        }
+        void pushAllStreamStopsWhenDownstreamRejects() {
+            // Arrange
+            final Stream<String> elements = Stream.of("A", "B", "C", "D");
+            final CountingDownstream<String> downstream = new CountingDownstream<>(2);
 
-        @Test
-        void withLeftNotNullRightNull() {
-            assertThat(GathererUtils.safeEquals("A", null)).isFalse();
+            // Act
+            GathererUtils.pushAll(elements, downstream);
+
+            // Assert
+            assertThat(downstream.pushes).isEqualTo(2);
         }
     }
-
 }
