@@ -45,7 +45,7 @@ dependencies {
     testImplementation("org.apache.commons:commons-statistics-inference:1.2") {
         because("We use this to measure if random sampling methods actually work")
     }
-    testImplementation("org.junit.jupiter:junit-jupiter:5.13.4") {
+    testImplementation("org.junit.jupiter:junit-jupiter:6.0.0") {
         because("We need this to run tests")
     }
     testImplementation("org.assertj:assertj-core:3.27.5") {
