@@ -779,7 +779,19 @@ public abstract class Gatherers4j {
     /// @param <INPUT> Type of elements in the input stream
     /// @return A non-null `Gatherer`
     public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> uniquelyOccurring() {
-        return new UniquelyOccurringGatherer<>();
+        return new UniquelyOccurringGatherer<>(Function.identity());
+    }
+
+    /// Emit only those elements that occur in the input stream a single time, as identified by the given `mappingFunction`.
+    ///
+    /// @param <INPUT> Type of elements in the input stream
+    /// @param <MAPPED> Type mapped from INPUT which is used to detect uniqueness
+    /// @param mappingFunction A non-null function, the results of which will be used to check for consecutive duplication.
+    /// @return A non-null `Gatherer`
+    public static <INPUT extends @Nullable Object, MAPPED extends @Nullable Object> Gatherer<INPUT, ?, INPUT> uniquelyOccurringBy(
+            final Function<INPUT, MAPPED> mappingFunction
+    ) {
+        return new UniquelyOccurringGatherer<>(mappingFunction);
     }
 
     /// Create windows over the elements of the input stream that are `windowSize` in length, sliding over `stepping` number of elements
