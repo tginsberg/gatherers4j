@@ -8,14 +8,14 @@ no_list: true
 ## v0.13.0
 [Released 2025-??-??](https://github.com/tginsberg/gatherers4j/releases/tag/v0.13.0)
 
-+
++ Implementing `uniquelyOccurringBy()` to limit the stream to uniquely occurring elements as measured by the given function
 
 ## v0.12.0
 [Released 2025-09-27](https://github.com/tginsberg/gatherers4j/releases/tag/v0.12.0)
 
 + Move Java version to 25 (was 24) Addresses [#164](https://github.com/tginsberg/gatherers4j/issues/164)
 + Support Java Modularization. Addresses [#156](https://github.com/tginsberg/gatherers4j/issues/156), thanks [@Goldmensch](https://github.com/Goldmensch)! 
-+ Support parallelization in UniquelyOccurringGatherer
++ Support parallelization in `UniquelyOccurringGatherer`
 
 ## v0.11.0
 [Released 2025-05-05](https://github.com/tginsberg/gatherers4j/releases/tag/v0.11.0)
