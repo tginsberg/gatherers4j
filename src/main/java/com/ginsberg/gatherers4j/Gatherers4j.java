@@ -219,7 +219,7 @@ public abstract class Gatherers4j {
         return BigDecimalExponentialMovingAverageGatherer.withAlpha(alpha, Function.identity());
     }
 
-    /// Create a Stream that represents the exponential moving average of a `BigDecimal` objects mapped from a `Stream<T>`
+    /// Create a Stream that represents the exponential moving average of `BigDecimal` objects mapped from a `Stream<INPUT>`
     /// via a `mappingFunction` and using the given `alpha`.
     ///
     /// @param alpha The alpha value to use in the EMA calculation.
@@ -242,7 +242,7 @@ public abstract class Gatherers4j {
         return BigDecimalExponentialMovingAverageGatherer.withPeriod(periods, Function.identity());
     }
 
-    /// Create a Stream that represents the exponential moving average of a `BigDecimal` objects mapped from a `Stream<T>`
+    /// Create a Stream that represents the exponential moving average of `BigDecimal` objects mapped from a `Stream<INPUT>`
     /// via a `mappingFunction` over the given number of `periods`.
     ///
     /// @param periods The number of periods to use in the EMA calculation.
@@ -419,6 +419,36 @@ public abstract class Gatherers4j {
         return SimpleIndexingGatherers.mapIndexed(mappingFunction);
     }
 
+    /// Create a Stream that represents the moving median of a `Stream<BigDecimal>` looking
+    /// back `windowSize` number of elements.
+    ///
+    /// @param windowSize The trailing number of elements to calculate the median over, must be greater than 1.
+    /// @return A non-null `BigDecimalMovingProductGatherer`
+    public static BigDecimalMedianGatherer<@Nullable BigDecimal> movingMedian(final int windowSize) {
+        if(windowSize <= 1) {
+            throw new IllegalArgumentException("windowSize must be greater than 1");
+        }
+        return new BigDecimalMedianGatherer<>(windowSize, Function.identity());
+    }
+
+    /// Create a Stream that represents the moving median of `BigDecimal` objects mapped from a `Stream<INPUT>`
+    /// via a `mappingFunction` and looking back `windowSize` number of elements.
+    ///
+    /// @param windowSize      The trailing number of elements to calculate the median from. Must be greater than 1.
+    /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
+    ///                        in the moving product calculation
+    /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
+    /// @return A non-null `BigDecimalMovingProductGatherer`
+    public static <INPUT extends @Nullable Object> BigDecimalMedianGatherer<INPUT> movingMedianBy(
+            final int windowSize,
+            final Function<INPUT, BigDecimal> mappingFunction
+    ) {
+        if(windowSize <= 1) {
+            throw new IllegalArgumentException("windowSize must be greater than 1");
+        }
+        return new BigDecimalMedianGatherer<>(windowSize, mappingFunction);
+    }
+
     /// Create a Stream that represents the moving product of a `Stream<BigDecimal>` looking
     /// back `windowSize` number of elements.
     ///
@@ -428,7 +458,7 @@ public abstract class Gatherers4j {
         return new BigDecimalMovingProductGatherer<>(windowSize, Function.identity());
     }
 
-    /// Create a Stream that represents the moving product of a `BigDecimal` objects mapped from a `Stream<T>`
+    /// Create a Stream that represents the moving product of `BigDecimal` objects mapped from a `Stream<INPUT>`
     /// via a `mappingFunction` and looking back `windowSize` number of elements.
     ///
     /// @param windowSize      The trailing number of elements to multiply, must be greater than 1.
@@ -452,7 +482,7 @@ public abstract class Gatherers4j {
         return new BigDecimalMovingSumGatherer<>(windowSize, Function.identity());
     }
 
-    /// Create a Stream that represents the moving sum of a `BigDecimal` objects mapped from a `Stream<T>`
+    /// Create a Stream that represents the moving sum of `BigDecimal` objects mapped from a `Stream<INPUT>`
     /// via a `mappingFunction` and looking back `windowSize` number of elements.
     ///
     /// @param windowSize      The trailing number of elements to multiply, must be greater than 1.
@@ -530,6 +560,32 @@ public abstract class Gatherers4j {
         return new RotateGatherer<>(direction, distance);
     }
 
+    /// Create a `Stream<BigDecimal>` that represents the running median of a `Stream<BigDecimal>`.
+    ///
+    /// @return A non-null `BigDecimalMedianGatherer`
+    public static BigDecimalMedianGatherer<@Nullable BigDecimal> runningMedian() {
+        return new BigDecimalMedianGatherer<>(
+                0,
+                Function.identity()
+        );
+    }
+
+    /// Create a `Stream<BigDecimal>` that represents the running mediation of `BigDecimal`
+    /// objects mapped from a `Stream<INPUT>` via a `mappingFunction`.
+    ///
+    /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
+    ///                        in the median calculation
+    /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
+    /// @return A non-null `BigDecimalMedianGatherer`
+    public static <INPUT extends @Nullable Object> BigDecimalMedianGatherer<INPUT> runningMedianBy(
+            final Function<INPUT, BigDecimal> mappingFunction
+    ) {
+        return new BigDecimalMedianGatherer<>(
+                0,
+                mappingFunction
+        );
+    }
+
     /// Create a `Stream<BigDecimal>` that represents the running population standard
     /// deviation of a `Stream<BigDecimal>`.
     ///
@@ -541,8 +597,8 @@ public abstract class Gatherers4j {
         );
     }
 
-    /// Create a `Stream<BigDecimal>` that represents the running population standard deviation of a `BigDecimal`
-    /// objects mapped from a `Stream<BigDecimal>` via a `mappingFunction`.
+    /// Create a `Stream<BigDecimal>` that represents the running population standard deviation of `BigDecimal`
+    /// objects mapped from a `Stream<INPUT>` via a `mappingFunction`.
     ///
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the standard deviation calculation
@@ -692,7 +748,7 @@ public abstract class Gatherers4j {
         return new BigDecimalSimpleMovingAverageGatherer<>(windowSize, Function.identity());
     }
 
-    /// Create a Stream that represents the simple moving average of a `BigDecimal` objects mapped from a `Stream<T>`
+    /// Create a Stream that represents the simple moving average of `BigDecimal` objects mapped from a `Stream<INPUT>`
     /// via a `mappingFunction` and looking back `windowSize` number of elements.
     ///
     /// @param windowSize      The number of elements to average, must be greater than 1.
