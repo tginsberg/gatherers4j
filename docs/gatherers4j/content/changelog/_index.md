@@ -8,7 +8,9 @@ no_list: true
 ## v0.13.0
 [Released 2025-??-??](https://github.com/tginsberg/gatherers4j/releases/tag/v0.13.0)
 
-+ Implementing `uniquelyOccurringBy()` to limit the stream to uniquely occurring elements as measured by the given function
++ Implement `uniquelyOccurringBy()` to limit the stream to uniquely occurring elements as measured by the given function
++ Implement `movingMedian()` and `movingMedianBy()`
++ Implement `runningMedian()` and `runningMedianBy()`
 
 ## v0.12.0
 [Released 2025-09-27](https://github.com/tginsberg/gatherers4j/releases/tag/v0.12.0)

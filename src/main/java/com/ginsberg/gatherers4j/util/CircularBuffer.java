@@ -38,7 +38,8 @@ public class CircularBuffer<T extends @Nullable Object> implements Iterable<T>{
         buffer = (T[]) new Object[capacity];
     }
 
-    public void add(final T element) {
+    public @Nullable T add(final T element) {
+        T previousEnd = size > 0 ? buffer[tail] : null;
         buffer[tail] = element;
         tail = (tail + 1) % buffer.length;
 
@@ -47,6 +48,7 @@ public class CircularBuffer<T extends @Nullable Object> implements Iterable<T>{
         } else {
             head = (head + 1) % buffer.length;
         }
+        return previousEnd;
     }
 
     public T removeFirst() {
