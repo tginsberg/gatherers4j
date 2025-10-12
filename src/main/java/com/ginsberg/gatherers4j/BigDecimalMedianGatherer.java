@@ -16,17 +16,13 @@
 
 package com.ginsberg.gatherers4j;
 
-import com.ginsberg.gatherers4j.util.CircularBuffer;
 import org.jspecify.annotations.Nullable;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.PriorityQueue;
 import java.util.function.Function;
 import java.util.function.Supplier;
 

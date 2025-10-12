@@ -11,6 +11,8 @@ no_list: true
 + Implement `uniquelyOccurringBy()` to limit the stream to uniquely occurring elements as measured by the given function
 + Implement `movingMedian()` and `movingMedianBy()`
 + Implement `runningMedian()` and `runningMedianBy()`
++ Implement `movingMax()`, `movingMaxBy()`, `movingMin()`, and `movingMinBy()`
++ Implement `runningMax()`, `runningMaxBy()`, `runningMin()`, and `runningMinBy()`
 
 ## v0.12.0
 [Released 2025-09-27](https://github.com/tginsberg/gatherers4j/releases/tag/v0.12.0)
