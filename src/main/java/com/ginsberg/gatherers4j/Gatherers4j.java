@@ -414,9 +414,31 @@ public abstract class Gatherers4j {
     /// @param mappingFunction A non-null function to map input to output, given an input and its index
     /// @return A non-null Gatherer
     public static <INPUT extends @Nullable Object, OUTPUT extends @Nullable Object> Gatherer<INPUT, ?, OUTPUT> mapIndexed(
-            final BiFunction<Integer, INPUT, OUTPUT> mappingFunction)
-    {
+            final BiFunction<Integer, INPUT, OUTPUT> mappingFunction) {
         return SimpleIndexingGatherers.mapIndexed(mappingFunction);
+    }
+
+    /// Create a stream that represents the moving maximum value over the previous `windowSize` elements.
+    ///
+    /// @param <INPUT> Type of elements in the input and output stream; must implement `Comparable`
+    /// @param windowSize How large the lookback window is, must be at least 2
+    /// @return A non-null `MinMaxGatherer`
+    public static <INPUT extends @Nullable Comparable<INPUT>> MinMaxGatherer<INPUT> movingMax(final int windowSize) {
+        return MinMaxGatherer.movingUsingComparable(windowSize, false);
+    }
+
+    /// Create a stream that represents the moving maximum value over the previous `windowSize` elements,
+    /// as calculated by the given `Comparator`.
+    ///
+    /// @param <INPUT> Type of elements in the input and output stream
+    /// @param windowSize How large the lookback window is, must be at least 2
+    /// @param comparator A non-null comparator to use to compare stream elements
+    /// @return A non-null `MinMaxGatherer`
+    public static <INPUT extends @Nullable Object> MinMaxGatherer<INPUT> movingMaxBy(
+            final int windowSize,
+            final Comparator<INPUT> comparator
+    ) {
+        return MinMaxGatherer.movingUsingComparator(windowSize, false, comparator);
     }
 
     /// Create a Stream that represents the moving median of a `Stream<BigDecimal>` looking
@@ -425,7 +447,7 @@ public abstract class Gatherers4j {
     /// @param windowSize The trailing number of elements to calculate the median over, must be greater than 1.
     /// @return A non-null `BigDecimalMovingProductGatherer`
     public static BigDecimalMedianGatherer<@Nullable BigDecimal> movingMedian(final int windowSize) {
-        if(windowSize <= 1) {
+        if (windowSize <= 1) {
             throw new IllegalArgumentException("windowSize must be greater than 1");
         }
         return new BigDecimalMedianGatherer<>(windowSize, Function.identity());
@@ -443,10 +465,33 @@ public abstract class Gatherers4j {
             final int windowSize,
             final Function<INPUT, BigDecimal> mappingFunction
     ) {
-        if(windowSize <= 1) {
+        if (windowSize <= 1) {
             throw new IllegalArgumentException("windowSize must be greater than 1");
         }
         return new BigDecimalMedianGatherer<>(windowSize, mappingFunction);
+    }
+
+    /// Create a stream that represents the moving minimum value over the previous `windowSize` elements.
+    ///
+    /// @param <INPUT> Type of elements in the input and output stream; must implement `Comparable`
+    /// @param windowSize How large the lookback window is, must be at least 2
+    /// @return A non-null `MinMaxGatherer`
+    public static <INPUT extends @Nullable Comparable<INPUT>> MinMaxGatherer<INPUT> movingMin(final int windowSize) {
+        return MinMaxGatherer.movingUsingComparable(windowSize, true);
+    }
+
+    /// Create a stream that represents the moving minimum value over the previous `windowSize` elements,
+    /// as calculated by the given `Comparator`.
+    ///
+    /// @param <INPUT> Type of elements in the input and output stream
+    /// @param windowSize How large the lookback window is, must be at least 2
+    /// @param comparator A non-null comparator to use to compare stream elements
+    /// @return A non-null `MinMaxGatherer`
+    public static <INPUT extends @Nullable Object> MinMaxGatherer<INPUT> movingMinBy(
+            final int windowSize,
+            final Comparator<INPUT> comparator
+    ) {
+        return MinMaxGatherer.movingUsingComparator(windowSize, true, comparator);
     }
 
     /// Create a Stream that represents the moving product of a `Stream<BigDecimal>` looking
@@ -515,8 +560,7 @@ public abstract class Gatherers4j {
     /// @param peekingConsumer A non-null consumer to peek at each element and its index
     /// @return A non-null Gatherer
     public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> peekIndexed(
-            final BiConsumer<Integer, INPUT> peekingConsumer)
-    {
+            final BiConsumer<Integer, INPUT> peekingConsumer) {
         return SimpleIndexingGatherers.peekIndexed(peekingConsumer);
     }
 
@@ -560,6 +604,25 @@ public abstract class Gatherers4j {
         return new RotateGatherer<>(direction, distance);
     }
 
+    /// Emit the running maximum value of `Comparable` elements in the input stream.
+    ///
+    /// @param <INPUT> Type of elements in the input and output stream; must implement `Comparable`
+    /// @return A non-null `MinMaxGatherer`
+    public static <INPUT extends @Nullable Comparable<INPUT>> MinMaxGatherer<INPUT> runningMax() {
+        return MinMaxGatherer.runningUsingComparable(false);
+    }
+
+    /// Emit the running maximum value element in the input stream, according to the given `Comparator`.
+    ///
+    /// @param <INPUT> Type of elements in the input and output stream
+    /// @param comparator A non-null `Comparator<INPUT>` to base the calculation on
+    /// @return A non-null `MinMaxGatherer`
+    public static <INPUT extends @Nullable Object> MinMaxGatherer<INPUT> runningMaxBy(
+            final Comparator<INPUT> comparator
+    ) {
+        return MinMaxGatherer.runningUsingComparator(false, comparator);
+    }
+
     /// Create a `Stream<BigDecimal>` that represents the running median of a `Stream<BigDecimal>`.
     ///
     /// @return A non-null `BigDecimalMedianGatherer`
@@ -584,6 +647,25 @@ public abstract class Gatherers4j {
                 0,
                 mappingFunction
         );
+    }
+
+    /// Emit the running minimum value of `Comparable` elements in the input stream.
+    ///
+    /// @param <INPUT> Type of elements in the input and output stream; must implement `Comparable`
+    /// @return A non-null `MinMaxGatherer`
+    public static <INPUT extends @Nullable Comparable<INPUT>> MinMaxGatherer<INPUT> runningMin() {
+        return MinMaxGatherer.runningUsingComparable(true);
+    }
+
+    /// Emit the running minimum value element in the input stream, according to the given `Comparator`.
+    ///
+    /// @param <INPUT> Type of elements in the input and output stream
+    /// @param comparator A non-null `Comparator<INPUT>` to base the calculation on
+    /// @return A non-null `MinMaxGatherer`
+    public static <INPUT extends @Nullable Object> MinMaxGatherer<INPUT> runningMinBy(
+            final Comparator<INPUT> comparator
+    ) {
+        return MinMaxGatherer.runningUsingComparator(true, comparator);
     }
 
     /// Create a `Stream<BigDecimal>` that represents the running population standard
