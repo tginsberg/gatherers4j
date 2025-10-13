@@ -8,7 +8,7 @@ description: Create a Stream that represents the moving minimum of a `Stream<T>`
 ---
 
 ### Implementation Notes
-This implementation is suitable comparing an arbitrary `Stream<T>` with a `Comparator`; for a version that operates directly on a `Stream<Comparable<T>>`, see [`movingMin()`](/gatherers4j/gatherers/mathematical/movingmin/).
+This implementation is suitable for comparing an arbitrary `Stream<T>` with a `Comparator`; for a version that operates directly on a `Stream<Comparable<T>>`, see [`movingMin()`](/gatherers4j/gatherers/mathematical/movingmin/).
 Nulls are ignored and play no part in calculations.
 
 **Signatures**
@@ -19,9 +19,10 @@ Nulls are ignored and play no part in calculations.
 
 **Additional Methods**
 
-| Method                                     | Purpose                                                                                                                                                                                                                                                                                                             |
-|--------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `excludePartialValues()`                   | When calculating the moving maximum values, and the full size of the window has not yet been reached, the gatherer should supress emitting values until the lookback window is full. [See example.](#excluding-partial-values) |
+| Method                   | Purpose                                                                                                                                                                                                                         |
+|--------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `excludePartialValues()` | When calculating the moving minimum values, and the full size of the window has not yet been reached, the gatherer should suppress emitting values until the lookback window is full. [See example.](#excluding-partial-values) |
+| `withOriginal()`         | Emit both the original stream element and its calculated moving minimum value wrapped in a `WithOriginal` object. [See example.](#emit-original-value-and-calculated-value)                                                     |
 
 ### Examples
 
@@ -61,4 +62,24 @@ Stream
     .toList();
 
 // [ "3", "2", "1", "1", "1" ]
+```
+
+#### Emit original value and calculated value
+
+Note that this call may need a type witness due to generic type erasure in Java.
+
+```java
+Stream
+    .of("3", "2", "1", "3", "4")
+    .gather(Gatherers4j.<String>movingMinBy(3, comparing(Integer::valueOf)).withOriginal())
+    .toList();
+
+// [
+//   WithOriginal[original=3, calculated=3], 
+//   WithOriginal[original=2, calculated=2], 
+//   WithOriginal[original=1, calculated=1], 
+//   WithOriginal[original=3, calculated=1], 
+//   WithOriginal[original=4, calculated=1]
+// ]
+
 ```

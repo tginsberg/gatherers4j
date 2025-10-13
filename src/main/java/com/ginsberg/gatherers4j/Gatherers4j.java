@@ -607,8 +607,8 @@ public abstract class Gatherers4j {
     /// Emit the running maximum value of `Comparable` elements in the input stream.
     ///
     /// @param <INPUT> Type of elements in the input and output stream; must implement `Comparable`
-    /// @return A non-null `Gatherer`
-    public static <INPUT extends @Nullable Comparable<INPUT>> Gatherer<INPUT, ?, INPUT> runningMax() {
+    /// @return A non-null `MinMaxGatherer`
+    public static <INPUT extends @Nullable Comparable<INPUT>> MinMaxGatherer<INPUT> runningMax() {
         return MinMaxGatherer.runningUsingComparable(false);
     }
 
@@ -616,8 +616,8 @@ public abstract class Gatherers4j {
     ///
     /// @param <INPUT> Type of elements in the input and output stream; must implement `Comparable`
     /// @param comparator A non-null `Comparator<INPUT>` to base the calculation on
-    /// @return A non-null `Gatherer`
-    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> runningMaxBy(
+    /// @return A non-null `MinMaxGatherer`
+    public static <INPUT extends @Nullable Object> MinMaxGatherer<INPUT> runningMaxBy(
             final Comparator<INPUT> comparator
     ) {
         return MinMaxGatherer.runningUsingComparator(false, comparator);
@@ -652,7 +652,7 @@ public abstract class Gatherers4j {
     /// Emit the running minimum value of `Comparable` elements in the input stream.
     ///
     /// @param <INPUT> Type of elements in the input and output stream; must implement `Comparable`
-    /// @return A non-null `Gatherer`
+    /// @return A non-null `MinMaxGatherer`
     public static <INPUT extends @Nullable Comparable<INPUT>> MinMaxGatherer<INPUT> runningMin() {
         return MinMaxGatherer.runningUsingComparable(true);
     }
@@ -661,8 +661,8 @@ public abstract class Gatherers4j {
     ///
     /// @param <INPUT> Type of elements in the input and output stream; must implement `Comparable`
     /// @param comparator A non-null `Comparator<INPUT>` to base the calculation on
-    /// @return A non-null `Gatherer`
-    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> runningMinBy(
+    /// @return A non-null `MinMaxGatherer`
+    public static <INPUT extends @Nullable Object> MinMaxGatherer<INPUT> runningMinBy(
             final Comparator<INPUT> comparator
     ) {
         return MinMaxGatherer.runningUsingComparator(true, comparator);

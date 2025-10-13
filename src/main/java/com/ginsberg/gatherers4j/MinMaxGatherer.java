@@ -16,7 +16,6 @@
 
 package com.ginsberg.gatherers4j;
 
-import com.ginsberg.gatherers4j.util.AndThen;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -33,6 +32,7 @@ public class MinMaxGatherer<INPUT extends @Nullable Object>
 
     private final Comparator<INPUT> comparator;
     private final int windowSize;
+    private boolean excludePartialValues;
 
     static <INPUT> MinMaxGatherer<INPUT> runningUsingComparator(
             final boolean sortingMin,
@@ -77,21 +77,30 @@ public class MinMaxGatherer<INPUT extends @Nullable Object>
 
     @Override
     public Supplier<State<INPUT>> initializer() {
-        return () -> windowSize == -1 ? new State<>(comparator) : new MovingState<>(windowSize, comparator);
+        return () -> windowSize == -1 ? new State<>(comparator) : new MovingState<>(windowSize, comparator, excludePartialValues);
     }
 
     @Override
     public Integrator<State<INPUT>, INPUT, INPUT> integrator() {
         return Integrator.ofGreedy((state, element, downstream) -> {
             if (element != null) {
-                return downstream.push(state.add(element));
+                state.add(element);
+                if(state.canCalculate()) {
+                    return downstream.push(state.calculate());
+                }
             }
             return !downstream.isRejecting();
         });
     }
 
-    public Gatherer<INPUT, ?, INPUT> excludePartialValues() {
-        return windowSize == -1 ? this : this.andThen(AndThen.drop(windowSize-1));
+    public MinMaxGatherer<INPUT> excludePartialValues() {
+        this.excludePartialValues = true;
+        return this;
+    }
+
+    /// Include the original input value from the stream in addition to the calculated value.
+    public WithOriginalGatherer<INPUT, ?, INPUT> withOriginal() {
+        return new WithOriginalGatherer<>(this);
     }
 
     public static class State<INPUT extends @Nullable Object> {
@@ -102,12 +111,21 @@ public class MinMaxGatherer<INPUT extends @Nullable Object>
             this.comparator = comparator;
         }
 
-        @NonNull INPUT add(final INPUT nextValue) {
+        void add(final INPUT nextValue) {
             if (bestValue == null) {
                 bestValue = nextValue;
             } else {
                 bestValue = eval(nextValue) ? bestValue : nextValue;
             }
+        }
+
+        boolean canCalculate() {
+            return true;
+        }
+
+        @SuppressWarnings("NullAway")
+        @NonNull INPUT calculate() {
+            assert bestValue != null;
             return bestValue;
         }
 
@@ -122,15 +140,17 @@ public class MinMaxGatherer<INPUT extends @Nullable Object>
 
         private final List<IndexValue<INPUT>> queue = new ArrayList<>();
         private final int windowSize;
+        private final boolean excludePartialValues;
         private int seen;
 
-        public MovingState(final int windowSize, final Comparator<INPUT> comparator) {
+        public MovingState(final int windowSize, final Comparator<INPUT> comparator, final boolean excludePartialValues) {
             super(comparator);
             this.windowSize = windowSize;
+            this.excludePartialValues = excludePartialValues;
         }
 
         @Override
-        @NonNull INPUT add(final INPUT nextValue) {
+        void add(final INPUT nextValue) {
             seen++;
             while (!queue.isEmpty() && queue.getFirst().index() <= (seen - windowSize)) {
                 queue.removeFirst();
@@ -140,7 +160,12 @@ public class MinMaxGatherer<INPUT extends @Nullable Object>
                 queue.removeLast();
             }
             queue.add(new IndexValue<>(seen, nextValue));
-            return queue.getFirst().value();
+            bestValue = queue.getFirst().value();
+        }
+
+        @Override
+        boolean canCalculate() {
+            return !excludePartialValues || seen >= windowSize;
         }
 
         private boolean shouldRemove(final INPUT oldItem, final INPUT newItem) {

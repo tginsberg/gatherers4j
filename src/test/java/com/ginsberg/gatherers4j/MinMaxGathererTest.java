@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import com.ginsberg.gatherers4j.dto.WithOriginal;
+
 import static java.util.Comparator.comparing;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -35,6 +37,17 @@ class MinMaxGathererTest {
     class Max {
         @Nested
         class Moving {
+
+            
+            @Test
+            void doNotCommit() {
+                IO.println(
+                        Stream
+                                .of(3, 2, 1, 2, 3)
+                                .gather(Gatherers4j.<Integer>runningMin().withOriginal())
+                                .toList()
+                );
+            }
 
             @Test
             void ignoresNulls() {
@@ -48,6 +61,30 @@ class MinMaxGathererTest {
 
                 // Assert
                 assertThat(output).containsExactly(1, 3, 5);
+            }
+
+            @Test
+            void movingMaxByWithOriginal() {
+                // Arrange
+                final Stream<Integer> input = IntStream.range(1, 10).boxed().gather(Gatherers4j.reverse());
+
+                // Act
+                final List<WithOriginal<Integer, Integer>> output = input
+                        .gather(Gatherers4j.<Integer>movingMaxBy(3, comparing(String::valueOf)).withOriginal())
+                        .toList();
+
+                // Assert
+                assertThat(output).containsExactly(
+                        new WithOriginal<>(9, 9),
+                        new WithOriginal<>(8, 9),
+                        new WithOriginal<>(7, 9),
+                        new WithOriginal<>(6, 8),
+                        new WithOriginal<>(5, 7),
+                        new WithOriginal<>(4, 6),
+                        new WithOriginal<>(3, 5),
+                        new WithOriginal<>(2, 4),
+                        new WithOriginal<>(1, 3)
+                );
             }
 
             @Test
@@ -65,11 +102,17 @@ class MinMaxGathererTest {
             }
 
             @Test
-            void doNotCommit() {
-                IO.println(Stream
-                        .of(null, "3", null, "2", "1", "3", "4")
-                        .gather(Gatherers4j.movingMaxBy(3, comparing(Integer::valueOf)))
-                        .toList());
+            void movingMaxComparableExcludingPartials() {
+                // Arrange
+                final Stream<String> input = IntStream.range(1, 10).mapToObj(String::valueOf).gather(Gatherers4j.reverse());
+
+                // Act
+                final List<String> output = input
+                        .gather(Gatherers4j.<String>movingMax(3).excludePartialValues())
+                        .toList();
+
+                // Assert
+                assertThat(output).containsExactly("9", "8", "7", "6", "5", "4", "3");
             }
 
             @Test
@@ -86,21 +129,6 @@ class MinMaxGathererTest {
                 assertThat(output).containsExactly(9, 9, 9, 8, 7, 6, 5, 4, 3);
             }
 
-
-            @Test
-            void movingMaxComparableExcludingPartials() {
-                // Arrange
-                final Stream<String> input = IntStream.range(1, 10).mapToObj(String::valueOf).gather(Gatherers4j.reverse());
-
-                // Act
-                final List<String> output = input
-                        .gather(Gatherers4j.<String>movingMax(3).excludePartialValues())
-                        .toList();
-
-                // Assert
-                assertThat(output).containsExactly("9", "8", "7", "6", "5", "4", "3");
-            }
-
             @Test
             void movingMaxComparatorExcludingPartials() {
                 // Arrange
@@ -113,6 +141,30 @@ class MinMaxGathererTest {
 
                 // Assert
                 assertThat(output).containsExactly(9, 8, 7, 6, 5, 4, 3);
+            }
+
+            @Test
+            void movingMaxWithOriginal() {
+                // Arrange
+                final Stream<String> input = IntStream.range(1, 10).mapToObj(String::valueOf).gather(Gatherers4j.reverse());
+
+                // Act
+                final List<WithOriginal<String, String>> output = input
+                        .gather(Gatherers4j.<String>movingMax(3).withOriginal())
+                        .toList();
+
+                // Assert
+                assertThat(output).containsExactly(
+                        new WithOriginal<>("9", "9"),
+                        new WithOriginal<>("8", "9"),
+                        new WithOriginal<>("7", "9"),
+                        new WithOriginal<>("6", "8"),
+                        new WithOriginal<>("5", "7"),
+                        new WithOriginal<>("4", "6"),
+                        new WithOriginal<>("3", "5"),
+                        new WithOriginal<>("2", "4"),
+                        new WithOriginal<>("1", "3")
+                );
             }
 
             @ParameterizedTest(name = "windowSize of {0}")
@@ -134,7 +186,7 @@ class MinMaxGathererTest {
 
         @Nested
         class Running {
-            
+
             @Test
             void ascendingEmitsAllComparable() {
                 // Arrange
@@ -146,7 +198,7 @@ class MinMaxGathererTest {
                 // Assert
                 assertThat(output).containsExactly(1, 2, 3, 4, 5, 6, 7, 8, 9);
             }
-            
+
             @Test
             void ascendingEmitsAllComparator() {
                 // Arrange
@@ -188,6 +240,54 @@ class MinMaxGathererTest {
             }
 
             @Test
+            void runningMaxByWithOriginal() {
+                // Arrange
+                final Stream<String> input = IntStream.range(1, 10).mapToObj(String::valueOf);
+
+                // Act
+                final List<WithOriginal<String, String>> output = input
+                        .gather(Gatherers4j.<String>runningMaxBy(comparing(Integer::valueOf)).withOriginal())
+                        .toList();
+
+                // Assert
+                assertThat(output).containsExactly(
+                        new WithOriginal<>("1", "1"),
+                        new WithOriginal<>("2", "2"),
+                        new WithOriginal<>("3", "3"),
+                        new WithOriginal<>("4", "4"),
+                        new WithOriginal<>("5", "5"),
+                        new WithOriginal<>("6", "6"),
+                        new WithOriginal<>("7", "7"),
+                        new WithOriginal<>("8", "8"),
+                        new WithOriginal<>("9", "9")
+                );
+            }
+
+            @Test
+            void runningMaxWithOriginal() {
+                // Arrange
+                final Stream<Integer> input = IntStream.range(1, 10).boxed();
+
+                // Act
+                final List<WithOriginal<Integer, Integer>> output = input
+                        .gather(Gatherers4j.<Integer>runningMax().withOriginal())
+                        .toList();
+
+                // Assert
+                assertThat(output).containsExactly(
+                        new WithOriginal<>(1, 1),
+                        new WithOriginal<>(2, 2),
+                        new WithOriginal<>(3, 3),
+                        new WithOriginal<>(4, 4),
+                        new WithOriginal<>(5, 5),
+                        new WithOriginal<>(6, 6),
+                        new WithOriginal<>(7, 7),
+                        new WithOriginal<>(8, 8),
+                        new WithOriginal<>(9, 9)
+                );
+            }
+
+            @Test
             void unchangingIsConstantComparable() {
                 // Arrange
                 final Stream<Integer> input = IntStream.range(1, 10).map(_ -> 1).boxed().gather(Gatherers4j.reverse());
@@ -221,20 +321,6 @@ class MinMaxGathererTest {
         class Moving {
 
             @Test
-            void ascendingComparator() {
-                // Arrange
-                final Stream<String> input = IntStream.range(1, 10).mapToObj(String::valueOf);
-
-                // Act
-                final List<String> output = input
-                        .gather(Gatherers4j.movingMinBy(3, comparing(Integer::valueOf)))
-                        .toList();
-
-                // Assert
-                assertThat(output).containsExactly("1", "1", "1", "2", "3", "4", "5", "6", "7");
-            }
-
-            @Test
             void ascendingComparable() {
                 // Arrange
                 final Stream<Integer> input = IntStream.range(1, 10).boxed();
@@ -246,6 +332,20 @@ class MinMaxGathererTest {
 
                 // Assert
                 assertThat(output).containsExactly(1, 1, 1, 2, 3, 4, 5, 6, 7);
+            }
+
+            @Test
+            void ascendingComparator() {
+                // Arrange
+                final Stream<String> input = IntStream.range(1, 10).mapToObj(String::valueOf);
+
+                // Act
+                final List<String> output = input
+                        .gather(Gatherers4j.movingMinBy(3, comparing(Integer::valueOf)))
+                        .toList();
+
+                // Assert
+                assertThat(output).containsExactly("1", "1", "1", "2", "3", "4", "5", "6", "7");
             }
 
             @Test
@@ -274,6 +374,54 @@ class MinMaxGathererTest {
 
                 // Assert
                 assertThat(output).containsExactly(5, 3, 1);
+            }
+
+            @Test
+            void movingMinByWithOriginal() {
+                // Arrange
+                final Stream<String> input = IntStream.range(1, 10).mapToObj(String::valueOf);
+
+                // Act
+                final List<WithOriginal<String, String>> output = input
+                        .gather(Gatherers4j.<String>movingMinBy(3, comparing(Integer::valueOf)).withOriginal())
+                        .toList();
+
+                // Assert
+                assertThat(output).containsExactly(
+                        new WithOriginal<>("1", "1"),
+                        new WithOriginal<>("2", "1"),
+                        new WithOriginal<>("3", "1"),
+                        new WithOriginal<>("4", "2"),
+                        new WithOriginal<>("5", "3"),
+                        new WithOriginal<>("6", "4"),
+                        new WithOriginal<>("7", "5"),
+                        new WithOriginal<>("8", "6"),
+                        new WithOriginal<>("9", "7")
+                );
+            }
+
+            @Test
+            void movingMinWithOriginal() {
+                // Arrange
+                final Stream<Integer> input = IntStream.range(1, 10).boxed();
+
+                // Act
+                final List<WithOriginal<Integer, Integer>> output = input
+                        .gather(Gatherers4j.<Integer>movingMin(3).withOriginal())
+                        .toList();
+
+                // Assert
+                assertThat(output).containsExactly(
+                        new WithOriginal<>(1, 1),
+                        new WithOriginal<>(2, 1),
+                        new WithOriginal<>(3, 1),
+                        new WithOriginal<>(4, 2),
+                        new WithOriginal<>(5, 3),
+                        new WithOriginal<>(6, 4),
+                        new WithOriginal<>(7, 5),
+                        new WithOriginal<>(8, 6),
+                        new WithOriginal<>(9, 7)
+                );
             }
 
             @ParameterizedTest(name = "windowSize of {0}")
@@ -333,6 +481,54 @@ class MinMaxGathererTest {
 
                 // Assert
                 assertThat(output).containsExactly(5, 3, 1);
+            }
+
+            @Test
+            void runningMinByWithOriginal() {
+                // Arrange
+                final Stream<String> input = IntStream.range(1, 10).mapToObj(String::valueOf).gather(Gatherers4j.reverse());
+
+                // Act
+                final List<WithOriginal<String, String>> output = input
+                        .gather(Gatherers4j.<String>runningMinBy(comparing(Integer::valueOf)).withOriginal())
+                        .toList();
+
+                // Assert
+                assertThat(output).containsExactly(
+                        new WithOriginal<>("9", "9"),
+                        new WithOriginal<>("8", "8"),
+                        new WithOriginal<>("7", "7"),
+                        new WithOriginal<>("6", "6"),
+                        new WithOriginal<>("5", "5"),
+                        new WithOriginal<>("4", "4"),
+                        new WithOriginal<>("3", "3"),
+                        new WithOriginal<>("2", "2"),
+                        new WithOriginal<>("1", "1")
+                );
+            }
+
+            @Test
+            void runningMinWithOriginal() {
+                // Arrange
+                final Stream<Integer> input = IntStream.range(1, 10).boxed().gather(Gatherers4j.reverse());
+
+                // Act
+                final List<WithOriginal<Integer, Integer>> output = input
+                        .gather(Gatherers4j.<Integer>runningMin().withOriginal())
+                        .toList();
+
+                // Assert
+                assertThat(output).containsExactly(
+                        new WithOriginal<>(9, 9),
+                        new WithOriginal<>(8, 8),
+                        new WithOriginal<>(7, 7),
+                        new WithOriginal<>(6, 6),
+                        new WithOriginal<>(5, 5),
+                        new WithOriginal<>(4, 4),
+                        new WithOriginal<>(3, 3),
+                        new WithOriginal<>(2, 2),
+                        new WithOriginal<>(1, 1)
+                );
             }
 
             @Test
