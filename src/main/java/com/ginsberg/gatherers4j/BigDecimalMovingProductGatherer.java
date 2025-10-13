@@ -28,7 +28,7 @@ public class BigDecimalMovingProductGatherer<INPUT extends @Nullable Object>
         extends BigDecimalGatherer<INPUT> {
 
     private final int windowSize;
-    private boolean includePartialValues = false;
+    private boolean includePartialValues = true;
 
     BigDecimalMovingProductGatherer(
             final int windowSize,
@@ -52,8 +52,8 @@ public class BigDecimalMovingProductGatherer<INPUT extends @Nullable Object>
     /// For example, if the trailing product is over 10 values, but the stream has only emitted two
     /// values, the gatherer should calculate the two values and emit the answer. The default is to not
     /// emit anything until the full size of the window has been seen.
-    public BigDecimalMovingProductGatherer<INPUT> includePartialValues() {
-        includePartialValues = true;
+    public BigDecimalMovingProductGatherer<INPUT> excludePartialValues() {
+        includePartialValues = false;
         return this;
     }
 

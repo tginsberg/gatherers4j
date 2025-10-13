@@ -20,12 +20,12 @@ for all calculations is {{< jdklink linkName="MathContext.DECIMAL64" package="ja
 
 **Additional Methods**
 
-| Method                                     | Purpose                                                                                                                                                                                                                                                                                                         |
-|--------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `includePartialValues()`                   | When calculating the moving product and the full size of the window has not yet been reached, the gatherer should emit values for what it has. [See example.](#including-partial-values)                                                                                                                        |
-| `treatNullAsOne()`                         | When encountering a `null` value in a stream, treat it as `BigDecimal.ONE` instead. [See example.](#treating-null-as-one)                                                                                                                                                                                       |
-| `treatNullAs(BigDecimal replacement)`      | When encountering a `null` value in a stream, treat it as the given `replacement` value instead. [See example.](#replacing-null-with-another-bigdecimal)                                                                                                                                                        |
-| `withMathContext(MathContext mathContext)` | Replace the `MathContext` used for all mathematical operations performed by this gatherer. [See example.](#specifying-a-new-mathcontext)                                                                                                                                                                        |
+| Method                                     | Purpose                                                                                                                                                                                                                                                                                                             |
+|--------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `excludePartialValues()`                   | When calculating the moving product, and the full size of the window has not yet been reached, the gatherer should suppress emitting values until the lookback window is full. [See example.](#excluding-partial-values)                                                                                     |
+| `treatNullAsOne()`                         | When encountering a `null` value in a stream, treat it as `BigDecimal.ONE` instead. [See example.](#treating-null-as-one)                                                                                                                                                                                           |
+| `treatNullAs(BigDecimal replacement)`      | When encountering a `null` value in a stream, treat it as the given `replacement` value instead. [See example.](#replacing-null-with-another-bigdecimal)                                                                                                                                                            |
+| `withMathContext(MathContext mathContext)` | Replace the `MathContext` used for all mathematical operations performed by this gatherer. [See example.](#specifying-a-new-mathcontext)                                                                                                                                                                            |
 | `withOriginal()`                           | Include the original input value from the stream in addition to the calculated value in a [`WithOriginal`](https://github.com/tginsberg/gatherers4j/blob/main/src/main/java/com/ginsberg/gatherers4j/dto/WithOriginal.java)record. [See example.](#emitting-a-record-containing-the-original-and-calculated-values) |
 
 Note: `treatNullAsZero()` is also a valid method on this gatherer, but it only makes sense in a very narrow set of circumstances.
@@ -42,25 +42,25 @@ Stream
     .toList();
 
 // [ 
+//   BigDecimal("1.0"), 
+//   BigDecimal("2.00"), 
 //   BigDecimal("20.000"), 
 //   BigDecimal("40.000") 
 // ]
 ```
 
-#### Including partial values
+#### Excluding partial values
 
-Showing that an in-process moving product is emitted for each element, even if there aren't 3 elements from which to calculate a full window yet.
+Showing that in-process moving product values are not emitted for each element until the lookback window has been filled.
 
 ```java
 Stream
     .of("1.0", "2.0", "10.0", "2.0")
     .map(BigDecimal::new)
-    .gather(Gatherers4j.movingProduct(3).includePartialValues())
+    .gather(Gatherers4j.movingProduct(3).excludePartialValues())
     .toList();
 
 // [ 
-//   BigDecimal("1.0"), 
-//   BigDecimal("2.0"), 
 //   BigDecimal("20.000"), 
 //   BigDecimal("40.000") 
 // ]
@@ -76,6 +76,8 @@ Stream
     .toList();
 
 // [ 
+//   BigDecimal("10.0"),
+//   BigDecimal("20.00"),
 //   BigDecimal("20.000")
 // ]
 ```
@@ -89,6 +91,8 @@ Stream
     .toList();
 
 // [ 
+//   BigDecimal("1"), 
+//   BigDecimal("1"), 
 //   BigDecimal("10.0"), 
 //   BigDecimal("20.00") 
 // ]
@@ -103,6 +107,8 @@ Stream
     .toList();
 
 // [ 
+//   BigDecimal("3.5"), 
+//   BigDecimal("12.25"), 
 //   BigDecimal("122.500"), 
 //   BigDecimal("70.000") 
 // ]
@@ -121,6 +127,8 @@ Stream
     .toList();
 
 // [ 
+//   BigDecimal("1.11"), 
+//   BigDecimal("2.46"), 
 //   BigDecimal("25.4"), 
 //   BigDecimal("55.7") 
 // ]
@@ -135,8 +143,11 @@ Stream
     .gather(Gatherers4j.movingProduct(3).withOriginal())
     .toList();
 
-// [ 
-//   WithOriginal[original=10.0, calculated=20.000]
+// [
+//   WithOriginal[original=1.0, calculated=1.0], 
+//   WithOriginal[original=2.0, calculated=2.00], 
+//   WithOriginal[original=10.0, calculated=20.000], 
 //   WithOriginal[original=2.0, calculated=40.000]
 // ]
+
 ```

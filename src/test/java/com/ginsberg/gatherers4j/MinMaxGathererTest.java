@@ -38,17 +38,6 @@ class MinMaxGathererTest {
         @Nested
         class Moving {
 
-            
-            @Test
-            void doNotCommit() {
-                IO.println(
-                        Stream
-                                .of(3, 2, 1, 2, 3)
-                                .gather(Gatherers4j.<Integer>runningMin().withOriginal())
-                                .toList()
-                );
-            }
-
             @Test
             void ignoresNulls() {
                 // Arrange
