@@ -428,9 +428,9 @@ public abstract class Gatherers4j {
     }
 
     /// Create a stream that represents the moving maximum value over the previous `windowSize` elements,
-    /// as calculated by the given `Comparator`
+    /// as calculated by the given `Comparator`.
     ///
-    /// @param <INPUT> Type of elements in the input and output stream; must implement `Comparable`
+    /// @param <INPUT> Type of elements in the input and output stream
     /// @param windowSize How large the lookback window is, must be at least 2
     /// @param comparator A non-null comparator to use to compare stream elements
     /// @return A non-null `MinMaxGatherer`
@@ -481,9 +481,9 @@ public abstract class Gatherers4j {
     }
 
     /// Create a stream that represents the moving minimum value over the previous `windowSize` elements,
-    /// as calculated by the given `Comparator`
+    /// as calculated by the given `Comparator`.
     ///
-    /// @param <INPUT> Type of elements in the input and output stream; must implement `Comparable`
+    /// @param <INPUT> Type of elements in the input and output stream
     /// @param windowSize How large the lookback window is, must be at least 2
     /// @param comparator A non-null comparator to use to compare stream elements
     /// @return A non-null `MinMaxGatherer`
@@ -614,7 +614,7 @@ public abstract class Gatherers4j {
 
     /// Emit the running maximum value element in the input stream, according to the given `Comparator`.
     ///
-    /// @param <INPUT> Type of elements in the input and output stream; must implement `Comparable`
+    /// @param <INPUT> Type of elements in the input and output stream
     /// @param comparator A non-null `Comparator<INPUT>` to base the calculation on
     /// @return A non-null `MinMaxGatherer`
     public static <INPUT extends @Nullable Object> MinMaxGatherer<INPUT> runningMaxBy(
@@ -657,9 +657,9 @@ public abstract class Gatherers4j {
         return MinMaxGatherer.runningUsingComparable(true);
     }
 
-    /// Emit the running maximum value element in the input stream, according to the given `Comparator`.
+    /// Emit the running minimum value element in the input stream, according to the given `Comparator`.
     ///
-    /// @param <INPUT> Type of elements in the input and output stream; must implement `Comparable`
+    /// @param <INPUT> Type of elements in the input and output stream
     /// @param comparator A non-null `Comparator<INPUT>` to base the calculation on
     /// @return A non-null `MinMaxGatherer`
     public static <INPUT extends @Nullable Object> MinMaxGatherer<INPUT> runningMinBy(
