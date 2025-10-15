@@ -30,7 +30,7 @@ public class BigDecimalMedianGatherer<INPUT extends @Nullable Object>
         extends BigDecimalGatherer<INPUT> {
 
     private final int windowSize;
-    private boolean includePartialValues = false;
+    private boolean includePartialValues = true;
 
     BigDecimalMedianGatherer(
             final int windowSize,
@@ -45,14 +45,14 @@ public class BigDecimalMedianGatherer<INPUT extends @Nullable Object>
         return () -> windowSize > 0 ? new WindowedState(windowSize, includePartialValues) : new RunningState();
     }
 
-    /// When creating a moving median and the full size of the window has not yet been reached, the
-    /// gatherer should emit the median for what it has.
+    /// When creating a moving median and the full size of the window has not yet been reached, do
+    /// not emit partially calculated values to the downstream.
     ///
-    /// For example, if the trailing median is over 10 values, but the stream has only emitted two
-    /// values, the gatherer should calculate the median with two values and emit the answer. The default is to not
-    /// emit anything until the full size of the window has been seen.
-    public BigDecimalMedianGatherer<INPUT> includePartialValues() {
-        includePartialValues = true;
+    /// For example, if the trailing median is over 10 values, but the upstream has only emitted two
+    /// values, this gatherer should not emit any partially calculated values. The default is for
+    /// partially calculated values to be emitted.
+    public BigDecimalMedianGatherer<INPUT> excludePartialValues() {
+        includePartialValues = false;
         return this;
     }
 
