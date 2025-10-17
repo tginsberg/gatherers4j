@@ -22,7 +22,7 @@ for all calculations is {{< jdklink linkName="MathContext.DECIMAL64" package="ja
 
 | Method                                     | Purpose                                                                                                                                                                                                                                                                                                             |
 |--------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `includePartialValues()`                   | When calculating the moving median and the full size of the window has not yet been reached, the gatherer should emit values for what it has. [See example.](#including-partial-values)                                                                                                                             |
+| `excludePartialValues()`                   | When calculating the moving median, and the full size of the window has not yet been reached, the gatherer should suppress emitting values until the lookback window is full. [See example.](#excluding-partial-values)                                                                                             |
 | `treatNullAsZero()`                        | When encountering a `null` value in a stream, treat it as `BigDecimal.ZERO` instead. [See example.](#treating-null-as-zero)                                                                                                                                                                                         |
 | `treatNullAs(BigDecimal replacement)`      | When encountering a `null` value in a stream, treat it as the given `replacement` value instead. [See example.](#replacing-null-with-another-bigdecimal)                                                                                                                                                            |
 | `withMathContext(MathContext mathContext)` | Replace the `MathContext` used for all mathematical operations performed by this gatherer. [See example.](#specifying-a-new-mathcontext)                                                                                                                                                                            |
@@ -40,28 +40,28 @@ Stream
     .toList();
 
 // [
-//   BigDecimal("2.0"), 
-//   BigDecimal("2.0"), 
+//   BigDecimal("1.0")
+//   BigDecimal("1.5")
+//   BigDecimal("2.0")
+//   BigDecimal("2.0")
 // ]
 ```
 
 
-#### Including partial values
+#### Excluding partial values
 
-Showing that an in-process moving median is emitted for each element, even if there aren't 3 elements from which to calculate a full window yet.
+Showing that in-process moving median values are not emitted for each element until the lookback window has been filled.
 
 ```java
 Stream
     .of("1.0", "2.0", "10.0", "2.0")
     .map(BigDecimal::new)
-    .gather(Gatherers4j.movingMedian(3).includePartialValues())
+    .gather(Gatherers4j.movingMedian(3).excludePartialValues())
     .toList();
 
-// [ 
-//   BigDecimal("1.0"), 
-//   BigDecimal("1.5"), 
-//   BigDecimal("2.0"), 
-//   BigDecimal("2.0"), 
+// [
+//   BigDecimal("2.0")
+//   BigDecimal("2.0")
 // ]
 ```
 
@@ -74,6 +74,8 @@ Stream
     .toList();
 
 // [
+//   BigDecimal("10.0")
+//   BigDecimal("6.0")
 //   BigDecimal("2.0")
 // ]
 ```
@@ -87,8 +89,10 @@ Stream
     .toList();
 
 // [
-//   BigDecimal("0"), 
-//   BigDecimal("2.0") 
+//   BigDecimal("0")
+//   BigDecimal("0")
+//   BigDecimal("0")
+//   BigDecimal("2.0")
 // ]
 ```
 
@@ -101,8 +105,10 @@ Stream
     .toList();
 
 // [
-//   BigDecimal("3.5"), 
-//   BigDecimal("3.5"), 
+//   BigDecimal("3.5")
+//   BigDecimal("3.5")
+//   BigDecimal("3.5")
+//   BigDecimal("3.5")
 // ]
 ```
 
@@ -119,7 +125,9 @@ Stream
     .toList();
 
 // [
-//   BigDecimal("2.222"), 
+//   BigDecimal("1.111")
+//   BigDecimal("1.66")
+//   BigDecimal("2.222")
 //   BigDecimal("2.444")
 // ]
 ```
@@ -134,7 +142,10 @@ Stream
     .toList();
 
 // [
+//   WithOriginal[original=1.0, calculated=1.0]
+//   WithOriginal[original=2.0, calculated=1.5]
 //   WithOriginal[original=10.0, calculated=2.0]
 //   WithOriginal[original=2.0, calculated=2.0]
 // ]
+
 ```

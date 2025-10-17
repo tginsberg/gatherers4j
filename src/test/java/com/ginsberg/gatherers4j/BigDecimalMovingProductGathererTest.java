@@ -46,6 +46,7 @@ class BigDecimalMovingProductGathererTest {
         assertThat(output)
                 .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                 .containsExactly(
+                        new BigDecimal("2"),
                         new BigDecimal("4"),
                         new BigDecimal("20")
                 );
@@ -67,6 +68,28 @@ class BigDecimalMovingProductGathererTest {
         // Act
         final List<BigDecimal> output = input
                 .gather(Gatherers4j.movingProduct(2))
+                .toList();
+
+        // Assert
+        assertThat(output)
+                .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
+                .containsExactly(
+                        new BigDecimal("1"),
+                        new BigDecimal("2"),
+                        new BigDecimal("6"),
+                        new BigDecimal("12")
+                );
+    }
+
+
+    @Test
+    void movingProductExcludingPartialValues() {
+        // Arrange
+        final Stream<BigDecimal> input = Stream.of("1", "2", "3", "4").map(BigDecimal::new);
+
+        // Act
+        final List<BigDecimal> output = input
+                .gather(Gatherers4j.movingProduct(2).excludePartialValues())
                 .toList();
 
         // Assert
@@ -99,31 +122,11 @@ class BigDecimalMovingProductGathererTest {
         assertThat(output)
                 .usingRecursiveFieldByFieldElementComparator(BIG_DECIMAL_RECURSIVE_COMPARISON)
                 .containsExactly(
+                        new BigDecimal("1"),
                         new BigDecimal("2"),
                         new BigDecimal("20"),
                         new BigDecimal("200"),
                         new BigDecimal("600")
-                );
-    }
-
-    @Test
-    void movingProductWithPartials() {
-        // Arrange
-        final Stream<BigDecimal> input = Stream.of("1", "2", "3", "4").map(BigDecimal::new);
-
-        // Act
-        final List<BigDecimal> output = input
-                .gather(Gatherers4j.movingProduct(2).includePartialValues())
-                .toList();
-
-        // Assert
-        assertThat(output)
-                .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
-                .containsExactly(
-                        new BigDecimal("1"),
-                        new BigDecimal("2"),
-                        new BigDecimal("6"),
-                        new BigDecimal("12")
                 );
     }
 
@@ -135,7 +138,6 @@ class BigDecimalMovingProductGathererTest {
         // Act
         final List<WithOriginal<BigDecimal, BigDecimal>> output = input
                 .gather(Gatherers4j.movingProduct(2)
-                        .includePartialValues()
                         .withOriginal()
                 )
                 .toList();
@@ -170,6 +172,7 @@ class BigDecimalMovingProductGathererTest {
         assertThat(output)
                 .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                 .containsExactly(
+                        new BigDecimal("2"),
                         new BigDecimal("6"),
                         new BigDecimal("3"),
                         new BigDecimal("4")

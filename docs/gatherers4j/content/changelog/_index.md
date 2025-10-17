@@ -8,6 +8,10 @@ no_list: true
 ## v0.13.0
 [Released 2025-??-??](https://github.com/tginsberg/gatherers4j/releases/tag/v0.13.0)
 
++ Behavior change: All "moving" gatherers will now include all calculated values by default, even when the full lookback window has not been reached. 
+  + To turn this behavior off, use `excludePartialValues()`. 
+  + Previously, partial results were suppressed and turned on via `includePartialValues()`.
+  + This affects `movingMax()`, `movingMaxBy()`, `movingMin()`, `movingMinBy()`, `movingMedian()`, `movingMedianBy()`, `movingProduct()`, `movingProductBy()`, `movingSum()`, `movingSumBy()`, `simpleMovingAverage()`, and `simpleMovingAverageBy()`
 + Implement `uniquelyOccurringBy()` to limit the stream to uniquely occurring elements as measured by the given function
 + Implement `movingMedian()` and `movingMedianBy()`
 + Implement `runningMedian()` and `runningMedianBy()`
@@ -44,7 +48,7 @@ no_list: true
 
 + Implement `filterInstanceOf()` to filter a stream by type more easily. Addresses [#86](https://github.com/tginsberg/gatherers4j/issues/86), thanks [@nipafx](https://github.com/nipafx).
 + Implement `groupOrdered()`, and `groupOrderedBy()` to appropriately group elements in the input stream to lists in the output stream. Addresses [#88](https://github.com/tginsberg/gatherers4j/issues/88), thanks [@nipafx](https://github.com/nipafx).
-+ Implement `ensureOrdred()` and `ensureOrderedBy()` to ensure the given stream meets an ordering criteria, or fail exceptionally otherwise
++ Implement `ensureOrdered()` and `ensureOrderedBy()` to ensure the given stream meets an ordering criteria, or fail exceptionally otherwise
 + Implement `filterOrdered()` and `filterOrderedBy()` to remove non-ordered elements from the input stream
 + Implement `window()` to provide more options to windowing functions, namely - ability to specify size, how many to skip each time, and whether to include partial windows
 + Implement `repeat(n)` and `repeatInfinitely()` to repeatedly emit the input stream to the output stream
@@ -91,7 +95,7 @@ no_list: true
     + `argumentWhenSourceLonger(fn)`
     + `sourceWhenArgumentLonger(fn)`
     + `nullArgumentWhenSourceLonger()`
-    + `nullSourceWhenArgumentLonger`
+    + `nullSourceWhenArgumentLonger()`
 + Add support for `interleave(iterable)` and `interleave(iterator)`
     + With support for:
     + `appendLonger()`

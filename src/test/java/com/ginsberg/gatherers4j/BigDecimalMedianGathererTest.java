@@ -59,7 +59,7 @@ class BigDecimalMedianGathererTest {
 
             // Act
             final List<BigDecimal> output = input
-                    .gather(Gatherers4j.movingMedian(3).includePartialValues())
+                    .gather(Gatherers4j.movingMedian(3))
                     .toList();
 
             // Assert
@@ -87,7 +87,7 @@ class BigDecimalMedianGathererTest {
 
             // Act
             final List<BigDecimal> output = input
-                    .gather(Gatherers4j.movingMedian(2).includePartialValues())
+                    .gather(Gatherers4j.movingMedian(2))
                     .toList();
 
             // Assert
@@ -114,7 +114,7 @@ class BigDecimalMedianGathererTest {
 
             // Act
             final List<BigDecimal> output = input.stream()
-                    .gather(Gatherers4j.movingMedianBy(2, TestValueHolder::value).includePartialValues())
+                    .gather(Gatherers4j.movingMedianBy(2, TestValueHolder::value))
                     .toList();
 
             // Assert
@@ -129,6 +129,54 @@ class BigDecimalMedianGathererTest {
                     );
         }
 
+
+        @Test
+        void movingMedianExcludingPartialValues() {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.of("1", "2", "3", "4").map(BigDecimal::new);
+
+            // Act
+            final List<BigDecimal> output = input
+                    .gather(Gatherers4j.movingMedian(2).excludePartialValues())
+                    .toList();
+
+            // Assert
+            assertThat(output)
+                    .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
+                    .containsExactly(
+                            new BigDecimal("1.5"),
+                            new BigDecimal("2.5"),
+                            new BigDecimal("3.5")
+                    );
+        }
+
+        @Test
+        void movingMedianByExcludingPartialValues() {
+            // Arrange
+            final List<TestValueHolder> input = List.of(
+                    new TestValueHolder(1, new BigDecimal("1")),
+                    new TestValueHolder(2, new BigDecimal("2")),
+                    new TestValueHolder(3, new BigDecimal("10")),
+                    new TestValueHolder(4, new BigDecimal("20")),
+                    new TestValueHolder(5, new BigDecimal("30"))
+            );
+
+            // Act
+            final List<BigDecimal> output = input.stream()
+                    .gather(Gatherers4j.movingMedianBy(2, TestValueHolder::value).excludePartialValues())
+                    .toList();
+
+            // Assert
+            assertThat(output)
+                    .usingRecursiveFieldByFieldElementComparator(BIG_DECIMAL_RECURSIVE_COMPARISON)
+                    .containsExactly(
+                            new BigDecimal("1.5"),
+                            new BigDecimal("6"),
+                            new BigDecimal("15"),
+                            new BigDecimal("25")
+                    );
+        }
+
         @Test
         void movingMedianWithDuplicateRemovals() {
             // Arrange
@@ -136,7 +184,7 @@ class BigDecimalMedianGathererTest {
 
             // Act
             final List<BigDecimal> output = input
-                    .gather(Gatherers4j.movingMedian(3).includePartialValues())
+                    .gather(Gatherers4j.movingMedian(3))
                     .toList();
 
             // Assert
@@ -158,7 +206,7 @@ class BigDecimalMedianGathererTest {
 
             // Act
             final List<WithOriginal<BigDecimal, BigDecimal>> output = input
-                    .gather(Gatherers4j.movingMedian(2).includePartialValues().withOriginal())
+                    .gather(Gatherers4j.movingMedian(2).withOriginal())
                     .toList();
 
             // Assert
@@ -184,7 +232,7 @@ class BigDecimalMedianGathererTest {
 
             // Act
             final List<BigDecimal> output = input
-                    .gather(Gatherers4j.movingMedian(2).includePartialValues().treatNullAsZero())
+                    .gather(Gatherers4j.movingMedian(2).treatNullAsZero())
                     .toList();
 
             // Assert
