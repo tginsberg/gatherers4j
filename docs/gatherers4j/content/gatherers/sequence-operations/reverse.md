@@ -3,7 +3,7 @@ title: "reverse()"
 linkTitle: "reverse()"
 show_in_table: true
 category: Sequence Operations
-description: everse the order of the input stream.
+description: reverse the order of the input stream.
 
 ---
 

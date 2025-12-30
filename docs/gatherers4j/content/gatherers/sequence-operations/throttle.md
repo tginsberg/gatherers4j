@@ -24,7 +24,7 @@ For a version of this that drops elements from the stream instead of pausing, se
 #### Limit to 2 per 100 milliseconds
 
 This shows a throttler that allows 2 elements every 100ms. First we record the `start` time so we can crudely measure elapsed time in milliseconds.
-Next, we start a range of `Integer` objects and `debounce` them. We see the original int and the elapsed time in the `Pair` we `map` to. Finally,
+Next, we start a range of `Integer` objects and `throttle` them. We see the original int and the elapsed time in the `Pair` we `map` to. Finally,
 we print the results.
 
 ```java

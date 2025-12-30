@@ -39,7 +39,7 @@ Stream
 
 ```java
 Stream
-    .of("A", "B", "C", "D", "E", "F", "G");
+    .of("A", "B", "C", "D", "E", "F", "G")
     .gather(Gatherers4j.window(2, 3, true))
     .toList();
 
@@ -52,7 +52,7 @@ This demonstrates the behavior of multiple partials.
 
 ```java
 Stream
-     .of("A", "B", "C", "D", "E", "F", "G");
+     .of("A", "B", "C", "D", "E", "F", "G")
      .gather(Gatherers4j.window(5, 2, true))
      .toList();
 

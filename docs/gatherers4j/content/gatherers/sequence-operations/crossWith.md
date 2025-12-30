@@ -15,7 +15,7 @@ for the `source` to be infinite, which would pair a single element from the inpu
 
 **Signatures**
 
-Note there are four possible types for the `soruce` of crossing elements.
+Note there are four possible types for the `source` of crossing elements.
 
 1. `crossWith(Iterator<CROSS> source)`
 2. `crossWith(Iterable<CROSS> source)`

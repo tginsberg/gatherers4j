@@ -9,7 +9,7 @@ description: Create a Stream that represents the moving median of a `Stream<BigD
 
 ### Implementation Notes
 This implementation is suitable for `Stream<BigDecimal>`, for a version that takes user-specified mapping function see [`movingMedianBy()`](/gatherers4j/gatherers/mathematical/movingmedianby/).
-By default, nulls are ignored and play no part in calculations, see `treatNullAs()` and `treatNullAZerl()` below for ways to change this behavior. The default `MathContext`
+By default, nulls are ignored and play no part in calculations, see `treatNullAs()` and `treatNullAZero()` below for ways to change this behavior. The default `MathContext`
 for all calculations is {{< jdklink linkName="MathContext.DECIMAL64" package="java.base/java/math/MathContext.html#DECIMAL64" >}}, but this can be overridden (see `withMathContext()`, below).
 
 
