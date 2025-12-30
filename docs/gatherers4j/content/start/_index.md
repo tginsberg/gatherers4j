@@ -5,7 +5,7 @@ weight: 2
 menu: {main: {weight: 20}}
 ---
 
-Gatherers4j releases are published to Maven Central, the latest version is {{< env "PROJECT_VERSION" >}}.
+Gatherers4j releases are published to Maven Central; the latest version is {{< env "PROJECT_VERSION" >}}.
 
 ### Maven
 

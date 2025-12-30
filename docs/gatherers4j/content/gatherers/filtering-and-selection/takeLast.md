@@ -3,7 +3,7 @@ title: "takeLast()"
 linkTitle: "takeLast()"
 show_in_table: true
 category: Filtering and Selection
-description: Remove all but the last `count` elements from the stream
+description: Remove all but the last `count` elements from the stream.
 ---
 
 

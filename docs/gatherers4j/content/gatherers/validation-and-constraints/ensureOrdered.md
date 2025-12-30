@@ -36,5 +36,5 @@ Stream
     .gather(Gatherers4j.ensureOrdered(Order.Descending))
     .toList();
 
-// java.lang.IllegalStateException: ensureDecreasing detected non-decreasing element
+// java.lang.IllegalStateException: ensureOrdered detected non-decreasing element
 ```

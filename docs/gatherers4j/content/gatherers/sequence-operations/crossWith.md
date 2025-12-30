@@ -8,14 +8,14 @@ description: Cross every element of the input stream with every element of the g
 
 ### Implementation Notes
 
-This gather pairs up each element of the input stream with some source of other elements, which do not have to be of the same type. While it is possible
-to have the `source` of elements be empty, the resulting output stream would be too so it is not recommended (this condition is not checked). It is also possible 
+This gatherer pairs up each element of the input stream with some source of other elements, which do not have to be of the same type. While it is possible
+to have the `source` of elements be empty, the resulting output stream would be empty too, so it is not recommended (this condition is not checked). It is also possible 
 for the `source` to be infinite, which would pair a single element from the input with whatever the `source` produces, which may make sense in a narrow set of cases
 (the implementation does not check for this condition).
 
 **Signatures**
 
-Note there are four possible types for the `soruce` of crossing elements.
+Note there are several possible types for the `source` of crossing elements.
 
 1. `crossWith(Iterator<CROSS> source)`
 2. `crossWith(Iterable<CROSS> source)`

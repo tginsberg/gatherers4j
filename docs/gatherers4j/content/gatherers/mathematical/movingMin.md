@@ -3,7 +3,7 @@ title: "movingMin()"
 linkTitle: "movingMin()"
 show_in_table: true
 category: "Mathematical Operations"
-description: Create a Stream that represents the moving minimum of a `Stream<T>` looking back `windowSize` number of elements
+description: Create a Stream that represents the moving minimum of a `Stream<T>` looking back `windowSize` elements.
 
 ---
 

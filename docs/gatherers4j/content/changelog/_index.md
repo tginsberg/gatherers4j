@@ -17,6 +17,7 @@ no_list: true
 + Implement `runningMedian()` and `runningMedianBy()`
 + Implement `movingMax()`, `movingMaxBy()`, `movingMin()`, and `movingMinBy()`
 + Implement `runningMax()`, `runningMaxBy()`, `runningMin()`, and `runningMinBy()`
++ Fixes to documentation
 
 ## v0.12.0
 [Released 2025-09-27](https://github.com/tginsberg/gatherers4j/releases/tag/v0.12.0)

@@ -13,13 +13,13 @@ The lists emitted from this Gatherer are unmodifiable.
 
 **Signature**
 
-`groupOrderedBy(Order order, Comparator<INPUT> coparator)`
+`groupOrderedBy(Order order, Comparator<INPUT> comparator)`
 * `order` - A non-null Order in which to group elements. Values are `Equal`, `Ascending`, `Descending`, `AscendingOrEqual`, and `DescendingOrEqual`
 * `comparator` - A non-null `Comparator` to compare stream elements
 
 ### Examples
 
-#### Group elements the stream into lists that are strictly descending, according to the given `Comparator`
+#### Group elements of the stream into lists that are strictly descending, according to the given `Comparator`
 
 ```java
 Stream
@@ -35,7 +35,7 @@ Stream
 // [ ["AAA", "AA", "A"], ["AA"], ["AA", "A"] ]
 ```
 
-#### Group elements the stream into lists that are strictly ascending, according to the given `Comparator`
+#### Group elements of the stream into lists that are strictly ascending, according to the given `Comparator`
 
 ```java
 Stream

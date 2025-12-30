@@ -10,7 +10,7 @@ description: Drop every `n`th element of the stream.
 ### Implementation Notes
 
 This is syntactic sugar on top of [`filterIndexed()`](/gatherers4j/gatherers/filtering-and-selection/filterindexed). For a version
-of this gatherer that keeps every n{{< sup "th" >}} element instead of dropping them, see the [`takeEveryNth()`](/gatherers4j/gatherers/filtering-and-selection/takeeverynth/)Gatherer.
+of this gatherer that keeps every n{{< sup "th" >}} element instead of dropping them, see the [`takeEveryNth()`](/gatherers4j/gatherers/filtering-and-selection/takeeverynth/) Gatherer.
 
 **Signature**
 

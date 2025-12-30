@@ -28,12 +28,12 @@ cascade:
 ## Why Are We Here?
 
 Since Streams were first introduced in Java 8, there has been a way for us to write our own terminal operations 
-with Collectors. However, there has not been a convenient way to write our own intermediate operations. Also, there
-are a lot of intermediate operations that seem like they would be good additions ot the JDK, but
+with Collectors. However, there has not been a convenient way to write our own intermediate operations. Furthermore, there
+are a lot of intermediate operations that seem like they would be good additions to the JDK, but
 adding all of them to the Stream API would make it more difficult to learn and maintain.
 
 Enter Gatherers! Finally, we have the ability to plug our own intermediate operations into Java Streams, so we
-can make life easier for ourselves, or use that sequence operation from another language that we miss in Java. 
+can make life easier for ourselves or use that sequence operation from other languages that we miss in Java. 
 
 This library aims to provide a comprehensive and useful set of Gatherers (intermediate operations).
 
@@ -60,14 +60,14 @@ This library aims to provide a comprehensive and useful set of Gatherers (interm
 Don't you hate it when you find a library that meets your needs only to discover that it comes with a 
 massive tree of mandatory dependencies that conflict with your project? 
 
-Gatherers4j has a single dependency. [JSpecify](https://jspecify.dev/) annotations are used on all public methods and types 
+Gatherers4j has a single dependency. [JSpecify](https://jspecify.dev/) annotations are used on all public methods and types, 
 so static type checkers can more easily check for nullability issues. It's there to help you write better code.
 JSpecify is _tiny_ (it is made up of only four annotations) and _stable_. 
 
 **A Single Entrypoint**
 
 All the Gatherers in this library are exposed through a single class, 
-[`Gatherers4j`](https://javadoc.io/doc/com.ginsberg/gatherers4j/latest/com/ginsberg/gatherers4j/Gatherers4j.html)for 
+[`Gatherers4j`](https://javadoc.io/doc/com.ginsberg/gatherers4j/latest/com.ginsberg.gatherers4j/com/ginsberg/gatherers4j/Gatherers4j.html) for 
 simplicity. The groups outlined above are only represented explicitly in the documentation.
 
 **Apache 2.0 License**

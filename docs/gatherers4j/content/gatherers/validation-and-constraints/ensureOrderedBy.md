@@ -12,7 +12,7 @@ This gatherer is all-or-nothing, meaning it will not emit any intermediate resul
 
 **Signature**
 
-`ensureOrderedBy(Order order, Comparator<INPUT> coparator)`
+`ensureOrderedBy(Order order, Comparator<INPUT> comparator)`
 * `order` -  A non-null Order which elements must be in. Values are `Equal`, `Ascending`, `Descending`, `AscendingOrEqual`, and `DescendingOrEqual`
 * `comparator` - A non-null `Comparator` to compare stream elements
 
@@ -41,5 +41,5 @@ Stream
     .gather(Gatherers4j.ensureOrderedBy(Order.Descending, String::length))
     .toList();
 
-// java.lang.IllegalStateException: ensureDecreasingBy detected non-decreasing element
+// java.lang.IllegalStateException: ensureOrderedBy detected non-decreasing element
 ```

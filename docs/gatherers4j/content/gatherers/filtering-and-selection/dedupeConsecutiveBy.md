@@ -3,15 +3,15 @@ title: "dedupeConsecutiveBy()"
 linkTitle: "dedupeConsecutiveBy()"
 show_in_table: true
 category: Filtering and Selection
-description: Remove consecutive duplicates, where equality is measured by a given function
+description: Remove consecutive duplicates, where equality is measured by a given function.
 ---
 
 ### Implementation Notes
 
-This function removes consecutive duplicate elements as measured by `Object.equals()`. For the purposes of this gatherer,
+This function removes consecutive duplicate elements as measured by `Object::equals()`. For the purposes of this gatherer,
 nulls are equal to each other but not equal to anything else.
 
-For a version of `dedupeConsecutiveBy()` that measures equality via `Object::equals`, see the [`dedupeConsecutive()`](/gatherers4j/gatherers/filtering-and-selection/dedupeconsecutive/)Gatherer.
+For a version of `dedupeConsecutiveBy()` that measures equality via `Object::equals()`, see the [`dedupeConsecutive()`](/gatherers4j/gatherers/filtering-and-selection/dedupeconsecutive/) Gatherer.
 
 
 **Signature**

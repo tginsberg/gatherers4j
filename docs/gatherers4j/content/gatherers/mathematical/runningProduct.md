@@ -8,7 +8,7 @@ description: Calculate the running product of a `Stream<BigDecimal>`.
 ---
 
 ### Implementation Notes
-This implementation is suitable for `Stream<BigDecimal>`, for a version that takes user-specified mapping function see [`runningProductBy()`](/gatherers4j/gatherers/mathematical/runningproductby/).
+This implementation is suitable for `Stream<BigDecimal>`, for a version that takes a user-specified mapping function see [`runningProductBy()`](/gatherers4j/gatherers/mathematical/runningproductby/).
 By default, nulls are ignored and play no part in calculations, see `treatNullAs()` and `treatNullAsOne()` below for ways to change this behavior. The default `MathContext`
 for all calculations is {{< jdklink linkName="MathContext.DECIMAL64" package="java.base/java/math/MathContext.html#DECIMAL64" >}}, but this can be overridden (see `withMathContext()`, below).
 
@@ -19,12 +19,12 @@ for all calculations is {{< jdklink linkName="MathContext.DECIMAL64" package="ja
 
 **Additional Methods**
 
-| Method                                     | Purpose                                                                                                                                                                                                                                                                                                           |
-|--------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `treatNullAsOne()`                         | When encountering a `null` value in a stream, treat it as `BigDecimal.ONE` instead. [See example.](#treating-null-as-one)                                                                                                                                                                                         |
-| `treatNullAs(BigDecimal replacement)`      | When encountering a `null` value in a stream, treat it as the given `replacement` value instead. [See example.](#replacing-null-with-another-bigdecimal)                                                                                                                                                          |
-| `withMathContext(MathContext mathContext)` | Replace the `MathContext` used for all mathematical operations performed by this gatherer. [See example.](#specifying-a-new-mathcontext)                                                                                                                                                                          |
-| `withOriginal()`                           | Include the original input value from the stream in addition to the calculated value in a [`WithOriginal`](https://github.com/tginsberg/gatherers4j/blob/main/src/main/java/com/ginsberg/gatherers4j/dto/WithOriginal.java)record. [See example.](#emitting-a-record-containing-the-original-and-calculated-values) |
+| Method                                     | Purpose                                                                                                                                                                                                                                                                                                              |
+|--------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `treatNullAsOne()`                         | When encountering a `null` value in a stream, treat it as `BigDecimal.ONE` instead. [See example.](#treating-null-as-one)                                                                                                                                                                                            |
+| `treatNullAs(BigDecimal replacement)`      | When encountering a `null` value in a stream, treat it as the given `replacement` value instead. [See example.](#replacing-null-with-another-bigdecimal)                                                                                                                                                             |
+| `withMathContext(MathContext mathContext)` | Replace the `MathContext` used for all mathematical operations performed by this gatherer. [See example.](#specifying-a-new-mathcontext)                                                                                                                                                                             |
+| `withOriginal()`                           | Include the original input value from the stream in addition to the calculated value in a [`WithOriginal`](https://github.com/tginsberg/gatherers4j/blob/main/src/main/java/com/ginsberg/gatherers4j/dto/WithOriginal.java) record. [See example.](#emitting-a-record-containing-the-original-and-calculated-values) |
 
 Note: `treatNullAsZero()` is also a valid method on this gatherer, but it only makes sense in a very narrow set of circumstances.
 
@@ -50,7 +50,7 @@ Stream
 
 ```java
 Stream
-    .of(null, null, new BigDecimal("10.0"), new BigDecimal("2.42"), new BigDecimal("1.234")
+    .of(null, null, new BigDecimal("10.0"), new BigDecimal("2.42"), new BigDecimal("1.234"))
     .gather(Gatherers4j.runningProduct())
     .toList();
 

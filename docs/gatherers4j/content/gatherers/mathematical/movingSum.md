@@ -3,12 +3,12 @@ title: "movingSum()"
 linkTitle: "movingSum()"
 show_in_table: true
 category: "Mathematical Operations"
-description: Calculate the moving sum of a `Stream<BigDecimal>` looking back `windowSize` number of elements.
+description: Calculate the moving sum of a `Stream<BigDecimal>` looking back `windowSize` elements.
 
 ---
 
 ### Implementation Notes
-This implementation is suitable for `Stream<BigDecimal>`, for a version that takes user-specified mapping function see [`movingSumBy()`](/gatherers4j/gatherers/mathematical/movingsumby/).
+This implementation is suitable for `Stream<BigDecimal>`, for a version that takes a user-specified mapping function see [`movingSumBy()`](/gatherers4j/gatherers/mathematical/movingsumby/).
 By default, nulls are ignored and play no part in calculations, see `treatNullAs()` and `treatNullAsZero()` below for ways to change this behavior. The default `MathContext`
 for all calculations is {{< jdklink linkName="MathContext.DECIMAL64" package="java.base/java/math/MathContext.html#DECIMAL64" >}}, but this can be overridden (see `withMathContext()`, below).
 
@@ -20,13 +20,13 @@ for all calculations is {{< jdklink linkName="MathContext.DECIMAL64" package="ja
 
 **Additional Methods**
 
-| Method                                     | Purpose                                                                                                                                                                                                                                                                                                             |
-|--------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `excludePartialValues()`                   | When calculating the moving sum, and the full size of the window has not yet been reached, the gatherer should suppress emitting values until the lookback window is full. [See example.](#excluding-partial-values)                                                                                     |
-| `treatNullAsZero()`                        | When encountering a `null` value in a stream, treat it as `BigDecimal.ONE` instead. [See example.](#treating-null-as-zero)                                                                                                                                                                                          |
-| `treatNullAs(BigDecimal replacement)`      | When encountering a `null` value in a stream, treat it as the given `replacement` value instead. [See example.](#replacing-null-with-another-bigdecimal)                                                                                                                                                            |
-| `withMathContext(MathContext mathContext)` | Replace the `MathContext` used for all mathematical operations performed by this gatherer. [See example.](#specifying-a-new-mathcontext)                                                                                                                                                                            |
-| `withOriginal()`                           | Include the original input value from the stream in addition to the calculated value in a [`WithOriginal`](https://github.com/tginsberg/gatherers4j/blob/main/src/main/java/com/ginsberg/gatherers4j/dto/WithOriginal.java)record. [See example.](#emitting-a-record-containing-the-original-and-calculated-values) |
+| Method                                     | Purpose                                                                                                                                                                                                                                                                                                              |
+|--------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `excludePartialValues()`                   | When calculating the moving sum, and the full size of the window has not yet been reached, the gatherer should suppress emitting values until the lookback window is full. [See example.](#excluding-partial-values)                                                                                                 |
+| `treatNullAsZero()`                        | When encountering a `null` value in a stream, treat it as `BigDecimal.ZERO` instead. [See example.](#treating-null-as-zero)                                                                                                                                                                                          |
+| `treatNullAs(BigDecimal replacement)`      | When encountering a `null` value in a stream, treat it as the given `replacement` value instead. [See example.](#replacing-null-with-another-bigdecimal)                                                                                                                                                             |
+| `withMathContext(MathContext mathContext)` | Replace the `MathContext` used for all mathematical operations performed by this gatherer. [See example.](#specifying-a-new-mathcontext)                                                                                                                                                                             |
+| `withOriginal()`                           | Include the original input value from the stream in addition to the calculated value in a [`WithOriginal`](https://github.com/tginsberg/gatherers4j/blob/main/src/main/java/com/ginsberg/gatherers4j/dto/WithOriginal.java) record. [See example.](#emitting-a-record-containing-the-original-and-calculated-values) |
 
 ### Examples
 
