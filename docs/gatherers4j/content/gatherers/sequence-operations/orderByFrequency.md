@@ -9,8 +9,8 @@ description: Emit elements in the input stream ordered by the specified frequenc
 
 ### Implementation Notes
 
-This implementation reads the entire stream before emitting any results making it inappropriate for infinite streams. Since this Gatherer
-is not order dependent it has a parallel-capable implementation. All results are wrapped in a [`WithCount`](https://github.com/tginsberg/gatherers4j/blob/main/src/main/java/com/ginsberg/gatherers4j/dto/WithCount.java)record.
+This implementation reads the entire stream before emitting any results, making it inappropriate for infinite streams. Since this Gatherer
+is not order-dependent, it has a parallel-capable implementation. All results are wrapped in a [`WithCount`](https://github.com/tginsberg/gatherers4j/blob/main/src/main/java/com/ginsberg/gatherers4j/dto/WithCount.java) record.
 
 **Signature**
 

@@ -3,15 +3,15 @@ title: "sampleFixedSize()"
 linkTitle: "sampleFixedSize()"
 show_in_table: true
 category: Filtering and Selection
-description: Perform a fixed size sampling over the input stream.
+description: Perform a fixed-size sampling over the input stream.
 
 ---
 
 ### Implementation Notes
 
-This uses the reservoir method internally and guarantees to have exactly `sampleSize` number of elements
-for streams at least `sampleSize` in length. Elements will be emitted in the order in which they are encountered.
-This implementation reads the entire stream before emitting any results making it inappropriate for infinite streams.
+This uses the reservoir method internally and guarantees for that streams that are at least `sampleSize` in length, there
+will be exactly `sampleSize` elements in the output stream. Elements will be emitted in the order in which they are encountered.
+This implementation reads the entire stream before emitting any results, making it inappropriate for infinite streams.
 
 **Signature**
 

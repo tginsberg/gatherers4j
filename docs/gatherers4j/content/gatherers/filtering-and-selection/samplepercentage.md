@@ -9,7 +9,7 @@ description: Perform a percentage-based sampling over the input stream.
 
 ### Implementation Notes
 
-This uses the Poisson method internally which means the `percentage` given is an approximation and will be more
+This uses the Poisson method internally, which means the `percentage` given is an approximation and will be more
 accurate over longer streams.
 
 **Signature**

@@ -9,7 +9,7 @@ description: Consume the entire stream and emit its elements rotated either left
 
 ### Implementation Notes
 
-This implementation reads the entire stream before emitting any results making it inappropriate for infinite streams.
+This implementation reads the entire stream before emitting any results, making it inappropriate for infinite streams.
 Left rotations store `abs(distance)` number of elements while right rotations store the entire stream.
 
 **Signature**
