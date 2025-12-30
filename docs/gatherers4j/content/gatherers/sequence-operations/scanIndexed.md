@@ -3,7 +3,7 @@ title: "scanIndexed()"
 linkTitle: "scanIndexed()"
 show_in_table: true
 category: Sequence Operations
-description: Perform a scan over every element in the input stream along with its index
+description: Perform a scan over every element in the input stream along with its index.
 
 ---
 

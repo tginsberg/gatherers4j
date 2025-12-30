@@ -3,7 +3,7 @@ title: "interleaveWith()"
 linkTitle: "interleaveWith()"
 show_in_table: true
 category: Sequence Operations
-description: Create a stream of alternating objects from the input stream and the argument source
+description: Create a stream of alternating objects from the input stream and the argument source.
 
 ---
 

@@ -3,7 +3,7 @@ title: "rotate()"
 linkTitle: "rotate()"
 show_in_table: true
 category: Sequence Operations
-description: Consume the entire stream and emit its elements rotated either left or right `distance` number of spaces
+description: Consume the entire stream and emit its elements rotated either left or right `distance` number of spaces.
 
 ---
 

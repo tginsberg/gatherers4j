@@ -3,7 +3,7 @@ title: "dedupeConsecutive()"
 linkTitle: "dedupeConsecutive()"
 show_in_table: true
 category: Filtering and Selection
-description: Remove consecutive duplicate elements from a stream where equality is measured by `Object::equals()`
+description: Remove consecutive duplicate elements from a stream where equality is measured by `Object::equals()`.
 ---
 
 

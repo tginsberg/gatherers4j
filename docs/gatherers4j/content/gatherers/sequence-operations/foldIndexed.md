@@ -3,7 +3,7 @@ title: "foldIndexed()"
 linkTitle: "foldIndexed()"
 show_in_table: true
 category: Sequence Operations
-description: Perform a fold over every element in the input stream along with its index
+description: Perform a fold over every element in the input stream along with its index.
 
 ---
 

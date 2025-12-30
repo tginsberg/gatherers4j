@@ -3,7 +3,7 @@ title: "movingMedian()"
 linkTitle: "movingMedian()"
 show_in_table: true
 category: "Mathematical Operations"
-description: Create a Stream that represents the moving median of a `Stream<BigDecimal>` looking back `windowSize` elements
+description: Create a Stream that represents the moving median of a `Stream<BigDecimal>` looking back `windowSize` elements.
 
 ---
 

@@ -3,7 +3,7 @@ title: "zipWith()"
 linkTitle: "zipWith()"
 show_in_table: true
 category: Sequence Operations
-description: Creates a stream of `Pair<FIRST,SECOND>` objects whose values come from the input stream and the source of arguments provided
+description: Creates a stream of `Pair<FIRST,SECOND>` objects whose values come from the input stream and the source of arguments provided.
 
 ---
 

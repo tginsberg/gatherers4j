@@ -3,7 +3,7 @@ title: "movingMaxBy()"
 linkTitle: "movingMaxBy()"
 show_in_table: true
 category: "Mathematical Operations"
-description: Create a Stream that represents the moving maximum of a `Stream<T>` looking back `windowSize` elements, as calculated by the given `Comparator`
+description: Create a Stream that represents the moving maximum of a `Stream<T>` looking back `windowSize` elements, as calculated by the given `Comparator`.
 
 ---
 
