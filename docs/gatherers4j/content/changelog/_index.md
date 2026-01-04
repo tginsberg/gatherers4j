@@ -6,7 +6,7 @@ no_list: true
 ---
 
 ## v0.13.0
-[Released 2025-??-??](https://github.com/tginsberg/gatherers4j/releases/tag/v0.13.0)
+[Released 2026-01-04](https://github.com/tginsberg/gatherers4j/releases/tag/v0.13.0)
 
 + Behavior change: All "moving" gatherers will now include all calculated values by default, even when the full lookback window has not been reached. 
   + To turn this behavior off, use `excludePartialValues()`. 
