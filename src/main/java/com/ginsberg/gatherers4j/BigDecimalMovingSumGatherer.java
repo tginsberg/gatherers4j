@@ -28,7 +28,7 @@ public class BigDecimalMovingSumGatherer<INPUT extends @Nullable Object>
         extends BigDecimalGatherer<INPUT> {
 
     private final int windowSize;
-    private boolean includePartialValues = false;
+        private boolean includePartialValues = true;
 
     BigDecimalMovingSumGatherer(
             final int windowSize,
@@ -46,14 +46,14 @@ public class BigDecimalMovingSumGatherer<INPUT extends @Nullable Object>
         return () -> new BigDecimalMovingSumGatherer.State(windowSize, includePartialValues);
     }
 
-    /// When creating a moving sum and the full size of the window has not yet been reached, the
-    /// gatherer should emit the sum of what it has.
+    /// When creating a moving sum and the full size of the window has not yet been reached, do
+    /// not emit partially calculated values to the downstream.
     ///
-    /// For example, if the trailing sum is over 10 values, but the stream has only emitted two
-    /// values, the gatherer should calculate the two values and emit the answer. The default is to not
-    /// emit anything until the full size of the window has been seen.
-    public BigDecimalMovingSumGatherer<INPUT> includePartialValues() {
-        includePartialValues = true;
+    /// For example, if the trailing sum is over 10 values, but the upstream has only emitted two
+    /// values, this gatherer should not emit any partially calculated values. The default is for
+    /// partially calculated values to be emitted.
+    public BigDecimalMovingSumGatherer<INPUT> excludePartialValues() {
+        includePartialValues = false;
         return this;
     }
 

@@ -19,36 +19,42 @@ package com.ginsberg.gatherers4j;
 import org.jspecify.annotations.Nullable;
 
 import java.util.HashSet;
-import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BinaryOperator;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Gatherer;
 
+import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
 import static com.ginsberg.gatherers4j.util.GathererUtils.pushAll;
 
-public class UniquelyOccurringGatherer<INPUT extends @Nullable Object>
-        implements Gatherer<INPUT, UniquelyOccurringGatherer.State<INPUT>, INPUT> {
+public class UniquelyOccurringGatherer<INPUT extends @Nullable Object, MAPPED extends @Nullable Object>
+        implements Gatherer<INPUT, UniquelyOccurringGatherer.State<INPUT, MAPPED>, INPUT> {
 
-    UniquelyOccurringGatherer() {
-        // Nothing to do
+    private final Function<INPUT, MAPPED> mappingFunction;
+
+    UniquelyOccurringGatherer(final Function<@Nullable INPUT, @Nullable MAPPED> mappingFunction) {
+        this.mappingFunction = mustNotBeNull(mappingFunction, "Mapping function must not be null");
     }
 
     @Override
-    public Supplier<State<INPUT>> initializer() {
+    public Supplier<State<INPUT, MAPPED>> initializer() {
         return State::new;
     }
 
     @Override
-    public Integrator<State<INPUT>, INPUT, INPUT> integrator() {
+    public Integrator<State<INPUT, MAPPED>, INPUT, INPUT> integrator() {
         return Integrator.ofGreedy((state, element, downstream) -> {
-            if (!state.duplicates.contains(element)) {
-                if (state.found.contains(element)) {
-                    state.duplicates.add(element);
-                    state.found.remove(element);
+            final MAPPED mappedObject = mappingFunction.apply(element);
+            if (!state.duplicates.contains(mappedObject)) {
+                if (state.found.containsKey(mappedObject)) {
+                    state.duplicates.add(mappedObject);
+                    state.found.remove(mappedObject);
                 } else {
-                    state.found.add(element);
+                    state.found.put(mappedObject, element);
                 }
             }
             return !downstream.isRejecting();
@@ -56,20 +62,20 @@ public class UniquelyOccurringGatherer<INPUT extends @Nullable Object>
     }
 
     @Override
-    public BinaryOperator<State<INPUT>> combiner() {
+    public BinaryOperator<State<INPUT, MAPPED>> combiner() {
         return (left, right) -> {
-            for (INPUT element : right.duplicates) {
+            for (final MAPPED element : right.duplicates) {
                 left.duplicates.add(element);
                 left.found.remove(element);
             }
 
-            for (INPUT element : right.found) {
-                if (!left.duplicates.contains(element)) {
-                    if (left.found.contains(element)) {
-                        left.found.remove(element);
-                        left.duplicates.add(element);
+            for (final Map.Entry<MAPPED, INPUT> element : right.found.entrySet()) {
+                if (!left.duplicates.contains(element.getKey())) {
+                    if (left.found.containsKey(element.getKey())) {
+                        left.found.remove(element.getKey());
+                        left.duplicates.add(element.getKey());
                     } else {
-                        left.found.add(element);
+                        left.found.put(element.getKey(), element.getValue());
                     }
                 }
             }
@@ -78,12 +84,12 @@ public class UniquelyOccurringGatherer<INPUT extends @Nullable Object>
     }
 
     @Override
-    public BiConsumer<State<INPUT>, Downstream<? super INPUT>> finisher() {
-        return (inputState, downstream) -> pushAll(inputState.found, downstream);
+    public BiConsumer<State<INPUT, MAPPED>, Downstream<? super INPUT>> finisher() {
+        return (inputState, downstream) -> pushAll(inputState.found.values(), downstream);
     }
 
-    public static class State<INPUT extends @Nullable Object> {
-        final Set<INPUT> duplicates = new HashSet<>();
-        final Set<INPUT> found = new LinkedHashSet<>();
+    public static class State<INPUT, MAPPED> {
+        final Set<@Nullable MAPPED> duplicates = new HashSet<>();
+        final Map<@Nullable MAPPED, @Nullable INPUT> found = new LinkedHashMap<>();
     }
 }

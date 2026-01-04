@@ -3,33 +3,33 @@ title: "interleaveWith()"
 linkTitle: "interleaveWith()"
 show_in_table: true
 category: Sequence Operations
-description: Creates a stream of alternating objects from the input stream and the argument source
+description: Create a stream of alternating objects from the input stream and the argument source.
 
 ---
 
 ### Implementation Notes
 
-This gatherer alternates elements from the input stream and some other source to the output stream. The default implementation assumes that
+This gatherer alternates elements from the input stream and some other source into the output stream. The default implementation assumes that
 both input stream and argument source are of the same length. If one is longer, it is not emitted to the output. Additional methods to alter
 this behavior (append source if longer, append argument if longer, append either if longer) are available as well.
 
 **Signatures**
 
-Note there are three possible types for the `other` of interleaved elements.
+Note there are several possible types for the `other` of interleaved elements.
 
 1. `interleaveWith(Iterator<CROSS> other)`
 2. `interleaveWith(Iterable<CROSS> other)`
 3. `interleaveWith(Stream<CROSS> other)`
 4. `interleaveWith(CROSS... other)`
-* `other` Must be non-null
+* `other` - Must be non-null
 
 **Additional Methods**
 
-| Method                     | Purpose                                                                                                                                                                                                                                                                       |
-|----------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `appendLonger()`           | If the source stream and the argument stream/iterator/iterable/varargs provide a different number of elements, append all the remaining elements from either one to the output stream. [See example.](#interleave-the-longer-of-source-or-argument)                           |
-| `appendSourceIfLonger()`   | If the source stream provides more elements than the argument stream/iterator/iterable/varargs, append all the remaining elements to the output stream. [See example.](#interleave-source-if-it-is-longer)                                                  |
-| `appendArgumentIfLonger()` | If the argument stream/iterator/iterable/varargs provides more elements than the source stream, append all remaining elements from the argument stream/iterator/iterable/varargs to the output stream. [See example.](#interleave-argument-if-it-is-longer) |
+| Method                     | Purpose                                                                                                                                                                                                                                                     |
+|----------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `appendLonger()`           | If the source stream and the argument stream/iterator/iterable/varargs provide a different number of elements, append all the remaining elements from either one to the output stream. [See example.](#interleave-the-longer-of-source-or-argument)         |
+| `appendSourceIfLonger()`   | If the source stream provides more elements than the argument stream/iterator/iterable/varargs, append all the remaining elements to the output stream. [See example.](#append-the-source-if-it-is-longer)                                                  |
+| `appendArgumentIfLonger()` | If the argument stream/iterator/iterable/varargs provides more elements than the source stream, append all remaining elements from the argument stream/iterator/iterable/varargs to the output stream. [See example.](#append-the-argument-if-it-is-longer) |
 
 ### Examples
 
@@ -118,7 +118,7 @@ left
 // "A", "F", "B", "G", "C", "H", "D", "E"
 ```
 
-#### Interleave source if it is longer
+#### Append the source if it is longer
 
 Appends the source elements only if they are longer, but not the argument elements if they are longer.
 
@@ -133,7 +133,7 @@ left
 // "A", "F", "B", "G", "C", "H", "D", "E"
 ```
 
-#### Interleave argument if it is longer
+#### Append the argument if it is longer
 
 Appends the argument elements only if they are longer, but not the source elements if they are longer.
 

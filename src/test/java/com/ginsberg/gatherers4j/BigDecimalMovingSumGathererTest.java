@@ -47,6 +47,7 @@ class BigDecimalMovingSumGathererTest {
         assertThat(output)
                 .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                 .containsExactly(
+                        new BigDecimal("2"),
                         new BigDecimal("4"),
                         new BigDecimal("12")
                 );
@@ -72,6 +73,7 @@ class BigDecimalMovingSumGathererTest {
         assertThat(output)
                 .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                 .containsExactly(
+                        new BigDecimal("1"),
                         new BigDecimal("3"),
                         new BigDecimal("5"),
                         new BigDecimal("7")
@@ -99,6 +101,7 @@ class BigDecimalMovingSumGathererTest {
         assertThat(output)
                 .usingRecursiveFieldByFieldElementComparator(BIG_DECIMAL_RECURSIVE_COMPARISON)
                 .containsExactly(
+                        new BigDecimal("1"),
                         new BigDecimal("3"),
                         new BigDecimal("12"),
                         new BigDecimal("30"),
@@ -108,20 +111,19 @@ class BigDecimalMovingSumGathererTest {
 
 
     @Test
-    void movingSumWithPartials() {
+    void movingSumWithoutPartials() {
         // Arrange
         final Stream<BigDecimal> input = Stream.of("1", "2", "3", "4").map(BigDecimal::new);
 
         // Act
         final List<BigDecimal> output = input
-                .gather(Gatherers4j.movingSum(2).includePartialValues())
+                .gather(Gatherers4j.movingSum(2).excludePartialValues())
                 .toList();
 
         // Assert
         assertThat(output)
                 .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                 .containsExactly(
-                        new BigDecimal("1"),
                         new BigDecimal("3"),
                         new BigDecimal("5"),
                         new BigDecimal("7")
@@ -129,14 +131,14 @@ class BigDecimalMovingSumGathererTest {
     }
 
     @Test
-    void movingSumWithPartialsWithOriginal() {
+    void movingSumWithoutPartialsWithOriginal() {
         // Arrange
         final Stream<BigDecimal> input = Stream.of("1", "2", "3", "4").map(BigDecimal::new);
 
         // Act
         final List<WithOriginal<BigDecimal, BigDecimal>> output = input
                 .gather(Gatherers4j.movingSum(2)
-                        .includePartialValues()
+                        .excludePartialValues()
                         .withOriginal())
                 .toList();
 
@@ -144,7 +146,6 @@ class BigDecimalMovingSumGathererTest {
         assertThat(output)
                 .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                 .containsExactly(
-                        new WithOriginal<>(new BigDecimal("1"), new BigDecimal("1")),
                         new WithOriginal<>(new BigDecimal("2"), new BigDecimal("3")),
                         new WithOriginal<>(new BigDecimal("3"), new BigDecimal("5")),
                         new WithOriginal<>(new BigDecimal("4"), new BigDecimal("7"))
@@ -170,6 +171,7 @@ class BigDecimalMovingSumGathererTest {
         assertThat(output)
                 .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                 .containsExactly(
+                        new BigDecimal("2"),
                         new BigDecimal("5"),
                         new BigDecimal("3"),
                         new BigDecimal("4")

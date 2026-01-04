@@ -47,6 +47,7 @@ class BigDecimalSimpleMovingAverageGathererTest {
         assertThat(output)
                 .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                 .containsExactly(
+                        new BigDecimal("1"),
                         new BigDecimal("1.5"),
                         new BigDecimal("6.0")
                 );
@@ -77,6 +78,8 @@ class BigDecimalSimpleMovingAverageGathererTest {
         assertThat(output)
                 .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                 .containsExactly(
+                        new BigDecimal("1"),
+                        new BigDecimal("1.5"),
                         new BigDecimal("4.33")
                 );
     }
@@ -101,6 +104,7 @@ class BigDecimalSimpleMovingAverageGathererTest {
         assertThat(output)
                 .usingRecursiveFieldByFieldElementComparator(BIG_DECIMAL_RECURSIVE_COMPARISON)
                 .containsExactly(
+                        new BigDecimal("1.0"),
                         new BigDecimal("1.5"),
                         new BigDecimal("6.0"),
                         new BigDecimal("15.0"),
@@ -127,6 +131,8 @@ class BigDecimalSimpleMovingAverageGathererTest {
         assertThat(output)
                 .usingRecursiveFieldByFieldElementComparator(BIG_DECIMAL_RECURSIVE_COMPARISON)
                 .containsExactly(
+                        new BigDecimal("1.0"),
+                        new BigDecimal("1.5"),
                         new BigDecimal("4.333333333333333"),
                         new BigDecimal("4.666666666666667")
                 );
@@ -147,6 +153,7 @@ class BigDecimalSimpleMovingAverageGathererTest {
                 .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                 .containsExactly(
                         BigDecimal.ZERO,
+                        BigDecimal.ZERO,
                         BigDecimal.ZERO
                 );
     }
@@ -165,6 +172,7 @@ class BigDecimalSimpleMovingAverageGathererTest {
         assertThat(output)
                 .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                 .containsExactly(
+                        new BigDecimal("10"),
                         new BigDecimal("5.5"),
                         new BigDecimal("5.5"),
                         new BigDecimal("5.5")
@@ -185,6 +193,7 @@ class BigDecimalSimpleMovingAverageGathererTest {
         assertThat(output)
                 .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                 .containsExactly(
+                        new BigDecimal("0"),
                         new BigDecimal("0.5"),
                         new BigDecimal("0.5"),
                         new BigDecimal("0.5")
@@ -214,7 +223,7 @@ class BigDecimalSimpleMovingAverageGathererTest {
         final List<WithOriginal<BigDecimal, BigDecimal>> output = input
                 .gather(Gatherers4j
                         .simpleMovingAverage(2)
-                        .includePartialValues()
+                        .excludePartialValues()
                         .withOriginal()
                 ).toList();
 
@@ -223,7 +232,6 @@ class BigDecimalSimpleMovingAverageGathererTest {
                 .map(WithOriginal::calculated)
                 .usingRecursiveFieldByFieldElementComparator(BIG_DECIMAL_RECURSIVE_COMPARISON)
                 .contains(
-                        new BigDecimal("1.0"),
                         new BigDecimal("1.5"),
                         new BigDecimal("6.0"),
                         new BigDecimal("15.0"),
@@ -234,7 +242,6 @@ class BigDecimalSimpleMovingAverageGathererTest {
                 .map(WithOriginal::original)
                 .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                 .containsExactly(
-                        new BigDecimal("1.0"),
                         new BigDecimal("2.0"),
                         new BigDecimal("10.0"),
                         new BigDecimal("20.0"),
@@ -263,6 +270,7 @@ class BigDecimalSimpleMovingAverageGathererTest {
                 .extracting(WithOriginal::calculated)
                 .usingRecursiveFieldByFieldElementComparator(BIG_DECIMAL_RECURSIVE_COMPARISON)
                 .containsExactly(
+                        new BigDecimal("1.0"),
                         new BigDecimal("1.5"),
                         new BigDecimal("6.0"),
                         new BigDecimal("15.0"),
@@ -271,7 +279,7 @@ class BigDecimalSimpleMovingAverageGathererTest {
 
         assertThat(output)
                 .map(WithOriginal::original)
-                .containsExactlyInAnyOrderElementsOf(input.stream().skip(1).toList());
+                .containsExactlyInAnyOrderElementsOf(input);
     }
 
 }

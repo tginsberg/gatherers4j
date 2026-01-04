@@ -8,7 +8,7 @@ description: Create an exponential average of `BigDecimal` values, over the give
 ---
 
 ### Implementation Notes
-This implementation is suitable for `Stream<BigDecimal>`, for a version that takes user-specified mapping function see [`exponentialMovingAverageWithPeriodBy()`](/gatherers4j/gatherers/mathematical/exponentialmovingaveragewithperiodby/).
+This implementation is suitable for `Stream<BigDecimal>`, for a version that takes a user-specified mapping function see [`exponentialMovingAverageWithPeriodBy()`](/gatherers4j/gatherers/mathematical/exponentialmovingaveragewithperiodby/).
 By default, nulls are ignored and play no part in calculations, see `treatNullAs()` and `treatNullAsZero()` below for ways to change this behavior. 
 
 **Signatures**
@@ -18,11 +18,11 @@ By default, nulls are ignored and play no part in calculations, see `treatNullAs
 
 **Additional Methods**
 
-| Method                                | Purpose                                                                                                                                                                                                                                                                                                         |
-|---------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `treatNullAsZero()`                   | When encountering a `null` value in a stream, treat it as `BigDecimal.ZERO` instead. [See example.](#treating-null-as-zero)                                                                                                                                                                                     |
-| `treatNullAs(BigDecimal replacement)` | When encountering a `null` value in a stream, treat it as the given `replacement` value instead. [See example.](#replacing-null-with-another-bigdecimal)                                                                                                                                                        |
-| `withOriginal()`                      | Include the original input value from the stream in addition to the calculated value in a [`WithOriginal`](https://github.com/tginsberg/gatherers4j/blob/main/src/main/java/com/ginsberg/gatherers4j/WithOriginal.java)record. [See example.](#emitting-a-record-containing-the-original-and-calculated-values) |
+| Method                                | Purpose                                                                                                                                                                                                                                                                                                              |
+|---------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `treatNullAsZero()`                   | When encountering a `null` value in a stream, treat it as `BigDecimal.ZERO` instead. [See example.](#treating-null-as-zero)                                                                                                                                                                                          |
+| `treatNullAs(BigDecimal replacement)` | When encountering a `null` value in a stream, treat it as the given `replacement` value instead. [See example.](#replacing-null-with-another-bigdecimal)                                                                                                                                                             |
+| `withOriginal()`                      | Include the original input value from the stream in addition to the calculated value in a [`WithOriginal`](https://github.com/tginsberg/gatherers4j/blob/main/src/main/java/com/ginsberg/gatherers4j/dto/WithOriginal.java) record. [See example.](#emitting-a-record-containing-the-original-and-calculated-values) |
 
 ### Examples
 

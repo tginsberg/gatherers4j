@@ -7,8 +7,8 @@ weight: 100
 ### JEP-485
 [JEP-485](https://openjdk.org/jeps/485) is the JDK Enhancement Proposal (JEP) that was used to deliver Stream Gatherers. 
 It contains quite a good explanation as to why we need Gatherers and details of how we got where we are today. If you
-are interested in the history of this proposal, there are previous versions available (note the "History" sections, which 
-will explain what changed): [JEP-473 (Second Preview)](https://openjdk.org/jeps/473) and  [JEP-462 (First Preview)](https://openjdk.org/jeps/461).
+are interested in the history of this proposal, there are previous versions available (see the "History" sections 
+for an explanation of changes): [JEP-473 (Second Preview)](https://openjdk.org/jeps/473) and  [JEP-461 (First Preview)](https://openjdk.org/jeps/461).
 
 
 ### JSpecify

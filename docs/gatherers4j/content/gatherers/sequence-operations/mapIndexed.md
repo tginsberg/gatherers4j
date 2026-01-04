@@ -3,7 +3,7 @@ title: "mapIndexed()"
 linkTitle: "mapIndexed()"
 show_in_table: true
 category: Sequence Operations
-description: Perform a mapping operation given the element being mapped and its zero-based index
+description: Perform a mapping operation given the element being mapped and its zero-based index.
 
 ---
 

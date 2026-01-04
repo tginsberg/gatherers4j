@@ -10,7 +10,7 @@ description: Limit the number of elements in the stream to some number per perio
 ### Implementation Notes
 
 Time is measured on a best-effort basis and may not be suitable for cases where a high precision clock is required.
-For a version of this that pauses the stream instead of dropping elements, see the [`throttle()`](/gatherers4j/gatherers/sequence-operations/throttle/)Gatherer. 
+For a version of this that pauses the stream instead of dropping elements, see the [`throttle()`](/gatherers4j/gatherers/sequence-operations/throttle/) Gatherer. 
 
 **Signature**
 
@@ -23,8 +23,8 @@ For a version of this that pauses the stream instead of dropping elements, see t
 
 #### Limit to 2 per 50 milliseconds
 
-This shows a debouncer that keeps 2 elements every 50ms. First we record the `start` time so we can crudely measure elapsed time in milliseconds.
-Next, we start a range of `Integer` objects and `debounce` them. We see the original int and the elapsed time in the `Pair` we `map` to. Finally,
+This shows a debouncer that keeps 2 elements every 50ms. First, we record the `start` time so we can crudely measure elapsed time in milliseconds.
+Next, we start a range of `Integer` objects and `debounce` them. We see the original integer and the elapsed time in the `Pair` we `map` to. Finally,
 we print the results.
 
 ```java
@@ -34,7 +34,7 @@ IntStream
     .range(1, 10_000_000)
     .boxed()
     .gather(Gatherers4j.debounce(2, Duration.ofMillis(50)))
-    .map(it -> new Pair<>(it, System.currentTimeMillis()-start))
+    .map(it -> new Pair<>(it, System.currentTimeMillis() - start))
     .forEach(System.out::println);
 
 // Prints

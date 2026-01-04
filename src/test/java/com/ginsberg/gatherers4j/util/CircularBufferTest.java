@@ -39,6 +39,30 @@ class CircularBufferTest {
     }
 
     @Test
+    void addReturnsNullWhenNotOverwriting() {
+        // Arrange
+        final CircularBuffer<String> cb = new CircularBuffer<>(2);
+
+        // Act
+        final List<String> output = Stream.of("A", "B").map(cb::add).toList();
+
+        // Assert
+        assertThat(output).containsExactly(null, null);
+    }
+
+    @Test
+    void addReturnsPreviousWhenOverwriting() {
+        // Arrange
+        final CircularBuffer<String> cb = new CircularBuffer<>(1);
+
+        // Act
+        final List<String> output = Stream.of("A", "B", "C").map(cb::add).toList();
+
+        // Assert
+        assertThat(output).containsExactly(null, "A", "B");
+    }
+
+    @Test
     void asList() {
         // Arrange
         final CircularBuffer<String> cb = new CircularBuffer<>(5);
@@ -48,7 +72,7 @@ class CircularBufferTest {
         final List<String> output = cb.asList();
 
         // Assert
-        assertThat(output).containsExactly("A" ,"B" ,"C", "D");
+        assertThat(output).containsExactly("A", "B", "C", "D");
     }
 
     @Test
@@ -153,7 +177,7 @@ class CircularBufferTest {
     @Test
     void iteratorEmptyWhenNext() {
         assertThatThrownBy(() ->
-            new CircularBuffer<>(1).iterator().next()
+                new CircularBuffer<>(1).iterator().next()
         ).isExactlyInstanceOf(NoSuchElementException.class);
     }
 

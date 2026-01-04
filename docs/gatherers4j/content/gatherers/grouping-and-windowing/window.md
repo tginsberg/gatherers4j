@@ -3,7 +3,7 @@ title: "window()"
 linkTitle: "window()"
 show_in_table: true
 category: Grouping and Windowing
-description: Create windows over the elements of the input stream that are `windowSize` in length, sliding over `stepping` number of elements and optionally including partial windows at the end of ths stream.
+description: Create windows over the elements of the input stream that are `windowSize` in length, sliding over `stepping` elements and optionally including partial windows at the end of the stream.
 ---
 
 
@@ -11,7 +11,7 @@ description: Create windows over the elements of the input stream that are `wind
 
 The lists returned from this Gatherer are unmodifiable. The `stepping` may be larger than the `windowSize`, in which case elements are skipped.
 
-Fun fact: calling `window(2, 1, true)` or `window(2, 1, false`) is the same as [`zipWithNext()`](/gatherers4j/gatherers/sequence-operations/zipwithnext/)!
+Fun fact: calling `window(2, 1, true)` or `window(2, 1, false)` is the same as [`zipWithNext()`](/gatherers4j/gatherers/sequence-operations/zipwithnext/)!
 
 **Signature**
 
@@ -23,8 +23,6 @@ Fun fact: calling `window(2, 1, true)` or `window(2, 1, false`) is the same as [
 ### Examples
 
 #### Window size 2, stepping 2, not including partials
-
-The function groups consecutive elements of equal length
 
 ```java
 Stream
@@ -39,7 +37,7 @@ Stream
 
 ```java
 Stream
-    .of("A", "B", "C", "D", "E", "F", "G");
+    .of("A", "B", "C", "D", "E", "F", "G")
     .gather(Gatherers4j.window(2, 3, true))
     .toList();
 
@@ -52,7 +50,7 @@ This demonstrates the behavior of multiple partials.
 
 ```java
 Stream
-     .of("A", "B", "C", "D", "E", "F", "G");
+     .of("A", "B", "C", "D", "E", "F", "G")
      .gather(Gatherers4j.window(5, 2, true))
      .toList();
 
