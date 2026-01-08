@@ -73,10 +73,11 @@ public class FrequencyGatherer<INPUT extends @Nullable Object>
     }
 
     private Comparator<WithCount<INPUT>> comparator() {
+        Comparator<WithCount<INPUT>> comparator = Comparator.comparing(WithCount::count);
         if (order == Frequency.Descending) {
-            return (o1, o2) -> (int) (o2.count() - o1.count());
+            return comparator.reversed();
         } else {
-            return (o1, o2) -> (int) (o1.count() - o2.count());
+            return comparator;
         }
     }
 
