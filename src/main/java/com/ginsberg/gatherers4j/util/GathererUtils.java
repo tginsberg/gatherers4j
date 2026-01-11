@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,4 +76,5 @@ abstract public class GathererUtils {
             downstream.push(iterator.next());
         }
     }
+
 }

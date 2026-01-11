@@ -16,7 +16,6 @@
 
 package com.ginsberg.gatherers4j;
 
-import com.ginsberg.gatherers4j.dto.WithOriginal;
 import com.ginsberg.gatherers4j.util.TestValueHolder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -30,44 +29,16 @@ import static com.ginsberg.gatherers4j.util.TestUtils.BIG_DECIMAL_RECURSIVE_COMP
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class BigDecimalMovingProductGathererTest {
+class BigDecimalMovingGeometricMeanGathererTest {
 
     @Test
     void ignoresNulls() {
         // Arrange
-        final Stream<BigDecimal> input = Stream.of(null, BigDecimal.TWO, BigDecimal.TWO, BigDecimal.TEN);
+        final Stream<BigDecimal> input = Stream.of(null, BigDecimal.valueOf(1), BigDecimal.valueOf(4), BigDecimal.valueOf(16));
 
         // Act
         final List<BigDecimal> output = input
-                .gather(Gatherers4j.movingProduct(2))
-                .toList();
-
-        // Assert
-        assertThat(output)
-                .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
-                .containsExactly(
-                        new BigDecimal("2"),
-                        new BigDecimal("4"),
-                        new BigDecimal("20")
-                );
-    }
-
-    @Test
-    @SuppressWarnings("DataFlowIssue")
-    void mathContextCannotBeNull() {
-        assertThatThrownBy(() ->
-                Stream.of(BigDecimal.ONE).gather(Gatherers4j.movingProduct(2).withMathContext(null))
-        ).isExactlyInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void movingProduct() {
-        // Arrange
-        final Stream<BigDecimal> input = Stream.of("1", "2", "3", "4").map(BigDecimal::new);
-
-        // Act
-        final List<BigDecimal> output = input
-                .gather(Gatherers4j.movingProduct(2))
+                .gather(Gatherers4j.movingGeometricMean(2))
                 .toList();
 
         // Assert
@@ -76,19 +47,39 @@ class BigDecimalMovingProductGathererTest {
                 .containsExactly(
                         new BigDecimal("1"),
                         new BigDecimal("2"),
-                        new BigDecimal("6"),
-                        new BigDecimal("12")
+                        new BigDecimal("8")
                 );
     }
 
     @Test
-    void movingProductWithZero() {
+    void movingGeometricMean() {
         // Arrange
-        final Stream<BigDecimal> input = Stream.of("1", "0", "3", "4").map(BigDecimal::new);
+        final Stream<BigDecimal> input = Stream.of("1", "4", "16", "64").map(BigDecimal::new);
 
         // Act
         final List<BigDecimal> output = input
-                .gather(Gatherers4j.movingProduct(2))
+                .gather(Gatherers4j.movingGeometricMean(2))
+                .toList();
+
+        // Assert
+        assertThat(output)
+                .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
+                .containsExactly(
+                        new BigDecimal("1"),
+                        new BigDecimal("2"),
+                        new BigDecimal("8"),
+                        new BigDecimal("32")
+                );
+    }
+
+    @Test
+    void movingGeometricMeanWithZero() {
+        // Arrange
+        final Stream<BigDecimal> input = Stream.of("1", "0", "16", "64").map(BigDecimal::new);
+
+        // Act
+        final List<BigDecimal> output = input
+                .gather(Gatherers4j.movingGeometricMean(2))
                 .toList();
 
         // Assert
@@ -98,19 +89,18 @@ class BigDecimalMovingProductGathererTest {
                         new BigDecimal("1"),
                         new BigDecimal("0"),
                         new BigDecimal("0"),
-                        new BigDecimal("12")
+                        new BigDecimal("32")
                 );
     }
 
-
     @Test
-    void movingProductExcludingPartialValues() {
+    void movingGeometricMeanExcludingPartialValues() {
         // Arrange
-        final Stream<BigDecimal> input = Stream.of("1", "2", "3", "4").map(BigDecimal::new);
+        final Stream<BigDecimal> input = Stream.of("1", "4", "16", "64").map(BigDecimal::new);
 
         // Act
         final List<BigDecimal> output = input
-                .gather(Gatherers4j.movingProduct(2).excludePartialValues())
+                .gather(Gatherers4j.movingGeometricMean(2).excludePartialValues())
                 .toList();
 
         // Assert
@@ -118,25 +108,24 @@ class BigDecimalMovingProductGathererTest {
                 .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                 .containsExactly(
                         new BigDecimal("2"),
-                        new BigDecimal("6"),
-                        new BigDecimal("12")
+                        new BigDecimal("8"),
+                        new BigDecimal("32")
                 );
     }
 
     @Test
-    void movingProductBy() {
+    void movingGeometricMeanBy() {
         // Arrange
         final List<TestValueHolder> input = List.of(
                 new TestValueHolder(1, new BigDecimal("1")),
-                new TestValueHolder(2, new BigDecimal("2")),
-                new TestValueHolder(3, new BigDecimal("10")),
-                new TestValueHolder(4, new BigDecimal("20")),
-                new TestValueHolder(5, new BigDecimal("30"))
+                new TestValueHolder(2, new BigDecimal("4")),
+                new TestValueHolder(3, new BigDecimal("16")),
+                new TestValueHolder(4, new BigDecimal("64"))
         );
 
         // Act
         final List<BigDecimal> output = input.stream()
-                .gather(Gatherers4j.movingProductBy(2, TestValueHolder::value))
+                .gather(Gatherers4j.movingGeometricMeanBy(2, TestValueHolder::value))
                 .toList();
 
         // Assert
@@ -145,32 +134,8 @@ class BigDecimalMovingProductGathererTest {
                 .containsExactly(
                         new BigDecimal("1"),
                         new BigDecimal("2"),
-                        new BigDecimal("20"),
-                        new BigDecimal("200"),
-                        new BigDecimal("600")
-                );
-    }
-
-    @Test
-    void movingProductWithPartialsWithOriginal() {
-        // Arrange
-        final Stream<BigDecimal> input = Stream.of("1", "2", "3", "4").map(BigDecimal::new);
-
-        // Act
-        final List<WithOriginal<BigDecimal, BigDecimal>> output = input
-                .gather(Gatherers4j.movingProduct(2)
-                        .withOriginal()
-                )
-                .toList();
-
-        // Assert
-        assertThat(output)
-                .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
-                .containsExactly(
-                        new WithOriginal<>(new BigDecimal("1"), new BigDecimal("1")),
-                        new WithOriginal<>(new BigDecimal("2"), new BigDecimal("2")),
-                        new WithOriginal<>(new BigDecimal("3"), new BigDecimal("6")),
-                        new WithOriginal<>(new BigDecimal("4"), new BigDecimal("12"))
+                        new BigDecimal("8"),
+                        new BigDecimal("32")
                 );
     }
 
@@ -178,25 +143,23 @@ class BigDecimalMovingProductGathererTest {
     void treatNullAsOne() {
         // Arrange
         final Stream<BigDecimal> input = Stream.of(
-                new BigDecimal("2"),
-                new BigDecimal("3"),
+                new BigDecimal("1"),
                 null,
                 new BigDecimal("4")
         );
 
         // Act
         final List<BigDecimal> output = input
-                .gather(Gatherers4j.movingProduct(2).treatNullAsOne())
+                .gather(Gatherers4j.movingGeometricMean(2).treatNullAsOne())
                 .toList();
 
         // Assert
         assertThat(output)
                 .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                 .containsExactly(
-                        new BigDecimal("2"),
-                        new BigDecimal("6"),
-                        new BigDecimal("3"),
-                        new BigDecimal("4")
+                        new BigDecimal("1"),
+                        new BigDecimal("1"),
+                        new BigDecimal("2")
                 );
     }
 
@@ -204,7 +167,7 @@ class BigDecimalMovingProductGathererTest {
     @ValueSource(ints = {-1, 0, 1})
     void windowSizeMustBeGreaterThanOne(final int windowSize) {
         assertThatThrownBy(() ->
-                Stream.of(BigDecimal.ONE).gather(Gatherers4j.movingProduct(windowSize))
+                Stream.of(BigDecimal.ONE).gather(Gatherers4j.movingGeometricMean(windowSize))
         ).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 }
