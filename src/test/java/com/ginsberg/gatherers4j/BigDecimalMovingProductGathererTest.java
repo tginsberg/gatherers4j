@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -81,6 +81,28 @@ class BigDecimalMovingProductGathererTest {
                 );
     }
 
+    @Test
+    void movingProductWithZero() {
+        // Arrange
+        final Stream<BigDecimal> input = Stream.of("1", "0", "0", "0", "3", "4").map(BigDecimal::new);
+
+        // Act
+        final List<BigDecimal> output = input
+                .gather(Gatherers4j.movingProduct(2))
+                .toList();
+
+        // Assert
+        assertThat(output)
+                .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
+                .containsExactly(
+                        new BigDecimal("1"),
+                        new BigDecimal("0"),
+                        new BigDecimal("0"),
+                        new BigDecimal("0"),
+                        new BigDecimal("0"),
+                        new BigDecimal("12")
+                );
+    }
 
     @Test
     void movingProductExcludingPartialValues() {
