@@ -1,5 +1,5 @@
 /*
- * Copyright 2024-2026 Todd Ginsberg
+ * Copyright 2024 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,7 +67,6 @@ public class BigDecimalMovingProductGatherer<INPUT extends @Nullable Object>
         final BigDecimal[] series;
         BigDecimal product = BigDecimal.ONE;
         int index = 0;
-        int zeroCount = 0;
 
         private State(final int lookBack, final boolean includePartialValues) {
             this.includePartialValues = includePartialValues;
@@ -82,28 +81,14 @@ public class BigDecimalMovingProductGatherer<INPUT extends @Nullable Object>
 
         @Override
         public void add(final BigDecimal element, final MathContext mathContext) {
-            final int windowIndex = index % series.length;
-            final BigDecimal outgoing = series[windowIndex];
-
-            if (outgoing.compareTo(BigDecimal.ZERO) == 0) {
-                zeroCount--;
-            } else {
-                product = product.divide(outgoing, mathContext);
-            }
-
-            if (element.compareTo(BigDecimal.ZERO) == 0) {
-                zeroCount++;
-            } else {
-                product = product.multiply(element, mathContext);
-            }
-
-            series[windowIndex] = element;
+            product = product.divide(series[index % series.length], mathContext).multiply(element, mathContext);
+            series[index % series.length] = element;
             index++;
         }
 
         @Override
         public BigDecimal calculate() {
-            return zeroCount > 0 ? BigDecimal.ZERO : product;
+            return product;
         }
     }
 }
