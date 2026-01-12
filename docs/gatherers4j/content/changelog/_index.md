@@ -9,6 +9,7 @@ no_list: true
 [Released 2026-??-??](https://github.com/tginsberg/gatherers4j/releases/tag/v0.14.0)
 
 + Implement `movingGeometricMean()`, `movingGeometricMeanBy()`, `runningGeometricMean()`, and `runningGeometricMeanBy()`
++ Fix bug in `movingProduct()` and `movingProductBy()` where zero values were incorrectly handled. Addresses [#184](https://github.com/tginsberg/gatherers4j/issues/184).
 
 ## v0.13.0
 [Released 2026-01-04](https://github.com/tginsberg/gatherers4j/releases/tag/v0.13.0)
