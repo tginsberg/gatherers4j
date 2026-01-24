@@ -229,7 +229,8 @@ class GroupChangingGathererTest {
                 assertThatIllegalStateException()
                     .isThrownBy(() ->
                         Stream.of(1, 1).gather(Gatherers4j.ensureOrdered(Order.Descending)).toList()
-                    ).withMessage("Elements not in proper order: Descending");
+                    )
+                    .withMessage("Elements not in proper order: Descending");
             }
 
             @Test

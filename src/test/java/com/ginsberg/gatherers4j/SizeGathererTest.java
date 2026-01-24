@@ -85,7 +85,8 @@ class SizeGathererTest {
             assertThatIllegalStateException()
                 .isThrownBy(() ->
                     Stream.of("A", "B", "C").gather(Gatherers4j.ensureSize(Size.Equals, 2)).toList()
-                ).withMessage("Invalid stream size: wanted Equals 2");
+                )
+                .withMessage("Invalid stream size: wanted Equals 2");
         }
 
         @Test
@@ -93,7 +94,8 @@ class SizeGathererTest {
             assertThatIllegalStateException()
                 .isThrownBy(() ->
                     Stream.of("A").gather(Gatherers4j.ensureSize(Size.Equals, 2)).toList()
-                ).withMessage(  "Invalid stream size: wanted Equals 2");
+                )
+                .withMessage(  "Invalid stream size: wanted Equals 2");
         }
 
         @Test
@@ -117,7 +119,8 @@ class SizeGathererTest {
             assertThatIllegalStateException()
                 .isThrownBy(() ->
                     Stream.of("A", "B").gather(Gatherers4j.ensureSize(Size.GreaterThan, 2)).toList()
-                ).withMessage(  "Invalid stream size: wanted GreaterThan 2");
+                )
+                .withMessage(  "Invalid stream size: wanted GreaterThan 2");
         }
 
         @Test
@@ -126,7 +129,8 @@ class SizeGathererTest {
                 .isThrownBy(() ->
                     Stream.of("A").gather(Gatherers4j.ensureSize(Size.GreaterThan, 2))
                         .toList()
-                ).withMessage("Invalid stream size: wanted GreaterThan 2");
+                )
+                .withMessage("Invalid stream size: wanted GreaterThan 2");
         }
 
         @Test
@@ -151,7 +155,8 @@ class SizeGathererTest {
                 .isThrownBy(() ->
                     Stream.of("A").gather(Gatherers4j.ensureSize(Size.GreaterThanOrEqualTo, 2))
                         .toList()
-                ).withMessage("Invalid stream size: wanted GreaterThanOrEqualTo 2");
+                )
+                .withMessage("Invalid stream size: wanted GreaterThanOrEqualTo 2");
         }
 
         @Test
@@ -225,7 +230,8 @@ class SizeGathererTest {
                 .isThrownBy(() ->
                     Stream.of("A", "B", "C")
                         .gather(Gatherers4j.ensureSize(Size.LessThanOrEqualTo, 2)).toList()
-                ).withMessage("Invalid stream size: wanted LessThanOrEqualTo 2");
+                )
+                .withMessage("Invalid stream size: wanted LessThanOrEqualTo 2");
         }
 
         @Test
