@@ -16,17 +16,19 @@
 
 package com.ginsberg.gatherers4j;
 
-import com.ginsberg.gatherers4j.enums.Order;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import static com.ginsberg.gatherers4j.Gatherers4j.groupBy;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.ginsberg.gatherers4j.enums.Order;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
 class GroupChangingGathererTest {
 
@@ -135,7 +137,9 @@ class GroupChangingGathererTest {
         @SuppressWarnings("DataFlowIssue")
         @Test
         void mappingFunctionMustNotBeNull() {
-            assertThatThrownBy(() -> Gatherers4j.groupBy(null)).isInstanceOf(IllegalArgumentException.class);
+            assertThatIllegalArgumentException()
+                .isThrownBy(() -> groupBy(null))
+                .withMessage("mappingFunction must not be null");
         }
 
         @Test
@@ -222,9 +226,10 @@ class GroupChangingGathererTest {
 
             @Test
             void ensureDescendingFailureCase() {
-                assertThatThrownBy(() ->
+                assertThatIllegalStateException()
+                    .isThrownBy(() ->
                         Stream.of(1, 1).gather(Gatherers4j.ensureOrdered(Order.Descending)).toList()
-                ).isExactlyInstanceOf(IllegalStateException.class);
+                    ).withMessage("Elements not in proper order: Descending");
             }
 
             @Test

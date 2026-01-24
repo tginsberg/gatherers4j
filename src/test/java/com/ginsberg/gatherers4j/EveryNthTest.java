@@ -16,14 +16,15 @@
 
 package com.ginsberg.gatherers4j;
 
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import static com.ginsberg.gatherers4j.Gatherers4j.dropEveryNth;
+import static com.ginsberg.gatherers4j.Gatherers4j.takeEveryNth;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 import java.util.List;
 import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
 class EveryNthTest {
 
@@ -44,13 +45,13 @@ class EveryNthTest {
 
         @Test
         void countMustBeTwoOrGreater() {
-            assertThatThrownBy(() ->
-                    Stream.of("A").gather(Gatherers4j.dropEveryNth(0)).toList()
-            ).isInstanceOf(IllegalArgumentException.class);
+            assertThatIllegalArgumentException()
+                .isThrownBy(() -> dropEveryNth(0))
+                .withMessage("Count must be a minimum of 2");
 
-            assertThatThrownBy(() ->
-                    Stream.of("A").gather(Gatherers4j.dropEveryNth(1)).toList()
-            ).isInstanceOf(IllegalArgumentException.class);
+            assertThatIllegalArgumentException()
+                .isThrownBy(() -> dropEveryNth(1))
+                .withMessage("Count must be a minimum of 2");
         }
     }
 
@@ -71,13 +72,13 @@ class EveryNthTest {
 
         @Test
         void countMustBeTwoOrGreater() {
-            assertThatThrownBy(() ->
-                    Stream.of("A").gather(Gatherers4j.takeEveryNth(0)).toList()
-            ).isInstanceOf(IllegalArgumentException.class);
+            assertThatIllegalArgumentException()
+                .isThrownBy(() -> takeEveryNth(0))
+                .withMessage("Count must be a minimum of 2");
 
-            assertThatThrownBy(() ->
-                    Stream.of("A").gather(Gatherers4j.takeEveryNth(1)).toList()
-            ).isInstanceOf(IllegalArgumentException.class);
+            assertThatIllegalArgumentException()
+                .isThrownBy(() -> takeEveryNth(1))
+                .withMessage("Count must be a minimum of 2");
         }
     }
 

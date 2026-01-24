@@ -24,50 +24,52 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 class ZipWithGathererTest {
 
     @Test
     void argumentIterableMustNotBeNull() {
-        assertThatThrownBy(() -> Stream.of("A")
-                .gather(Gatherers4j.zipWith((Iterable<String>) null)).toList()
-        ).isInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> Gatherers4j.zipWith((Iterable<String>) null))
+            .withMessage("Other iterable must not be null");
     }
 
     @Test
     void argumentIteratorMustNotBeNull() {
-        assertThatThrownBy(() -> Stream.of("A")
-                .gather(Gatherers4j.zipWith((Iterator<String>) null)).toList()
-        ).isInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> Gatherers4j.zipWith((Iterator<String>) null))
+            .withMessage("Other iterator must not be null");
     }
 
     @Test
     void argumentStreamMustNotBeNull() {
-        assertThatThrownBy(() -> Stream.of("A")
-                .gather(Gatherers4j.zipWith((Stream<String>) null)).toList()
-        ).isInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> Gatherers4j.zipWith((Stream<String>) null))
+            .withMessage("Other stream must not be null");
     }
 
     @Test
     void argumentVarargsMustNotBeNull() {
-        assertThatThrownBy(() -> Stream.of("A")
-                .gather(Gatherers4j.zipWith((String[]) null)).toList()
-        ).isInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> Gatherers4j.zipWith((String[]) null))
+            .withMessage("Other stream must not be null");
     }
 
     @Test
     void argumentWhenSourceLongerFunctionMustNotBeNull() {
-        assertThatThrownBy(() -> Stream.of("A")
-                .gather(Gatherers4j.zipWith(List.of("A")).argumentWhenSourceLonger(null)).toList()
-        ).isInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> Gatherers4j.zipWith(List.of("A")).argumentWhenSourceLonger(null))
+            .withMessage(
+                "Mapping function must not be null, use nullArgumentWhenSourceLonger() to insert nulls");
     }
 
     @Test
     void sourceWhenArgumentLongerFunctionMustNotBeNull() {
-        assertThatThrownBy(() -> Stream.of("A")
-                .gather(Gatherers4j.zipWith(List.of("A")).sourceWhenArgumentLonger(null)).toList()
-        ).isInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> Gatherers4j.zipWith(List.of("A")).sourceWhenArgumentLonger(null))
+            .withMessage(
+                "Mapping function must not be null, use nullSourceWhenArgumentLonger() to insert nulls");
     }
 
 
