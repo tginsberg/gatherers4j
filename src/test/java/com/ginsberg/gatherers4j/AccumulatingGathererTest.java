@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 public class AccumulatingGathererTest {
 
@@ -34,8 +34,9 @@ public class AccumulatingGathererTest {
         @Test
         @SuppressWarnings("DataFlowIssue")
         void accumulatorFunctionMustNotBeNull() {
-            assertThatThrownBy(() -> Gatherers4j.foldIndexed(() -> "A", null))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatIllegalArgumentException()
+                .isThrownBy(() -> Gatherers4j.foldIndexed(() -> "A", null))
+                .withMessage("Accumulator function must not be null");
         }
 
         @Test
@@ -71,8 +72,9 @@ public class AccumulatingGathererTest {
         @Test
         @SuppressWarnings("DataFlowIssue")
         void initialSupplierMustNotBeNull() {
-            assertThatThrownBy(() -> Gatherers4j.foldIndexed(null, (_, _, it) -> it))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatIllegalArgumentException()
+                .isThrownBy(() -> Gatherers4j.foldIndexed(null, (_, _, it) -> it))
+                .withMessage("Initial value supplier must not be null");
         }
     }
 
@@ -81,13 +83,17 @@ public class AccumulatingGathererTest {
         @Test
         @SuppressWarnings("DataFlowIssue")
         void initialValueMustNotBeNull() {
-            assertThatThrownBy(() -> Gatherers4j.scanIndexed(null, (_, _, _) -> 0)).isInstanceOf(IllegalArgumentException.class);
+            assertThatIllegalArgumentException()
+                .isThrownBy(() -> Gatherers4j.scanIndexed(null, (_, _, _) -> 0))
+                .withMessage("Initial value supplier must not be null");
         }
 
         @Test
         @SuppressWarnings("DataFlowIssue")
         void scanIndexFunctionMustNotBeNull() {
-            assertThatThrownBy(() -> Gatherers4j.scanIndexed(() -> "", null)).isInstanceOf(IllegalArgumentException.class);
+            assertThatIllegalArgumentException()
+                .isThrownBy(() -> Gatherers4j.scanIndexed(() -> "", null))
+                .withMessage("Accumulator function must not be null");
         }
 
         @Test

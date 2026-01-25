@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class SizeGathererTest {
@@ -62,16 +64,16 @@ class SizeGathererTest {
         @Test
         void orElseMustNotBeNull() {
             //noinspection DataFlowIssue
-            assertThatThrownBy(() ->
-                    Stream.empty().gather(Gatherers4j.ensureSize(Size.Equals, 2).orElse(null)).toList()
-            ).isInstanceOf(IllegalArgumentException.class);
+            assertThatIllegalArgumentException()
+                .isThrownBy(() -> Gatherers4j.ensureSize(Size.Equals, 2).orElse(null))
+                .withMessage("The orElse function must not be null");
         }
 
         @Test
         void targetSizeMustNotBeNegative() {
-            assertThatThrownBy(() ->
-                    Stream.empty().gather(Gatherers4j.ensureSize(Size.Equals, -1)).toList()
-            ).isInstanceOf(IllegalArgumentException.class);
+            assertThatIllegalArgumentException()
+                .isThrownBy(() -> Gatherers4j.ensureSize(Size.Equals, -1))
+                .withMessage("Target size cannot be negative");
         }
     }
 
@@ -80,16 +82,20 @@ class SizeGathererTest {
 
         @Test
         void doesNotEmitOverTarget() {
-            assertThatThrownBy(() ->
+            assertThatIllegalStateException()
+                .isThrownBy(() ->
                     Stream.of("A", "B", "C").gather(Gatherers4j.ensureSize(Size.Equals, 2)).toList()
-            ).isInstanceOf(IllegalStateException.class);
+                )
+                .withMessage("Invalid stream size: wanted Equals 2");
         }
 
         @Test
         void doesNotEmitUnderTarget() {
-            assertThatThrownBy(() ->
+            assertThatIllegalStateException()
+                .isThrownBy(() ->
                     Stream.of("A").gather(Gatherers4j.ensureSize(Size.Equals, 2)).toList()
-            ).isInstanceOf(IllegalStateException.class);
+                )
+                .withMessage(  "Invalid stream size: wanted Equals 2");
         }
 
         @Test
@@ -110,16 +116,21 @@ class SizeGathererTest {
 
         @Test
         void doesNotEmitAtTarget() {
-            assertThatThrownBy(() ->
+            assertThatIllegalStateException()
+                .isThrownBy(() ->
                     Stream.of("A", "B").gather(Gatherers4j.ensureSize(Size.GreaterThan, 2)).toList()
-            ).isInstanceOf(IllegalStateException.class);
+                )
+                .withMessage(  "Invalid stream size: wanted GreaterThan 2");
         }
 
         @Test
         void doesNotEmitUnderTarget() {
-            assertThatThrownBy(() ->
-                    Stream.of("A").gather(Gatherers4j.ensureSize(Size.GreaterThan, 2)).toList()
-            ).isInstanceOf(IllegalStateException.class);
+            assertThatIllegalStateException()
+                .isThrownBy(() ->
+                    Stream.of("A").gather(Gatherers4j.ensureSize(Size.GreaterThan, 2))
+                        .toList()
+                )
+                .withMessage("Invalid stream size: wanted GreaterThan 2");
         }
 
         @Test
@@ -140,9 +151,12 @@ class SizeGathererTest {
 
         @Test
         void doesNotEmitUnderTarget() {
-            assertThatThrownBy(() ->
-                    Stream.of("A").gather(Gatherers4j.ensureSize(Size.GreaterThanOrEqualTo, 2)).toList()
-            ).isInstanceOf(IllegalStateException.class);
+            assertThatIllegalStateException()
+                .isThrownBy(() ->
+                    Stream.of("A").gather(Gatherers4j.ensureSize(Size.GreaterThanOrEqualTo, 2))
+                        .toList()
+                )
+                .withMessage("Invalid stream size: wanted GreaterThanOrEqualTo 2");
         }
 
         @Test
@@ -176,16 +190,21 @@ class SizeGathererTest {
 
         @Test
         void doesNotEmitAtTarget() {
-            assertThatThrownBy(() ->
-                    Stream.of("A", "B").gather(Gatherers4j.ensureSize(Size.LessThan,  2)).toList()
-            ).isInstanceOf(IllegalStateException.class);
+            assertThatIllegalStateException()
+                .isThrownBy(() ->
+                    Stream.of("A", "B").gather(Gatherers4j.ensureSize(Size.LessThan, 2)).toList()
+                )
+                .withMessage("Invalid stream size: wanted LessThan 2");
         }
 
         @Test
         void doesNotEmitOverTarget() {
-            assertThatThrownBy(() ->
-                    Stream.of("A", "B", "C").gather(Gatherers4j.ensureSize(Size.LessThan,  2)).toList()
-            ).isInstanceOf(IllegalStateException.class);
+            assertThatIllegalStateException()
+                .isThrownBy(() ->
+                    Stream.of("A", "B", "C").gather(Gatherers4j.ensureSize(Size.LessThan, 2))
+                        .toList()
+                )
+                .withMessage("Invalid stream size: wanted LessThan 2");
         }
 
         @Test
@@ -207,9 +226,12 @@ class SizeGathererTest {
 
         @Test
         void doesNotEmitOverTarget() {
-            assertThatThrownBy(() ->
-                    Stream.of("A", "B", "C").gather(Gatherers4j.ensureSize(Size.LessThanOrEqualTo,  2)).toList()
-            ).isInstanceOf(IllegalStateException.class);
+            assertThatIllegalStateException()
+                .isThrownBy(() ->
+                    Stream.of("A", "B", "C")
+                        .gather(Gatherers4j.ensureSize(Size.LessThanOrEqualTo, 2)).toList()
+                )
+                .withMessage("Invalid stream size: wanted LessThanOrEqualTo 2");
         }
 
         @Test

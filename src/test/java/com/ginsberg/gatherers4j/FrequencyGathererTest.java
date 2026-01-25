@@ -16,16 +16,15 @@
 
 package com.ginsberg.gatherers4j;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+
 import com.ginsberg.gatherers4j.dto.WithCount;
 import com.ginsberg.gatherers4j.enums.Frequency;
 import com.ginsberg.gatherers4j.test.ParallelAndSequentialTest;
-import org.junit.jupiter.api.Test;
-
 import java.util.List;
 import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import org.junit.jupiter.api.Test;
 
 class FrequencyGathererTest {
 
@@ -61,9 +60,9 @@ class FrequencyGathererTest {
 
     @Test
     void orderMustBeSpecified() {
-        assertThatThrownBy(() ->
-                Stream.of("A").gather(new FrequencyGatherer<>(null)).toList()
-        ).isInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> new FrequencyGatherer<>(null))
+            .withMessage("Order must be specified");
     }
 
 }
