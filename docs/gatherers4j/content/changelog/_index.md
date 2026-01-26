@@ -10,6 +10,8 @@ no_list: true
 
 + Implement `movingGeometricMean()`, `movingGeometricMeanBy()`, `runningGeometricMean()`, and `runningGeometricMeanBy()`
 + Fix bug in `movingProduct()` and `movingProductBy()` where zero values were incorrectly handled. Addresses [#184](https://github.com/tginsberg/gatherers4j/issues/184).
++ Thank you to [@Riggs333](https://github.com/Riggs333) for contributing code cleanups, making comparisons in `FrequencyGatherer` easier to understand!
++ Thank you to [@Riggs333](https://github.com/Riggs333) for contributing changes to tests to use AssertJ's type-specific exception assertions, which clarifies the intent of the code!
 
 ## v0.13.0
 [Released 2026-01-04](https://github.com/tginsberg/gatherers4j/releases/tag/v0.13.0)
