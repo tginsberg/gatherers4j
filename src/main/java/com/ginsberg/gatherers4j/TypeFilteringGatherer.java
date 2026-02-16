@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,13 +29,14 @@ abstract class TypeFilteringGatherer {
             throw new IllegalArgumentException("Must provide at least one type");
         }
 
-        return Gatherer.of((_, element, downstream) -> {
-            for (final var type : validTypes) {
-                if (type.isInstance(element)) {
-                    return downstream.push(type.cast(element));
-                }
-            }
-            return !downstream.isRejecting();
-        });
+        return Gatherer.of(
+                Gatherer.Integrator.ofGreedy((_, element, downstream) -> {
+                    for (final var type : validTypes) {
+                        if (type.isInstance(element)) {
+                            return downstream.push(type.cast(element));
+                        }
+                    }
+                    return !downstream.isRejecting();
+                }));
     }
 }
