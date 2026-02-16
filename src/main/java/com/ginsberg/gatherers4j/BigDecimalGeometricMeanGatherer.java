@@ -54,9 +54,6 @@ public final class BigDecimalGeometricMeanGatherer<INPUT extends @Nullable Objec
 
         @Override
         public BigDecimal calculate() {
-            if (count == 0) {
-                return BigDecimal.ZERO;
-            }
             return MathUtils.nthRoot(product, count, mathContext);
         }
     }

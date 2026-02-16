@@ -18,17 +18,26 @@ package com.ginsberg.gatherers4j.util;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class MathUtilsTest {
 
     @Nested
     class NthRoot {
+        @Test
+        void firstRootReturnsSelf() {
+            assertThat(MathUtils.nthRoot(new BigDecimal("16"), 1))
+                    .isEqualByComparingTo("16");
+        }
+
         @Test
         void squareRoot() {
             assertThat(MathUtils.nthRoot(new BigDecimal("16"), 2))
@@ -78,6 +87,47 @@ class MathUtilsTest {
             assertThat(MathUtils.nthRoot(BigDecimal.ONE, n))
                     .isEqualByComparingTo("1");
         }
+
+        @ParameterizedTest(name = "root is {0}")
+        @ValueSource(ints = {-1, 0 } )
+        void invalidRoots(int root) {
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> MathUtils.nthRoot(BigDecimal.ONE, root));
+        }
+
+        @SuppressWarnings("DataFlowIssue")
+        @Test
+        void missingValue() {
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> MathUtils.nthRoot(null, 2));
+        }
+
+        @SuppressWarnings("DataFlowIssue")
+        @Test
+        void missingMathContext() {
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> MathUtils.nthRoot(BigDecimal.ONE, 2, null));
+        }
+
+        @Test
+        void verySmallPositiveValue() {
+            assertThat(MathUtils.nthRoot(new BigDecimal("0.00000001"), 2))
+                    .isEqualByComparingTo("0.0001");
+        }
+
+        @ParameterizedTest(name = "root {0} of ONE returns ONE")
+        @ValueSource(longs = {1, 2, 3, 5, 10, 100, 1000})
+        void rootOfOneReturnsOne(long root) {
+            assertThat(MathUtils.nthRoot(BigDecimal.ONE, root))
+                    .isEqualByComparingTo("1");
+        }
+
+        @Test
+        void zeroPrecisionMathContext() {
+            final MathContext mc = new MathContext(0);
+            final BigDecimal result = MathUtils.nthRoot(new BigDecimal("100"), 2, mc);
+            assertThat(result).isEqualByComparingTo("10");
+        }
     }
 
     @Nested
@@ -98,6 +148,87 @@ class MathUtilsTest {
         void positiveExponent() {
             assertThat(MathUtils.pow(new BigDecimal("2"), 10, MathContext.DECIMAL64))
                     .isEqualByComparingTo("1024");
+        }
+
+        @Test
+        void negativeExponent() {
+            // Should throw or have defined behavior - let's see what happens
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> MathUtils.pow(new BigDecimal("2"), -5, MathContext.DECIMAL64));
+        }
+
+        @Test
+        void exponentTwo() {
+            assertThat(MathUtils.pow(new BigDecimal("7"), 2, MathContext.DECIMAL64))
+                    .isEqualByComparingTo("49");
+        }
+
+        @Test
+        void oddExponentFive() {
+            assertThat(MathUtils.pow(new BigDecimal("3"), 5, MathContext.DECIMAL64))
+                    .isEqualByComparingTo("243");
+        }
+
+        @Test
+        void oddExponentSeven() {
+            assertThat(MathUtils.pow(new BigDecimal("2"), 7, MathContext.DECIMAL64))
+                    .isEqualByComparingTo("128");
+        }
+
+        @Test
+        void largeEvenExponent() {
+            assertThat(MathUtils.pow(new BigDecimal("2"), 16, MathContext.DECIMAL64))
+                    .isEqualByComparingTo("65536");
+        }
+
+        @Test
+        void largeEvenExponentThirtyTwo() {
+            assertThat(MathUtils.pow(new BigDecimal("2"), 32, MathContext.DECIMAL64))
+                    .isEqualByComparingTo("4294967296");
+        }
+
+        @Test
+        void zeroBaseWithZeroExponent() {
+            assertThat(MathUtils.pow(BigDecimal.ZERO, 0, MathContext.DECIMAL64))
+                    .isEqualByComparingTo("1");
+        }
+
+        @Test
+        void zeroBaseWithPositiveExponent() {
+            assertThat(MathUtils.pow(BigDecimal.ZERO, 5, MathContext.DECIMAL64))
+                    .isEqualByComparingTo("0");
+        }
+
+        @ParameterizedTest(name = "exponent {0} of ONE returns ONE")
+        @ValueSource(ints = {0, 1, 100})
+        void oneBaseWithVariousExponents(int exponent) {
+            assertThat(MathUtils.pow(BigDecimal.ONE, exponent, MathContext.DECIMAL64))
+                    .isEqualByComparingTo("1");
+        }
+        @Test
+        void negativeBase() {
+            assertThat(MathUtils.pow(new BigDecimal("-2"), 3, MathContext.DECIMAL64))
+                    .isEqualByComparingTo("-8");
+        }
+
+        @Test
+        void negativeBaseEvenExponent() {
+            assertThat(MathUtils.pow(new BigDecimal("-3"), 4, MathContext.DECIMAL64))
+                    .isEqualByComparingTo("81");
+        }
+
+        @SuppressWarnings("DataFlowIssue")
+        @Test
+        void nullBase() {
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> MathUtils.pow(null, 2, MathContext.DECIMAL64));
+        }
+
+        @SuppressWarnings("DataFlowIssue")
+        @Test
+        void nullMathContext() {
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> MathUtils.pow(new BigDecimal("2"), 2, null));
         }
     }
 }

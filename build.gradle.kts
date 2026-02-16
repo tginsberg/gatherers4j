@@ -20,6 +20,7 @@ import java.io.IOException
 
 plugins {
     id("com.adarshr.test-logger") version "4.0.0"
+    id("info.solidsoft.pitest") version "1.19.0-rc.3"
     id("jacoco")
     id("java-library")
     id("org.jreleaser") version "1.22.0"
@@ -118,6 +119,22 @@ jreleaser {
         }
 
     }
+}
+
+pitest {
+    coverageThreshold = 80
+    features = listOf("+auto_threads")
+    historyInputLocation = layout.buildDirectory.file("pitHistory").get().asFile
+    historyOutputLocation = layout.buildDirectory.file("pitHistory").get().asFile
+    junit5PluginVersion = "1.2.1"
+    mutationThreshold = 75
+    mutators = listOf("DEFAULTS")
+    outputFormats = listOf("HTML", "XML")
+    targetClasses = listOf("com.ginsberg.gatherers4j.*")
+    targetTests = listOf("com.ginsberg.gatherers4j.*")
+    threads = Runtime.getRuntime().availableProcessors()
+    timestampedReports = false
+    verbose = true
 }
 
 publishing {
@@ -224,6 +241,7 @@ tasks {
     }
 
 }
+
 
 fun gitBranch(): String =
     ProcessBuilder("git rev-parse --abbrev-ref HEAD".split(" "))
