@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,6 +46,24 @@ class SimpleIndexingGatherersTest {
 
             // Assert
             assertThat(output).containsExactly("A", "C", "D");
+        }
+
+        @Test
+        void filteringIncrementsIndex() {
+            // Arrange
+            final Stream<String> input = Stream.of("A", "B", "C", "D");
+            final List<Integer> indices = new ArrayList<>();
+
+            // Act
+            final List<String> output = input
+                    .gather(Gatherers4j.filterIndexed((index, _) -> {
+                                indices.add(index);
+                                return index % 2 == 0;
+                            }
+                    )).toList();
+
+            assertThat(output).containsExactly("A", "C");
+            assertThat(indices).containsExactly(0, 1, 2, 3);
         }
 
         @SuppressWarnings("DataFlowIssue")

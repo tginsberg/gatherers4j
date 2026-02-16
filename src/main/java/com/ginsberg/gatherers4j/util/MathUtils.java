@@ -103,7 +103,12 @@ public abstract class MathUtils {
      * @return the result of base^exponent
      */
     public static BigDecimal pow(final BigDecimal base, final long exponent, final MathContext mc) {
-        if (exponent == 0) {
+        mustNotBeNull(base, "Base cannot be null");
+        mustNotBeNull(mc, "MathContext cannot be null");
+
+        if (exponent < 0) {
+            throw new IllegalArgumentException("Exponent must be non-negative");
+        } else if (exponent == 0) {
             return BigDecimal.ONE;
         } else if (exponent == 1) {
             return base;
