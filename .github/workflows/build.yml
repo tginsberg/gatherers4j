@@ -6,6 +6,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java-version: ['25', '26']
     permissions:
       contents: read
       packages: write
@@ -16,10 +19,10 @@ jobs:
 
       - uses: gradle/actions/wrapper-validation@v4
 
-      - name: Set up JDK 25
+      - name: Set up JDK ${{ matrix.java-version }}
         uses: actions/setup-java@v5
         with:
-          java-version: '25'
+          java-version: ${{ matrix.java-version }}
           distribution: 'temurin'
           cache: 'gradle'
 
