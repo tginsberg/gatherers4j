@@ -27,7 +27,7 @@ jobs:
           cache: 'gradle'
 
       - name: Build
-        run: ./gradlew build --no-daemon
+        run: ./gradlew build -PjavaVersion=${{ matrix.java-version }} --no-daemon
 
       - name: Add coverage to PR
         if: github.event_name == 'pull_request'

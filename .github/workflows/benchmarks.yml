@@ -34,11 +34,11 @@ jobs:
 
       - name: Run JMH (all benchmarks)
         if: ${{ github.event.inputs.include == '' }}
-        run: ./gradlew jmh --no-daemon
+        run: ./gradlew jmh -PjavaVersion=${{ matrix.java-version }} --no-daemon
 
       - name: Run JMH (filtered)
         if: ${{ github.event.inputs.include != '' }}
-        run: ./gradlew jmh --no-daemon -Pjmh.include="${{ github.event.inputs.include }}"
+        run: ./gradlew jmh -PjavaVersion=${{ matrix.java-version }} --no-daemon -Pjmh.include="${{ github.event.inputs.include }}"
 
       - name: Upload JMH reports
         if: always()

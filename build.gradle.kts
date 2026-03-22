@@ -34,6 +34,7 @@ description = "An extra set of helpful Stream Gatherers for Java"
 group = "com.ginsberg"
 version = file("VERSION.txt").readLines().first()
 
+val javaVersion = findProperty("javaVersion")?.toString()?.toInt() ?: 25
 val jUnitVersion = "6.0.2"
 
 val gitBranch = gitBranch()
@@ -42,7 +43,7 @@ else "${gitBranch.substringAfterLast("/")}-SNAPSHOT"
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(25)
+        languageVersion = JavaLanguageVersion.of(javaVersion)
     }
     withJavadocJar()
     withSourcesJar()
