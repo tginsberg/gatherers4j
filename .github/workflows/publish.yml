@@ -19,7 +19,7 @@ jobs:
         uses: actions/setup-java@v5
         with:
           java-version: '25'
-          distribution: 'temurin'
+          distribution: 'corretto'
           cache: 'gradle'
 
       - name: Publish
