@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,8 +60,8 @@ public final class BigDecimalSimpleMovingAverageGatherer<INPUT extends @Nullable
         final boolean includePartialValues;
         final BigDecimal[] series;
         BigDecimal sum = BigDecimal.ZERO;
-        BigDecimal count = BigDecimal.ZERO;
         BigDecimal average = BigDecimal.ZERO;
+        int count = 0;
         int index = 0;
 
         private State(final int lookBack, final boolean includePartialValues) {
@@ -72,7 +72,7 @@ public final class BigDecimalSimpleMovingAverageGatherer<INPUT extends @Nullable
 
         @Override
         public boolean canCalculate() {
-            return includePartialValues || count.intValue() >= series.length;
+            return includePartialValues || count >= series.length;
         }
 
         @Override
@@ -80,10 +80,10 @@ public final class BigDecimalSimpleMovingAverageGatherer<INPUT extends @Nullable
             sum = sum.subtract(series[index]).add(element, mathContext);
             series[index % series.length] = element;
             index = (index + 1) % series.length;
-            if (count.intValue() < series.length) {
-                count = count.add(BigDecimal.ONE);
+            if (count < series.length) {
+                count++;
             }
-            average = sum.divide(count, mathContext);
+            average = sum.divide(BigDecimal.valueOf(count), mathContext);
         }
 
         @Override
