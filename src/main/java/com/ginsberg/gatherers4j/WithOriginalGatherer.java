@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ public class WithOriginalGatherer<INPUT extends @Nullable Object, STATE, OUTPUT 
         };
     }
 
-    private static class CapturingDownstream<OUTPUT> implements Downstream<OUTPUT> {
+    private static class CapturingDownstream<OUTPUT extends @Nullable Object> implements Downstream<OUTPUT> {
 
         private final Deque<OUTPUT> captured = new ConcurrentLinkedDeque<>();
 

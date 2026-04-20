@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,8 +55,10 @@ public class RepeatingGatherer<INPUT extends @Nullable Object>
     @Override
     public Integrator<RepeatingGatherer.State<INPUT>, INPUT, INPUT> integrator() {
         return Integrator.ofGreedy((state, element, downstream) -> {
-            state.theStream.add(element);
-            return repeats != 0 && !downstream.isRejecting();
+            if(repeats != 0) {
+                state.theStream.add(element);
+            }
+            return !downstream.isRejecting();
         });
     }
 
@@ -73,7 +75,7 @@ public class RepeatingGatherer<INPUT extends @Nullable Object>
         };
     }
 
-    public static class State<INPUT> {
+    public static class State<INPUT extends @Nullable Object> {
         int repeatsRemaining;
         final List<INPUT> theStream = new ArrayList<>();
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,14 +34,14 @@ public class MinMaxGatherer<INPUT extends @Nullable Object>
     private final int windowSize;
     private boolean excludePartialValues;
 
-    static <INPUT> MinMaxGatherer<INPUT> runningUsingComparator(
+    static <INPUT extends @Nullable Object> MinMaxGatherer<INPUT> runningUsingComparator(
             final boolean sortingMin,
             final Comparator<INPUT> comparator
     ) {
         return new MinMaxGatherer<>(sortingMin ? comparator : comparator.reversed());
     }
 
-    static <INPUT> MinMaxGatherer<INPUT> movingUsingComparator(
+    static <INPUT extends @Nullable Object> MinMaxGatherer<INPUT> movingUsingComparator(
             final int windowSize,
             final boolean sortingMin,
             final Comparator<INPUT> comparator
@@ -134,8 +134,8 @@ public class MinMaxGatherer<INPUT extends @Nullable Object>
         }
     }
 
-    public static class MovingState<INPUT> extends State<INPUT> {
-        private record IndexValue<INPUT>(int index, INPUT value) {
+    public static class MovingState<INPUT extends @Nullable Object> extends State<INPUT> {
+        private record IndexValue<INPUT extends @Nullable Object>(int index, INPUT value) {
         }
 
         private final List<IndexValue<INPUT>> queue = new ArrayList<>();

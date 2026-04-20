@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package com.ginsberg.gatherers4j;
 
 import com.ginsberg.gatherers4j.enums.Order;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,13 +29,13 @@ import java.util.stream.Gatherer;
 
 import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
 
-public class GroupChangingGatherer<INPUT>
+public class GroupChangingGatherer<INPUT extends @Nullable Object>
         implements Gatherer<INPUT, GroupChangingGatherer.State<INPUT>, List<INPUT>> {
 
     private final Order operation;
     private final Comparator<INPUT> comparator;
 
-    static <INPUT> GroupChangingGatherer<INPUT> usingComparator(
+    static <INPUT extends @Nullable Object> GroupChangingGatherer<INPUT> usingComparator(
             final Order operation,
             final Comparator<INPUT> comparator
     ) {
@@ -85,7 +86,7 @@ public class GroupChangingGatherer<INPUT>
         };
     }
 
-    public static class State<INPUT> {
+    public static class State<INPUT extends @Nullable Object> {
         List<INPUT> currentElements = new ArrayList<>();
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ public class RotateGatherer<INPUT extends @Nullable Object>
     private final Rotate direction;
     private final int distance;
 
-    public RotateGatherer(final Rotate direction, final int distance) {
+    RotateGatherer(final Rotate direction, final int distance) {
         if (distance < 0) {
             this.distance = -distance;
             this.direction = direction.flip();
@@ -78,7 +78,7 @@ public class RotateGatherer<INPUT extends @Nullable Object>
         };
     }
 
-    public static class State<INPUT> {
+    public static class State<INPUT extends @Nullable Object> {
         final List<INPUT> fullStream = new ArrayList<>();
     }
 }

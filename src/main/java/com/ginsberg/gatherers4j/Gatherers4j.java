@@ -278,7 +278,7 @@ public abstract class Gatherers4j {
     /// @param validTypes A non-empty array of types to filter for
     /// @return A non-null `Gatherer`
     @SafeVarargs
-    public static <INPUT extends @Nullable Object, OUTPUT extends @Nullable Object> Gatherer<INPUT, ?, OUTPUT> filterInstanceOf(
+    public static <INPUT extends @Nullable Object, OUTPUT> Gatherer<INPUT, ?, OUTPUT> filterInstanceOf(
             final Class<? extends OUTPUT>... validTypes
     ) {
         return TypeFilteringGatherer.of(validTypes);
