@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,8 @@ import java.util.stream.Gatherer;
 
 import static com.ginsberg.gatherers4j.util.GathererUtils.pushAll;
 
-public class SampleFixedSizeGatherer<INPUT extends @Nullable Object> implements Gatherer<INPUT, SampleFixedSizeGatherer.State<INPUT>, INPUT> {
+public class SampleFixedSizeGatherer<INPUT extends @Nullable Object>
+        implements Gatherer<INPUT, SampleFixedSizeGatherer.State<INPUT>, INPUT> {
 
     private final int sampleSize;
 
@@ -56,7 +57,7 @@ public class SampleFixedSizeGatherer<INPUT extends @Nullable Object> implements 
         return (inputState, downstream) -> pushAll(inputState.elements, downstream);
     }
 
-    public static class State<INPUT> {
+    public static class State<INPUT extends @Nullable Object> {
         private final List<INPUT> elements = new ArrayList<>();
         private final RandomGenerator random = RandomGenerator.getDefault();
         private final int sampleSize;

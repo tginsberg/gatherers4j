@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package com.ginsberg.gatherers4j.dto;
 
 import org.jspecify.annotations.Nullable;
 
-public record WithOriginal<ORIGINAL, CALCULATED>(
+public record WithOriginal<ORIGINAL extends @Nullable Object, CALCULATED extends @Nullable Object>(
         @Nullable ORIGINAL original,
         @Nullable CALCULATED calculated
 ) {

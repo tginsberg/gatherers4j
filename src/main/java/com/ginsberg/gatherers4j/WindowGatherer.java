@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,7 +77,7 @@ public class WindowGatherer<INPUT extends @Nullable Object>
         };
     }
 
-    public static class State<INPUT> {
+    public static class State<INPUT extends @Nullable Object> {
         int stepDelta = 0;
         final CircularBuffer<INPUT> window;
         State(int capacity) {

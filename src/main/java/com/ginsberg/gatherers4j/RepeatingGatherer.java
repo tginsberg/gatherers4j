@@ -75,7 +75,7 @@ public class RepeatingGatherer<INPUT extends @Nullable Object>
         };
     }
 
-    public static class State<INPUT> {
+    public static class State<INPUT extends @Nullable Object> {
         int repeatsRemaining;
         final List<INPUT> theStream = new ArrayList<>();
 

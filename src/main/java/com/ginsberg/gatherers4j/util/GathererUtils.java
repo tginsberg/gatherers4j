@@ -47,7 +47,7 @@ abstract public class GathererUtils {
     // Yes, I realize this is not to contract, but I only want it to measure equality in a narrow case
     // in which I only care about certain outputs.
     @SuppressWarnings("ComparatorMethodParameterNotUsed")
-    public static <T, R> Comparator<T> equalityOnlyComparator(final Function<T, R> mappingFunction) {
+    public static <T extends @Nullable Object, R extends @Nullable Object> Comparator<T> equalityOnlyComparator(final Function<T, R> mappingFunction) {
         return (o1, o2) -> Objects.equals(mappingFunction.apply(o1), mappingFunction.apply(o2)) ? 0 : -1;
     }
 

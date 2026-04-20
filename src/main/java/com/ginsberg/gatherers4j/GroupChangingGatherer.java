@@ -35,7 +35,7 @@ public class GroupChangingGatherer<INPUT extends @Nullable Object>
     private final Order operation;
     private final Comparator<INPUT> comparator;
 
-    static <INPUT> GroupChangingGatherer<INPUT> usingComparator(
+    static <INPUT extends @Nullable Object> GroupChangingGatherer<INPUT> usingComparator(
             final Order operation,
             final Comparator<INPUT> comparator
     ) {
