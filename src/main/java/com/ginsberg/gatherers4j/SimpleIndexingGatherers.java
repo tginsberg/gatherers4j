@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
 
 public class SimpleIndexingGatherers {
 
-    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> filterIndexed(
+    static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> filterIndexed(
             final BiPredicate<Integer, @Nullable INPUT> predicate
     ) {
         mustNotBeNull(predicate, "Predicate must not be null");
@@ -43,7 +43,7 @@ public class SimpleIndexingGatherers {
         );
     }
 
-    public static <INPUT extends @Nullable Object, OUTPUT extends @Nullable Object> Gatherer<INPUT, ?, OUTPUT> mapIndexed(
+    static <INPUT extends @Nullable Object, OUTPUT extends @Nullable Object> Gatherer<INPUT, ?, OUTPUT> mapIndexed(
             final BiFunction<Integer, @Nullable INPUT, @Nullable OUTPUT> mappingFunction
     ) {
         mustNotBeNull(mappingFunction, "mappingFunction must not be null");
@@ -55,7 +55,7 @@ public class SimpleIndexingGatherers {
         );
     }
 
-    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> peekIndexed(
+    static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> peekIndexed(
             final BiConsumer<Integer, @Nullable INPUT> peekingConsumer
     ) {
         mustNotBeNull(peekingConsumer, "peekingConsumer must not be null");
@@ -69,7 +69,7 @@ public class SimpleIndexingGatherers {
         );
     }
 
-    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, WithIndex<INPUT>> withIndex() {
+    static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, WithIndex<INPUT>> withIndex() {
         return mapIndexed(WithIndex::new);
     }
 

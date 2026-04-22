@@ -284,6 +284,15 @@ public abstract class Gatherers4j {
         return TypeFilteringGatherer.of(validTypes);
     }
 
+    /// Filter null elements from the stream, emitting only non-null elements. This is useful
+    /// to line up the nullability annotations.
+    ///
+    /// @param <TYPE> The type of elements in the stream
+    /// @return A non-null gatherer
+    public static <TYPE> Gatherer<@Nullable TYPE, ?, TYPE> filterNotNull() {
+        return SimpleFilteringGatherers.filterNotNull();
+    }
+
     /// Filter the input stream so that it contains `Comparable` elements in the `order` specified. Anything not matching
     /// that order is removed as it is encountered.
     ///
