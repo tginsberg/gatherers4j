@@ -20,7 +20,7 @@ import java.io.IOException
 
 plugins {
     id("com.adarshr.test-logger") version "4.0.0"
-    id("info.solidsoft.pitest") version "1.19.0-rc.3"
+    id("info.solidsoft.pitest") version "1.19.0"
     id("jacoco")
     id("java-library")
     id("org.jreleaser") version "1.22.0"
@@ -135,7 +135,7 @@ pitest {
     targetTests = listOf("com.ginsberg.gatherers4j.*")
     threads = Runtime.getRuntime().availableProcessors()
     timestampedReports = false
-    verbose = true
+    verbose = false
 }
 
 publishing {
