@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
+@SuppressWarnings("DataFlowIssue")
 class ShufflingGathererTest {
 
     @Test
@@ -64,13 +65,9 @@ class ShufflingGathererTest {
         assertThat(output).hasSizeGreaterThan(1);
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void withNullRandomGenerator() {
-        // Arrange
-        final Stream<String> input = Stream.of("A");
-
-        // Act/Assert
-        assertThatThrownBy(() -> input.gather(Gatherers4j.shuffle(null)).toList())
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException().isThrownBy(() ->Gatherers4j.shuffle(null));
     }
 }

@@ -26,8 +26,8 @@ import java.util.stream.Stream;
 
 import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatNoException;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 
 class GathererUtilsTest {
@@ -66,9 +66,9 @@ class GathererUtilsTest {
     class MustNotBeNull {
         @Test
         void whenNull() {
-            assertThatThrownBy(() -> mustNotBeNull(null, "123"))
-                    .isExactlyInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("123");
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> mustNotBeNull(null, "123"))
+                    .withMessage("123");
         }
 
         @Test

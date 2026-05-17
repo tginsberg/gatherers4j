@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import java.util.stream.Stream;
 
 import static com.ginsberg.gatherers4j.test.ParallelAndSequentialTest.NULL;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 class UniquelyOccurringGathererTest {
 
@@ -164,9 +164,8 @@ class UniquelyOccurringGathererTest {
         @SuppressWarnings("DataFlowIssue")
         @Test
         void mappingFunctionMustNotBeNull() {
-            assertThatThrownBy(() ->
-                    Gatherers4j.uniquelyOccurringBy(null)
-            ).isExactlyInstanceOf(IllegalArgumentException.class);
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Gatherers4j.uniquelyOccurringBy(null));
         }
 
         @ParallelAndSequentialTest(values = {NULL, NULL})

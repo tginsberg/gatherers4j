@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,59 +28,60 @@ import java.util.concurrent.locks.LockSupport;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 class ThrottlingGathererTest {
 
     @Test
     void amountIsNegative() {
-        assertThatThrownBy(() ->
-                Stream.of("A").gather(Gatherers4j.throttle(-1, Duration.ofSeconds(1)))
-        ).isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> Gatherers4j.throttle(-1, Duration.ofSeconds(1))
+        );
     }
 
     @Test
     void amountIsZero() {
-        assertThatThrownBy(() ->
-                Stream.of("A").gather(Gatherers4j.throttle(-1, Duration.ofSeconds(1)))
-        ).isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> Gatherers4j.throttle(-1, Duration.ofSeconds(1))
+        );
     }
 
     @SuppressWarnings("DataFlowIssue")
     @Test
     void clockMustNotBeNull() {
-        assertThatThrownBy(() ->
-                Stream.of("A").gather(Gatherers4j.throttle(1, Duration.ofSeconds(1)).withClock(null))
-        ).isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> Gatherers4j.throttle(1, Duration.ofSeconds(1)).withClock(null)
+        );
     }
 
     @Test
     void durationIsNegative() {
-        assertThatThrownBy(() ->
-                Stream.of("A").gather(Gatherers4j.throttle(1, Duration.ofSeconds(-1)))
-        ).isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> Gatherers4j.throttle(1, Duration.ofSeconds(-1))
+        );
     }
 
     @SuppressWarnings("DataFlowIssue")
     @Test
     void durationIsNull() {
-        assertThatThrownBy(() ->
-                Stream.of("A").gather(Gatherers4j.throttle(1, null))
-        ).isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> Gatherers4j.throttle(1, null)
+        );
     }
 
     @Test
     void durationIsZero() {
-        assertThatThrownBy(() ->
-                Stream.of("A").gather(Gatherers4j.throttle(1, Duration.ofSeconds(0)))
-        ).isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> Gatherers4j.throttle(1, Duration.ofSeconds(0))
+        );
     }
 
     @SuppressWarnings("DataFlowIssue")
     @Test
     void limitRuleIsNotNull() {
-        assertThatThrownBy(() -> new ThrottlingGatherer<>(null, 1, Duration.ofSeconds(1))
-        ).isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> new ThrottlingGatherer<>(null, 1, Duration.ofSeconds(1))
+        );
     }
 
     @Test
