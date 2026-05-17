@@ -6,7 +6,7 @@ no_list: true
 ---
 
 ## v0.14.0
-[Released 2026-??-??](https://github.com/tginsberg/gatherers4j/releases/tag/v0.14.0)
+[Released 2026-05-17](https://github.com/tginsberg/gatherers4j/releases/tag/v0.14.0)
 
 + Implement `movingGeometricMean()`, `movingGeometricMeanBy()`, `runningGeometricMean()`, and `runningGeometricMeanBy()`.
 + Implement `filterNotNull()`, which filters out null values from the input stream and is useful for lining up JSpecify annotations (from nullable to non-nullable).
