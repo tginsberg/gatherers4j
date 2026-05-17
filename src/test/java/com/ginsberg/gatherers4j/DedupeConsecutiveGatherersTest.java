@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 class DedupeConsecutiveGatherersTest {
 
@@ -93,13 +93,9 @@ class DedupeConsecutiveGatherersTest {
     }
 
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void dedupeConsecutiveByWithNullMappingFunction() {
-        // Arrange
-        final Stream<String> input = Stream.of("A");
-
-        // Act/Assert
-        assertThatThrownBy(() -> input.gather(Gatherers4j.dedupeConsecutiveBy(null)).toList())
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException().isThrownBy(() -> Gatherers4j.dedupeConsecutiveBy(null));
     }
 }

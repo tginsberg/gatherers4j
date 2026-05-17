@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 class RepeatingGathererTest {
 
@@ -80,9 +80,9 @@ class RepeatingGathererTest {
     @ParameterizedTest(name = "With {0} repeats")
     @ValueSource(ints = {Integer.MIN_VALUE, -1})
     void numberOfRepeatsMustBeNegative(int repeats) {
-        assertThatThrownBy(() ->
+        assertThatIllegalArgumentException().isThrownBy(() ->
                 RepeatingGatherer.ofFinite(repeats)
-        ).isExactlyInstanceOf(IllegalArgumentException.class);
+        );
     }
 
 

@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 class SimpleIndexingGatherersTest {
 
@@ -69,8 +69,9 @@ class SimpleIndexingGatherersTest {
         @SuppressWarnings("DataFlowIssue")
         @Test
         void predicateMustNotBeNull() {
-            assertThatThrownBy(() -> Stream.of("A").gather(Gatherers4j.filterIndexed(null)))
-                    .isExactlyInstanceOf(IllegalArgumentException.class);
+            assertThatIllegalArgumentException().isThrownBy(() ->
+                    Gatherers4j.filterIndexed(null)
+            );
         }
     }
 
@@ -79,9 +80,9 @@ class SimpleIndexingGatherersTest {
         @SuppressWarnings("DataFlowIssue")
         @Test
         void mappingFunctionMustNotBeNull() {
-            assertThatThrownBy(() ->
+            assertThatIllegalArgumentException().isThrownBy(() ->
                     Gatherers4j.mapIndexed(null)
-            ).isExactlyInstanceOf(IllegalArgumentException.class);
+            );
         }
 
         @Test
@@ -115,9 +116,9 @@ class SimpleIndexingGatherersTest {
         @SuppressWarnings("DataFlowIssue")
         @Test
         void peekingFunctionMustNotBeNull() {
-            assertThatThrownBy(() ->
+            assertThatIllegalArgumentException().isThrownBy(() ->
                     Gatherers4j.peekIndexed(null)
-            ).isExactlyInstanceOf(IllegalArgumentException.class);
+            );
         }
 
         @Test

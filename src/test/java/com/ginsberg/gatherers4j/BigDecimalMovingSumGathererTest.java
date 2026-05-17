@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import java.util.stream.Stream;
 
 import static com.ginsberg.gatherers4j.util.TestUtils.BIG_DECIMAL_RECURSIVE_COMPARISON;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 class BigDecimalMovingSumGathererTest {
 
@@ -56,9 +56,9 @@ class BigDecimalMovingSumGathererTest {
     @Test
     @SuppressWarnings("DataFlowIssue")
     void mathContextCannotBeNull() {
-        assertThatThrownBy(() ->
-                Stream.of(BigDecimal.ONE).gather(Gatherers4j.movingSum(2).withMathContext(null))
-        ).isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> Gatherers4j.movingSum(2).withMathContext(null)
+        );
     }
 
     @Test
@@ -182,9 +182,9 @@ class BigDecimalMovingSumGathererTest {
     @ParameterizedTest(name = "windowSize of {0}")
     @ValueSource(ints = {-1, 0, 1})
     void windowSizeMustBeGreaterThanOne(final int windowSize) {
-        assertThatThrownBy(() ->
-                Stream.of(BigDecimal.ONE).gather(Gatherers4j.movingSum(windowSize))
-        ).isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> Gatherers4j.movingSum(windowSize)
+        );
     }
 
 }

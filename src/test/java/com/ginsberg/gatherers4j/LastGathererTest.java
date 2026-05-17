@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 
 class LastGathererTest {
@@ -76,13 +76,12 @@ class LastGathererTest {
     @Test
     void lastNegativeCount() {
         // Arrange
-        final Stream<String> input = Stream.of("A", "B", "C", "D", "E", "F");
         final int last = -1;
 
         // Act/Assert
-        assertThatThrownBy(() ->
-                input.gather(Gatherers4j.takeLast(last))
-        ).isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> Gatherers4j.takeLast(last)
+        );
     }
 
     @Test

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 class FilterChangingGathererTest {
 
@@ -221,17 +221,17 @@ class FilterChangingGathererTest {
             @SuppressWarnings("DataFlowIssue")
             @Test
             void comparatorMustNotBeNull() {
-                assertThatThrownBy(() ->
+                assertThatIllegalArgumentException().isThrownBy(() ->
                         new FilterChangingGatherer<>(Order.Ascending, null)
-                ).isExactlyInstanceOf(IllegalArgumentException.class);
+                );
             }
 
             @SuppressWarnings("DataFlowIssue")
             @Test
             void operationMustNotBeNull() {
-                assertThatThrownBy(() ->
+                assertThatIllegalArgumentException().isThrownBy(() ->
                         new FilterChangingGatherer<>(null, (_, _) -> 0)
-                ).isExactlyInstanceOf(IllegalArgumentException.class);
+                );
             }
 
         }

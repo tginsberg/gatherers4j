@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package com.ginsberg.gatherers4j;
 
+import com.ginsberg.gatherers4j.dto.WithOriginal;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -25,11 +26,9 @@ import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import com.ginsberg.gatherers4j.dto.WithOriginal;
-
 import static java.util.Comparator.comparing;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 class MinMaxGathererTest {
 
@@ -159,17 +158,17 @@ class MinMaxGathererTest {
             @ParameterizedTest(name = "windowSize of {0}")
             @ValueSource(ints = {-1, 0, 1})
             void windowSizeMustBeAtLeast2Comparable(final int value) {
-                assertThatThrownBy(() ->
+                assertThatIllegalArgumentException().isThrownBy(() ->
                         MinMaxGatherer.movingUsingComparable(value, true)
-                ).isExactlyInstanceOf(IllegalArgumentException.class);
+                );
             }
 
             @ParameterizedTest(name = "windowSize of {0}")
             @ValueSource(ints = {-1, 0, 1})
             void windowSizeMustBeAtLeast2Comparator(final int value) {
-                assertThatThrownBy(() ->
+                assertThatIllegalArgumentException().isThrownBy(() ->
                         MinMaxGatherer.movingUsingComparator(value, true, String::compareTo)
-                ).isExactlyInstanceOf(IllegalArgumentException.class);
+                );
             }
         }
 
@@ -416,17 +415,17 @@ class MinMaxGathererTest {
             @ParameterizedTest(name = "windowSize of {0}")
             @ValueSource(ints = {-1, 0, 1})
             void windowSizeMustBeAtLeast2Comparable(final int value) {
-                assertThatThrownBy(() ->
+                assertThatIllegalArgumentException().isThrownBy(() ->
                         MinMaxGatherer.movingUsingComparable(value, true)
-                ).isExactlyInstanceOf(IllegalArgumentException.class);
+                );
             }
 
             @ParameterizedTest(name = "windowSize of {0}")
             @ValueSource(ints = {-1, 0, 1})
             void windowSizeMustBeAtLeast2Comparator(final int value) {
-                assertThatThrownBy(() ->
+                assertThatIllegalArgumentException().isThrownBy(() ->
                         MinMaxGatherer.movingUsingComparator(value, true, String::compareTo)
-                ).isExactlyInstanceOf(IllegalArgumentException.class);
+                );
             }
 
         }
