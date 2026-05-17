@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,12 +53,14 @@ public class CrossGatherer {
     }
 
     private static <INPUT extends @Nullable Object, CROSS extends @Nullable Object> Gatherer<INPUT, ?, Pair<INPUT, CROSS>> create(final Iterable<CROSS> source) {
-        return Gatherer.of((_, element, downstream) -> {
-            for (final CROSS cross : source) {
-                downstream.push(new Pair<>(element, cross));
-            }
-            return !downstream.isRejecting();
-        });
+        return Gatherer.of(
+                Gatherer.Integrator.ofGreedy((_, element, downstream) -> {
+                    for (final CROSS cross : source) {
+                        downstream.push(new Pair<>(element, cross));
+                    }
+                    return !downstream.isRejecting();
+                })
+        );
     }
 
 }

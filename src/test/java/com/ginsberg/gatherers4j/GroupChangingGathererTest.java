@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static com.ginsberg.gatherers4j.Gatherers4j.groupBy;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+@SuppressWarnings("ResultOfMethodCallIgnored")
 class GroupChangingGathererTest {
 
     @Nested
@@ -135,7 +139,9 @@ class GroupChangingGathererTest {
         @SuppressWarnings("DataFlowIssue")
         @Test
         void mappingFunctionMustNotBeNull() {
-            assertThatThrownBy(() -> Gatherers4j.groupBy(null)).isInstanceOf(IllegalArgumentException.class);
+            assertThatIllegalArgumentException()
+                .isThrownBy(() -> groupBy(null))
+                .withMessage("mappingFunction must not be null");
         }
 
         @Test
@@ -222,9 +228,11 @@ class GroupChangingGathererTest {
 
             @Test
             void ensureDescendingFailureCase() {
-                assertThatThrownBy(() ->
+                assertThatIllegalStateException()
+                    .isThrownBy(() ->
                         Stream.of(1, 1).gather(Gatherers4j.ensureOrdered(Order.Descending)).toList()
-                ).isExactlyInstanceOf(IllegalStateException.class);
+                    )
+                    .withMessage("Elements not in proper order: Descending");
             }
 
             @Test
@@ -272,9 +280,9 @@ class GroupChangingGathererTest {
 
             @Test
             void ensureAscendingFailureCase() {
-                assertThatThrownBy(() ->
+                assertThatIllegalStateException().isThrownBy(() ->
                         Stream.of(1, 1).gather(Gatherers4j.ensureOrdered(Order.Ascending)).toList()
-                ).isExactlyInstanceOf(IllegalStateException.class);
+                );
             }
 
             @Test
@@ -341,9 +349,9 @@ class GroupChangingGathererTest {
 
             @Test
             void ensureAscendingOrEqualFailureCase() {
-                assertThatThrownBy(() ->
+                assertThatIllegalStateException().isThrownBy(() ->
                         Stream.of(1, 0).gather(Gatherers4j.ensureOrdered(Order.AscendingOrEqual)).toList()
-                ).isExactlyInstanceOf(IllegalStateException.class);
+                );
             }
 
             @Test
@@ -409,9 +417,9 @@ class GroupChangingGathererTest {
 
             @Test
             void ensureDescendingOrEqualFailureCase() {
-                assertThatThrownBy(() ->
+                assertThatIllegalStateException().isThrownBy(() ->
                         Stream.of(1, 2).gather(Gatherers4j.ensureOrdered(Order.DescendingOrEqual)).toList()
-                ).isExactlyInstanceOf(IllegalStateException.class);
+                );
             }
 
             @Test
@@ -457,17 +465,17 @@ class GroupChangingGathererTest {
             @SuppressWarnings("DataFlowIssue")
             @Test
             void comparatorMustNotBeNull() {
-                assertThatThrownBy(() ->
+                assertThatIllegalArgumentException().isThrownBy(() ->
                         new GroupChangingGatherer<>(Order.Ascending, null)
-                ).isExactlyInstanceOf(IllegalArgumentException.class);
+                );
             }
 
             @SuppressWarnings("DataFlowIssue")
             @Test
             void operationMustNotBeNull() {
-                assertThatThrownBy(() ->
+                assertThatIllegalArgumentException().isThrownBy(() ->
                         new GroupChangingGatherer<>(null, (_, _) -> 0)
-                ).isExactlyInstanceOf(IllegalArgumentException.class);
+                );
             }
 
             @Test
@@ -527,11 +535,11 @@ class GroupChangingGathererTest {
 
             @Test
             void ensureDecreasingFailureCase() {
-                assertThatThrownBy(() ->
+                assertThatIllegalStateException().isThrownBy(() ->
                         Stream.of("A", "AA")
                                 .gather(Gatherers4j.ensureOrderedBy(Order.Descending, Comparator.comparingInt(String::length)))
                                 .toList()
-                ).isExactlyInstanceOf(IllegalStateException.class);
+                );
             }
 
             @Test
@@ -595,11 +603,11 @@ class GroupChangingGathererTest {
 
             @Test
             void ensureAscendingFailureCase() {
-                assertThatThrownBy(() ->
+                assertThatIllegalStateException().isThrownBy(() ->
                         Stream.of("AA", "A")
                                 .gather(Gatherers4j.ensureOrderedBy(Order.Ascending, Comparator.comparingInt(String::length)))
                                 .toList()
-                ).isExactlyInstanceOf(IllegalStateException.class);
+                );
             }
 
             @Test
@@ -669,11 +677,11 @@ class GroupChangingGathererTest {
 
             @Test
             void ensureAscendingOrEqualFailureCase() {
-                assertThatThrownBy(() ->
+                assertThatIllegalStateException().isThrownBy(() ->
                         Stream.of("AA", "A")
                                 .gather(Gatherers4j.ensureOrderedBy(Order.AscendingOrEqual, Comparator.comparingInt(String::length)))
                                 .toList()
-                ).isExactlyInstanceOf(IllegalStateException.class);
+                );
             }
 
             @Test
@@ -741,11 +749,11 @@ class GroupChangingGathererTest {
 
             @Test
             void ensureDescendingOrEqualFailureCase() {
-                assertThatThrownBy(() ->
+                assertThatIllegalStateException().isThrownBy(() ->
                         Stream.of("AA", "AAA")
                                 .gather(Gatherers4j.ensureOrderedBy(Order.DescendingOrEqual, Comparator.comparingInt(String::length)))
                                 .toList()
-                ).isExactlyInstanceOf(IllegalStateException.class);
+                );
             }
 
             @Test

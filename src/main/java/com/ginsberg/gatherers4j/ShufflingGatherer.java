@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,7 +64,7 @@ public class ShufflingGatherer<INPUT extends @Nullable Object> implements
         };
     }
 
-    public static class State<INPUT> {
+    public static class State<INPUT extends @Nullable Object> {
         final List<INPUT> inputs = new ArrayList<>();
     }
 }

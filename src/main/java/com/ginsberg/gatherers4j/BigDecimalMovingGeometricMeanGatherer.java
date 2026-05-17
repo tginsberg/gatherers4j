@@ -16,6 +16,7 @@
 
 package com.ginsberg.gatherers4j;
 
+import com.ginsberg.gatherers4j.util.MathUtils;
 import org.jspecify.annotations.Nullable;
 
 import java.math.BigDecimal;
@@ -24,13 +25,18 @@ import java.util.Arrays;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class BigDecimalMovingProductGatherer<INPUT extends @Nullable Object>
+/**
+ * A gatherer that calculates the moving geometric mean of BigDecimals.
+ *
+ * @param <INPUT> the type of the input elements
+ */
+public class BigDecimalMovingGeometricMeanGatherer<INPUT extends @Nullable Object>
         extends BigDecimalGatherer<INPUT> {
 
     private final int windowSize;
     private boolean includePartialValues = true;
 
-    BigDecimalMovingProductGatherer(
+    BigDecimalMovingGeometricMeanGatherer(
             final int windowSize,
             final Function<INPUT, @Nullable BigDecimal> mappingFunction
     ) {
@@ -43,21 +49,25 @@ public class BigDecimalMovingProductGatherer<INPUT extends @Nullable Object>
 
     @Override
     public Supplier<BigDecimalGatherer.State> initializer() {
-        return () -> new BigDecimalMovingProductGatherer.State(windowSize, includePartialValues);
+        return () -> new BigDecimalMovingGeometricMeanGatherer.State(windowSize, includePartialValues);
     }
 
-    /// When creating a moving product and the full size of the window has not yet been reached, do
-    /// not emit partially calculated values to the downstream.
-    ///
-    /// For example, if the trailing product is over 10 values, but the upstream has only emitted two
-    /// values, this gatherer should not emit any partially calculated values. The default is for
-    /// partially calculated values to be emitted.
-    public BigDecimalMovingProductGatherer<INPUT> excludePartialValues() {
+    /**
+     * When creating a moving geometric mean and the full size of the window has not yet been reached, do
+     * not emit partially calculated values to the downstream.
+     *
+     * @return this gatherer
+     */
+    public BigDecimalMovingGeometricMeanGatherer<INPUT> excludePartialValues() {
         includePartialValues = false;
         return this;
     }
 
-    /// When encountering a `null` value in a stream, treat it as `BigDecimal.ONE` instead.
+    /**
+     * When encountering a `null` value in a stream, treat it as `BigDecimal.ONE` instead.
+     *
+     * @return this gatherer
+     */
     public BigDecimalGatherer<INPUT> treatNullAsOne() {
         return treatNullAs(BigDecimal.ONE);
     }
@@ -68,6 +78,7 @@ public class BigDecimalMovingProductGatherer<INPUT extends @Nullable Object>
         BigDecimal product = BigDecimal.ONE;
         int index = 0;
         int zeroCount = 0;
+        private BigDecimal nthRoot = BigDecimal.ZERO;
 
         private State(final int lookBack, final boolean includePartialValues) {
             this.includePartialValues = includePartialValues;
@@ -98,12 +109,17 @@ public class BigDecimalMovingProductGatherer<INPUT extends @Nullable Object>
             }
 
             series[windowIndex] = element;
-            index++;
+            final int count = Math.min(++index, series.length);
+            if (count == 0 || zeroCount > 0) {
+                nthRoot = BigDecimal.ZERO;
+            } else {
+                nthRoot = MathUtils.nthRoot(product, count, mathContext);
+            }
         }
 
         @Override
         public BigDecimal calculate() {
-            return zeroCount > 0 ? BigDecimal.ZERO : product;
+            return nthRoot;
         }
     }
 }

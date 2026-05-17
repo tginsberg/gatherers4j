@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ abstract public class GathererUtils {
     // Yes, I realize this is not to contract, but I only want it to measure equality in a narrow case
     // in which I only care about certain outputs.
     @SuppressWarnings("ComparatorMethodParameterNotUsed")
-    public static <T, R> Comparator<T> equalityOnlyComparator(final Function<T, R> mappingFunction) {
+    public static <T extends @Nullable Object, R extends @Nullable Object> Comparator<T> equalityOnlyComparator(final Function<T, R> mappingFunction) {
         return (o1, o2) -> Objects.equals(mappingFunction.apply(o1), mappingFunction.apply(o2)) ? 0 : -1;
     }
 
@@ -76,4 +76,5 @@ abstract public class GathererUtils {
             downstream.push(iterator.next());
         }
     }
+
 }

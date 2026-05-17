@@ -5,6 +5,16 @@ weight: 90
 no_list: true
 ---
 
+## v0.14.0
+[Released 2026-05-17](https://github.com/tginsberg/gatherers4j/releases/tag/v0.14.0)
+
++ Implement `movingGeometricMean()`, `movingGeometricMeanBy()`, `runningGeometricMean()`, and `runningGeometricMeanBy()`.
++ Implement `filterNotNull()`, which filters out null values from the input stream and is useful for lining up JSpecify annotations (from nullable to non-nullable).
++ Fix bug in `movingProduct()` and `movingProductBy()` where zero values were incorrectly handled. Addresses [#184](https://github.com/tginsberg/gatherers4j/issues/184).
++ Change `CrossGatherer`, `TypeFilteringGatherer`, and `FlattenSingleOrFail` to use Greedy integrators.
++ Thank you to [@Riggs333](https://github.com/Riggs333) for contributing code cleanups, making comparisons in `FrequencyGatherer` easier to understand!
++ Thank you to [@Riggs333](https://github.com/Riggs333) for contributing changes to tests to use AssertJ's type-specific exception assertions, which clarifies the intent of the code!
+
 ## v0.13.0
 [Released 2026-01-04](https://github.com/tginsberg/gatherers4j/releases/tag/v0.13.0)
 

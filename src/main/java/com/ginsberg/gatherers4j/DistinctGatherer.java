@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
 public class DistinctGatherer<INPUT extends @Nullable Object>
         implements Gatherer<INPUT, DistinctGatherer.State, INPUT> {
 
-    private final Function<INPUT, Object> mappingFunction;
+    private final Function<INPUT, @Nullable Object> mappingFunction;
 
     DistinctGatherer(final Function<INPUT, @Nullable Object> mappingFunction) {
         this.mappingFunction = mustNotBeNull(mappingFunction, "Mapping function must not be null");

@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 class WindowGathererTest {
 
@@ -83,15 +83,17 @@ class WindowGathererTest {
     @ParameterizedTest
     @ValueSource(ints = {-1, 0})
     void steppingMustBePositive(int stepping) {
-        assertThatThrownBy(() -> new WindowGatherer<>(1, stepping, true))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> new WindowGatherer<>(1, stepping, true))
+            .withMessage("Stepping must be greater than zero");
     }
 
     @ParameterizedTest
     @ValueSource(ints = {-1, 0})
     void windowSizeMustBePositive(int windowSize) {
-        assertThatThrownBy(() -> new WindowGatherer<>(windowSize, 1, true))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> new WindowGatherer<>(windowSize, 1, true))
+            .withMessage("Window size must be greater than zero");
     }
 
     @Test

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024-2025 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,13 @@ import java.io.IOException
 
 plugins {
     id("com.adarshr.test-logger") version "4.0.0"
+    id("info.solidsoft.pitest") version "1.19.0"
     id("jacoco")
     id("java-library")
     id("org.jreleaser") version "1.22.0"
     id("maven-publish")
     id("me.champeau.jmh") version "0.7.3"
-    id("net.ltgt.errorprone") version "4.3.0"
+    id("net.ltgt.errorprone") version "4.4.0"
     id("signing")
 }
 
@@ -33,7 +34,8 @@ description = "An extra set of helpful Stream Gatherers for Java"
 group = "com.ginsberg"
 version = file("VERSION.txt").readLines().first()
 
-val jUnitVersion = "6.0.1"
+val javaVersion = findProperty("javaVersion")?.toString()?.toInt() ?: 25
+val jUnitVersion = "6.0.2"
 
 val gitBranch = gitBranch()
 val gatherers4jVersion = if (gitBranch == "main" || gitBranch.startsWith("release/")) version.toString()
@@ -41,7 +43,7 @@ else "${gitBranch.substringAfterLast("/")}-SNAPSHOT"
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(25)
+        languageVersion = JavaLanguageVersion.of(javaVersion)
     }
     withJavadocJar()
     withSourcesJar()
@@ -66,14 +68,14 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:$jUnitVersion") {
         because("We need this to run tests")
     }
-    testImplementation("org.assertj:assertj-core:3.27.6") {
+    testImplementation("org.assertj:assertj-core:3.27.7") {
         because("These assertions are clearer than JUnit+Hamcrest")
     }
 
-    errorprone("com.google.errorprone:error_prone_core:2.45.0") {
+    errorprone("com.google.errorprone:error_prone_core:2.46.0") {
         because("This helps us eliminate bugs during the development cycle")
     }
-    errorprone("com.uber.nullaway:nullaway:0.12.15") {
+    errorprone("com.uber.nullaway:nullaway:0.13.0") {
         because("It helps us find nullability issues, along with JSpecify")
     }
 }
@@ -91,7 +93,6 @@ jreleaser {
 
     signing {
         active.set(org.jreleaser.model.Active.NEVER)
-        armored.set(true)
     }
 
     deploy {
@@ -101,7 +102,6 @@ jreleaser {
                     active.set(org.jreleaser.model.Active.RELEASE)
                     url = "https://central.sonatype.com/api/v1/publisher"
                     stagingRepository("build/staging-deploy")
-                    sign = false
                     applyMavenCentralRules = true
                 }
             }
@@ -110,7 +110,6 @@ jreleaser {
                     active.set(org.jreleaser.model.Active.SNAPSHOT)
                     snapshotUrl = "https://central.sonatype.com/repository/maven-snapshots"
                     url = "https://central.sonatype.com/repository/maven-snapshots"
-                    sign = false
                     applyMavenCentralRules = true
                     snapshotSupported = true
                     closeRepository = false
@@ -121,6 +120,22 @@ jreleaser {
         }
 
     }
+}
+
+pitest {
+    coverageThreshold = 80
+    features = listOf("+auto_threads")
+    historyInputLocation = layout.buildDirectory.file("pitHistory").get().asFile
+    historyOutputLocation = layout.buildDirectory.file("pitHistory").get().asFile
+    junit5PluginVersion = "1.2.1"
+    mutationThreshold = 75
+    mutators = listOf("DEFAULTS")
+    outputFormats = listOf("HTML", "XML")
+    targetClasses = listOf("com.ginsberg.gatherers4j.*")
+    targetTests = listOf("com.ginsberg.gatherers4j.*")
+    threads = Runtime.getRuntime().availableProcessors()
+    timestampedReports = false
+    verbose = false
 }
 
 publishing {
@@ -190,8 +205,9 @@ tasks {
     }
 
     jacoco {
-        toolVersion = "0.8.13"
+        toolVersion = "0.8.14"
     }
+
     jacocoTestReport {
         dependsOn(test)
         reports {
@@ -226,6 +242,7 @@ tasks {
     }
 
 }
+
 
 fun gitBranch(): String =
     ProcessBuilder("git rev-parse --abbrev-ref HEAD".split(" "))

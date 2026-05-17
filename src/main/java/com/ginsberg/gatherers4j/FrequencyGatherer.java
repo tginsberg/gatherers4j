@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,21 +66,23 @@ public class FrequencyGatherer<INPUT extends @Nullable Object>
         return (inputState, downstream) -> {
             var counts = inputState.counts
                     .entrySet()
-                    .stream().map(it -> new WithCount<>(it.getKey(), it.getValue()))
+                    .stream()
+                    .map(it -> new WithCount<INPUT>(it.getKey(), it.getValue()))
                     .sorted(comparator());
             pushAll(counts, downstream);
         };
     }
 
     private Comparator<WithCount<INPUT>> comparator() {
+        Comparator<WithCount<INPUT>> comparator = Comparator.comparing(WithCount::count);
         if (order == Frequency.Descending) {
-            return (o1, o2) -> (int) (o2.count() - o1.count());
+            return comparator.reversed();
         } else {
-            return (o1, o2) -> (int) (o1.count() - o2.count());
+            return comparator;
         }
     }
 
-    public static class State<INPUT> {
+    public static class State<INPUT extends @Nullable Object> {
         final Map<INPUT, Long> counts = new HashMap<>();
     }
 }

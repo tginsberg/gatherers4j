@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 class SimpleIndexingGatherersTest {
 
@@ -48,11 +48,30 @@ class SimpleIndexingGatherersTest {
             assertThat(output).containsExactly("A", "C", "D");
         }
 
+        @Test
+        void filteringIncrementsIndex() {
+            // Arrange
+            final Stream<String> input = Stream.of("A", "B", "C", "D");
+            final List<Integer> indices = new ArrayList<>();
+
+            // Act
+            final List<String> output = input
+                    .gather(Gatherers4j.filterIndexed((index, _) -> {
+                                indices.add(index);
+                                return index % 2 == 0;
+                            }
+                    )).toList();
+
+            assertThat(output).containsExactly("A", "C");
+            assertThat(indices).containsExactly(0, 1, 2, 3);
+        }
+
         @SuppressWarnings("DataFlowIssue")
         @Test
         void predicateMustNotBeNull() {
-            assertThatThrownBy(() -> Stream.of("A").gather(Gatherers4j.filterIndexed(null)))
-                    .isExactlyInstanceOf(IllegalArgumentException.class);
+            assertThatIllegalArgumentException().isThrownBy(() ->
+                    Gatherers4j.filterIndexed(null)
+            );
         }
     }
 
@@ -61,9 +80,9 @@ class SimpleIndexingGatherersTest {
         @SuppressWarnings("DataFlowIssue")
         @Test
         void mappingFunctionMustNotBeNull() {
-            assertThatThrownBy(() ->
+            assertThatIllegalArgumentException().isThrownBy(() ->
                     Gatherers4j.mapIndexed(null)
-            ).isExactlyInstanceOf(IllegalArgumentException.class);
+            );
         }
 
         @Test
@@ -97,9 +116,9 @@ class SimpleIndexingGatherersTest {
         @SuppressWarnings("DataFlowIssue")
         @Test
         void peekingFunctionMustNotBeNull() {
-            assertThatThrownBy(() ->
+            assertThatIllegalArgumentException().isThrownBy(() ->
                     Gatherers4j.peekIndexed(null)
-            ).isExactlyInstanceOf(IllegalArgumentException.class);
+            );
         }
 
         @Test

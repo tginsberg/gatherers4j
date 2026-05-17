@@ -16,18 +16,18 @@
 
 package com.ginsberg.gatherers4j;
 
-import com.ginsberg.gatherers4j.dto.Pair;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import static com.ginsberg.gatherers4j.Gatherers4j.crossWith;
+import static java.util.Collections.emptyList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
+import com.ginsberg.gatherers4j.dto.Pair;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
-
-import static java.util.Collections.emptyList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
 class CrossGathererTest {
 
@@ -36,7 +36,9 @@ class CrossGathererTest {
         @Test
         @SuppressWarnings("DataFlowIssue")
         void crossIterableMustNotBeNull() {
-            assertThatThrownBy(() -> Gatherers4j.crossWith((Iterable<String>) null)).isInstanceOf(IllegalArgumentException.class);
+            assertThatIllegalArgumentException()
+                .isThrownBy(() -> crossWith((Iterable<String>) null))
+                .withMessage("source list must not be null");
         }
 
         @Test
@@ -102,7 +104,9 @@ class CrossGathererTest {
         @Test
         @SuppressWarnings("DataFlowIssue")
         void crossIteratorMustNotBeNull() {
-            assertThatThrownBy(() -> Gatherers4j.crossWith((Iterator<String>) null)).isInstanceOf(IllegalArgumentException.class);
+            assertThatIllegalArgumentException()
+                .isThrownBy(() -> crossWith((Iterator<String>) null))
+                .withMessage("source iterator must not be null");
         }
 
         @Test
@@ -168,7 +172,9 @@ class CrossGathererTest {
         @Test
         @SuppressWarnings("DataFlowIssue")
         void crossStreamMustNotBeNull() {
-            assertThatThrownBy(() -> Gatherers4j.crossWith((Stream<String>) null)).isInstanceOf(IllegalArgumentException.class);
+            assertThatIllegalArgumentException()
+                .isThrownBy(() -> crossWith((Stream<String>) null))
+                .withMessage("source stream must not be null");
         }
 
         @Test
@@ -235,7 +241,9 @@ class CrossGathererTest {
         @Test
         @SuppressWarnings("DataFlowIssue")
         void crossVarargsNotBeNull() {
-            assertThatThrownBy(() -> Gatherers4j.crossWith((String[]) null)).isInstanceOf(IllegalArgumentException.class);
+            assertThatIllegalArgumentException()
+                .isThrownBy(() -> crossWith((String[]) null))
+                .withMessage("source must not be null");
         }
 
         @Test

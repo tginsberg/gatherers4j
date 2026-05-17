@@ -22,15 +22,15 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 class DropLastGathererTest {
 
     @Test
     void countMustBePositive() {
-        assertThatThrownBy(() -> Stream.of("A")
-                .gather(Gatherers4j.dropLast(0)).toList())
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> Gatherers4j.dropLast(0))
+            .withMessage("DropLast count must be positive");
     }
 
     @Test

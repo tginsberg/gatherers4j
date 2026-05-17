@@ -18,7 +18,7 @@ Add the following dependency to `pom.xml`.
 <dependency>
     <groupId>com.ginsberg</groupId>
     <artifactId>gatherers4j</artifactId>
-    <version>0.13.0</version>
+    <version>0.14.0</version>
 </dependency>
 ```
 
@@ -27,7 +27,7 @@ Add the following dependency to `pom.xml`.
 Add the following dependency to `build.gradle` or `build.gradle.kts`
 
 ```groovy
-implementation("com.ginsberg:gatherers4j:0.13.0")
+implementation("com.ginsberg:gatherers4j:0.14.0")
 ```
 
 
@@ -79,6 +79,7 @@ Gatherers that select or remove elements based on some criteria.
 | [`dropLast(n)`](https://tginsberg.github.io/gatherers4j/gatherers/filtering-and-selection/droplast/)                               | Keep all but the last `n` elements of the stream                                                                               |
 | [`filterIndexed()`](https://tginsberg.github.io/gatherers4j/gatherers/filtering-and-selection/filterindexed/)                      | Filter a stream according to a given predicate, which takes both the item being examined and its zero-based index.             |
 | [`filterInstanceOf`](https://tginsberg.github.io/gatherers4j/gatherers/filtering-and-selection/filterinstanceof/)                  | Filter the elements in the stream to only include elements of the given types.                                                 |
+| [`filterNotNull()`](https://tginsberg.github.io/gatherers4j/gatherers/filtering-and-selection/filternotnull/)                       | Remove null elements from a stream, narrowing the output type to non-null.                                                     |
 | [`filterOrdered(order)`](https://tginsberg.github.io/gatherers4j/gatherers/filtering-and-selection/filterordered/)                 | Filter the input stream of `Comparable` objects so that is strictly in the given `order`                                       |                                                                                           |
 | [`filterOrderedBy(order, comparator)`](https://tginsberg.github.io/gatherers4j/gatherers/filtering-and-selection/filterorderedby/) | Filter the input stream of objects so that it contains only elements in the given `order`, as measured by a given `Comparator` |
 | [`sampleFixedSize(n)`](https://tginsberg.github.io/gatherers4j/gatherers/filtering-and-selection/samplefixedsize/)                 | Perform a fixed size sampling over the input stream.                                                                           |
@@ -121,16 +122,20 @@ Functions performing calculations over the stream.
 | [`exponentialMovingAverageWithAlphaBy(alpha, fn)`](https://tginsberg.github.io/gatherers4j/gatherers/mathematical/exponentialmovingaveragewithalphaby/)     | Create an exponential average of `BigDecimal` values with the given `alpha`, as mapped via `fn`.                                                                 |
 | [`exponentialMovingAverageWithPeriod(periods)`](https://tginsberg.github.io/gatherers4j/gatherers/mathematical/exponentialmovingaveragewithperiod/)         | Create an exponential average of `BigDecimal` values, with the given number of `periods`.                                                                        |
 | [`exponentialMovingAverageWithPeriodBy(periods, fn)`](https://tginsberg.github.io/gatherers4j/gatherers/mathematical/exponentialmovingaveragewithperiodby/) | Create an exponential average of `BigDecimal` values with the given number of `periods`, as mapped via `fn`.                                                     |
+| [`movingGeometricMean(window)`](https://tginsberg.github.io/gatherers4j/gatherers/mathematical/movinggeometricmean/)                                 | Create a moving geometric mean of `BigDecimal` objects over the previous `window` values.                                                                       |
+| [`movingGeometricMeanBy(window, fn)`](https://tginsberg.github.io/gatherers4j/gatherers/mathematical/movinggeometricmeanby/)                             | Create a moving geometric mean of `BigDecimal` objects over the previous `window` values, as mapped via `fn`.                                                   |
 | [`movingMax(window)`](https://tginsberg.github.io/gatherers4j/gatherers/mathematical/movingmax/)                                                            | Create a `Stream<T>` representing the moving maximum over the previous `window` elements, where `T` implements `Comparable<T>`.                                  |
-| [`movingMaxBy(window, comparator)`](https://tginsberg.github.io/gatherers4j/gatherers/mathematical/movingmaxby/)                                            | Create a `Stream<T>` representing the moving maximum over the previous `window` elements, according to the given `Comparator`.                                  |
+| [`movingMaxBy(window, comparator)`](https://tginsberg.github.io/gatherers4j/gatherers/mathematical/movingmaxby/)                                            | Create a `Stream<T>` representing the moving maximum over the previous `window` elements, according to the given `Comparator`.                                   |
 | [`movingMedian(window)`](https://tginsberg.github.io/gatherers4j/gatherers/mathematical/movingmedian/)                                                      | Create a Stream that represents the moving median of a `Stream<BigDecimal>` looking back `window` number of elements.                                            |
 | [`movingMedianBy(window, fn)`](https://tginsberg.github.io/gatherers4j/gatherers/mathematical/movingmedianby/)                                              | Create a Stream that represents the moving median of `BigDecimal` objects mapped from a `Stream<INPUT>` via a `fn` and looking back `window` number of elements. |
 | [`movingMin(window)`](https://tginsberg.github.io/gatherers4j/gatherers/mathematical/movingmin/)                                                            | Create a `Stream<T>` representing the moving minimum over the previous `window` elements, where `T` implements `Comparable<T>`.                                  |
-| [`movingMinBy(window, comparator)`](https://tginsberg.github.io/gatherers4j/gatherers/mathematical/movingminby/)                                            | Create a `Stream<T>` representing the moving minimum over the previous `window` elements, according to the given `Comparator`.                                  |
+| [`movingMinBy(window, comparator)`](https://tginsberg.github.io/gatherers4j/gatherers/mathematical/movingminby/)                                            | Create a `Stream<T>` representing the moving minimum over the previous `window` elements, according to the given `Comparator`.                                   |
 | [`movingProduct(window)`](https://tginsberg.github.io/gatherers4j/gatherers/mathematical/movingproduct/)                                                    | Create a moving product of `BigDecimal` objects over the previous `window` values.                                                                               |
 | [`movingProductBy(window, fn)`](https://tginsberg.github.io/gatherers4j/gatherers/mathematical/movingproductby/)                                            | Create a moving product of `BigDecimal` objects over the previous `window` values, as mapped via `fn`.                                                           |
 | [`movingSum(window)`](https://tginsberg.github.io/gatherers4j/gatherers/mathematical/movingsum/)                                                            | Create a moving sum of `BigDecimal` objects over the previous `window` values.                                                                                   |
 | [`movingSumBy(window, fn)`](https://tginsberg.github.io/gatherers4j/gatherers/mathematical/movingsumby/)                                                    | Create a moving sum of `BigDecimal` objects over the previous `window` values, as mapped via `fn`.                                                               |
+| [`runningGeometricMean()`](https://tginsberg.github.io/gatherers4j/gatherers/mathematical/runninggeometricmean/)                                         | Create a running geometric mean of `BigDecimal` values.                                                                                                          |
+| [`runningGeometricMeanBy(fn)`](https://tginsberg.github.io/gatherers4j/gatherers/mathematical/runninggeometricmeanby/)                                   | Create a running geometric mean of `BigDecimal` values as mapped via `fn`.                                                                                       |
 | [`runningMax()`](https://tginsberg.github.io/gatherers4j/gatherers/mathematical/runningmax/)                                                                | Create a `Stream<T>` representing the running maximum of the input stream, where `T` implements `Comparable<T>`.                                                 |
 | [`runningMaxBy(comparator)`](https://tginsberg.github.io/gatherers4j/gatherers/mathematical/runningmaxby/)                                                  | Create a `Stream<T>` representing the running maximum of the input stream, according to the given `Comparator`.                                                  |
 | [`runningMedian()`](https://tginsberg.github.io/gatherers4j/gatherers/mathematical/runningmedian/)                                                          | Create a `Stream<BigDecimal>` that represents the running median of a `Stream<BigDecimal>`.                                                                      |
@@ -155,4 +160,4 @@ Functions performing calculations over the stream.
 Please feel free to file issues for change requests or bugs. If you would like to contribute new functionality, please
 contact me before starting work!
 
-Copyright © 2024-2025 by Todd Ginsberg
+Copyright © 2024-2026 by Todd Ginsberg

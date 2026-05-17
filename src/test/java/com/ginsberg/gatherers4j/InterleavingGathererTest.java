@@ -16,15 +16,15 @@
 
 package com.ginsberg.gatherers4j;
 
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import static com.ginsberg.gatherers4j.Gatherers4j.interleaveWith;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
 class InterleavingGathererTest {
 
@@ -33,10 +33,9 @@ class InterleavingGathererTest {
 
         @Test
         void argumentIterableMustNotBeNull() {
-            assertThatThrownBy(() -> Stream.of("A")
-                    .gather(Gatherers4j.interleaveWith((Iterable<String>) null))
-                    .toList()
-            ).isInstanceOf(IllegalArgumentException.class);
+            assertThatIllegalArgumentException()
+                .isThrownBy(() -> Gatherers4j.interleaveWith((Iterable<String>) null))
+                .withMessage("Other iterable must not be null");
         }
 
         @Test
@@ -62,10 +61,9 @@ class InterleavingGathererTest {
 
         @Test
         void argumentIteratorMustNotBeNull() {
-            assertThatThrownBy(() -> Stream.of("A")
-                    .gather(Gatherers4j.interleaveWith((Iterator<String>) null))
-                    .toList()
-            ).isInstanceOf(IllegalArgumentException.class);
+            assertThatIllegalArgumentException()
+                .isThrownBy(() -> interleaveWith((Iterator<String>) null))
+                .withMessage("Other iterable must not be null");
         }
 
         @Test
@@ -90,10 +88,9 @@ class InterleavingGathererTest {
     class FromStream {
         @Test
         void argumentStreamMustNotBeNull() {
-            assertThatThrownBy(() -> Stream.of("A")
-                    .gather(Gatherers4j.interleaveWith((Stream<String>) null))
-                    .toList()
-            ).isInstanceOf(IllegalArgumentException.class);
+            assertThatIllegalArgumentException()
+                .isThrownBy(() -> interleaveWith((Stream<String>) null))
+                .withMessage("Other stream must not be null");
         }
 
         @Test
@@ -195,10 +192,9 @@ class InterleavingGathererTest {
 
         @Test
         void argumentMustNotBeNull() {
-            assertThatThrownBy(() -> Stream.of("A")
-                    .gather(Gatherers4j.interleaveWith((String[]) null))
-                    .toList()
-            ).isInstanceOf(IllegalArgumentException.class);
+            assertThatIllegalArgumentException()
+                .isThrownBy(() -> interleaveWith((String[]) null))
+                .withMessage("Other stream must not be null");
         }
 
         @Test

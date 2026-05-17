@@ -14,12 +14,22 @@
  * limitations under the License.
  */
 
-package com.ginsberg.gatherers4j.dto;
+package com.ginsberg.gatherers4j;
 
 import org.jspecify.annotations.Nullable;
 
-public record WithCount<VALUE extends @Nullable Object>(
-        @Nullable VALUE value,
-        long count
-) {
+import java.util.stream.Gatherer;
+
+public class SimpleFilteringGatherers {
+
+    static <TYPE> Gatherer<@Nullable TYPE, ?, TYPE> filterNotNull() {
+        return Gatherer.of(
+                Gatherer.Integrator.ofGreedy((_, element, downstream) -> {
+                    if (element != null) {
+                        downstream.push(element);
+                    }
+                    return !downstream.isRejecting();
+                })
+        );
+    }
 }

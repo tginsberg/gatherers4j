@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,10 +24,11 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 
 class FlattenSingleOrFailTest {
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     @Test
     void doesNotEmitAnythingDuringFailureCase() {
         // Arrange
@@ -35,11 +36,11 @@ class FlattenSingleOrFailTest {
         final Set<Object> emitted = new HashSet<>();
 
         // Act
-        assertThatThrownBy(() ->
+        assertThatIllegalStateException().isThrownBy(() ->
                 input.gather(new FlattenSingleOrFail<>("More than one input collection"))
                         .peek(emitted::add)
                         .toList()
-        ).isExactlyInstanceOf(IllegalStateException.class);
+        );
 
         // Assert
         assertThat(emitted).isEmpty();
@@ -69,16 +70,16 @@ class FlattenSingleOrFailTest {
         assertThat(output).isEmpty();
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     @Test
     void failsWhenThereAreMoreThanOneList() {
-        assertThatThrownBy(() ->
+        assertThatIllegalStateException().isThrownBy(() ->
                 Stream.of(List.of("A"), Set.of("A"))
                         .gather(new FlattenSingleOrFail<>("More than one input collection"))
                         .toList()
-        ).isExactlyInstanceOf(IllegalStateException.class);
+        );
     }
 
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void singleElementNull() {
         // Arrange

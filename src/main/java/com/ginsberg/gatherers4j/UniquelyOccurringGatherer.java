@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -88,7 +88,7 @@ public class UniquelyOccurringGatherer<INPUT extends @Nullable Object, MAPPED ex
         return (inputState, downstream) -> pushAll(inputState.found.values(), downstream);
     }
 
-    public static class State<INPUT, MAPPED> {
+    public static class State<INPUT extends @Nullable Object, MAPPED extends @Nullable Object> {
         final Set<@Nullable MAPPED> duplicates = new HashSet<>();
         final Map<@Nullable MAPPED, @Nullable INPUT> found = new LinkedHashMap<>();
     }

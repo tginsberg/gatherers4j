@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ class FlattenSingleOrFail<INPUT extends Collection<OUTPUT>, OUTPUT>
 
     @Override
     public Integrator<State<INPUT>, INPUT, OUTPUT> integrator() {
-        return (state, element, downstream) -> {
+        return Integrator.ofGreedy((state, element, downstream) -> {
             if (state.isFirst) {
                 state.firstCollection = element;
                 state.isFirst = false;
@@ -50,13 +50,13 @@ class FlattenSingleOrFail<INPUT extends Collection<OUTPUT>, OUTPUT>
             } else {
                 throw new IllegalStateException(message);
             }
-        };
+        });
     }
 
     @Override
     public BiConsumer<State<INPUT>, Downstream<? super OUTPUT>> finisher() {
         return (inputState, downstream) -> {
-            if(inputState.firstCollection != null) {
+            if (inputState.firstCollection != null) {
                 pushAll(inputState.firstCollection, downstream);
             }
         };

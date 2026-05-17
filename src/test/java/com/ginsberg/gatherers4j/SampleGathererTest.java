@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 class SampleGathererTest {
 
@@ -70,9 +70,9 @@ class SampleGathererTest {
         @ParameterizedTest(name = "sampleSize of {0}")
         @ValueSource(ints = {-1, 0})
         void sampleSizeMustBeAtLeast1(int size) {
-            assertThatThrownBy(() ->
-                    Gatherers4j.sampleFixedSize(size)
-            ).isExactlyInstanceOf(IllegalArgumentException.class);
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Gatherers4j.sampleFixedSize(size)
+            );
         }
 
         @Test
@@ -131,9 +131,9 @@ class SampleGathererTest {
         @ParameterizedTest(name = "samplePercentage of {0}")
         @ValueSource(doubles = {0.0, 1.01, -0.1})
         void sampleSizeMustBeAtLeast1(final double percentage) {
-            assertThatThrownBy(() ->
-                    Gatherers4j.samplePercentage(percentage)
-            ).isExactlyInstanceOf(IllegalArgumentException.class);
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Gatherers4j.samplePercentage(percentage)
+            );
         }
     }
 

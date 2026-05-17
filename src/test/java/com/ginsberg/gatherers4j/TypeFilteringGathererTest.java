@@ -16,13 +16,12 @@
 
 package com.ginsberg.gatherers4j;
 
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 import java.util.List;
 import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import org.junit.jupiter.api.Test;
 
 
 class TypeFilteringGathererTest {
@@ -50,8 +49,8 @@ class TypeFilteringGathererTest {
 
     @Test
     void mustHaveAtLeastOneValidType() {
-        assertThatThrownBy(TypeFilteringGatherer::of)
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+            .isThrownBy(TypeFilteringGatherer::of);
     }
 
     @Test
@@ -73,9 +72,9 @@ class TypeFilteringGathererTest {
     @SuppressWarnings("DataFlowIssue")
     @Test
     void validTypesMustNotBeNull() {
-        assertThatThrownBy(() -> {
-            TypeFilteringGatherer.of((Class<Object>[])null);
-        }).isInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> TypeFilteringGatherer.of((Class<Object>[]) null))
+            .withMessage("validTypes must not be null");
     }
 
 }

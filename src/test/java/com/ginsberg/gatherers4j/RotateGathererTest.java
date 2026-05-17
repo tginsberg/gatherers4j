@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,18 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class RotateGathererTest {
+
+    @Nested
+    class RotateEnum {
+        @Test
+        void leftFlipsToRight() {
+            assertThat(Rotate.Left.flip()).isEqualTo(Rotate.Right);
+        }
+        @Test
+        void rightFlipsToLeft() {
+            assertThat(Rotate.Right.flip()).isEqualTo(Rotate.Left);
+        }
+    }
 
     @Nested
     class RotateLeft {

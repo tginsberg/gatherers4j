@@ -21,15 +21,18 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static com.ginsberg.gatherers4j.Gatherers4j.takeUntil;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 class TakeUntilGathererTest {
 
     @Test
     @SuppressWarnings("DataFlowIssue")
     void predicateMustNotBeNull() {
-        assertThatThrownBy(() -> Gatherers4j.takeUntil(null)).isInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> takeUntil(null))
+            .withMessage("Predicate must not be null");
     }
 
     @Test

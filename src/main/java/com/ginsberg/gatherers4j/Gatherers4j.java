@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -278,10 +278,19 @@ public abstract class Gatherers4j {
     /// @param validTypes A non-empty array of types to filter for
     /// @return A non-null `Gatherer`
     @SafeVarargs
-    public static <INPUT extends @Nullable Object, OUTPUT extends @Nullable Object> Gatherer<INPUT, ?, OUTPUT> filterInstanceOf(
+    public static <INPUT extends @Nullable Object, OUTPUT> Gatherer<INPUT, ?, OUTPUT> filterInstanceOf(
             final Class<? extends OUTPUT>... validTypes
     ) {
         return TypeFilteringGatherer.of(validTypes);
+    }
+
+    /// Filter null elements from the stream, emitting only non-null elements. This is useful
+    /// to line up the nullability annotations.
+    ///
+    /// @param <TYPE> The type of elements in the stream
+    /// @return A non-null gatherer
+    public static <TYPE> Gatherer<@Nullable TYPE, ?, TYPE> filterNotNull() {
+        return SimpleFilteringGatherers.filterNotNull();
     }
 
     /// Filter the input stream so that it contains `Comparable` elements in the `order` specified. Anything not matching
@@ -416,6 +425,30 @@ public abstract class Gatherers4j {
     public static <INPUT extends @Nullable Object, OUTPUT extends @Nullable Object> Gatherer<INPUT, ?, OUTPUT> mapIndexed(
             final BiFunction<Integer, INPUT, OUTPUT> mappingFunction) {
         return SimpleIndexingGatherers.mapIndexed(mappingFunction);
+    }
+
+    /// Create a Stream that represents the moving geometric mean of a `Stream<BigDecimal>` looking
+    /// back `windowSize` number of elements.
+    ///
+    /// @param windowSize The trailing number of elements to include in the geometric mean, must be greater than 1.
+    /// @return A non-null `BigDecimalMovingGeometricMeanGatherer`
+    public static BigDecimalMovingGeometricMeanGatherer<@Nullable BigDecimal> movingGeometricMean(final int windowSize) {
+        return new BigDecimalMovingGeometricMeanGatherer<>(windowSize, Function.identity());
+    }
+
+    /// Create a Stream that represents the moving geometric mean of `BigDecimal` objects mapped from a `Stream<INPUT>`
+    /// via a `mappingFunction` and looking back `windowSize` number of elements.
+    ///
+    /// @param windowSize      The trailing number of elements to include in the geometric mean, must be greater than 1.
+    /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
+    ///                        in the moving geometric mean calculation
+    /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
+    /// @return A non-null `BigDecimalMovingGeometricMeanGatherer`
+    public static <INPUT extends @Nullable Object> BigDecimalMovingGeometricMeanGatherer<INPUT> movingGeometricMeanBy(
+            final int windowSize,
+            final Function<INPUT, BigDecimal> mappingFunction
+    ) {
+        return new BigDecimalMovingGeometricMeanGatherer<>(windowSize, mappingFunction);
     }
 
     /// Create a stream that represents the moving maximum value over the previous `windowSize` elements.
@@ -602,6 +635,26 @@ public abstract class Gatherers4j {
     /// @return A non-null Gatherer
     public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> rotate(final Rotate direction, final int distance) {
         return new RotateGatherer<>(direction, distance);
+    }
+
+    /// Create a Stream that is the running geometric mean of `Stream<BigDecimal>`
+    ///
+    /// @return BigDecimalGeometricMeanGatherer
+    public static BigDecimalGeometricMeanGatherer<@Nullable BigDecimal> runningGeometricMean() {
+        return runningGeometricMeanBy(Function.identity());
+    }
+
+    /// Create a Stream that is the running geometric mean of `BigDecimal` objects as mapped by
+    /// the given function. This is useful when paired with the `withOriginal` function.
+    ///
+    /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
+    ///                        in the running geometric mean calculation
+    /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
+    /// @return A non-null `BigDecimalGeometricMeanGatherer`
+    public static <INPUT extends @Nullable Object> BigDecimalGeometricMeanGatherer<INPUT> runningGeometricMeanBy(
+            final Function<INPUT, BigDecimal> mappingFunction
+    ) {
+        return new BigDecimalGeometricMeanGatherer<>(mappingFunction);
     }
 
     /// Emit the running maximum value of `Comparable` elements in the input stream.
