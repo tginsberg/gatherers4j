@@ -888,22 +888,67 @@ public abstract class Gatherers4j {
     /// then all elements are emitted. Elements will be emitted in the order in which they are encountered.
     /// This implementation reads the entire stream before emitting any results making it inappropriate for infinite streams.
     ///
+    /// Note: The returned Gatherer uses a single `RandomGenerator` from `RandomGenerator.getDefault()`, which is not
+    /// guaranteed to be thread-safe. Do not use the returned Gatherer from multiple threads at the same time.
+    ///
     /// @param sampleSize Number of elements to sample.
     /// @param <INPUT> Type of elements in the input and output stream
     /// @return A non-null Gatherer
     public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> sampleFixedSize(final int sampleSize) {
-        return new SampleFixedSizeGatherer<>(sampleSize);
+        return new SampleFixedSizeGatherer<>(sampleSize, RandomGenerator.getDefault());
     }
 
-    /// Perform a percentage-based sampling over the input stream. This method uses Poisson sampling internally, so
-    /// the number of elements emitted to the downstream may not be strictly in line with the given `percentage`.
+    /// Perform a fixed size sampling over the input stream. This method uses the Reservoir method internally, which
+    /// should guarantee the correct number of elements returned. If the stream is shorter than the specified `sampleSize`
+    /// then all elements are emitted. Elements will be emitted in the order in which they are encountered.
+    /// This implementation reads the entire stream before emitting any results making it inappropriate for infinite streams.
+    ///
+    /// Note: The given `randomGenerator` is used by every run of the returned Gatherer. Most `RandomGenerator`
+    /// implementations are not thread-safe, so do not use the returned Gatherer from multiple threads at the same time.
+    ///
+    /// @param sampleSize Number of elements to sample.
+    /// @param randomGenerator A non-null `RandomGenerator` to use as a random source for the sampling
+    /// @param <INPUT> Type of elements in the input and output stream
+    /// @return A non-null Gatherer
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> sampleFixedSize(
+            final int sampleSize,
+            final RandomGenerator randomGenerator
+    ) {
+        return new SampleFixedSizeGatherer<>(sampleSize, randomGenerator);
+    }
+
+    /// Perform a percentage-based sampling over the input stream. This method uses Bernoulli sampling internally
+    /// (each element is kept independently with a probability of `percentage`), so the number of elements emitted
+    /// to the downstream may not be strictly in line with the given `percentage`.
     /// Elements will be emitted in the order in which they are encountered.
+    ///
+    /// Note: The returned Gatherer uses a single `RandomGenerator` from `RandomGenerator.getDefault()`, which is not
+    /// guaranteed to be thread-safe. Do not use the returned Gatherer from multiple threads at the same time.
     ///
     /// @param percentage Percentage of elements that should be sampled, on average.
     /// @param <INPUT> Type of elements in the input and output stream
     /// @return A non-null Gatherer
     public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> samplePercentage(final double percentage) {
-        return SamplePercentageGatherers.poisson(percentage);
+        return SamplePercentageGatherers.bernoulli(percentage, RandomGenerator.getDefault());
+    }
+
+    /// Perform a percentage-based sampling over the input stream. This method uses Bernoulli sampling internally
+    /// (each element is kept independently with a probability of `percentage`), so the number of elements emitted
+    /// to the downstream may not be strictly in line with the given `percentage`.
+    /// Elements will be emitted in the order in which they are encountered.
+    ///
+    /// Note: The given `randomGenerator` is used by every run of the returned Gatherer. Most `RandomGenerator`
+    /// implementations are not thread-safe, so do not use the returned Gatherer from multiple threads at the same time.
+    ///
+    /// @param percentage Percentage of elements that should be sampled, on average.
+    /// @param randomGenerator A non-null `RandomGenerator` to use as a random source for the sampling
+    /// @param <INPUT> Type of elements in the input and output stream
+    /// @return A non-null Gatherer
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> samplePercentage(
+            final double percentage,
+            final RandomGenerator randomGenerator
+    ) {
+        return SamplePercentageGatherers.bernoulli(percentage, randomGenerator);
     }
 
     ///  Perform a scan over every element in the input stream along with its index
@@ -925,6 +970,9 @@ public abstract class Gatherers4j {
     /// Note: This consumes the entire stream and holds it in memory, so it will not work on infinite
     /// streams and may cause memory pressure on very large streams.
     ///
+    /// Note: The returned Gatherer uses a single `RandomGenerator` from `RandomGenerator.getDefault()`, which is not
+    /// guaranteed to be thread-safe. Do not use the returned Gatherer from multiple threads at the same time.
+    ///
     /// @param <INPUT> Type of elements in the input stream
     /// @return A non-null `Gatherer`
     public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> shuffle() {
@@ -935,6 +983,9 @@ public abstract class Gatherers4j {
     ///
     /// Note: This consumes the entire stream and holds it in memory, so it will not work on infinite
     /// streams and may cause memory pressure on very large streams.
+    ///
+    /// Note: The given `randomGenerator` is used by every run of the returned Gatherer. Most `RandomGenerator`
+    /// implementations are not thread-safe, so do not use the returned Gatherer from multiple threads at the same time.
     ///
     /// @param randomGenerator A non-null `RandomGenerator` to use as a random source for the shuffle
     /// @param <INPUT>         Type of elements in the input stream

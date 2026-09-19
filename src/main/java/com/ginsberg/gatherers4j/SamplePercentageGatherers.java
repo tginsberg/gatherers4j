@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,16 +21,18 @@ import org.jspecify.annotations.Nullable;
 import java.util.random.RandomGenerator;
 import java.util.stream.Gatherer;
 
+import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
+
 public class SamplePercentageGatherers {
 
-    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> poisson(final double percentage) {
-        if (percentage <= 0.0) {
-            throw new IllegalArgumentException("percentage must be greater than 0");
+    static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> bernoulli(
+            final double percentage,
+            final RandomGenerator randomGenerator
+    ) {
+        if (!(percentage > 0.0 && percentage <= 1.0)) {
+            throw new IllegalArgumentException("percentage must be greater than 0 and 1.0 or less");
         }
-        if (percentage > 1.0) {
-            throw new IllegalArgumentException("percentage must be less than 1.0");
-        }
-        final RandomGenerator randomGenerator = RandomGenerator.getDefault();
+        mustNotBeNull(randomGenerator, "RandomGenerator must not be null");
         return Gatherer.ofSequential(
                 Gatherer.Integrator.ofGreedy((_, element, downstream) -> {
                     if (randomGenerator.nextDouble() < percentage) {
