@@ -7,7 +7,8 @@ no_list: true
 
 ## v0.15.0
 [Released 2026-??-??](https://github.com/tginsberg/gatherers4j/releases/tag/v0.15.0)
-+ TBD
++ Internal refactoring: the BigDecimal-based moving and running gatherers (sum, product, simple average, exponential average, median, geometric mean, standard deviation) now share `BigDecimalMovingStatGatherer` and `BigDecimalRunningStatGatherer`, replacing the individual per-gatherer classes.
++ `treatNullAsOne()` and `withMathContext()` are now available on all of the BigDecimal gatherers.
 
 ## v0.14.0
 [Released 2026-05-17](https://github.com/tginsberg/gatherers4j/releases/tag/v0.14.0)

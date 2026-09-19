@@ -16,107 +16,260 @@
 
 package com.ginsberg.gatherers4j;
 
+import com.ginsberg.gatherers4j.util.TestValueHolder;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static com.ginsberg.gatherers4j.util.TestUtils.BIG_DECIMAL_RECURSIVE_COMPARISON;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 class BigDecimalGeometricMeanGathererTest {
 
-    @Test
-    void geometricRunningAverage() {
-        // Arrange
-        final Stream<BigDecimal> input = Stream.of(
-                BigDecimal.valueOf(2),
-                BigDecimal.valueOf(8)
-        );
+    @Nested
+    class Moving {
+        @Test
+        void ignoresNulls() {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.of(null, BigDecimal.valueOf(1), BigDecimal.valueOf(4), BigDecimal.valueOf(16));
 
-        // Act
-        final List<BigDecimal> output = input
-                .gather(Gatherers4j.runningGeometricMean())
-                .toList();
+            // Act
+            final List<BigDecimal> output = input
+                    .gather(Gatherers4j.movingGeometricMean(2))
+                    .toList();
 
-        // Assert
-        assertThat(output).hasSize(2);
-        assertThat(output.get(0)).isEqualByComparingTo("2");
-        assertThat(output.get(1)).isEqualByComparingTo("4");
+            // Assert
+            assertThat(output)
+                    .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
+                    .containsExactly(
+                            new BigDecimal("1"),
+                            new BigDecimal("2"),
+                            new BigDecimal("8")
+                    );
+        }
+
+        @Test
+        void movingGeometricMean() {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.of("1", "4", "16", "64").map(BigDecimal::new);
+
+            // Act
+            final List<BigDecimal> output = input
+                    .gather(Gatherers4j.movingGeometricMean(2))
+                    .toList();
+
+            // Assert
+            assertThat(output)
+                    .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
+                    .containsExactly(
+                            new BigDecimal("1"),
+                            new BigDecimal("2"),
+                            new BigDecimal("8"),
+                            new BigDecimal("32")
+                    );
+        }
+
+        @Test
+        void movingGeometricMeanWithZero() {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.of("1", "0", "16", "64").map(BigDecimal::new);
+
+            // Act
+            final List<BigDecimal> output = input
+                    .gather(Gatherers4j.movingGeometricMean(2))
+                    .toList();
+
+            // Assert
+            assertThat(output)
+                    .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
+                    .containsExactly(
+                            new BigDecimal("1"),
+                            new BigDecimal("0"),
+                            new BigDecimal("0"),
+                            new BigDecimal("32")
+                    );
+        }
+
+        @Test
+        void movingGeometricMeanExcludingPartialValues() {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.of("1", "4", "16", "64").map(BigDecimal::new);
+
+            // Act
+            final List<BigDecimal> output = input
+                    .gather(Gatherers4j.movingGeometricMean(2).excludePartialValues())
+                    .toList();
+
+            // Assert
+            assertThat(output)
+                    .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
+                    .containsExactly(
+                            new BigDecimal("2"),
+                            new BigDecimal("8"),
+                            new BigDecimal("32")
+                    );
+        }
+
+        @Test
+        void movingGeometricMeanBy() {
+            // Arrange
+            final List<TestValueHolder> input = List.of(
+                    new TestValueHolder(1, new BigDecimal("1")),
+                    new TestValueHolder(2, new BigDecimal("4")),
+                    new TestValueHolder(3, new BigDecimal("16")),
+                    new TestValueHolder(4, new BigDecimal("64"))
+            );
+
+            // Act
+            final List<BigDecimal> output = input.stream()
+                    .gather(Gatherers4j.movingGeometricMeanBy(2, TestValueHolder::value))
+                    .toList();
+
+            // Assert
+            assertThat(output)
+                    .usingRecursiveFieldByFieldElementComparator(BIG_DECIMAL_RECURSIVE_COMPARISON)
+                    .containsExactly(
+                            new BigDecimal("1"),
+                            new BigDecimal("2"),
+                            new BigDecimal("8"),
+                            new BigDecimal("32")
+                    );
+        }
+
+        @Test
+        void treatNullAsOne() {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.of(
+                    new BigDecimal("1"),
+                    null,
+                    new BigDecimal("4")
+            );
+
+            // Act
+            final List<BigDecimal> output = input
+                    .gather(Gatherers4j.movingGeometricMean(2).treatNullAsOne())
+                    .toList();
+
+            // Assert
+            assertThat(output)
+                    .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
+                    .containsExactly(
+                            new BigDecimal("1"),
+                            new BigDecimal("1"),
+                            new BigDecimal("2")
+                    );
+        }
+
+        @ParameterizedTest(name = "windowSize of {0}")
+        @ValueSource(ints = {-1, 0, 1})
+        void windowSizeMustBeGreaterThanOne(final int windowSize) {
+            assertThatIllegalArgumentException().isThrownBy(() ->
+                    Gatherers4j.movingGeometricMean(windowSize)
+            );
+        }
     }
 
-    @Test
-    void geometricRunningAverageWithMapping() {
-        // Arrange
-        final Stream<String> input = Stream.of("1", "4", "16");
+    @Nested
+    class Running {
 
-        // Act
-        final List<BigDecimal> output = input
-                .gather(Gatherers4j.runningGeometricMeanBy(BigDecimal::new))
-                .toList();
+        @Test
+        void geometricRunningAverage() {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.of(
+                    BigDecimal.valueOf(2),
+                    BigDecimal.valueOf(8)
+            );
 
-        // Assert
-        assertThat(output).hasSize(3);
-        assertThat(output.get(0)).isEqualByComparingTo("1");
-        assertThat(output.get(1)).isEqualByComparingTo("2");
-        assertThat(output.get(2)).isEqualByComparingTo("4");
-    }
+            // Act
+            final List<BigDecimal> output = input
+                    .gather(Gatherers4j.runningGeometricMean())
+                    .toList();
 
-    @Test
-    void geometricRunningAverageIgnoresNulls() {
-        // Arrange
-        final Stream<BigDecimal> input = Stream.of(
-                BigDecimal.valueOf(2),
-                null,
-                BigDecimal.valueOf(8)
-        );
+            // Assert
+            assertThat(output).hasSize(2);
+            assertThat(output.get(0)).isEqualByComparingTo("2");
+            assertThat(output.get(1)).isEqualByComparingTo("4");
+        }
 
-        // Act
-        final List<BigDecimal> output = input
-                .gather(Gatherers4j.runningGeometricMean())
-                .toList();
+        @Test
+        void geometricRunningAverageWithMapping() {
+            // Arrange
+            final Stream<String> input = Stream.of("1", "4", "16");
 
-        // Assert
-        assertThat(output).hasSize(2);
-        assertThat(output.get(0)).isEqualByComparingTo("2");
-        assertThat(output.get(1)).isEqualByComparingTo("4");
-    }
+            // Act
+            final List<BigDecimal> output = input
+                    .gather(Gatherers4j.runningGeometricMeanBy(BigDecimal::new))
+                    .toList();
 
-    @Test
-    void geometricRunningAverageTreatNullAsOne() {
-        // Arrange
-        final Stream<BigDecimal> input = Stream.of(
-                BigDecimal.valueOf(2),
-                null,
-                BigDecimal.valueOf(8)
-        );
+            // Assert
+            assertThat(output).hasSize(3);
+            assertThat(output.get(0)).isEqualByComparingTo("1");
+            assertThat(output.get(1)).isEqualByComparingTo("2");
+            assertThat(output.get(2)).isEqualByComparingTo("4");
+        }
 
-        // Act
-        final List<BigDecimal> output = input
-                .gather(Gatherers4j.runningGeometricMean().treatNullAsOne())
-                .toList();
+        @Test
+        void geometricRunningAverageIgnoresNulls() {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.of(
+                    BigDecimal.valueOf(2),
+                    null,
+                    BigDecimal.valueOf(8)
+            );
 
-        // Assert
-        assertThat(output).hasSize(3);
-        assertThat(output.get(0)).isEqualByComparingTo("2");
-        assertThat(output.get(1)).isEqualByComparingTo("1.414213562373095");
-        assertThat(output.get(2)).isEqualByComparingTo("2.519842099789746");
-    }
+            // Act
+            final List<BigDecimal> output = input
+                    .gather(Gatherers4j.runningGeometricMean())
+                    .toList();
 
-    @Test
-    void geometricRunningAverageWithMathContext() {
-        // Arrange
-        final Stream<BigDecimal> input = Stream.of(BigDecimal.valueOf(2));
-        final MathContext mc = new MathContext(2);
+            // Assert
+            assertThat(output).hasSize(2);
+            assertThat(output.get(0)).isEqualByComparingTo("2");
+            assertThat(output.get(1)).isEqualByComparingTo("4");
+        }
 
-        // Act
-        final List<BigDecimal> output = input
-                .gather(Gatherers4j.runningGeometricMean().withMathContext(mc))
-                .toList();
+        @Test
+        void geometricRunningAverageTreatNullAsOne() {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.of(
+                    BigDecimal.valueOf(2),
+                    null,
+                    BigDecimal.valueOf(8)
+            );
 
-        // Assert
-        assertThat(output).hasSize(1);
-        assertThat(output.getFirst()).isEqualByComparingTo("2.0");
+            // Act
+            final List<BigDecimal> output = input
+                    .gather(Gatherers4j.runningGeometricMean().treatNullAsOne())
+                    .toList();
+
+            // Assert
+            assertThat(output).hasSize(3);
+            assertThat(output.get(0)).isEqualByComparingTo("2");
+            assertThat(output.get(1)).isEqualByComparingTo("1.414213562373095");
+            assertThat(output.get(2)).isEqualByComparingTo("2.519842099789746");
+        }
+
+        @Test
+        void geometricRunningAverageWithMathContext() {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.of(BigDecimal.valueOf(2));
+            final MathContext mc = new MathContext(2);
+
+            // Act
+            final List<BigDecimal> output = input
+                    .gather(Gatherers4j.runningGeometricMean().withMathContext(mc))
+                    .toList();
+
+            // Assert
+            assertThat(output).hasSize(1);
+            assertThat(output.getFirst()).isEqualByComparingTo("2.0");
+        }
     }
 }

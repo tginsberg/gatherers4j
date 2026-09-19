@@ -23,6 +23,7 @@ import com.ginsberg.gatherers4j.enums.Frequency;
 import com.ginsberg.gatherers4j.enums.Order;
 import com.ginsberg.gatherers4j.enums.Rotate;
 import com.ginsberg.gatherers4j.enums.Size;
+import com.ginsberg.gatherers4j.enums.StandardDeviation;
 import org.jspecify.annotations.Nullable;
 
 import java.math.BigDecimal;
@@ -214,9 +215,15 @@ public abstract class Gatherers4j {
     /// Create a Stream that represents the exponential moving average of a `Stream<BigDecimal>`, with the given `alpha`.
     ///
     /// @param alpha The alpha value to use in the EMA calculation.
-    /// @return A non-null `BigDecimalExponentialMovingAverageGatherer`
-    public static BigDecimalExponentialMovingAverageGatherer<@Nullable BigDecimal> exponentialMovingAverageWithAlpha(final double alpha) {
-        return BigDecimalExponentialMovingAverageGatherer.withAlpha(alpha, Function.identity());
+    /// @return A non-null `BigDecimalRunningStatGatherer`
+    public static BigDecimalRunningStatGatherer<@Nullable BigDecimal, BigDecimal> exponentialMovingAverageWithAlpha(final double alpha) {
+        if (alpha <= 0 || alpha >= 1.0) {
+            throw new IllegalArgumentException("alpha must be between 0.0 and 1.0, exclusive, got " + alpha);
+        }
+        return new BigDecimalRunningStatGatherer<>(
+                Function.identity(),
+                () -> new StatisticAccumulators.EmaAccumulator(alpha)
+        );
     }
 
     /// Create a Stream that represents the exponential moving average of `BigDecimal` objects mapped from a `Stream<INPUT>`
@@ -226,20 +233,33 @@ public abstract class Gatherers4j {
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the exponential average calculation
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
-    /// @return A non-null `BigDecimalExponentialMovingAverageGatherer`
-    public static <INPUT extends @Nullable Object> BigDecimalExponentialMovingAverageGatherer<INPUT> exponentialMovingAverageWithAlphaBy(
+    /// @return A non-null `BigDecimalRunningStatGatherer`
+    public static <INPUT extends @Nullable Object> BigDecimalRunningStatGatherer<INPUT, BigDecimal> exponentialMovingAverageWithAlphaBy(
             final double alpha,
             final Function<INPUT, BigDecimal> mappingFunction
     ) {
-        return BigDecimalExponentialMovingAverageGatherer.withAlpha(alpha, mappingFunction);
+        if (alpha <= 0 || alpha >= 1.0) {
+            throw new IllegalArgumentException("alpha must be between 0.0 and 1.0, exclusive, got " + alpha);
+        }
+        return new BigDecimalRunningStatGatherer<>(
+                mappingFunction,
+                () -> new StatisticAccumulators.EmaAccumulator(alpha)
+        );
     }
 
     /// Create a Stream that represents the exponential moving average of a `Stream<BigDecimal>`, over the given number of `periods`.
     ///
     /// @param periods The number of periods to use in the EMA calculation.
-    /// @return A non-null `BigDecimalExponentialMovingAverageGatherer`
-    public static BigDecimalExponentialMovingAverageGatherer<@Nullable BigDecimal> exponentialMovingAverageWithPeriod(final int periods) {
-        return BigDecimalExponentialMovingAverageGatherer.withPeriod(periods, Function.identity());
+    /// @return A non-null `BigDecimalRunningStatGatherer`
+    public static BigDecimalRunningStatGatherer<@Nullable BigDecimal, BigDecimal> exponentialMovingAverageWithPeriod(final int periods) {
+        if (periods <= 1) {
+            throw new IllegalArgumentException("periods must be greater than 1");
+        }
+        final double alpha = 2.0 / (((long) periods) + 1);
+        return new BigDecimalRunningStatGatherer<>(
+                Function.identity(),
+                () -> new StatisticAccumulators.EmaAccumulator(alpha)
+        );
     }
 
     /// Create a Stream that represents the exponential moving average of `BigDecimal` objects mapped from a `Stream<INPUT>`
@@ -249,12 +269,19 @@ public abstract class Gatherers4j {
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the exponential average calculation
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
-    /// @return A non-null `BigDecimalExponentialMovingAverageGatherer`
-    public static <INPUT extends @Nullable Object> BigDecimalExponentialMovingAverageGatherer<INPUT> exponentialMovingAverageWithPeriodBy(
+    /// @return A non-null `BigDecimalRunningStatGatherer`
+    public static <INPUT extends @Nullable Object> BigDecimalRunningStatGatherer<INPUT, BigDecimal> exponentialMovingAverageWithPeriodBy(
             final int periods,
             final Function<INPUT, BigDecimal> mappingFunction
     ) {
-        return BigDecimalExponentialMovingAverageGatherer.withPeriod(periods, mappingFunction);
+        if (periods <= 1) {
+            throw new IllegalArgumentException("periods must be greater than 1");
+        }
+        final double alpha = 2.0 / (((long) periods) + 1);
+        return new BigDecimalRunningStatGatherer<>(
+                mappingFunction,
+                () -> new StatisticAccumulators.EmaAccumulator(alpha)
+        );
     }
 
     /// Filter a stream according to the given `predicate`, which takes both the item being examined,
@@ -431,9 +458,13 @@ public abstract class Gatherers4j {
     /// back `windowSize` number of elements.
     ///
     /// @param windowSize The trailing number of elements to include in the geometric mean, must be greater than 1.
-    /// @return A non-null `BigDecimalMovingGeometricMeanGatherer`
-    public static BigDecimalMovingGeometricMeanGatherer<@Nullable BigDecimal> movingGeometricMean(final int windowSize) {
-        return new BigDecimalMovingGeometricMeanGatherer<>(windowSize, Function.identity());
+    /// @return A non-null `BigDecimalMovingStatGatherer`
+    public static BigDecimalMovingStatGatherer<@Nullable BigDecimal, BigDecimal> movingGeometricMean(final int windowSize) {
+        return new BigDecimalMovingStatGatherer<>(
+                windowSize,
+                Function.identity(),
+                StatisticAccumulators.GeometricMeanAccumulator::new
+        );
     }
 
     /// Create a Stream that represents the moving geometric mean of `BigDecimal` objects mapped from a `Stream<INPUT>`
@@ -443,12 +474,16 @@ public abstract class Gatherers4j {
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the moving geometric mean calculation
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
-    /// @return A non-null `BigDecimalMovingGeometricMeanGatherer`
-    public static <INPUT extends @Nullable Object> BigDecimalMovingGeometricMeanGatherer<INPUT> movingGeometricMeanBy(
+    /// @return A non-null `BigDecimalMovingStatGatherer`
+    public static <INPUT extends @Nullable Object> BigDecimalMovingStatGatherer<INPUT, BigDecimal> movingGeometricMeanBy(
             final int windowSize,
             final Function<INPUT, BigDecimal> mappingFunction
     ) {
-        return new BigDecimalMovingGeometricMeanGatherer<>(windowSize, mappingFunction);
+        return new BigDecimalMovingStatGatherer<>(
+                windowSize,
+                mappingFunction,
+                StatisticAccumulators.GeometricMeanAccumulator::new
+        );
     }
 
     /// Create a stream that represents the moving maximum value over the previous `windowSize` elements.
@@ -478,12 +513,16 @@ public abstract class Gatherers4j {
     /// back `windowSize` number of elements.
     ///
     /// @param windowSize The trailing number of elements to calculate the median over, must be greater than 1.
-    /// @return A non-null `BigDecimalMovingProductGatherer`
-    public static BigDecimalMedianGatherer<@Nullable BigDecimal> movingMedian(final int windowSize) {
+    /// @return A non-null `BigDecimalMovingStatGatherer`
+    public static BigDecimalMovingStatGatherer<@Nullable BigDecimal, BigDecimal> movingMedian(final int windowSize) {
         if (windowSize <= 1) {
             throw new IllegalArgumentException("windowSize must be greater than 1");
         }
-        return new BigDecimalMedianGatherer<>(windowSize, Function.identity());
+        return new BigDecimalMovingStatGatherer<>(
+                windowSize,
+                Function.identity(),
+                () -> new StatisticAccumulators.PercentileAccumulator(50.0)
+        );
     }
 
     /// Create a Stream that represents the moving median of `BigDecimal` objects mapped from a `Stream<INPUT>`
@@ -491,17 +530,21 @@ public abstract class Gatherers4j {
     ///
     /// @param windowSize      The trailing number of elements to calculate the median from. Must be greater than 1.
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
-    ///                        in the moving product calculation
+    ///                        in the moving median calculation
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
-    /// @return A non-null `BigDecimalMovingProductGatherer`
-    public static <INPUT extends @Nullable Object> BigDecimalMedianGatherer<INPUT> movingMedianBy(
+    /// @return A non-null `BigDecimalMovingStatGatherer`
+    public static <INPUT extends @Nullable Object> BigDecimalMovingStatGatherer<INPUT, BigDecimal> movingMedianBy(
             final int windowSize,
             final Function<INPUT, BigDecimal> mappingFunction
     ) {
         if (windowSize <= 1) {
             throw new IllegalArgumentException("windowSize must be greater than 1");
         }
-        return new BigDecimalMedianGatherer<>(windowSize, mappingFunction);
+        return new BigDecimalMovingStatGatherer<>(
+                windowSize,
+                mappingFunction,
+                () -> new StatisticAccumulators.PercentileAccumulator(50.0)
+        );
     }
 
     /// Create a stream that represents the moving minimum value over the previous `windowSize` elements.
@@ -531,9 +574,12 @@ public abstract class Gatherers4j {
     /// back `windowSize` number of elements.
     ///
     /// @param windowSize The trailing number of elements to multiply, must be greater than 1.
-    /// @return A non-null `BigDecimalMovingProductGatherer`
-    public static BigDecimalMovingProductGatherer<@Nullable BigDecimal> movingProduct(final int windowSize) {
-        return new BigDecimalMovingProductGatherer<>(windowSize, Function.identity());
+    /// @return A non-null `BigDecimalMovingStatGatherer`
+    public static BigDecimalMovingStatGatherer<@Nullable BigDecimal, BigDecimal> movingProduct(final int windowSize) {
+        return new BigDecimalMovingStatGatherer<>(
+                windowSize, Function.identity(),
+                StatisticAccumulators.ProductAccumulator::new
+        );
     }
 
     /// Create a Stream that represents the moving product of `BigDecimal` objects mapped from a `Stream<INPUT>`
@@ -543,21 +589,29 @@ public abstract class Gatherers4j {
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the moving product calculation
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
-    /// @return A non-null `BigDecimalMovingProductGatherer`
-    public static <INPUT extends @Nullable Object> BigDecimalMovingProductGatherer<INPUT> movingProductBy(
+    /// @return A non-null `BigDecimalMovingStatGatherer`
+    public static <INPUT extends @Nullable Object> BigDecimalMovingStatGatherer<INPUT, BigDecimal> movingProductBy(
             final int windowSize,
             final Function<INPUT, BigDecimal> mappingFunction
     ) {
-        return new BigDecimalMovingProductGatherer<>(windowSize, mappingFunction);
+        return new BigDecimalMovingStatGatherer<>(
+                windowSize,
+                mappingFunction,
+                StatisticAccumulators.ProductAccumulator::new
+        );
     }
 
     /// Create a Stream that represents the moving sum of a `Stream<BigDecimal>` looking
     /// back `windowSize` number of elements.
     ///
     /// @param windowSize The trailing number of elements to add, must be greater than 1.
-    /// @return A non-null `BigDecimalMovingSumGatherer`
-    public static BigDecimalMovingSumGatherer<@Nullable BigDecimal> movingSum(final int windowSize) {
-        return new BigDecimalMovingSumGatherer<>(windowSize, Function.identity());
+    /// @return A non-null `BigDecimalMovingStatGatherer`
+    public static BigDecimalMovingStatGatherer<@Nullable BigDecimal, BigDecimal> movingSum(final int windowSize) {
+        return new BigDecimalMovingStatGatherer<>(
+                windowSize,
+                Function.identity(),
+                StatisticAccumulators.SumAccumulator::new
+        );
     }
 
     /// Create a Stream that represents the moving sum of `BigDecimal` objects mapped from a `Stream<INPUT>`
@@ -567,12 +621,15 @@ public abstract class Gatherers4j {
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the moving sum calculation
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
-    /// @return A non-null `BigDecimalMovingSumGatherer`
-    public static <INPUT extends @Nullable Object> BigDecimalMovingSumGatherer<INPUT> movingSumBy(
+    /// @return A non-null `BigDecimalMovingStatGatherer`
+    public static <INPUT extends @Nullable Object> BigDecimalMovingStatGatherer<INPUT, BigDecimal> movingSumBy(
             final int windowSize,
             final Function<INPUT, BigDecimal> mappingFunction
     ) {
-        return new BigDecimalMovingSumGatherer<>(windowSize, mappingFunction);
+        return new BigDecimalMovingStatGatherer<>(
+                windowSize, mappingFunction,
+                StatisticAccumulators.SumAccumulator::new
+        );
     }
 
     /// Emit elements in the input stream ordered by frequency in the direction specified. Elements are emitted wrapped
@@ -639,9 +696,12 @@ public abstract class Gatherers4j {
 
     /// Create a Stream that is the running geometric mean of `Stream<BigDecimal>`
     ///
-    /// @return BigDecimalGeometricMeanGatherer
-    public static BigDecimalGeometricMeanGatherer<@Nullable BigDecimal> runningGeometricMean() {
-        return runningGeometricMeanBy(Function.identity());
+    /// @return BigDecimalRunningStatGatherer
+    public static BigDecimalRunningStatGatherer<@Nullable BigDecimal, BigDecimal> runningGeometricMean() {
+        return new BigDecimalRunningStatGatherer<>(
+                Function.identity(),
+                StatisticAccumulators.GeometricMeanAccumulator::new
+        );
     }
 
     /// Create a Stream that is the running geometric mean of `BigDecimal` objects as mapped by
@@ -650,11 +710,14 @@ public abstract class Gatherers4j {
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the running geometric mean calculation
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
-    /// @return A non-null `BigDecimalGeometricMeanGatherer`
-    public static <INPUT extends @Nullable Object> BigDecimalGeometricMeanGatherer<INPUT> runningGeometricMeanBy(
+    /// @return A non-null `BigDecimalRunningStatGatherer`
+    public static <INPUT extends @Nullable Object> BigDecimalRunningStatGatherer<INPUT, BigDecimal> runningGeometricMeanBy(
             final Function<INPUT, BigDecimal> mappingFunction
     ) {
-        return new BigDecimalGeometricMeanGatherer<>(mappingFunction);
+        return new BigDecimalRunningStatGatherer<>(
+                mappingFunction,
+                StatisticAccumulators.GeometricMeanAccumulator::new
+        );
     }
 
     /// Emit the running maximum value of `Comparable` elements in the input stream.
@@ -678,11 +741,11 @@ public abstract class Gatherers4j {
 
     /// Create a `Stream<BigDecimal>` that represents the running median of a `Stream<BigDecimal>`.
     ///
-    /// @return A non-null `BigDecimalMedianGatherer`
-    public static BigDecimalMedianGatherer<@Nullable BigDecimal> runningMedian() {
-        return new BigDecimalMedianGatherer<>(
-                0,
-                Function.identity()
+    /// @return A non-null `BigDecimalRunningStatGatherer`
+    public static BigDecimalRunningStatGatherer<@Nullable BigDecimal, BigDecimal> runningMedian() {
+        return new BigDecimalRunningStatGatherer<>(
+                Function.identity(),
+                () -> new StatisticAccumulators.PercentileAccumulator(50.0)
         );
     }
 
@@ -692,13 +755,13 @@ public abstract class Gatherers4j {
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the median calculation
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
-    /// @return A non-null `BigDecimalMedianGatherer`
-    public static <INPUT extends @Nullable Object> BigDecimalMedianGatherer<INPUT> runningMedianBy(
+    /// @return A non-null `BigDecimalRunningStatGatherer`
+    public static <INPUT extends @Nullable Object> BigDecimalRunningStatGatherer<INPUT, BigDecimal> runningMedianBy(
             final Function<INPUT, BigDecimal> mappingFunction
     ) {
-        return new BigDecimalMedianGatherer<>(
-                0,
-                mappingFunction
+        return new BigDecimalRunningStatGatherer<>(
+                mappingFunction,
+                () -> new StatisticAccumulators.PercentileAccumulator(50.0)
         );
     }
 
@@ -724,11 +787,11 @@ public abstract class Gatherers4j {
     /// Create a `Stream<BigDecimal>` that represents the running population standard
     /// deviation of a `Stream<BigDecimal>`.
     ///
-    /// @return A non-null `BigDecimalStandardDeviationGatherer`
-    public static BigDecimalStandardDeviationGatherer<@Nullable BigDecimal> runningPopulationStandardDeviation() {
-        return new BigDecimalStandardDeviationGatherer<>(
-                BigDecimalStandardDeviationGatherer.Mode.Population,
-                Function.identity()
+    /// @return A non-null `BigDecimalRunningStatGatherer`
+    public static BigDecimalRunningStatGatherer<@Nullable BigDecimal, BigDecimal> runningPopulationStandardDeviation() {
+        return new BigDecimalRunningStatGatherer<>(
+                Function.identity(),
+                () -> new StatisticAccumulators.StdDevAccumulator(StandardDeviation.Population)
         );
     }
 
@@ -738,21 +801,21 @@ public abstract class Gatherers4j {
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the standard deviation calculation
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
-    /// @return A non-null `BigDecimalStandardDeviationGatherer`
-    public static <INPUT extends @Nullable Object> BigDecimalStandardDeviationGatherer<INPUT> runningPopulationStandardDeviationBy(
+    /// @return A non-null `BigDecimalRunningStatGatherer`
+    public static <INPUT extends @Nullable Object> BigDecimalRunningStatGatherer<INPUT, BigDecimal> runningPopulationStandardDeviationBy(
             final Function<INPUT, BigDecimal> mappingFunction
     ) {
-        return new BigDecimalStandardDeviationGatherer<>(
-                BigDecimalStandardDeviationGatherer.Mode.Population,
-                mappingFunction
+        return new BigDecimalRunningStatGatherer<>(
+                mappingFunction,
+                () -> new StatisticAccumulators.StdDevAccumulator(StandardDeviation.Population)
         );
     }
 
     /// Create a `Stream<BigDecimal>` that represents the running product of a `Stream<BigDecimal>`.
     ///
-    /// @return A non-null `BigDecimalProductGatherer`
-    public static BigDecimalProductGatherer<@Nullable BigDecimal> runningProduct() {
-        return new BigDecimalProductGatherer<>(Function.identity());
+    /// @return A non-null `BigDecimalRunningStatGatherer`
+    public static BigDecimalRunningStatGatherer<@Nullable BigDecimal, BigDecimal> runningProduct() {
+        return new BigDecimalRunningStatGatherer<>(Function.identity(), StatisticAccumulators.ProductAccumulator::new);
     }
 
     /// Create a `Stream<BigDecimal>` that represents the running product of `BigDecimal` objects mapped
@@ -761,20 +824,20 @@ public abstract class Gatherers4j {
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the product calculation
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
-    /// @return A non-null `BigDecimalProductGatherer`
-    public static <INPUT extends @Nullable Object> BigDecimalProductGatherer<INPUT> runningProductBy(
+    /// @return A non-null `BigDecimalRunningStatGatherer`
+    public static <INPUT extends @Nullable Object> BigDecimalRunningStatGatherer<INPUT, BigDecimal> runningProductBy(
             final Function<INPUT, BigDecimal> mappingFunction
     ) {
-        return new BigDecimalProductGatherer<>(mappingFunction);
+        return new BigDecimalRunningStatGatherer<>(mappingFunction, StatisticAccumulators.ProductAccumulator::new);
     }
 
     /// Create a `Stream<BigDecimal>` that represents the running sample standard deviation of a `Stream<BigDecimal>`.
     ///
-    /// @return A non-null `BigDecimalStandardDeviationGatherer`
-    public static BigDecimalStandardDeviationGatherer<@Nullable BigDecimal> runningSampleStandardDeviation() {
-        return new BigDecimalStandardDeviationGatherer<>(
-                BigDecimalStandardDeviationGatherer.Mode.Sample,
-                Function.identity()
+    /// @return A non-null `BigDecimalRunningStatGatherer`
+    public static BigDecimalRunningStatGatherer<@Nullable BigDecimal, BigDecimal> runningSampleStandardDeviation() {
+        return new BigDecimalRunningStatGatherer<>(
+                Function.identity(),
+                () -> new StatisticAccumulators.StdDevAccumulator(StandardDeviation.Sample)
         );
     }
 
@@ -784,21 +847,24 @@ public abstract class Gatherers4j {
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the standard deviation calculation
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
-    /// @return A non-null `BigDecimalStandardDeviationGatherer`
-    public static <INPUT extends @Nullable Object> BigDecimalStandardDeviationGatherer<INPUT> runningSampleStandardDeviationBy(
+    /// @return A non-null `BigDecimalRunningStatGatherer`
+    public static <INPUT extends @Nullable Object> BigDecimalRunningStatGatherer<INPUT, BigDecimal> runningSampleStandardDeviationBy(
             final Function<INPUT, BigDecimal> mappingFunction
     ) {
-        return new BigDecimalStandardDeviationGatherer<>(
-                BigDecimalStandardDeviationGatherer.Mode.Sample,
-                mappingFunction
+        return new BigDecimalRunningStatGatherer<>(
+                mappingFunction,
+                () -> new StatisticAccumulators.StdDevAccumulator(StandardDeviation.Sample)
         );
     }
 
     /// Create a `Stream<BigDecimal>` that represents the running sum of a `Stream<BigDecimal>`.
     ///
-    /// @return A non-null `BigDecimalSumGatherer`
-    public static BigDecimalSumGatherer<@Nullable BigDecimal> runningSum() {
-        return new BigDecimalSumGatherer<>(Function.identity());
+    /// @return A non-null `BigDecimalRunningStatGatherer`
+    public static BigDecimalRunningStatGatherer<@Nullable BigDecimal, BigDecimal> runningSum() {
+        return new BigDecimalRunningStatGatherer<>(
+                Function.identity(),
+                StatisticAccumulators.SumAccumulator::new
+        );
     }
 
     /// Create a `Stream<BigDecimal>` that represents the running sum of `BigDecimal` objects mapped
@@ -807,11 +873,14 @@ public abstract class Gatherers4j {
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the running sum calculation
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
-    /// @return A non-null `BigDecimalSumGatherer`
-    public static <INPUT extends @Nullable Object> BigDecimalSumGatherer<INPUT> runningSumBy(
+    /// @return A non-null `BigDecimalRunningStatGatherer`
+    public static <INPUT extends @Nullable Object> BigDecimalRunningStatGatherer<INPUT, BigDecimal> runningSumBy(
             final Function<INPUT, BigDecimal> mappingFunction
     ) {
-        return new BigDecimalSumGatherer<>(mappingFunction);
+        return new BigDecimalRunningStatGatherer<>(
+                mappingFunction,
+                StatisticAccumulators.SumAccumulator::new
+        );
     }
 
     /// Perform a fixed size sampling over the input stream. This method uses the Reservoir method internally, which
@@ -878,9 +947,13 @@ public abstract class Gatherers4j {
     /// back `windowSize` number of elements.
     ///
     /// @param windowSize The number of elements to average, must be greater than 1.
-    /// @return A non-null `BigDecimalSimpleMovingAverageGatherer`
-    public static BigDecimalSimpleMovingAverageGatherer<@Nullable BigDecimal> simpleMovingAverage(final int windowSize) {
-        return new BigDecimalSimpleMovingAverageGatherer<>(windowSize, Function.identity());
+    /// @return A non-null `BigDecimalMovingStatGatherer`
+    public static BigDecimalMovingStatGatherer<@Nullable BigDecimal, BigDecimal> simpleMovingAverage(final int windowSize) {
+        return new BigDecimalMovingStatGatherer<>(
+                windowSize,
+                Function.identity(),
+                StatisticAccumulators.MeanAccumulator::new
+        );
     }
 
     /// Create a Stream that represents the simple moving average of `BigDecimal` objects mapped from a `Stream<INPUT>`
@@ -890,19 +963,23 @@ public abstract class Gatherers4j {
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the moving average calculation
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
-    /// @return A non-null `BigDecimalSimpleMovingAverageGatherer`
-    public static <INPUT extends @Nullable Object> BigDecimalSimpleMovingAverageGatherer<INPUT> simpleMovingAverageBy(
+    /// @return A non-null `BigDecimalMovingStatGatherer`
+    public static <INPUT extends @Nullable Object> BigDecimalMovingStatGatherer<INPUT, BigDecimal> simpleMovingAverageBy(
             final int windowSize,
             final Function<INPUT, BigDecimal> mappingFunction
     ) {
-        return new BigDecimalSimpleMovingAverageGatherer<>(windowSize, mappingFunction);
+        return new BigDecimalMovingStatGatherer<>(
+                windowSize,
+                mappingFunction,
+                StatisticAccumulators.MeanAccumulator::new
+        );
     }
 
     /// Create a Stream that is the running average of `Stream<BigDecimal>`
     ///
-    /// @return BigDecimalSimpleAverageGatherer
-    public static BigDecimalSimpleAverageGatherer<@Nullable BigDecimal> simpleRunningAverage() {
-        return simpleRunningAverageBy(Function.identity());
+    /// @return BigDecimalRunningStatGatherer
+    public static BigDecimalRunningStatGatherer<@Nullable BigDecimal, BigDecimal> simpleRunningAverage() {
+        return new BigDecimalRunningStatGatherer<>(Function.identity(), StatisticAccumulators.MeanAccumulator::new);
     }
 
     /// Create a Stream that is the running average of `BigDecimal` objects as mapped by
@@ -911,11 +988,11 @@ public abstract class Gatherers4j {
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the running average calculation
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
-    /// @return A non-null `BigDecimalSimpleAverageGatherer`
-    public static <INPUT extends @Nullable Object> BigDecimalSimpleAverageGatherer<INPUT> simpleRunningAverageBy(
+    /// @return A non-null `BigDecimalRunningStatGatherer`
+    public static <INPUT extends @Nullable Object> BigDecimalRunningStatGatherer<INPUT, BigDecimal> simpleRunningAverageBy(
             final Function<INPUT, BigDecimal> mappingFunction
     ) {
-        return new BigDecimalSimpleAverageGatherer<>(mappingFunction);
+        return new BigDecimalRunningStatGatherer<>(mappingFunction, StatisticAccumulators.MeanAccumulator::new);
     }
 
     /// Take every nth element of the stream.

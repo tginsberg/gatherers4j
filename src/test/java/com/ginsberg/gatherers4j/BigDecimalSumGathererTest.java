@@ -18,114 +18,280 @@ package com.ginsberg.gatherers4j;
 
 import com.ginsberg.gatherers4j.dto.WithOriginal;
 import com.ginsberg.gatherers4j.util.TestValueHolder;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static com.ginsberg.gatherers4j.util.TestUtils.BIG_DECIMAL_RECURSIVE_COMPARISON;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 class BigDecimalSumGathererTest {
 
-    @Test
-    void ignoresNull() {
-        // Arrange
-        final Stream<BigDecimal> input = Stream.of(
-                new BigDecimal("2"),
-                new BigDecimal("3"),
-                null,
-                new BigDecimal("4")
-        );
+    @Nested
+    class Moving {
 
-        // Act
-        final List<BigDecimal> output = input
-                .gather(Gatherers4j.runningSum())
-                .toList();
+        @Test
+        void ignoresNulls() {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.of(null, BigDecimal.TWO, BigDecimal.TWO, BigDecimal.TEN);
 
-        // Assert
-        assertThat(output)
-                .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
-                .containsExactly(
-                        new BigDecimal("2"),
-                        new BigDecimal("5"),
-                        new BigDecimal("9")
-                );
+            // Act
+            final List<BigDecimal> output = input
+                    .gather(Gatherers4j.movingSum(2))
+                    .toList();
+
+            // Assert
+            assertThat(output)
+                    .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
+                    .containsExactly(
+                            new BigDecimal("2"),
+                            new BigDecimal("4"),
+                            new BigDecimal("12")
+                    );
+        }
+
+        @Test
+        @SuppressWarnings("DataFlowIssue")
+        void mathContextCannotBeNull() {
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Gatherers4j.movingSum(2).withMathContext(null)
+                    );
+        }
+
+        @Test
+        void movingSum() {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.of("1", "2", "3", "4").map(BigDecimal::new);
+
+            // Act
+            final List<BigDecimal> output = input.gather(Gatherers4j.movingSum(2)).toList();
+
+            // Assert
+            assertThat(output)
+                    .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
+                    .containsExactly(
+                            new BigDecimal("1"),
+                            new BigDecimal("3"),
+                            new BigDecimal("5"),
+                            new BigDecimal("7")
+                    );
+        }
+
+
+        @Test
+        void movingSumBy() {
+            // Arrange
+            final List<TestValueHolder> input = List.of(
+                    new TestValueHolder(1, new BigDecimal("1")),
+                    new TestValueHolder(2, new BigDecimal("2")),
+                    new TestValueHolder(3, new BigDecimal("10")),
+                    new TestValueHolder(4, new BigDecimal("20")),
+                    new TestValueHolder(5, new BigDecimal("30"))
+            );
+
+            // Act
+            final List<BigDecimal> output = input.stream()
+                    .gather(Gatherers4j.movingSumBy(2, TestValueHolder::value))
+                    .toList();
+
+            // Assert
+            assertThat(output)
+                    .usingRecursiveFieldByFieldElementComparator(BIG_DECIMAL_RECURSIVE_COMPARISON)
+                    .containsExactly(
+                            new BigDecimal("1"),
+                            new BigDecimal("3"),
+                            new BigDecimal("12"),
+                            new BigDecimal("30"),
+                            new BigDecimal("50")
+                    );
+        }
+
+
+        @Test
+        void movingSumWithoutPartials() {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.of("1", "2", "3", "4").map(BigDecimal::new);
+
+            // Act
+            final List<BigDecimal> output = input
+                    .gather(Gatherers4j.movingSum(2).excludePartialValues())
+                    .toList();
+
+            // Assert
+            assertThat(output)
+                    .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
+                    .containsExactly(
+                            new BigDecimal("3"),
+                            new BigDecimal("5"),
+                            new BigDecimal("7")
+                    );
+        }
+
+        @Test
+        void movingSumWithoutPartialsWithOriginal() {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.of("1", "2", "3", "4").map(BigDecimal::new);
+
+            // Act
+            final List<WithOriginal<BigDecimal, BigDecimal>> output = input
+                    .gather(Gatherers4j.movingSum(2)
+                            .excludePartialValues()
+                            .withOriginal())
+                    .toList();
+
+            // Assert
+            assertThat(output)
+                    .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
+                    .containsExactly(
+                            new WithOriginal<>(new BigDecimal("2"), new BigDecimal("3")),
+                            new WithOriginal<>(new BigDecimal("3"), new BigDecimal("5")),
+                            new WithOriginal<>(new BigDecimal("4"), new BigDecimal("7"))
+                    );
+        }
+
+        @Test
+        void treatNullAsOne() {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.of(
+                    new BigDecimal("2"),
+                    new BigDecimal("3"),
+                    null,
+                    new BigDecimal("4")
+            );
+
+            // Act
+            final List<BigDecimal> output = input
+                    .gather(Gatherers4j.movingSum(2).treatNullAsZero())
+                    .toList();
+
+            // Assert
+            assertThat(output)
+                    .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
+                    .containsExactly(
+                            new BigDecimal("2"),
+                            new BigDecimal("5"),
+                            new BigDecimal("3"),
+                            new BigDecimal("4")
+                    );
+        }
+
+
+        @ParameterizedTest(name = "windowSize of {0}")
+        @ValueSource(ints = {-1, 0, 1})
+        void windowSizeMustBeGreaterThanOne(final int windowSize) {
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Gatherers4j.movingSum(windowSize)
+                    );
+        }
+
     }
 
-    @SuppressWarnings("DataFlowIssue")
-    @Test
-    void mathContextCannotBeNull() {
-        assertThatIllegalArgumentException().isThrownBy(() ->
-                Gatherers4j.runningSum().withMathContext(null)
-        );
+    @Nested
+    class Running {
+
+        @Test
+        void ignoresNull() {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.of(
+                    new BigDecimal("2"),
+                    new BigDecimal("3"),
+                    null,
+                    new BigDecimal("4")
+            );
+
+            // Act
+            final List<BigDecimal> output = input
+                    .gather(Gatherers4j.runningSum())
+                    .toList();
+
+            // Assert
+            assertThat(output)
+                    .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
+                    .containsExactly(
+                            new BigDecimal("2"),
+                            new BigDecimal("5"),
+                            new BigDecimal("9")
+                    );
+        }
+
+        @SuppressWarnings("DataFlowIssue")
+        @Test
+        void mathContextCannotBeNull() {
+            assertThatIllegalArgumentException().isThrownBy(() ->
+                    Gatherers4j.runningSum().withMathContext(null)
+            );
+        }
+
+        @Test
+        void runningSum() {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.of("1", "2", "3").map(BigDecimal::new);
+
+            // Act
+            final List<BigDecimal> output = input.gather(Gatherers4j.runningSum()).toList();
+
+            // Assert
+            assertThat(output)
+                    .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
+                    .containsExactly(
+                            BigDecimal.ONE,
+                            new BigDecimal("3"),
+                            new BigDecimal("6")
+                    );
+        }
+
+        @Test
+        void runningSumBy() {
+            // Arrange
+            final Stream<TestValueHolder> input = Stream.of(
+                    new TestValueHolder(1, new BigDecimal("1.0")),
+                    new TestValueHolder(2, new BigDecimal("2.0")),
+                    new TestValueHolder(3, new BigDecimal("10.0")),
+                    new TestValueHolder(4, new BigDecimal("20.0")),
+                    new TestValueHolder(5, new BigDecimal("30.0"))
+            );
+
+            // Act
+            final List<BigDecimal> output = input.gather(Gatherers4j.runningSumBy(TestValueHolder::value)).toList();
+
+            // Assert
+            assertThat(output)
+                    .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
+                    .containsExactly(
+                            BigDecimal.ONE,
+                            new BigDecimal("3"),
+                            new BigDecimal("13"),
+                            new BigDecimal("33"),
+                            new BigDecimal("63")
+                    );
+        }
+
+
+        @Test
+        void withOriginalBigDecimal() {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.of("1", "2", "3").map(BigDecimal::new);
+
+            // Act
+            final List<WithOriginal<BigDecimal, BigDecimal>> output = input
+                    .gather(Gatherers4j.runningSum().withOriginal())
+                    .toList();
+
+            // Assert
+            assertThat(output)
+                    .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
+                    .containsExactly(
+                            new WithOriginal<>(BigDecimal.ONE, BigDecimal.ONE),
+                            new WithOriginal<>(new BigDecimal("2"), new BigDecimal("3")),
+                            new WithOriginal<>(new BigDecimal("3"), new BigDecimal("6"))
+
+                    );
+        }
     }
-
-    @Test
-    void runningSum() {
-        // Arrange
-        final Stream<BigDecimal> input = Stream.of("1", "2", "3").map(BigDecimal::new);
-
-        // Act
-        final List<BigDecimal> output = input.gather(Gatherers4j.runningSum()).toList();
-
-        // Assert
-        assertThat(output)
-                .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
-                .containsExactly(
-                        BigDecimal.ONE,
-                        new BigDecimal("3"),
-                        new BigDecimal("6")
-                );
-    }
-
-    @Test
-    void runningSumBy() {
-        // Arrange
-        final Stream<TestValueHolder> input = Stream.of(
-                new TestValueHolder(1, new BigDecimal("1.0")),
-                new TestValueHolder(2, new BigDecimal("2.0")),
-                new TestValueHolder(3, new BigDecimal("10.0")),
-                new TestValueHolder(4, new BigDecimal("20.0")),
-                new TestValueHolder(5, new BigDecimal("30.0"))
-        );
-
-        // Act
-        final List<BigDecimal> output = input.gather(Gatherers4j.runningSumBy(TestValueHolder::value)).toList();
-
-        // Assert
-        assertThat(output)
-                .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
-                .containsExactly(
-                        BigDecimal.ONE,
-                        new BigDecimal("3"),
-                        new BigDecimal("13"),
-                        new BigDecimal("33"),
-                        new BigDecimal("63")
-                );
-    }
-
-
-    @Test
-    void withOriginalBigDecimal() {
-        // Arrange
-        final Stream<BigDecimal> input = Stream.of("1", "2", "3").map(BigDecimal::new);
-
-        // Act
-        final List<WithOriginal<BigDecimal, BigDecimal>> output = input
-                .gather(Gatherers4j.runningSum().withOriginal())
-                .toList();
-
-        // Assert
-        assertThat(output)
-                .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
-                .containsExactly(
-                        new WithOriginal<>(BigDecimal.ONE, BigDecimal.ONE),
-                        new WithOriginal<>(new BigDecimal("2"), new BigDecimal("3")),
-                        new WithOriginal<>(new BigDecimal("3"), new BigDecimal("6"))
-
-                );
-    }
-
 }
