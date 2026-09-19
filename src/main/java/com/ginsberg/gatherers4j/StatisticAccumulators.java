@@ -301,7 +301,7 @@ class StatisticAccumulators {
         private long zeroCount = 0;
         private BigDecimal product = BigDecimal.ONE;
 
-        public void add(final BigDecimal value, final MathContext mathContext) {
+        void add(final BigDecimal value, final MathContext mathContext) {
             count++;
             if (value.compareTo(BigDecimal.ZERO) == 0) {
                 zeroCount++;
@@ -310,11 +310,11 @@ class StatisticAccumulators {
             }
         }
 
-        public long count() {
+        long count() {
             return count;
         }
 
-        public void evict(final BigDecimal value, final MathContext mathContext) {
+        void evict(final BigDecimal value, final MathContext mathContext) {
             count--;
             if (value.compareTo(BigDecimal.ZERO) == 0) {
                 zeroCount--;
@@ -323,7 +323,7 @@ class StatisticAccumulators {
             }
         }
 
-        public BigDecimal product() {
+        BigDecimal product() {
             return zeroCount > 0 ? BigDecimal.ZERO : product;
         }
     }

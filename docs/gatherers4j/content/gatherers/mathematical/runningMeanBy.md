@@ -1,21 +1,23 @@
 ---
-title: "simpleRunningAverageBy()"
-linkTitle: "simpleRunningAverageBy()"
+title: "runningMeanBy()"
+linkTitle: "runningMeanBy()"
 show_in_table: true
 category: "Mathematical Operations"
-description: Calculate the simple running average of `BigDecimal` objects mapped from a `Stream<INPUT>` via a `mappingFunction`.
+description: Calculate the running mean of `BigDecimal` objects mapped from a `Stream<INPUT>` via a `mappingFunction`.
+aliases:
+  - /gatherers/mathematical/simplerunningaverageby/
 
 ---
 
 ### Implementation Notes
-This implementation is suitable for mapping an arbitrary `Stream<INPUT>` to `BigDecimal` via a `mappingFunction`; for a version that operates directly on a `Stream<BigDecimal>`, see [`simpleRunningAverage()`](/gatherers4j/gatherers/mathematical/simplerunningaverage/).
+This implementation is suitable for mapping an arbitrary `Stream<INPUT>` to `BigDecimal` via a `mappingFunction`; for a version that operates directly on a `Stream<BigDecimal>`, see [`runningMean()`](/gatherers4j/gatherers/mathematical/runningmean/).
 By default, nulls are ignored and play no part in calculations, see `treatNullAs()` and `treatNullAsZero()` below for ways to change this behavior. The default `MathContext`
 for all calculations is {{< jdklink linkName="MathContext.DECIMAL64" package="java.base/java/math/MathContext.html#DECIMAL64" >}}, but this can be overridden (see `withMathContext()`, below).
 
 
 **Signatures**
 
-`simpleRunningAverageBy(Function<INPUT, BigDecimal> mappingFunction)`
+`runningMeanBy(Function<INPUT, BigDecimal> mappingFunction)`
 * `mappingFunction` - A non-null function to map stream `INPUT` elements into `BigDecimal` for calculation
 
 **Additional Methods**
@@ -30,7 +32,7 @@ for all calculations is {{< jdklink linkName="MathContext.DECIMAL64" package="ja
 
 ### Examples
 
-#### Simple running average, mapped from an object
+#### Running mean, mapped from an object
 
 ```java
 record NamedValue(String name, BigDecimal value) {}
@@ -43,7 +45,7 @@ Stream
         new NamedValue("fourth", new BigDecimal("20.0")),
         new NamedValue("fifth",  new BigDecimal("30.0"))
     )
-    .gather(Gatherers4j.simpleRunningAverageBy(NamedValue::value))
+    .gather(Gatherers4j.runningMeanBy(NamedValue::value))
     .toList();
 
 // [ 
@@ -68,7 +70,7 @@ Stream
         new NamedValue("fourth", new BigDecimal("20.0")),
         new NamedValue("fifth",  new BigDecimal("30.0"))
     )
-    .gather(Gatherers4j.simpleRunningAverageBy(NamedValue::value))
+    .gather(Gatherers4j.runningMeanBy(NamedValue::value))
     .toList();
 
 // [
@@ -91,7 +93,7 @@ Stream
         new NamedValue("fourth", new BigDecimal("20.0")),
         new NamedValue("fifth",  new BigDecimal("30.0"))
     )
-    .gather(Gatherers4j.simpleRunningAverageBy(NamedValue::value).treatNullAsZero())
+    .gather(Gatherers4j.runningMeanBy(NamedValue::value).treatNullAsZero())
     .toList();
 
 // [
@@ -117,7 +119,7 @@ Stream
         new NamedValue("fourth", new BigDecimal("20.0")),
         new NamedValue("fifth",  new BigDecimal("30.0"))
     )
-    .gather(Gatherers4j.simpleRunningAverageBy(NamedValue::value).treatNullAs(BigDecimal.TWO))
+    .gather(Gatherers4j.runningMeanBy(NamedValue::value).treatNullAs(BigDecimal.TWO))
     .toList();
 
 // [
@@ -145,7 +147,7 @@ Stream
         new NamedValue("fifth",  new BigDecimal("30.0"))
     )
     .gather(Gatherers4j
-        .simpleRunningAverageBy(NamedValue::value)
+        .runningMeanBy(NamedValue::value)
         .withMathContext(new MathContext(3, RoundingMode.DOWN))
     )
     .toList();
@@ -174,7 +176,7 @@ Stream
         new NamedValue("fourth", new BigDecimal("20.0")),
         new NamedValue("fifth",  new BigDecimal("30.0"))
     )
-    .gather(Gatherers4j.simpleRunningAverageBy(NamedValue::value).withOriginal())
+    .gather(Gatherers4j.runningMeanBy(NamedValue::value).withOriginal())
     .toList();
 
 // [ 

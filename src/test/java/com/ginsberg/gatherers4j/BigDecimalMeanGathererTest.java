@@ -43,7 +43,7 @@ class BigDecimalMeanGathererTest {
 
             // Act
             final List<BigDecimal> output = input
-                    .gather(Gatherers4j.simpleMovingAverage(2))
+                    .gather(Gatherers4j.movingMean(2))
                     .toList();
 
             // Assert
@@ -60,7 +60,7 @@ class BigDecimalMeanGathererTest {
         @Test
         void mathContextCannotBeNull() {
             assertThatIllegalArgumentException().isThrownBy(() ->
-                    Gatherers4j.simpleMovingAverage(2).withMathContext(null)
+                    Gatherers4j.movingMean(2).withMathContext(null)
             );
         }
 
@@ -75,7 +75,7 @@ class BigDecimalMeanGathererTest {
 
             // Act
             final List<BigDecimal> output = input
-                    .gather(Gatherers4j.simpleMovingAverage(3).withMathContext(new MathContext(3)))
+                    .gather(Gatherers4j.movingMean(3).withMathContext(new MathContext(3)))
                     .toList();
 
             // Assert
@@ -101,7 +101,7 @@ class BigDecimalMeanGathererTest {
 
             // Act
             final List<BigDecimal> output = input.stream()
-                    .gather(Gatherers4j.simpleMovingAverageBy(2, TestValueHolder::value))
+                    .gather(Gatherers4j.movingMeanBy(2, TestValueHolder::value))
                     .toList();
 
             // Assert
@@ -128,7 +128,7 @@ class BigDecimalMeanGathererTest {
 
             // Act
             final List<BigDecimal> output = input
-                    .gather(Gatherers4j.simpleMovingAverage(3))
+                    .gather(Gatherers4j.movingMean(3))
                     .toList();
 
             // Assert
@@ -149,7 +149,7 @@ class BigDecimalMeanGathererTest {
 
             // Act
             final List<BigDecimal> output = input
-                    .gather(Gatherers4j.simpleMovingAverage(2))
+                    .gather(Gatherers4j.movingMean(2))
                     .toList();
 
             // Assert
@@ -169,7 +169,7 @@ class BigDecimalMeanGathererTest {
 
             // Act
             final List<BigDecimal> output = input
-                    .gather(Gatherers4j.simpleMovingAverage(2).treatNullAs(BigDecimal.TEN))
+                    .gather(Gatherers4j.movingMean(2).treatNullAs(BigDecimal.TEN))
                     .toList();
 
             // Assert
@@ -190,7 +190,7 @@ class BigDecimalMeanGathererTest {
 
             // Act
             final List<BigDecimal> output = input
-                    .gather(Gatherers4j.simpleMovingAverage(2).treatNullAsZero())
+                    .gather(Gatherers4j.movingMean(2).treatNullAsZero())
                     .toList();
 
             // Assert
@@ -208,7 +208,7 @@ class BigDecimalMeanGathererTest {
         @ValueSource(ints = {-1, 0, 1})
         void windowSizeMustBeGreaterThanOne(final int windowSize) {
             assertThatIllegalArgumentException().isThrownBy(() ->
-                    Gatherers4j.simpleMovingAverage(windowSize)
+                    Gatherers4j.movingMean(windowSize)
             );
         }
 
@@ -226,7 +226,7 @@ class BigDecimalMeanGathererTest {
             // Act
             final List<WithOriginal<BigDecimal, BigDecimal>> output = input
                     .gather(Gatherers4j
-                            .simpleMovingAverage(2)
+                            .movingMean(2)
                             .excludePartialValues()
                             .withOriginal()
                     ).toList();
@@ -266,7 +266,7 @@ class BigDecimalMeanGathererTest {
 
             // Act
             final List<WithOriginal<TestValueHolder, BigDecimal>> output = input.stream()
-                    .gather(Gatherers4j.simpleMovingAverageBy(2, TestValueHolder::value).withOriginal())
+                    .gather(Gatherers4j.movingMeanBy(2, TestValueHolder::value).withOriginal())
                     .toList();
 
             // Assert
@@ -297,7 +297,7 @@ class BigDecimalMeanGathererTest {
 
             // Act
             final List<BigDecimal> output = input
-                    .gather(Gatherers4j.simpleRunningAverage())
+                    .gather(Gatherers4j.runningMean())
                     .toList();
 
             // Assert
@@ -313,7 +313,7 @@ class BigDecimalMeanGathererTest {
         @Test
         void mathContextCannotBeNull() {
             assertThatIllegalArgumentException().isThrownBy(() ->
-                    Gatherers4j.simpleRunningAverage().withMathContext(null)
+                    Gatherers4j.runningMean().withMathContext(null)
             );
         }
 
@@ -328,7 +328,7 @@ class BigDecimalMeanGathererTest {
 
             // Act
             final List<BigDecimal> output = input
-                    .gather(Gatherers4j.simpleRunningAverage().withMathContext(new MathContext(3)))
+                    .gather(Gatherers4j.runningMean().withMathContext(new MathContext(3)))
                     .toList();
 
             // Assert
@@ -354,7 +354,7 @@ class BigDecimalMeanGathererTest {
 
             // Act
             final List<BigDecimal> output = input.stream()
-                    .gather(Gatherers4j.simpleRunningAverageBy(TestValueHolder::value))
+                    .gather(Gatherers4j.runningMeanBy(TestValueHolder::value))
                     .toList();
 
             // Assert
@@ -380,7 +380,7 @@ class BigDecimalMeanGathererTest {
 
             // Act
             final List<BigDecimal> output = input
-                    .gather(Gatherers4j.simpleRunningAverage())
+                    .gather(Gatherers4j.runningMean())
                     .toList();
 
             // Assert
@@ -400,7 +400,7 @@ class BigDecimalMeanGathererTest {
 
             // Act
             final List<BigDecimal> output = input
-                    .gather(Gatherers4j.simpleRunningAverage())
+                    .gather(Gatherers4j.runningMean())
                     .toList();
 
             // Assert
@@ -420,7 +420,7 @@ class BigDecimalMeanGathererTest {
 
             // Act
             final List<BigDecimal> output = input
-                    .gather(Gatherers4j.simpleRunningAverage().treatNullAs(BigDecimal.TEN))
+                    .gather(Gatherers4j.runningMean().treatNullAs(BigDecimal.TEN))
                     .toList();
 
             // Assert
@@ -441,7 +441,7 @@ class BigDecimalMeanGathererTest {
 
             // Act
             final List<BigDecimal> output = input
-                    .gather(Gatherers4j.simpleRunningAverage().treatNullAsZero())
+                    .gather(Gatherers4j.runningMean().treatNullAsZero())
                     .toList();
 
             // Assert
@@ -468,7 +468,7 @@ class BigDecimalMeanGathererTest {
 
             // Act
             final List<WithOriginal<BigDecimal, BigDecimal>> output = input
-                    .gather(Gatherers4j.simpleRunningAverage().withOriginal())
+                    .gather(Gatherers4j.runningMean().withOriginal())
                     .toList();
 
             // Assert
@@ -508,7 +508,7 @@ class BigDecimalMeanGathererTest {
 
             // Act
             final List<WithOriginal<TestValueHolder, BigDecimal>> output = input.stream()
-                    .gather(Gatherers4j.simpleRunningAverageBy(TestValueHolder::value).withOriginal())
+                    .gather(Gatherers4j.runningMeanBy(TestValueHolder::value).withOriginal())
                     .toList();
 
             // Assert
