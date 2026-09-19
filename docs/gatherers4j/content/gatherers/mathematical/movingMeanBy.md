@@ -1,29 +1,31 @@
 ---
-title: "simpleMovingAverageBy()"
-linkTitle: "simpleMovingAverageBy()"
+title: "movingMeanBy()"
+linkTitle: "movingMeanBy()"
 show_in_table: true
 category: "Mathematical Operations"
-description: Calculate the simple moving average of `BigDecimal` objects mapped from a `Stream<INPUT>` via a `mappingFunction` and looking back `windowSize` elements.
+description: Calculate the moving mean of `BigDecimal` objects mapped from a `Stream<INPUT>` via a `mappingFunction` and looking back `windowSize` elements.
+aliases:
+  - /gatherers/mathematical/simplemovingaverageby/
 
 ---
 
 ### Implementation Notes
-This implementation is suitable for mapping an arbitrary `Stream<INPUT>` to `BigDecimal` via a `mappingFunction`; for a version that operates directly on a `Stream<BigDecimal>`, see [`simpleMovingAverage()`](/gatherers4j/gatherers/mathematical/simplemovingaverage/).
+This implementation is suitable for mapping an arbitrary `Stream<INPUT>` to `BigDecimal` via a `mappingFunction`; for a version that operates directly on a `Stream<BigDecimal>`, see [`movingMean()`](/gatherers4j/gatherers/mathematical/movingmean/).
 By default, nulls are ignored and play no part in calculations, see `treatNullAs()` and `treatNullAsZero()` below for ways to change this behavior. The default `MathContext`
 for all calculations is {{< jdklink linkName="MathContext.DECIMAL64" package="java.base/java/math/MathContext.html#DECIMAL64" >}}, but this can be overridden (see `withMathContext()`, below).
 
 
 **Signatures**
 
-`simpleMovingAverageBy(int windowSize, Function<INPUT, BigDecimal> mappingFunction)`
-* `windowSize` - How many trailing elements to average over at any given point in the stream
+`movingMeanBy(int windowSize, Function<INPUT, BigDecimal> mappingFunction)`
+* `windowSize` - How many trailing elements to mean over at any given point in the stream
 * `mappingFunction` - A non-null function to map stream `INPUT` elements into `BigDecimal` for calculation
 
 **Additional Methods**
 
 | Method                                     | Purpose                                                                                                                                                                                                                                                                                                              |
 |--------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `excludePartialValues()`                   | When calculating the moving average, and the full size of the window has not yet been reached, the gatherer should suppress emitting values until the lookback window is full. [See example.](#excluding-partial-values)                                                                                             |
+| `excludePartialValues()`                   | When calculating the moving mean, and the full size of the window has not yet been reached, the gatherer should suppress emitting values until the lookback window is full. [See example.](#excluding-partial-values)                                                                                             |
 | `treatNullAsZero()`                        | When encountering a `null` value in a stream, treat it as `BigDecimal.ZERO` instead. [See example.](#treating-null-as-zero)                                                                                                                                                                                          |
 | `treatNullAs(BigDecimal replacement)`      | When encountering a `null` value in a stream, treat it as the given `replacement` value instead. [See example.](#replacing-null-with-another-bigdecimal)                                                                                                                                                             |
 | `treatNullAsOne()`                         | When encountering a `null` value in a stream, treat it as `BigDecimal.ONE` instead.                                                                                                                                                                                                                                  |
@@ -32,7 +34,7 @@ for all calculations is {{< jdklink linkName="MathContext.DECIMAL64" package="ja
 
 ### Examples
 
-#### Simple moving average of window size 3, mapped from an object
+#### Moving mean of window size 3, mapped from an object
 
 ```java
 record NamedValue(String name, BigDecimal value) {}
@@ -45,7 +47,7 @@ Stream
         new NamedValue("fourth", new BigDecimal("20.0")),
         new NamedValue("fifth",  new BigDecimal("30.0"))
     )
-    .gather(Gatherers4j.simpleMovingAverageBy(3, NamedValue::value))
+    .gather(Gatherers4j.movingMeanBy(3, NamedValue::value))
     .toList();
 
 // [
@@ -59,7 +61,7 @@ Stream
 
 #### Excluding partial values
 
-Showing that in-process moving average values are not emitted for each element until the lookback window has been filled.
+Showing that in-process moving mean values are not emitted for each element until the lookback window has been filled.
 
 
 ```java
@@ -73,7 +75,7 @@ Stream
         new NamedValue("fourth", new BigDecimal("20.0")),
         new NamedValue("fifth",  new BigDecimal("30.0"))
     )
-    .gather(Gatherers4j.simpleMovingAverageBy(3, NamedValue::value).excludePartialValues())
+    .gather(Gatherers4j.movingMeanBy(3, NamedValue::value).excludePartialValues())
     .toList();
 
 // [
@@ -97,7 +99,7 @@ Stream
         new NamedValue("fourth", new BigDecimal("20.0")),
         new NamedValue("fifth",  new BigDecimal("30.0"))
     )
-    .gather(Gatherers4j.simpleMovingAverageBy(3, NamedValue::value))
+    .gather(Gatherers4j.movingMeanBy(3, NamedValue::value))
     .toList();
 
 // [
@@ -120,7 +122,7 @@ Stream
         new NamedValue("fourth", new BigDecimal("20.0")),
         new NamedValue("fifth",  new BigDecimal("30.0"))
     )
-    .gather(Gatherers4j.simpleMovingAverageBy(3, NamedValue::value).treatNullAsZero())
+    .gather(Gatherers4j.movingMeanBy(3, NamedValue::value).treatNullAsZero())
     .toList();
 
 // [
@@ -146,7 +148,7 @@ Stream
         new NamedValue("fourth", new BigDecimal("20.0")),
         new NamedValue("fifth",  new BigDecimal("30.0"))
     )
-    .gather(Gatherers4j.simpleMovingAverageBy(3, NamedValue::value).treatNullAs(BigDecimal.TWO))
+    .gather(Gatherers4j.movingMeanBy(3, NamedValue::value).treatNullAs(BigDecimal.TWO))
     .toList();
 
 // [
@@ -174,7 +176,7 @@ Stream
         new NamedValue("fifth",  new BigDecimal("30.0"))
     )
     .gather(Gatherers4j
-        .simpleMovingAverageBy(3, NamedValue::value)
+        .movingMeanBy(3, NamedValue::value)
         .withMathContext(new MathContext(3, RoundingMode.DOWN))
     )
     .toList();
@@ -203,7 +205,7 @@ Stream
         new NamedValue("fourth", new BigDecimal("20.0")),
         new NamedValue("fifth",  new BigDecimal("30.0"))
     )
-    .gather(Gatherers4j.simpleMovingAverageBy(3, NamedValue::value).withOriginal())
+    .gather(Gatherers4j.movingMeanBy(3, NamedValue::value).withOriginal())
     .toList();
 
 // [

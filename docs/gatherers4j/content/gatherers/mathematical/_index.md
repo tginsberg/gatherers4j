@@ -9,7 +9,7 @@ Functions performing calculations over the stream.
 
 Major themes are:
 
-* Moving and running product, sum, and simple average
+* Moving and running product, sum, and mean
 * Running population and sample standard deviation
 * Variations for working with `Stream<BigDecimal>` or mapping input elements to `BigDecimal`
 

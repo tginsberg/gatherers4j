@@ -1,26 +1,30 @@
 ---
-title: "simpleRunningAverage()"
-linkTitle: "simpleRunningAverage()"
+title: "movingMean()"
+linkTitle: "movingMean()"
 show_in_table: true
 category: "Mathematical Operations"
-description: Calculate the simple running average of a `Stream<BigDecimal>`.
+description: Calculate the moving mean of `BigDecimal` values over the previous `windowSize` number of values.
+aliases:
+  - /gatherers/mathematical/simplemovingaverage/
 
 ---
 
 ### Implementation Notes
-This implementation is suitable for `Stream<BigDecimal>`. For a version that takes a user-specified mapping function, see [`simpleRunningAverageBy()`](/gatherers4j/gatherers/mathematical/simplerunningaverageby/).
+This implementation is suitable for `Stream<BigDecimal>`, for a version that takes a user-specified mapping function see [`movingMeanBy()`](/gatherers4j/gatherers/mathematical/movingmeanby/).
 By default, nulls are ignored and play no part in calculations, see `treatNullAs()` and `treatNullAsZero()` below for ways to change this behavior. The default `MathContext`
 for all calculations is {{< jdklink linkName="MathContext.DECIMAL64" package="java.base/java/math/MathContext.html#DECIMAL64" >}}, but this can be overridden (see `withMathContext()`, below).
 
 
 **Signatures**
 
-`simpleRunningAverage()`
+`movingMean(int windowSize)`
+* `windowSize` - How many trailing elements to mean over at any given point in the stream
 
 **Additional Methods**
 
 | Method                                     | Purpose                                                                                                                                                                                                                                                                                                              |
 |--------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `excludePartialValues()`                   | When calculating the moving mean, and the full size of the window has not yet been reached, the gatherer should suppress emitting values until the lookback window is full. [See example.](#excluding-partial-values)                                                                                             |
 | `treatNullAsZero()`                        | When encountering a `null` value in a stream, treat it as `BigDecimal.ZERO` instead. [See example.](#treating-null-as-zero)                                                                                                                                                                                          |
 | `treatNullAs(BigDecimal replacement)`      | When encountering a `null` value in a stream, treat it as the given `replacement` value instead. [See example.](#replacing-null-with-another-bigdecimal)                                                                                                                                                             |
 | `treatNullAsOne()`                         | When encountering a `null` value in a stream, treat it as `BigDecimal.ONE` instead.                                                                                                                                                                                                                                  |
@@ -29,33 +33,53 @@ for all calculations is {{< jdklink linkName="MathContext.DECIMAL64" package="ja
 
 ### Examples
 
-#### Simple running average
+#### Moving mean of window size 3
 
 ```java
 Stream
-    .of("1.0", "2.0", "3.0")
+    .of("1.0", "2.0", "10.0", "2.0")
     .map(BigDecimal::new)
-    .gather(Gatherers4j.simpleRunningAverage())
+    .gather(Gatherers4j.movingMean(3))
     .toList();
 
-// [ 
-//   BigDecimal("1.0"), 
-//   BigDecimal("1.5"), 
-//   BigDecimal("2.0")
+// [
+//   BigDecimal("1.0")
+//   BigDecimal("1.5")
+//   BigDecimal("4.333333333333333")
+//   BigDecimal("4.666666666666667")
+// ]
+
+```
+
+#### Excluding partial values
+
+Showing that in-process moving mean values are not emitted for each element until the lookback window has been filled.
+
+```java
+Stream
+    .of("1.0", "2.0", "10.0", "2.0")
+    .map(BigDecimal::new)
+    .gather(Gatherers4j.movingMean(3).excludePartialValues())
+    .toList();
+
+// [
+//   BigDecimal("4.333333333333333")
+//   BigDecimal("4.666666666666667")
 // ]
 ```
+
 
 #### Showing nulls are ignored by default
 
 ```java
 Stream
     .of(null, null, new BigDecimal("10.0"), new BigDecimal("2.0"), new BigDecimal("1.0"))
-    .gather(Gatherers4j.simpleRunningAverage())
+    .gather(Gatherers4j.movingMean(3))
     .toList();
 
-// [ 
-//   BigDecimal("10.0"),
-//   BigDecimal("6.0"),
+// [
+//   BigDecimal("10.0")
+//   BigDecimal("6.0")
 //   BigDecimal("4.333333333333333")
 // ]
 ```
@@ -65,15 +89,14 @@ Stream
 ```java
 Stream
     .of(null, null, new BigDecimal("10.0"), new BigDecimal("2.0"))
-    .gather(Gatherers4j.simpleRunningAverage().treatNullAsZero())
+    .gather(Gatherers4j.movingMean(3).treatNullAsZero())
     .toList();
 
-// [ 
-//   BigDecimal("0"),
-//   BigDecimal("0"),
-//   BigDecimal("3.333333333333333"), 
-//   BigDecimal("2.9999999999999998"), 
-//   BigDecimal("2.5999999999999998") 
+// [
+//   BigDecimal("0")
+//   BigDecimal("0")
+//   BigDecimal("3.333333333333333")
+//   BigDecimal("4.0")
 // ]
 ```
 
@@ -82,15 +105,14 @@ Stream
 ```java
 Stream
     .of(null, null, new BigDecimal("10.0"), new BigDecimal("2.0"))
-    .gather(Gatherers4j.simpleRunningAverage().treatNullAs(new BigDecimal("3.5")))
+    .gather(Gatherers4j.movingMean(3).treatNullAs(new BigDecimal("3.5")))
     .toList();
 
-// [  
-//   BigDecimal("3.5"),  
-//   BigDecimal("3.5"),  
-//   BigDecimal("5.666666666666667"), 
-//   BigDecimal("4.7500000000000002"), 
-//   BigDecimal("4.0000000000000002") 
+// [
+//   BigDecimal("3.5")
+//   BigDecimal("3.5")
+//   BigDecimal("5.666666666666667")
+//   BigDecimal("5.166666666666667")
 // ]
 ```
 
@@ -101,16 +123,16 @@ Stream
     .of("1.0", "2.0", "10.0", "2.0")
     .map(BigDecimal::new)
     .gather(Gatherers4j
-        .simpleRunningAverage()
+        .movingMean(3)
         .withMathContext(new MathContext(3, RoundingMode.DOWN))
     )
     .toList();
 
-// [ 
-//   BigDecimal("1.0"), 
-//   BigDecimal("1.5"), 
-//   BigDecimal("4.33"), 
-//   BigDecimal("3.748") 
+// [
+//   BigDecimal("1.0")
+//   BigDecimal("1.5")
+//   BigDecimal("4.33")
+//   BigDecimal("4.66")
 // ]
 ```
 
@@ -120,13 +142,13 @@ Stream
 Stream
     .of("1.0", "2.0", "10.0", "2.0")
     .map(BigDecimal::new)
-    .gather(Gatherers4j.simpleRunningAverage().withOriginal())
+    .gather(Gatherers4j.movingMean(3).withOriginal())
     .toList();
 
-// [ 
+// [
 //   WithOriginal[original=1.0, calculated=1.0]
 //   WithOriginal[original=2.0, calculated=1.5]
 //   WithOriginal[original=10.0, calculated=4.333333333333333]
-//   WithOriginal[original=2.0, calculated=3.7499999999999998]
+//   WithOriginal[original=2.0, calculated=4.666666666666667]
 // ]
 ```
