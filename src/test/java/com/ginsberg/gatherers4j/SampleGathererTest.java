@@ -25,6 +25,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,8 +34,30 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 
 class SampleGathererTest {
 
+    private static final double ALPHA = 1e-6;
+
     @Nested
     class FixedSizeReservoirSampling {
+
+        @Test
+        void sampleSizeOneOnTwoElementStreamShouldReturnBothEqually() {
+            // Arrange
+            final int runs = 10_000;
+            final Random random = new Random(42);
+            final BinomialTest binomialTest = BinomialTest.withDefaults().with(AlternativeHypothesis.TWO_SIDED);
+            int countA = 0;
+
+            // Act
+            for (int i = 0; i < runs; i++) {
+                if ("A".equals(Stream.of("A", "B").gather(Gatherers4j.sampleFixedSize(1, random)).toList().getFirst())) {
+                    countA++;
+                }
+            }
+
+            // Assert
+            assertThat(binomialTest.test(runs, countA, 0.5).reject(ALPHA)).isFalse();
+        }
+
         @Test
         void includesAllElementsWhenSampleSizeNotMet() {
             // Arrange
@@ -50,20 +74,23 @@ class SampleGathererTest {
         void inclusionProbability() {
             // Arrange
             final List<Integer> input = List.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
-            final int samples = 100_000;
+            final int runs = 10_000;
+            final Random random = new Random(42);
             final int sampleSize = 4;
-            final int[] counts = new int[10];
-            final double expectedProbability = (double) sampleSize / samples;
+            final int[] counts = new int[input.size()];
+            final double expectedProbability = (double) sampleSize / input.size();
             final BinomialTest binomialTest = BinomialTest.withDefaults().with(AlternativeHypothesis.TWO_SIDED);
 
             // Act
-            for (int i = 0; i < samples; i++) {
-                input.stream().gather(Gatherers4j.sampleFixedSize(sampleSize)).forEach(it -> counts[it]++);
+            for (int i = 0; i < runs; i++) {
+                input.stream().gather(Gatherers4j.sampleFixedSize(sampleSize, random)).forEach(it -> counts[it]++);
             }
 
             // Assert
-            for (int count : counts) {
-                assertThat(binomialTest.test(samples, count, expectedProbability).getPValue()).isLessThan(0.05);
+            for (int i = 0; i < counts.length; i++) {
+                assertThat(binomialTest.test(runs, counts[i], expectedProbability).reject(ALPHA / counts.length))
+                        .as("element %d selected %d times", i, counts[i])
+                        .isFalse();
             }
         }
 
@@ -91,49 +118,92 @@ class SampleGathererTest {
         void uniformSelection() {
             // Arrange
             final List<Integer> input = List.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+            final Random random = new Random(42);
             final long[] counts = new long[10];
 
             // Act
             for (int i = 0; i < 100_000; i++) {
-                input.stream().gather(Gatherers4j.sampleFixedSize(4)).forEach(it -> counts[it]++);
+                input.stream().gather(Gatherers4j.sampleFixedSize(4, random)).forEach(it -> counts[it]++);
             }
 
             // Assert
-            assertThat(ChiSquareTest.withDefaults().test(counts).getPValue()).isLessThan(0.05);
+            assertThat(ChiSquareTest.withDefaults().test(counts).reject(ALPHA)).isFalse();
         }
 
+        @Test
+        void testKnownSample() {
+            // Arrange
+            final Stream<String> input = Stream.of("A", "B", "C", "D", "E", "F", "G");
+
+            // Act
+            final String output = input
+                    .gather(Gatherers4j.sampleFixedSize(3, new Random(42)))
+                    .collect(Collectors.joining());
+
+            // Assert
+            assertThat(output).isEqualTo("CDF");
+        }
+
+        @SuppressWarnings("DataFlowIssue")
+        @Test
+        void withNullRandomGenerator() {
+            assertThatIllegalArgumentException().isThrownBy(() -> Gatherers4j.sampleFixedSize(5, null));
+        }
     }
 
     @Nested
-    class PercentagePoisson {
+    class PercentageBernoulli {
 
         @Test
         void inclusionProbability() {
             // Arrange
             final List<Integer> input = List.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
-            final int samples = 100_000;
+            final int runs = 10_000;
+            final Random random = new Random(42);
             final double samplePercentage = 0.4;
-            final int[] counts = new int[10];
-            final double expectedProbability = samplePercentage / samples;
+            final int[] counts = new int[input.size()];
             final BinomialTest binomialTest = BinomialTest.withDefaults().with(AlternativeHypothesis.TWO_SIDED);
 
             // Act
-            for (int i = 0; i < samples; i++) {
-                input.stream().gather(Gatherers4j.samplePercentage(samplePercentage)).forEach(it -> counts[it]++);
+            for (int i = 0; i < runs; i++) {
+                input.stream().gather(Gatherers4j.samplePercentage(samplePercentage, random)).forEach(it -> counts[it]++);
             }
 
             // Assert
-            for (int count : counts) {
-                assertThat(binomialTest.test(samples, count, expectedProbability).getPValue()).isLessThan(0.05);
+            for (int i = 0; i < counts.length; i++) {
+                assertThat(binomialTest.test(runs, counts[i], samplePercentage).reject(ALPHA / counts.length))
+                        .as("element %d selected %d times", i, counts[i])
+                        .isFalse();
             }
         }
 
+        @Test
+        void testKnownSample() {
+            // Arrange
+            final Stream<String> input = Stream.of("A", "B", "C", "D", "E", "F", "G");
+
+            // Act
+            final String output = input
+                    .gather(Gatherers4j.samplePercentage(0.5, new Random(42)))
+                    .collect(Collectors.joining());
+
+            // Assert
+            assertThat(output).isEqualTo("CDG");
+        }
+
+
         @ParameterizedTest(name = "samplePercentage of {0}")
-        @ValueSource(doubles = {0.0, 1.01, -0.1})
-        void sampleSizeMustBeAtLeast1(final double percentage) {
+        @ValueSource(doubles = {0.0, 1.01, -0.1, Double.NaN})
+        void percentageMustBeInRange(final double percentage) {
             assertThatIllegalArgumentException()
                     .isThrownBy(() -> Gatherers4j.samplePercentage(percentage)
             );
+        }
+
+        @SuppressWarnings("DataFlowIssue")
+        @Test
+        void withNullRandomGenerator() {
+            assertThatIllegalArgumentException().isThrownBy(() -> Gatherers4j.samplePercentage(0.5, null));
         }
     }
 
