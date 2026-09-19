@@ -20,6 +20,8 @@ import com.ginsberg.gatherers4j.dto.WithOriginal;
 import com.ginsberg.gatherers4j.util.TestValueHolder;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -30,21 +32,263 @@ import static com.ginsberg.gatherers4j.util.TestUtils.BIG_DECIMAL_RECURSIVE_COMP
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
-class BigDecimalStandardDeviationGathererTest {
+class BigDecimalMeanGathererTest {
 
     @Nested
-    class Common {
+    class Moving {
+        @Test
+        void ignoresNulls() {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.of(null, BigDecimal.ONE, BigDecimal.TWO, BigDecimal.TEN);
+
+            // Act
+            final List<BigDecimal> output = input
+                    .gather(Gatherers4j.simpleMovingAverage(2))
+                    .toList();
+
+            // Assert
+            assertThat(output)
+                    .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
+                    .containsExactly(
+                            new BigDecimal("1"),
+                            new BigDecimal("1.5"),
+                            new BigDecimal("6.0")
+                    );
+        }
+
         @SuppressWarnings("DataFlowIssue")
         @Test
         void mathContextCannotBeNull() {
             assertThatIllegalArgumentException().isThrownBy(() ->
-                    Gatherers4j.runningPopulationStandardDeviation().withMathContext(null)
+                    Gatherers4j.simpleMovingAverage(2).withMathContext(null)
             );
+        }
+
+        @Test
+        void mathContextChange() {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.of(
+                    BigDecimal.ONE,
+                    BigDecimal.TWO,
+                    BigDecimal.TEN
+            );
+
+            // Act
+            final List<BigDecimal> output = input
+                    .gather(Gatherers4j.simpleMovingAverage(3).withMathContext(new MathContext(3)))
+                    .toList();
+
+            // Assert
+            assertThat(output)
+                    .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
+                    .containsExactly(
+                            new BigDecimal("1"),
+                            new BigDecimal("1.5"),
+                            new BigDecimal("4.33")
+                    );
+        }
+
+        @Test
+        void movingAverageBy() {
+            // Arrange
+            final List<TestValueHolder> input = List.of(
+                    new TestValueHolder(1, new BigDecimal("1.0")),
+                    new TestValueHolder(2, new BigDecimal("2.0")),
+                    new TestValueHolder(3, new BigDecimal("10.0")),
+                    new TestValueHolder(4, new BigDecimal("20.0")),
+                    new TestValueHolder(5, new BigDecimal("30.0"))
+            );
+
+            // Act
+            final List<BigDecimal> output = input.stream()
+                    .gather(Gatherers4j.simpleMovingAverageBy(2, TestValueHolder::value))
+                    .toList();
+
+            // Assert
+            assertThat(output)
+                    .usingRecursiveFieldByFieldElementComparator(BIG_DECIMAL_RECURSIVE_COMPARISON)
+                    .containsExactly(
+                            new BigDecimal("1.0"),
+                            new BigDecimal("1.5"),
+                            new BigDecimal("6.0"),
+                            new BigDecimal("15.0"),
+                            new BigDecimal("25.0")
+                    );
+        }
+
+        @Test
+        void movingAverageOfBigDecimals() {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.of(
+                    new BigDecimal("1.0"),
+                    new BigDecimal("2.0"),
+                    new BigDecimal("10.0"),
+                    new BigDecimal("2.0")
+            );
+
+            // Act
+            final List<BigDecimal> output = input
+                    .gather(Gatherers4j.simpleMovingAverage(3))
+                    .toList();
+
+            // Assert
+            assertThat(output)
+                    .usingRecursiveFieldByFieldElementComparator(BIG_DECIMAL_RECURSIVE_COMPARISON)
+                    .containsExactly(
+                            new BigDecimal("1.0"),
+                            new BigDecimal("1.5"),
+                            new BigDecimal("4.333333333333333"),
+                            new BigDecimal("4.666666666666667")
+                    );
+        }
+
+        @Test
+        void movingAverageOfZero() {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.of(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
+
+            // Act
+            final List<BigDecimal> output = input
+                    .gather(Gatherers4j.simpleMovingAverage(2))
+                    .toList();
+
+            // Assert
+            assertThat(output)
+                    .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
+                    .containsExactly(
+                            BigDecimal.ZERO,
+                            BigDecimal.ZERO,
+                            BigDecimal.ZERO
+                    );
+        }
+
+        @Test
+        void treatNullAsNonZero() {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.of(null, BigDecimal.ONE, null, BigDecimal.ONE);
+
+            // Act
+            final List<BigDecimal> output = input
+                    .gather(Gatherers4j.simpleMovingAverage(2).treatNullAs(BigDecimal.TEN))
+                    .toList();
+
+            // Assert
+            assertThat(output)
+                    .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
+                    .containsExactly(
+                            new BigDecimal("10"),
+                            new BigDecimal("5.5"),
+                            new BigDecimal("5.5"),
+                            new BigDecimal("5.5")
+                    );
+        }
+
+        @Test
+        void treatNullAsZero() {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.of(null, BigDecimal.ONE, null, BigDecimal.ONE);
+
+            // Act
+            final List<BigDecimal> output = input
+                    .gather(Gatherers4j.simpleMovingAverage(2).treatNullAsZero())
+                    .toList();
+
+            // Assert
+            assertThat(output)
+                    .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
+                    .containsExactly(
+                            new BigDecimal("0"),
+                            new BigDecimal("0.5"),
+                            new BigDecimal("0.5"),
+                            new BigDecimal("0.5")
+                    );
+        }
+
+        @ParameterizedTest(name = "windowSize of {0}")
+        @ValueSource(ints = {-1, 0, 1})
+        void windowSizeMustBeGreaterThanOne(final int windowSize) {
+            assertThatIllegalArgumentException().isThrownBy(() ->
+                    Gatherers4j.simpleMovingAverage(windowSize)
+            );
+        }
+
+        @Test
+        void withOriginalBigDecimal() {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.of(
+                    new BigDecimal("1.0"),
+                    new BigDecimal("2.0"),
+                    new BigDecimal("10.0"),
+                    new BigDecimal("20.0"),
+                    new BigDecimal("30.0")
+            );
+
+            // Act
+            final List<WithOriginal<BigDecimal, BigDecimal>> output = input
+                    .gather(Gatherers4j
+                            .simpleMovingAverage(2)
+                            .excludePartialValues()
+                            .withOriginal()
+                    ).toList();
+
+            // Assert
+            assertThat(output)
+                    .map(WithOriginal::calculated)
+                    .usingRecursiveFieldByFieldElementComparator(BIG_DECIMAL_RECURSIVE_COMPARISON)
+                    .contains(
+                            new BigDecimal("1.5"),
+                            new BigDecimal("6.0"),
+                            new BigDecimal("15.0"),
+                            new BigDecimal("25.0")
+                    );
+
+            assertThat(output)
+                    .map(WithOriginal::original)
+                    .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
+                    .containsExactly(
+                            new BigDecimal("2.0"),
+                            new BigDecimal("10.0"),
+                            new BigDecimal("20.0"),
+                            new BigDecimal("30.0")
+                    );
+        }
+
+        @Test
+        void withOriginalRecordByMappedField() {
+            // Arrange
+            final List<TestValueHolder> input = List.of(
+                    new TestValueHolder(1, new BigDecimal("1.0")),
+                    new TestValueHolder(2, new BigDecimal("2.0")),
+                    new TestValueHolder(3, new BigDecimal("10.0")),
+                    new TestValueHolder(4, new BigDecimal("20.0")),
+                    new TestValueHolder(5, new BigDecimal("30.0"))
+            );
+
+            // Act
+            final List<WithOriginal<TestValueHolder, BigDecimal>> output = input.stream()
+                    .gather(Gatherers4j.simpleMovingAverageBy(2, TestValueHolder::value).withOriginal())
+                    .toList();
+
+            // Assert
+            assertThat(output)
+                    .extracting(WithOriginal::calculated)
+                    .usingRecursiveFieldByFieldElementComparator(BIG_DECIMAL_RECURSIVE_COMPARISON)
+                    .containsExactly(
+                            new BigDecimal("1.0"),
+                            new BigDecimal("1.5"),
+                            new BigDecimal("6.0"),
+                            new BigDecimal("15.0"),
+                            new BigDecimal("25.0")
+                    );
+
+            assertThat(output)
+                    .map(WithOriginal::original)
+                    .containsExactlyInAnyOrderElementsOf(input);
         }
     }
 
     @Nested
-    class Population {
+    class Running {
 
         @Test
         void ignoresNulls() {
@@ -53,16 +297,24 @@ class BigDecimalStandardDeviationGathererTest {
 
             // Act
             final List<BigDecimal> output = input
-                    .gather(Gatherers4j.runningPopulationStandardDeviation())
+                    .gather(Gatherers4j.simpleRunningAverage())
                     .toList();
 
             // Assert
             assertThat(output)
                     .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                     .containsExactly(
-                            BigDecimal.ZERO,
-                            new BigDecimal(".5")
+                            BigDecimal.ONE,
+                            new BigDecimal("1.5")
                     );
+        }
+
+        @SuppressWarnings("DataFlowIssue")
+        @Test
+        void mathContextCannotBeNull() {
+            assertThatIllegalArgumentException().isThrownBy(() ->
+                    Gatherers4j.simpleRunningAverage().withMathContext(null)
+            );
         }
 
         @Test
@@ -76,45 +328,21 @@ class BigDecimalStandardDeviationGathererTest {
 
             // Act
             final List<BigDecimal> output = input
-                    .gather(Gatherers4j.runningPopulationStandardDeviation().withMathContext(new MathContext(3)))
+                    .gather(Gatherers4j.simpleRunningAverage().withMathContext(new MathContext(3)))
                     .toList();
 
             // Assert
             assertThat(output)
                     .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                     .containsExactly(
-                            BigDecimal.ZERO,
-                            new BigDecimal(".5"),
-                            new BigDecimal("4.02")
+                            new BigDecimal("1"),
+                            new BigDecimal("1.5"),
+                            new BigDecimal("4.33")
                     );
         }
 
         @Test
-        void standardDeviation() {
-            // Arrange
-            final Stream<BigDecimal> input = Stream.of(
-                    new BigDecimal("1.0"),
-                    new BigDecimal("2.0"),
-                    new BigDecimal("10.0")
-            );
-
-            // Act
-            final List<BigDecimal> output = input
-                    .gather(Gatherers4j.runningPopulationStandardDeviation())
-                    .toList();
-
-            // Assert
-            assertThat(output)
-                    .usingRecursiveFieldByFieldElementComparator(BIG_DECIMAL_RECURSIVE_COMPARISON)
-                    .containsExactly(
-                            BigDecimal.ZERO,
-                            new BigDecimal(".5"),
-                            new BigDecimal("4.02768199119819")
-                    );
-        }
-
-        @Test
-        void standardDeviationBy() {
+        void simpleAverageBy() {
             // Arrange
             final List<TestValueHolder> input = List.of(
                     new TestValueHolder(1, new BigDecimal("1.0")),
@@ -126,18 +354,62 @@ class BigDecimalStandardDeviationGathererTest {
 
             // Act
             final List<BigDecimal> output = input.stream()
-                    .gather(Gatherers4j.runningPopulationStandardDeviationBy(TestValueHolder::value))
+                    .gather(Gatherers4j.simpleRunningAverageBy(TestValueHolder::value))
                     .toList();
 
             // Assert
             assertThat(output)
                     .usingRecursiveFieldByFieldElementComparator(BIG_DECIMAL_RECURSIVE_COMPARISON)
                     .containsExactly(
+                            new BigDecimal("1"),
+                            new BigDecimal("1.5"),
+                            new BigDecimal("4.333333333333333"),
+                            new BigDecimal("8.25"),
+                            new BigDecimal("12.6")
+                    );
+        }
+
+        @Test
+        void simpleAverageOfBigDecimals() {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.of(
+                    new BigDecimal("1.0"),
+                    new BigDecimal("2.0"),
+                    new BigDecimal("10.0")
+            );
+
+            // Act
+            final List<BigDecimal> output = input
+                    .gather(Gatherers4j.simpleRunningAverage())
+                    .toList();
+
+            // Assert
+            assertThat(output)
+                    .usingRecursiveFieldByFieldElementComparator(BIG_DECIMAL_RECURSIVE_COMPARISON)
+                    .containsExactly(
+                            new BigDecimal("1"),
+                            new BigDecimal("1.5"),
+                            new BigDecimal("4.333333333333333")
+                    );
+        }
+
+        @Test
+        void simpleAverageOfZero() {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.of(BigDecimal.ZERO, new BigDecimal("-1"), BigDecimal.ONE);
+
+            // Act
+            final List<BigDecimal> output = input
+                    .gather(Gatherers4j.simpleRunningAverage())
+                    .toList();
+
+            // Assert
+            assertThat(output)
+                    .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
+                    .containsExactly(
                             BigDecimal.ZERO,
-                            new BigDecimal(".5"),
-                            new BigDecimal("4.02768199119819"),
-                            new BigDecimal("7.628073151196179"),
-                            new BigDecimal("11.0562199688682")
+                            new BigDecimal("-0.5"),
+                            BigDecimal.ZERO
                     );
         }
 
@@ -148,17 +420,17 @@ class BigDecimalStandardDeviationGathererTest {
 
             // Act
             final List<BigDecimal> output = input
-                    .gather(Gatherers4j.runningPopulationStandardDeviation().treatNullAs(BigDecimal.TEN))
+                    .gather(Gatherers4j.simpleRunningAverage().treatNullAs(BigDecimal.TEN))
                     .toList();
 
             // Assert
             assertThat(output)
                     .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                     .containsExactly(
-                            BigDecimal.ZERO,
-                            new BigDecimal("4.5"),
-                            new BigDecimal("4.242640687119285"),
-                            new BigDecimal("4.5")
+                            BigDecimal.TEN,
+                            new BigDecimal("5.5"),
+                            new BigDecimal("7"),
+                            new BigDecimal("5.5")
                     );
         }
 
@@ -169,7 +441,7 @@ class BigDecimalStandardDeviationGathererTest {
 
             // Act
             final List<BigDecimal> output = input
-                    .gather(Gatherers4j.runningPopulationStandardDeviation().treatNullAsZero())
+                    .gather(Gatherers4j.simpleRunningAverage().treatNullAsZero())
                     .toList();
 
             // Assert
@@ -178,7 +450,7 @@ class BigDecimalStandardDeviationGathererTest {
                     .containsExactly(
                             BigDecimal.ZERO,
                             new BigDecimal("0.5"),
-                            new BigDecimal("0.4714045207910317"),
+                            new BigDecimal("0.3333333333333333"),
                             new BigDecimal("0.5")
                     );
         }
@@ -196,7 +468,7 @@ class BigDecimalStandardDeviationGathererTest {
 
             // Act
             final List<WithOriginal<BigDecimal, BigDecimal>> output = input
-                    .gather(Gatherers4j.runningPopulationStandardDeviation().withOriginal())
+                    .gather(Gatherers4j.simpleRunningAverage().withOriginal())
                     .toList();
 
             // Assert
@@ -204,11 +476,11 @@ class BigDecimalStandardDeviationGathererTest {
                     .map(WithOriginal::calculated)
                     .usingRecursiveFieldByFieldElementComparator(BIG_DECIMAL_RECURSIVE_COMPARISON)
                     .contains(
-                            BigDecimal.ZERO,
-                            new BigDecimal(".5"),
-                            new BigDecimal("4.02768199119819"),
-                            new BigDecimal("7.628073151196179"),
-                            new BigDecimal("11.0562199688682")
+                            new BigDecimal("1"),
+                            new BigDecimal("1.5"),
+                            new BigDecimal("4.333333333333333"),
+                            new BigDecimal("8.25"),
+                            new BigDecimal("12.6")
                     );
 
             assertThat(output)
@@ -236,7 +508,7 @@ class BigDecimalStandardDeviationGathererTest {
 
             // Act
             final List<WithOriginal<TestValueHolder, BigDecimal>> output = input.stream()
-                    .gather(Gatherers4j.runningPopulationStandardDeviationBy(TestValueHolder::value).withOriginal())
+                    .gather(Gatherers4j.simpleRunningAverageBy(TestValueHolder::value).withOriginal())
                     .toList();
 
             // Assert
@@ -244,11 +516,11 @@ class BigDecimalStandardDeviationGathererTest {
                     .extracting(WithOriginal::calculated)
                     .usingRecursiveFieldByFieldElementComparator(BIG_DECIMAL_RECURSIVE_COMPARISON)
                     .containsExactly(
-                            BigDecimal.ZERO,
-                            new BigDecimal(".5"),
-                            new BigDecimal("4.02768199119819"),
-                            new BigDecimal("7.628073151196179"),
-                            new BigDecimal("11.0562199688682")
+                            new BigDecimal("1"),
+                            new BigDecimal("1.5"),
+                            new BigDecimal("4.333333333333333"),
+                            new BigDecimal("8.25"),
+                            new BigDecimal("12.6")
                     );
 
             assertThat(output)
@@ -256,219 +528,4 @@ class BigDecimalStandardDeviationGathererTest {
                     .containsExactlyInAnyOrderElementsOf(input);
         }
     }
-
-    @Nested
-    class Sample {
-
-        @Test
-        void ignoresNulls() {
-            // Arrange
-            final Stream<BigDecimal> input = Stream.of(null, BigDecimal.ONE, BigDecimal.TWO);
-
-            // Act
-            final List<BigDecimal> output = input
-                    .gather(Gatherers4j.runningSampleStandardDeviation())
-                    .toList();
-
-            // Assert
-            assertThat(output)
-                    .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
-                    .containsExactly(
-                            BigDecimal.ZERO,
-                            new BigDecimal("0.7071067811865475")
-                    );
-        }
-
-        @Test
-        void mathContextChange() {
-            // Arrange
-            final Stream<BigDecimal> input = Stream.of(
-                    new BigDecimal("1.0"),
-                    new BigDecimal("2.0"),
-                    new BigDecimal("10.0")
-            );
-
-            // Act
-            final List<BigDecimal> output = input
-                    .gather(Gatherers4j.runningSampleStandardDeviation().withMathContext(new MathContext(3)))
-                    .toList();
-
-            // Assert
-            assertThat(output)
-                    .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
-                    .containsExactly(
-                            BigDecimal.ZERO,
-                            new BigDecimal("0.707"),
-                            new BigDecimal("4.93")
-                    );
-        }
-
-        @Test
-        void standardDeviation() {
-            // Arrange
-            final Stream<BigDecimal> input = Stream.of(
-                    new BigDecimal("1.0"),
-                    new BigDecimal("2.0"),
-                    new BigDecimal("10.0")
-            );
-
-            // Act
-            final List<BigDecimal> output = input
-                    .gather(Gatherers4j.runningSampleStandardDeviation())
-                    .toList();
-
-            // Assert
-            assertThat(output)
-                    .usingRecursiveFieldByFieldElementComparator(BIG_DECIMAL_RECURSIVE_COMPARISON)
-                    .containsExactly(
-                            BigDecimal.ZERO,
-                            new BigDecimal("0.7071067811865475"),
-                            new BigDecimal("4.932882862316247")
-                    );
-        }
-
-        @Test
-        void standardDeviationBy() {
-            // Arrange
-            final List<TestValueHolder> input = List.of(
-                    new TestValueHolder(1, new BigDecimal("1.0")),
-                    new TestValueHolder(2, new BigDecimal("2.0")),
-                    new TestValueHolder(3, new BigDecimal("10.0")),
-                    new TestValueHolder(4, new BigDecimal("20.0")),
-                    new TestValueHolder(5, new BigDecimal("30.0"))
-            );
-
-            // Act
-            final List<BigDecimal> output = input.stream()
-                    .gather(Gatherers4j.runningSampleStandardDeviationBy(TestValueHolder::value))
-                    .toList();
-
-            // Assert
-            assertThat(output)
-                    .usingRecursiveFieldByFieldElementComparator(BIG_DECIMAL_RECURSIVE_COMPARISON)
-                    .containsExactly(
-                            BigDecimal.ZERO,
-                            new BigDecimal("0.7071067811865475"),
-                            new BigDecimal("4.932882862316247"),
-                            new BigDecimal("8.808140174482541"),
-                            new BigDecimal("12.36122971228995")
-                    );
-        }
-
-        @Test
-        void treatNullAsNonZero() {
-            // Arrange
-            final Stream<BigDecimal> input = Stream.of(null, BigDecimal.ONE, null, BigDecimal.ONE);
-
-            // Act
-            final List<BigDecimal> output = input
-                    .gather(Gatherers4j.runningSampleStandardDeviation().treatNullAs(BigDecimal.TEN))
-                    .toList();
-
-            // Assert
-            assertThat(output)
-                    .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
-                    .containsExactly(
-                            BigDecimal.ZERO,
-                            new BigDecimal("6.363961030678928"),
-                            new BigDecimal("5.196152422706632"),
-                            new BigDecimal("5.196152422706632")
-                    );
-        }
-
-        @Test
-        void treatNullAsZero() {
-            // Arrange
-            final Stream<BigDecimal> input = Stream.of(null, BigDecimal.ONE, null, BigDecimal.ONE);
-
-            // Act
-            final List<BigDecimal> output = input
-                    .gather(Gatherers4j.runningSampleStandardDeviation().treatNullAsZero())
-                    .toList();
-
-            // Assert
-            assertThat(output)
-                    .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
-                    .containsExactly(
-                            BigDecimal.ZERO,
-                            new BigDecimal("0.7071067811865475"),
-                            new BigDecimal("0.5773502691896257"),
-                            new BigDecimal("0.5773502691896257")
-                    );
-        }
-
-        @Test
-        void withOriginalBigDecimal() {
-            // Arrange
-            final Stream<BigDecimal> input = Stream.of(
-                    new BigDecimal("1.0"),
-                    new BigDecimal("2.0"),
-                    new BigDecimal("10.0"),
-                    new BigDecimal("20.0"),
-                    new BigDecimal("30.0")
-            );
-
-            // Act
-            final List<WithOriginal<BigDecimal, BigDecimal>> output = input
-                    .gather(Gatherers4j.runningSampleStandardDeviation().withOriginal())
-                    .toList();
-
-            // Assert
-            assertThat(output)
-                    .map(WithOriginal::calculated)
-                    .usingRecursiveFieldByFieldElementComparator(BIG_DECIMAL_RECURSIVE_COMPARISON)
-                    .contains(
-                            BigDecimal.ZERO,
-                            new BigDecimal("0.7071067811865475"),
-                            new BigDecimal("4.932882862316247"),
-                            new BigDecimal("8.808140174482541"),
-                            new BigDecimal("12.36122971228995")
-                    );
-
-            assertThat(output)
-                    .map(WithOriginal::original)
-                    .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
-                    .containsExactly(
-                            new BigDecimal("1.0"),
-                            new BigDecimal("2.0"),
-                            new BigDecimal("10.0"),
-                            new BigDecimal("20.0"),
-                            new BigDecimal("30.0")
-                    );
-        }
-
-        @Test
-        void withOriginalRecordByMappedField() {
-            // Arrange
-            final List<TestValueHolder> input = List.of(
-                    new TestValueHolder(1, new BigDecimal("1.0")),
-                    new TestValueHolder(2, new BigDecimal("2.0")),
-                    new TestValueHolder(3, new BigDecimal("10.0")),
-                    new TestValueHolder(4, new BigDecimal("20.0")),
-                    new TestValueHolder(5, new BigDecimal("30.0"))
-            );
-
-            // Act
-            final List<WithOriginal<TestValueHolder, BigDecimal>> output = input.stream()
-                    .gather(Gatherers4j.runningSampleStandardDeviationBy(TestValueHolder::value).withOriginal())
-                    .toList();
-
-            // Assert
-            assertThat(output)
-                    .extracting(WithOriginal::calculated)
-                    .usingRecursiveFieldByFieldElementComparator(BIG_DECIMAL_RECURSIVE_COMPARISON)
-                    .containsExactly(
-                            BigDecimal.ZERO,
-                            new BigDecimal("0.7071067811865475"),
-                            new BigDecimal("4.932882862316247"),
-                            new BigDecimal("8.808140174482541"),
-                            new BigDecimal("12.36122971228995")
-                    );
-
-            assertThat(output)
-                    .map(WithOriginal::original)
-                    .containsExactlyInAnyOrderElementsOf(input);
-        }
-    }
-
 }
