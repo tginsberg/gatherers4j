@@ -35,3 +35,5 @@ jobs:
         with:
           paths: ${{ github.workspace }}/**/build/reports/jacoco/test/jacocoTestReport.xml
           token: ${{ secrets.GITHUB_TOKEN }}
+          title: "Coverage for Java ${{ matrix.java-version }}"
+          update-comment: true
