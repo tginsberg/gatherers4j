@@ -16,7 +16,7 @@
 
 package com.ginsberg.gatherers4j.enums;
 
-public enum StandardDeviation {
+public enum Dataset {
     Population,
     Sample
 }

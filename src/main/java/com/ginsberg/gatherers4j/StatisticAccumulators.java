@@ -16,7 +16,7 @@
 
 package com.ginsberg.gatherers4j;
 
-import com.ginsberg.gatherers4j.enums.StandardDeviation;
+import com.ginsberg.gatherers4j.enums.Dataset;
 import com.ginsberg.gatherers4j.util.MathUtils;
 
 import java.math.BigDecimal;
@@ -170,9 +170,9 @@ class StatisticAccumulators {
 
     final static class StdDevAccumulator implements StatisticAccumulator<BigDecimal> {
         private final Moments state = new Moments();
-        private final StandardDeviation mode;
+        private final Dataset mode;
 
-        StdDevAccumulator(final StandardDeviation mode) {
+        StdDevAccumulator(final Dataset mode) {
             this.mode = mustNotBeNull(mode, "Must specify a mode for Standard Deviation");
         }
 
@@ -193,7 +193,7 @@ class StatisticAccumulators {
 
         @Override
         public BigDecimal value(final MathContext mc) {
-            return mode == StandardDeviation.Population
+            return mode == Dataset.Population
                     ? state.populationStandardDeviation(mc)
                     : state.sampleStandardDeviation(mc);
         }
