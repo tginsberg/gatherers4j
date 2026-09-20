@@ -23,10 +23,10 @@ plugins {
     id("info.solidsoft.pitest") version "1.19.0"
     id("jacoco")
     id("java-library")
-    id("org.jreleaser") version "1.22.0"
+    id("org.jreleaser") version "1.26.0"
     id("maven-publish")
     id("me.champeau.jmh") version "0.7.3"
-    id("net.ltgt.errorprone") version "4.4.0"
+    id("net.ltgt.errorprone") version "5.1.1"
     id("signing")
 }
 
@@ -35,7 +35,7 @@ group = "com.ginsberg"
 version = file("VERSION.txt").readLines().first()
 
 val javaVersion = findProperty("javaVersion")?.toString()?.toInt() ?: 25
-val jUnitVersion = "6.0.2"
+val jUnitVersion = "6.1.3"
 
 val gitBranch = gitBranch()
 val gatherers4jVersion = if (gitBranch == "main" || gitBranch.startsWith("release/")) version.toString()
@@ -54,7 +54,7 @@ repositories {
 }
 
 dependencies {
-    api("org.jspecify:jspecify:1.0.0") {
+    api("org.jspecify:jspecify:1.0.1") {
         because("Annotating with JSpecify makes static analysis more accurate")
     }
 
@@ -62,7 +62,7 @@ dependencies {
         because("Starting in Gradle 9.0, this needs to be an explicitly declared dependency")
     }
 
-    testImplementation("org.apache.commons:commons-statistics-inference:1.2") {
+    testImplementation("org.apache.commons:commons-statistics-inference:1.3") {
         because("We use this to measure if random sampling methods actually work")
     }
     testImplementation("org.junit.jupiter:junit-jupiter:$jUnitVersion") {
@@ -72,10 +72,10 @@ dependencies {
         because("These assertions are clearer than JUnit+Hamcrest")
     }
 
-    errorprone("com.google.errorprone:error_prone_core:2.46.0") {
+    errorprone("com.google.errorprone:error_prone_core:2.50.0") {
         because("This helps us eliminate bugs during the development cycle")
     }
-    errorprone("com.uber.nullaway:nullaway:0.13.0") {
+    errorprone("com.uber.nullaway:nullaway:0.14.1") {
         because("It helps us find nullability issues, along with JSpecify")
     }
 }
@@ -129,7 +129,7 @@ pitest {
     features = listOf("+auto_threads")
     historyInputLocation = layout.buildDirectory.file("pitHistory").get().asFile
     historyOutputLocation = layout.buildDirectory.file("pitHistory").get().asFile
-    junit5PluginVersion = "1.2.1"
+    junit5PluginVersion = "1.2.3"
     mutationThreshold = 75
     mutators = listOf("DEFAULTS")
     outputFormats = listOf("HTML", "XML")
@@ -207,7 +207,7 @@ tasks {
     }
 
     jacoco {
-        toolVersion = "0.8.14"
+        toolVersion = "0.8.15"
     }
 
     jacocoTestReport {
