@@ -65,7 +65,7 @@ class StatisticAccumulators {
     }
 
     final static class GeometricMeanAccumulator implements StatisticAccumulator<BigDecimal> {
-        final Product state = new Product();
+        private final Product state = new Product();
 
         @Override
         public void add(final BigDecimal value, final MathContext mc) {
