@@ -633,6 +633,38 @@ public abstract class Gatherers4j {
         );
     }
 
+    /// Create a Stream that represents the moving root mean square of a `Stream<BigDecimal>` looking
+    /// back `windowSize` number of elements.
+    ///
+    /// @param windowSize The trailing number of elements to calculate the root mean square over, must be greater than 1.
+    /// @return A non-null `BigDecimalMovingStatGatherer`
+    public static BigDecimalMovingStatGatherer<@Nullable BigDecimal, BigDecimal> movingRootMeanSquare(final int windowSize) {
+        return new BigDecimalMovingStatGatherer<>(
+                windowSize,
+                Function.identity(),
+                StatisticAccumulators.RootMeanSquareAccumulator::new
+        );
+    }
+
+    /// Create a Stream that represents the moving root mean square of `BigDecimal` objects mapped from a `Stream<INPUT>`
+    /// via a `mappingFunction` and looking back `windowSize` number of elements.
+    ///
+    /// @param windowSize      The trailing number of elements to calculate the root mean square over, must be greater than 1.
+    /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
+    ///                        in the moving root mean square calculation
+    /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
+    /// @return A non-null `BigDecimalMovingStatGatherer`
+    public static <INPUT extends @Nullable Object> BigDecimalMovingStatGatherer<INPUT, BigDecimal> movingRootMeanSquareBy(
+            final int windowSize,
+            final Function<INPUT, BigDecimal> mappingFunction
+    ) {
+        return new BigDecimalMovingStatGatherer<>(
+                windowSize,
+                mappingFunction,
+                StatisticAccumulators.RootMeanSquareAccumulator::new
+        );
+    }
+
     /// Create a Stream that represents the moving standard deviation of a `Stream<BigDecimal>` looking
     /// back `windowSize` number of elements.
     ///
@@ -900,6 +932,32 @@ public abstract class Gatherers4j {
             final Function<INPUT, BigDecimal> mappingFunction
     ) {
         return new BigDecimalRunningStatGatherer<>(mappingFunction, StatisticAccumulators.ProductAccumulator::new);
+    }
+
+    /// Create a `Stream<BigDecimal>` that represents the running root mean square of a `Stream<BigDecimal>`.
+    ///
+    /// @return A non-null `BigDecimalRunningStatGatherer`
+    public static BigDecimalRunningStatGatherer<@Nullable BigDecimal, BigDecimal> runningRootMeanSquare() {
+        return new BigDecimalRunningStatGatherer<>(
+                Function.identity(),
+                StatisticAccumulators.RootMeanSquareAccumulator::new
+        );
+    }
+
+    /// Create a `Stream<BigDecimal>` that represents the running root mean square of `BigDecimal` objects mapped
+    /// from a `Stream<INPUT>` via a `mappingFunction`.
+    ///
+    /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
+    ///                        in the running root mean square calculation
+    /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
+    /// @return A non-null `BigDecimalRunningStatGatherer`
+    public static <INPUT extends @Nullable Object> BigDecimalRunningStatGatherer<INPUT, BigDecimal> runningRootMeanSquareBy(
+            final Function<INPUT, BigDecimal> mappingFunction
+    ) {
+        return new BigDecimalRunningStatGatherer<>(
+                mappingFunction,
+                StatisticAccumulators.RootMeanSquareAccumulator::new
+        );
     }
 
     /// Create a `Stream<BigDecimal>` that represents the running standard deviation of a `Stream<BigDecimal>`.
