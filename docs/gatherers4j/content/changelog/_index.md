@@ -15,6 +15,7 @@ no_list: true
 + Fix bug in `sampleFixedSize()` where elements were not sampled with equal probability. The first `sampleSize` elements were chosen too rarely and later elements too often. 
 + Implement `sampleFixedSize(int, RandomGenerator)` and `samplePercentage(double, RandomGenerator)` so callers can specify the source of randomness.
 + `samplePercentage()` now rejects `NaN`, which was previously accepted and silently emitted nothing.
++ Implement `movingHarmoincMean()`, `movingHarmonicMeanBy()`, `runningHarmonicMean()`, and `runningHarmonicMeanBy()`.
 
 ## v0.14.0
 [Released 2026-05-17](https://github.com/tginsberg/gatherers4j/releases/tag/v0.14.0)

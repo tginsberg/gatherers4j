@@ -88,6 +88,30 @@ class StatisticAccumulators {
         }
     }
 
+    final static class HarmonicMeanAccumulator implements StatisticAccumulator<BigDecimal> {
+        private final CountSum state = new CountSum();
+
+        @Override
+        public void add(final BigDecimal value, final MathContext mc) {
+            state.add(BigDecimal.ONE.divide(value, mc));
+        }
+
+        @Override
+        public void evict(final BigDecimal oldest, final MathContext mc) {
+            state.evict(BigDecimal.ONE.divide(oldest, mc));
+        }
+
+        @Override
+        public boolean isReady() {
+            return state.count() > 0;
+        }
+
+        @Override
+        public BigDecimal value(final MathContext mc) {
+            return BigDecimal.valueOf(state.count()).divide(state.sum, mc);
+        }
+    }
+
     final static class MeanAccumulator implements StatisticAccumulator<BigDecimal> {
         private final CountSum state = new CountSum();
 
