@@ -486,6 +486,38 @@ public abstract class Gatherers4j {
         );
     }
 
+    /// Create a Stream that represents the moving harmonic mean of a `Stream<BigDecimal>` looking
+    /// back `windowSize` number of elements.
+    ///
+    /// @param windowSize The trailing number of elements to include in the harmonic mean, must be greater than 1.
+    /// @return A non-null `BigDecimalMovingStatGatherer`
+    public static BigDecimalMovingStatGatherer<@Nullable BigDecimal, BigDecimal> movingHarmonicMean(final int windowSize) {
+        return new BigDecimalMovingStatGatherer<>(
+                windowSize,
+                Function.identity(),
+                StatisticAccumulators.HarmonicMeanAccumulator::new
+        );
+    }
+
+    /// Create a Stream that represents the moving harmonic mean of `BigDecimal` objects mapped from a `Stream<INPUT>`
+    /// via a `mappingFunction` and looking back `windowSize` number of elements.
+    ///
+    /// @param windowSize      The trailing number of elements to include in the harmonic mean, must be greater than 1.
+    /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
+    ///                        in the moving harmonic mean calculation
+    /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
+    /// @return A non-null `BigDecimalMovingStatGatherer`
+    public static <INPUT extends @Nullable Object> BigDecimalMovingStatGatherer<INPUT, BigDecimal> movingHarmonicMeanBy(
+            final int windowSize,
+            final Function<INPUT, BigDecimal> mappingFunction
+    ) {
+        return new BigDecimalMovingStatGatherer<>(
+                windowSize,
+                mappingFunction,
+                StatisticAccumulators.HarmonicMeanAccumulator::new
+        );
+    }
+
     /// Create a stream that represents the moving maximum value over the previous `windowSize` elements.
     ///
     /// @param <INPUT> Type of elements in the input and output stream; must implement `Comparable`
@@ -757,6 +789,32 @@ public abstract class Gatherers4j {
         return new BigDecimalRunningStatGatherer<>(
                 mappingFunction,
                 StatisticAccumulators.GeometricMeanAccumulator::new
+        );
+    }
+
+    /// Create a Stream that is the running harmonic mean of `Stream<BigDecimal>`
+    ///
+    /// @return BigDecimalRunningStatGatherer
+    public static BigDecimalRunningStatGatherer<@Nullable BigDecimal, BigDecimal> runningHarmonicMean() {
+        return new BigDecimalRunningStatGatherer<>(
+                Function.identity(),
+                StatisticAccumulators.HarmonicMeanAccumulator::new
+        );
+    }
+
+    /// Create a Stream that is the running harmonic mean of `BigDecimal` objects as mapped by
+    /// the given function. This is useful when paired with the `withOriginal` function.
+    ///
+    /// @param mapingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
+    ///                        in the running harmonic mean calculation
+    /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mapingFunction`
+    /// @return A non-null `BigDecimalRunningStatGatherer`
+    public static <INPUT extends @Nullable Object> BigDecimalRunningStatGatherer<INPUT, BigDecimal> runningHarmonicMeanBy(
+            final Function<INPUT, BigDecimal> mapingFunction
+    ) {
+        return new BigDecimalRunningStatGatherer<>(
+                mapingFunction,
+                StatisticAccumulators.HarmonicMeanAccumulator::new
         );
     }
 
