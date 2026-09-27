@@ -28,7 +28,7 @@ A `0` anywhere in the stream is undefined for a harmonic mean and will throw an 
 | `withMathContext(MathContext mathContext)` | Replace the `MathContext` used for all mathematical operations performed by this gatherer. [See example.](#specifying-a-new-mathcontext)                                                                                                                                                                             |
 | `withOriginal()`                           | Include the original input value from the stream in addition to the calculated value in a [`WithOriginal`](https://github.com/tginsberg/gatherers4j/blob/main/src/main/java/com/ginsberg/gatherers4j/dto/WithOriginal.java) record. [See example.](#emitting-a-record-containing-the-original-and-calculated-values) |
 
-Note: `treatNullAsZero()` is also a valid method on this gatherer, but it only makes sense in a very narrow set of circumstances.
+Note: `treatNullAsZero()` is also a valid method on this gatherer, but since `0` is undefined for a harmonic mean, it will cause an `ArithmeticException` as soon as a `null` value is encountered.
 
 ### Examples
 

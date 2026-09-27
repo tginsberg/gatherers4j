@@ -192,6 +192,30 @@ class StatisticAccumulators {
         }
     }
 
+    final static class RootMeanSquareAccumulator implements StatisticAccumulator<BigDecimal> {
+        private final CountSum state = new CountSum();
+
+        @Override
+        public void add(final BigDecimal value, final MathContext mc) {
+            state.add(value.pow(2).round(mc));
+        }
+
+        @Override
+        public void evict(final BigDecimal oldest, final MathContext mc) {
+            state.evict(oldest.pow(2).round(mc));
+        }
+
+        @Override
+        public boolean isReady() {
+            return state.count() > 0;
+        }
+
+        @Override
+        public BigDecimal value(final MathContext mc) {
+            return state.mean(mc).sqrt(mc);
+        }
+    }
+
     final static class StdDevAccumulator implements StatisticAccumulator<BigDecimal> {
         private final Moments state = new Moments();
         private final Dataset mode;
