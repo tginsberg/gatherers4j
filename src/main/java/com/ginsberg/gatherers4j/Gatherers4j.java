@@ -736,6 +736,46 @@ public abstract class Gatherers4j {
         );
     }
 
+    /// Create a Stream that represents the moving variance of a `Stream<BigDecimal>` looking
+    /// back `windowSize` number of elements.
+    ///
+    /// @param dataset    Whether to treat the elements in the window as a `Population` or a `Sample` of a larger population
+    /// @param windowSize The trailing number of elements to calculate the variance over, must be greater than 1.
+    /// @return A non-null `BigDecimalMovingStatGatherer`
+    public static BigDecimalMovingStatGatherer<@Nullable BigDecimal, BigDecimal> movingVariance(
+            final Dataset dataset,
+            final int windowSize
+    ) {
+        mustNotBeNull(dataset, "Dataset must not be null");
+        return new BigDecimalMovingStatGatherer<>(
+                windowSize,
+                Function.identity(),
+                () -> new StatisticAccumulators.VarianceAccumulator(dataset)
+        );
+    }
+
+    /// Create a Stream that represents the moving variance of `BigDecimal` objects mapped from a
+    /// `Stream<INPUT>` via a `mappingFunction` and looking back `windowSize` number of elements.
+    ///
+    /// @param dataset         Whether to treat the elements in the window as a `Population` or a `Sample` of a larger population
+    /// @param windowSize      The trailing number of elements to calculate the variance over, must be greater than 1.
+    /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
+    ///                        in the moving variance calculation
+    /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
+    /// @return A non-null `BigDecimalMovingStatGatherer`
+    public static <INPUT extends @Nullable Object> BigDecimalMovingStatGatherer<INPUT, BigDecimal> movingVarianceBy(
+            final Dataset dataset,
+            final int windowSize,
+            final Function<INPUT, BigDecimal> mappingFunction
+    ) {
+        mustNotBeNull(dataset, "Dataset must not be null");
+        return new BigDecimalMovingStatGatherer<>(
+                windowSize,
+                mappingFunction,
+                () -> new StatisticAccumulators.VarianceAccumulator(dataset)
+        );
+    }
+
     /// Emit elements in the input stream ordered by frequency in the direction specified. Elements are emitted wrapped
     /// in `WithCount<INPUT>` objects that carry the element and the number of occurrences.
     ///
@@ -1016,6 +1056,39 @@ public abstract class Gatherers4j {
         return new BigDecimalRunningStatGatherer<>(
                 mappingFunction,
                 StatisticAccumulators.SumAccumulator::new
+        );
+    }
+
+    /// Create a `Stream<BigDecimal>` that represents the running variance of a `Stream<BigDecimal>`.
+    ///
+    /// @param dataset Whether to treat the elements seen so far as a `Population` or a `Sample` of a larger population
+    /// @return A non-null `BigDecimalRunningStatGatherer`
+    public static BigDecimalRunningStatGatherer<@Nullable BigDecimal, BigDecimal> runningVariance(
+            final Dataset dataset
+    ) {
+        mustNotBeNull(dataset, "Dataset must not be null");
+        return new BigDecimalRunningStatGatherer<>(
+                Function.identity(),
+                () -> new StatisticAccumulators.VarianceAccumulator(dataset)
+        );
+    }
+
+    /// Create a `Stream<BigDecimal>` that represents the running variance of `BigDecimal` objects mapped
+    /// from a `Stream<INPUT>` via a `mappingFunction`.
+    ///
+    /// @param dataset         Whether to treat the elements seen so far as a `Population` or a `Sample` of a larger population
+    /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
+    ///                        in the variance calculation
+    /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
+    /// @return A non-null `BigDecimalRunningStatGatherer`
+    public static <INPUT extends @Nullable Object> BigDecimalRunningStatGatherer<INPUT, BigDecimal> runningVarianceBy(
+            final Dataset dataset,
+            final Function<INPUT, BigDecimal> mappingFunction
+    ) {
+        mustNotBeNull(dataset, "Dataset must not be null");
+        return new BigDecimalRunningStatGatherer<>(
+                mappingFunction,
+                () -> new StatisticAccumulators.VarianceAccumulator(dataset)
         );
     }
 
