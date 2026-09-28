@@ -271,6 +271,37 @@ class StatisticAccumulators {
         }
     }
 
+    final static class VarianceAccumulator implements StatisticAccumulator<BigDecimal> {
+        private final Moments state = new Moments();
+        private final Dataset mode;
+
+        VarianceAccumulator(final Dataset mode) {
+            this.mode = mustNotBeNull(mode, "Must specify a mode for Variance");
+        }
+
+        @Override
+        public void add(final BigDecimal value, final MathContext mc) {
+            state.add(value.round(mc), mc);
+        }
+
+        @Override
+        public void evict(final BigDecimal oldest, final MathContext mc) {
+            state.evict(oldest.round(mc), mc);
+        }
+
+        @Override
+        public boolean isReady() {
+            return state.count() > 0;
+        }
+
+        @Override
+        public BigDecimal value(final MathContext mc) {
+            return mode == Dataset.Population
+                    ? state.populationVariance(mc)
+                    : state.sampleVariance(mc);
+        }
+    }
+
     private final static class CountSum {
         private long count = 0;
         private BigDecimal sum = BigDecimal.ZERO;

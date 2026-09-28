@@ -16,6 +16,7 @@ no_list: true
 + Implement `sampleFixedSize(int, RandomGenerator)` and `samplePercentage(double, RandomGenerator)` so callers can specify the source of randomness.
 + `samplePercentage()` now rejects `NaN`, which was previously accepted and silently emitted nothing.
 + Implement `movingHarmoincMean()`, `movingHarmonicMeanBy()`, `runningHarmonicMean()`, and `runningHarmonicMeanBy()`.
++ Implement `movingVariance()`, `movingVarianceBy()`, `runningVariance()`, and `runningVarianceBy()`
 
 ## v0.14.0
 [Released 2026-05-17](https://github.com/tginsberg/gatherers4j/releases/tag/v0.14.0)

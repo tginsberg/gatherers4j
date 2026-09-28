@@ -200,6 +200,20 @@ class SampleGathererTest {
             );
         }
 
+        @Test
+        void usesDefaultRandomGeneratorWhenNotSpecified() {
+            // Arrange
+            final Stream<String> input = Stream.of("A", "B", "C");
+
+            // Act
+            final List<String> output = input
+                    .gather(Gatherers4j.samplePercentage(1.0))
+                    .toList();
+
+            // Assert
+            assertThat(output).containsExactly("A", "B", "C");
+        }
+
         @SuppressWarnings("DataFlowIssue")
         @Test
         void withNullRandomGenerator() {
