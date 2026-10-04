@@ -16,7 +16,12 @@
 
 package com.ginsberg.gatherers4j.enums;
 
+/// Whether the elements seen by a statistical gatherer represent an entire population or a sample of a larger one.
 public enum Dataset {
+    /// The elements are the entire dataset. Variance is divided by *n*.
     Population,
+
+    /// The elements are a sample of a larger population. Variance is divided by *n - 1*, so it is undefined for a
+    /// single element. Gatherers using this mode emit nothing until at least two elements have been seen.
     Sample
 }

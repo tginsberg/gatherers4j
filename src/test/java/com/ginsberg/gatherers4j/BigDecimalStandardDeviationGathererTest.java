@@ -362,7 +362,6 @@ class BigDecimalStandardDeviationGathererTest {
                 assertThat(output)
                         .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                         .containsExactly(
-                                BigDecimal.ZERO,
                                 new BigDecimal("0.7071067811865475")
                         );
             }
@@ -386,7 +385,6 @@ class BigDecimalStandardDeviationGathererTest {
                 assertThat(output)
                         .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                         .containsExactly(
-                                BigDecimal.ZERO,
                                 new BigDecimal("0.707"),
                                 new BigDecimal("5.66"),
                                 new BigDecimal("7.07")
@@ -413,7 +411,6 @@ class BigDecimalStandardDeviationGathererTest {
                 assertThat(output)
                         .usingRecursiveFieldByFieldElementComparator(BIG_DECIMAL_RECURSIVE_COMPARISON)
                         .containsExactly(
-                                BigDecimal.ZERO,
                                 new BigDecimal("0.7071067811865475"),
                                 new BigDecimal("4.932882862316247"),
                                 new BigDecimal("9.018499505645788"),
@@ -441,7 +438,6 @@ class BigDecimalStandardDeviationGathererTest {
                 assertThat(output)
                         .usingRecursiveFieldByFieldElementComparator(BIG_DECIMAL_RECURSIVE_COMPARISON)
                         .containsExactly(
-                                BigDecimal.ZERO,
                                 new BigDecimal("0.7071067811865475"),
                                 new BigDecimal("4.932882862316247"),
                                 new BigDecimal("9.018499505645788"),
@@ -463,7 +459,6 @@ class BigDecimalStandardDeviationGathererTest {
                 assertThat(output)
                         .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                         .containsExactly(
-                                BigDecimal.ZERO,
                                 new BigDecimal("6.363961030678928"),
                                 new BigDecimal("6.363961030678928"),
                                 new BigDecimal("6.363961030678928")
@@ -484,7 +479,6 @@ class BigDecimalStandardDeviationGathererTest {
                 assertThat(output)
                         .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                         .containsExactly(
-                                BigDecimal.ZERO,
                                 new BigDecimal("0.7071067811865475"),
                                 new BigDecimal("0.7071067811865475"),
                                 new BigDecimal("0.7071067811865475")
@@ -512,7 +506,6 @@ class BigDecimalStandardDeviationGathererTest {
                         .map(WithOriginal::calculated)
                         .usingRecursiveFieldByFieldElementComparator(BIG_DECIMAL_RECURSIVE_COMPARISON)
                         .containsExactly(
-                                BigDecimal.ZERO,
                                 new BigDecimal("0.7071067811865475"),
                                 new BigDecimal("4.932882862316247"),
                                 new BigDecimal("9.018499505645788"),
@@ -523,7 +516,6 @@ class BigDecimalStandardDeviationGathererTest {
                         .map(WithOriginal::original)
                         .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                         .containsExactly(
-                                new BigDecimal("1.0"),
                                 new BigDecimal("2.0"),
                                 new BigDecimal("10.0"),
                                 new BigDecimal("20.0"),
@@ -552,7 +544,6 @@ class BigDecimalStandardDeviationGathererTest {
                         .extracting(WithOriginal::calculated)
                         .usingRecursiveFieldByFieldElementComparator(BIG_DECIMAL_RECURSIVE_COMPARISON)
                         .containsExactly(
-                                BigDecimal.ZERO,
                                 new BigDecimal("0.7071067811865475"),
                                 new BigDecimal("4.932882862316247"),
                                 new BigDecimal("9.018499505645788"),
@@ -561,7 +552,7 @@ class BigDecimalStandardDeviationGathererTest {
 
                 assertThat(output)
                         .map(WithOriginal::original)
-                        .containsExactlyInAnyOrderElementsOf(input);
+                        .containsExactlyElementsOf(input.subList(1, input.size()));
             }
         }
     }
@@ -821,7 +812,6 @@ class BigDecimalStandardDeviationGathererTest {
                 assertThat(output)
                         .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                         .containsExactly(
-                                BigDecimal.ZERO,
                                 new BigDecimal("0.7071067811865475")
                         );
             }
@@ -844,7 +834,6 @@ class BigDecimalStandardDeviationGathererTest {
                 assertThat(output)
                         .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                         .containsExactly(
-                                BigDecimal.ZERO,
                                 new BigDecimal("0.707"),
                                 new BigDecimal("4.93")
                         );
@@ -868,7 +857,6 @@ class BigDecimalStandardDeviationGathererTest {
                 assertThat(output)
                         .usingRecursiveFieldByFieldElementComparator(BIG_DECIMAL_RECURSIVE_COMPARISON)
                         .containsExactly(
-                                BigDecimal.ZERO,
                                 new BigDecimal("0.7071067811865475"),
                                 new BigDecimal("4.932882862316247")
                         );
@@ -894,7 +882,6 @@ class BigDecimalStandardDeviationGathererTest {
                 assertThat(output)
                         .usingRecursiveFieldByFieldElementComparator(BIG_DECIMAL_RECURSIVE_COMPARISON)
                         .containsExactly(
-                                BigDecimal.ZERO,
                                 new BigDecimal("0.7071067811865475"),
                                 new BigDecimal("4.932882862316247"),
                                 new BigDecimal("8.808140174482541"),
@@ -916,7 +903,6 @@ class BigDecimalStandardDeviationGathererTest {
                 assertThat(output)
                         .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                         .containsExactly(
-                                BigDecimal.ZERO,
                                 new BigDecimal("6.363961030678928"),
                                 new BigDecimal("5.196152422706632"),
                                 new BigDecimal("5.196152422706632")
@@ -937,7 +923,6 @@ class BigDecimalStandardDeviationGathererTest {
                 assertThat(output)
                         .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                         .containsExactly(
-                                BigDecimal.ZERO,
                                 new BigDecimal("0.7071067811865475"),
                                 new BigDecimal("0.5773502691896257"),
                                 new BigDecimal("0.5773502691896257")
@@ -964,8 +949,7 @@ class BigDecimalStandardDeviationGathererTest {
                 assertThat(output)
                         .map(WithOriginal::calculated)
                         .usingRecursiveFieldByFieldElementComparator(BIG_DECIMAL_RECURSIVE_COMPARISON)
-                        .contains(
-                                BigDecimal.ZERO,
+                        .containsExactly(
                                 new BigDecimal("0.7071067811865475"),
                                 new BigDecimal("4.932882862316247"),
                                 new BigDecimal("8.808140174482541"),
@@ -976,7 +960,6 @@ class BigDecimalStandardDeviationGathererTest {
                         .map(WithOriginal::original)
                         .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                         .containsExactly(
-                                new BigDecimal("1.0"),
                                 new BigDecimal("2.0"),
                                 new BigDecimal("10.0"),
                                 new BigDecimal("20.0"),
@@ -1005,7 +988,6 @@ class BigDecimalStandardDeviationGathererTest {
                         .extracting(WithOriginal::calculated)
                         .usingRecursiveFieldByFieldElementComparator(BIG_DECIMAL_RECURSIVE_COMPARISON)
                         .containsExactly(
-                                BigDecimal.ZERO,
                                 new BigDecimal("0.7071067811865475"),
                                 new BigDecimal("4.932882862316247"),
                                 new BigDecimal("8.808140174482541"),
@@ -1014,8 +996,115 @@ class BigDecimalStandardDeviationGathererTest {
 
                 assertThat(output)
                         .map(WithOriginal::original)
-                        .containsExactlyInAnyOrderElementsOf(input);
+                        .containsExactlyElementsOf(input.subList(1, input.size()));
             }
+        }
+    }
+
+    /// Inputs whose squares need more digits than `DECIMAL64` provides, with a spread that differs only in the
+    /// last place. Rounding the squares to the `MathContext` produced negative variances, so these threw.
+    @Nested
+    class Precision {
+
+        @Test
+        void movingPopulationNearLimitOfPrecision() {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.of("99999999.99999999", "99999999.99999998", "99999999.99999999", "99999999.99999997")
+                    .map(BigDecimal::new);
+
+            // Act
+            final List<BigDecimal> output = input
+                    .gather(Gatherers4j.movingStandardDeviation(Dataset.Population, 2))
+                    .toList();
+
+            // Assert
+            assertThat(output)
+                    .usingRecursiveFieldByFieldElementComparator(BIG_DECIMAL_RECURSIVE_COMPARISON)
+                    .containsExactly(BigDecimal.ZERO, new BigDecimal("5E-9"), new BigDecimal("5E-9"), new BigDecimal("1E-8"));
+        }
+
+        @Test
+        void movingSampleNearLimitOfPrecision() {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.of("99999999.99999999", "99999999.99999998", "99999999.99999999", "99999999.99999997")
+                    .map(BigDecimal::new);
+
+            // Act
+            final List<BigDecimal> output = input
+                    .gather(Gatherers4j.movingStandardDeviation(Dataset.Sample, 2))
+                    .toList();
+
+            // Assert
+            assertThat(output).hasSize(3).allMatch(it -> it.signum() > 0);
+        }
+
+        @Test
+        void runningPopulationNearLimitOfPrecision() {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.of("1.000000000000001", "1.000000000000002", "1.000000000000003")
+                    .map(BigDecimal::new);
+
+            // Act
+            final List<BigDecimal> output = input
+                    .gather(Gatherers4j.runningStandardDeviation(Dataset.Population))
+                    .toList();
+
+            // Assert
+            assertThat(output)
+                    .usingRecursiveFieldByFieldElementComparator(BIG_DECIMAL_RECURSIVE_COMPARISON)
+                    .startsWith(BigDecimal.ZERO, new BigDecimal("5E-16"))
+                    .hasSize(3);
+        }
+
+        @Test
+        void runningNeverThrowsWithLargeOffset() {
+            // Arrange
+            final List<BigDecimal> input = Stream.of("12345678.12345678", "12345678.12345679", "12345678.12345677")
+                    .map(BigDecimal::new)
+                    .toList();
+
+            // Act
+            final List<BigDecimal> population = input.stream()
+                    .gather(Gatherers4j.runningStandardDeviation(Dataset.Population))
+                    .toList();
+            final List<BigDecimal> sample = input.stream()
+                    .gather(Gatherers4j.runningStandardDeviation(Dataset.Sample))
+                    .toList();
+
+            // Assert
+            assertThat(population).hasSize(3).allMatch(it -> it.signum() >= 0);
+            assertThat(sample).hasSize(2).allMatch(it -> it.signum() >= 0);
+        }
+    }
+
+    /// Sample standard deviation divides by n - 1, so it is undefined for a single element.
+    @Nested
+    class SingleElement {
+
+        @Test
+        void movingPopulationEmitsZero() {
+            assertThat(Stream.of(BigDecimal.TEN).gather(Gatherers4j.movingStandardDeviation(Dataset.Population, 2)).toList())
+                    .usingRecursiveFieldByFieldElementComparator(BIG_DECIMAL_RECURSIVE_COMPARISON)
+                    .containsExactly(BigDecimal.ZERO);
+        }
+
+        @Test
+        void movingSampleEmitsNothing() {
+            assertThat(Stream.of(BigDecimal.TEN).gather(Gatherers4j.movingStandardDeviation(Dataset.Sample, 2)).toList())
+                    .isEmpty();
+        }
+
+        @Test
+        void runningPopulationEmitsZero() {
+            assertThat(Stream.of(BigDecimal.TEN).gather(Gatherers4j.runningStandardDeviation(Dataset.Population)).toList())
+                    .usingRecursiveFieldByFieldElementComparator(BIG_DECIMAL_RECURSIVE_COMPARISON)
+                    .containsExactly(BigDecimal.ZERO);
+        }
+
+        @Test
+        void runningSampleEmitsNothing() {
+            assertThat(Stream.of(BigDecimal.TEN).gather(Gatherers4j.runningStandardDeviation(Dataset.Sample)).toList())
+                    .isEmpty();
         }
     }
 }
