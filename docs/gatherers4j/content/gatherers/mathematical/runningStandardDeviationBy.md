@@ -15,7 +15,7 @@ This implementation is suitable for mapping an arbitrary `Stream<INPUT>` to `Big
 By default, nulls are ignored and play no part in calculations, see `treatNullAs()` and `treatNullAsZero()` below for ways to change this behavior. The default `MathContext`
 for all calculations is {{< jdklink linkName="MathContext.DECIMAL64" package="java.base/java/math/MathContext.html#DECIMAL64" >}}, but this can be overridden (see `withMathContext()`, below).
 
-Use `Dataset.Population` when the elements are the entire dataset (the variance is divided by *n*), and `Dataset.Sample` when they are a sample of a larger population (the variance is divided by *n - 1*). The sample standard deviation of a single value is `0`.
+Use `Dataset.Population` when the elements are the entire dataset (the variance is divided by *n*), and `Dataset.Sample` when they are a sample of a larger population (the variance is divided by *n - 1*). The sample standard deviation of a single value is undefined, so when using `Dataset.Sample` nothing is emitted until at least two values have been seen.
 
 
 **Signatures**
@@ -78,7 +78,6 @@ Stream
     .toList();
 
 // [ 
-//   BigDecimal("0.0"), 
 //   BigDecimal("0.7071067811865475"),
 //   BigDecimal("4.932882862316247"), 
 //   BigDecimal("8.808140174482542"),

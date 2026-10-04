@@ -12,7 +12,7 @@ This implementation is suitable for `Stream<BigDecimal>`, for a version that tak
 By default, nulls are ignored and play no part in calculations, see `treatNullAs()` and `treatNullAsZero()` below for ways to change this behavior. The default `MathContext`
 for all calculations is {{< jdklink linkName="MathContext.DECIMAL64" package="java.base/java/math/MathContext.html#DECIMAL64" >}}, but this can be overridden (see `withMathContext()`, below).
 
-Use `Dataset.Population` when the elements are the entire dataset (the variance is divided by *n*), and `Dataset.Sample` when they are a sample of a larger population (the variance is divided by *n - 1*). The sample variance of a single value is `0`.
+Use `Dataset.Population` when the elements are the entire dataset (the variance is divided by *n*), and `Dataset.Sample` when they are a sample of a larger population (the variance is divided by *n - 1*). The sample variance of a single value is undefined, so when using `Dataset.Sample` nothing is emitted until at least two values have been seen.
 
 See also [`movingStandardDeviation()`](/gatherers4j/gatherers/mathematical/movingstandarddeviation/), which is the square root of this value.
 
@@ -62,7 +62,6 @@ Stream
     .toList();
 
 // [
-//   BigDecimal("0")
 //   BigDecimal("0.50")
 //   BigDecimal("24.33333333333333")
 //   BigDecimal("21.33333333333333")

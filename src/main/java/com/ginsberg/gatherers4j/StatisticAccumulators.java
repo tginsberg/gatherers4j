@@ -49,7 +49,7 @@ class StatisticAccumulators {
                 first = false;
                 ema = value;
             } else {
-                ema = value.multiply(alpha).add(ema.multiply(oneMinusAlpha));
+                ema = value.multiply(alpha).add(ema.multiply(oneMinusAlpha)).round(mc);
             }
         }
 
@@ -226,17 +226,17 @@ class StatisticAccumulators {
 
         @Override
         public void add(final BigDecimal value, final MathContext mc) {
-            state.add(value.round(mc), mc);
+            state.add(value.round(mc));
         }
 
         @Override
         public void evict(final BigDecimal oldest, final MathContext mc) {
-            state.evict(oldest.round(mc), mc);
+            state.evict(oldest.round(mc));
         }
 
         @Override
         public boolean isReady() {
-            return state.count() > 0;
+            return state.count() > (mode == Dataset.Sample ? 1 : 0);
         }
 
         @Override
@@ -281,17 +281,17 @@ class StatisticAccumulators {
 
         @Override
         public void add(final BigDecimal value, final MathContext mc) {
-            state.add(value.round(mc), mc);
+            state.add(value.round(mc));
         }
 
         @Override
         public void evict(final BigDecimal oldest, final MathContext mc) {
-            state.evict(oldest.round(mc), mc);
+            state.evict(oldest.round(mc));
         }
 
         @Override
         public boolean isReady() {
-            return state.count() > 0;
+            return state.count() > (mode == Dataset.Sample ? 1 : 0);
         }
 
         @Override
@@ -333,14 +333,14 @@ class StatisticAccumulators {
         private final CountSum countSum = new CountSum();
         private BigDecimal sumOfSquares = BigDecimal.ZERO;
 
-        void add(final BigDecimal roundedValue, final MathContext mc) {
+        void add(final BigDecimal roundedValue) {
             countSum.add(roundedValue);
-            sumOfSquares = sumOfSquares.add(roundedValue.multiply(roundedValue, mc));
+            sumOfSquares = sumOfSquares.add(roundedValue.multiply(roundedValue));
         }
 
-        void evict(final BigDecimal roundedValue, final MathContext mc) {
+        void evict(final BigDecimal roundedValue) {
             countSum.evict(roundedValue);
-            sumOfSquares = sumOfSquares.subtract(roundedValue.multiply(roundedValue, mc));
+            sumOfSquares = sumOfSquares.subtract(roundedValue.multiply(roundedValue));
         }
 
         long count() {
@@ -358,9 +358,6 @@ class StatisticAccumulators {
         }
 
         BigDecimal sampleVariance(final MathContext mc) {
-            if (count() <= 1) {
-                return BigDecimal.ZERO;
-            }
             final BigDecimal n = BigDecimal.valueOf(count());
             final BigDecimal numerator = sumOfSquares.multiply(n).subtract(sum().multiply(sum()));
             return numerator.divide(n.multiply(n.subtract(BigDecimal.ONE)), mc);
@@ -371,7 +368,7 @@ class StatisticAccumulators {
         }
 
         BigDecimal sampleStandardDeviation(final MathContext mc) {
-            return count() <= 1 ? BigDecimal.ZERO : sampleVariance(mc).sqrt(mc);
+            return sampleVariance(mc).sqrt(mc);
         }
     }
 
