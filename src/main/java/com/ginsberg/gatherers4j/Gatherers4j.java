@@ -1323,7 +1323,7 @@ public abstract class Gatherers4j {
     }
 
     /// Create windows over the elements of the input stream that are `windowSize` in length, sliding over `stepping` number of elements
-    /// and optionally including partial windows at the end of ths stream.
+    /// and optionally including partial windows at the end of the stream.
     ///
     /// @param <INPUT> Type of elements in the input and output stream
     /// @param windowSize Size of the window, must be greater than 0

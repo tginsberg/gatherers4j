@@ -49,7 +49,7 @@ title = 'Gatherers4j'
     icon = "fab fa-github"
     desc = "Development takes place here!"
   [params.ui]
-    navbar_logo = false
+    navbar_logo = true
     showLightDarkModeMenu = true
     sidebar_menu_foldable = true
 
