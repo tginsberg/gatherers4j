@@ -1,0 +1,8 @@
+// Brand colors: slate #495057 and green #2F9E44 (see static/brand).
+// The brand green is 3.4:1 on white, so it is not used for text. Contrast against white:
+// primary 6.1:1, secondary 8.2:1.
+$primary: #237032;
+$secondary: #495057;
+
+// Dark mode links use the lighter green from the dark wordmark: 7.7:1 on #212529.
+$link-color-dark: #51cf66;
