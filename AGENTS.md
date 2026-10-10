@@ -150,6 +150,8 @@ Numeric rules. The regression tests in `BigDecimalVarianceGathererTest`, `BigDec
   `1.000000000000001, 1.000000000000002, 1.000000000000003`.
 - **Product, geometric mean and EMA** round at every step, because exact accumulation would add digits with every
   element.
+- **Output:** `value()` never returns more digits than the `MathContext` allows. Sum keeps its total exact and rounds
+  it only on the way out.
 - **Nulls:** a null that is still null after mapping and null replacement is skipped. It emits nothing and doesn't
   move the window.
 - **`Dataset.Sample`:** statistics emit nothing until they have seen two values.

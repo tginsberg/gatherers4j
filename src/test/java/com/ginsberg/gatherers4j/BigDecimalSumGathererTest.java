@@ -24,6 +24,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -61,6 +62,26 @@ class BigDecimalSumGathererTest {
         void mathContextCannotBeNull() {
             assertThatIllegalArgumentException()
                     .isThrownBy(() -> Gatherers4j.movingSum(2).withMathContext(null)
+                    );
+        }
+
+        @Test
+        void mathContextRoundsTotal() {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.of("1E+20", "1E-20", "1E-20").map(BigDecimal::new);
+
+            // Act
+            final List<BigDecimal> output = input
+                    .gather(Gatherers4j.movingSum(2).withMathContext(MathContext.DECIMAL32))
+                    .toList();
+
+            // Assert
+            assertThat(output)
+                    .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
+                    .containsExactly(
+                            new BigDecimal("1E+20"),
+                            new BigDecimal("1E+20"),
+                            new BigDecimal("2E-20")
                     );
         }
 
@@ -226,6 +247,26 @@ class BigDecimalSumGathererTest {
             assertThatIllegalArgumentException().isThrownBy(() ->
                     Gatherers4j.runningSum().withMathContext(null)
             );
+        }
+
+        @Test
+        void mathContextRoundsTotal() {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.of("1E+20", "1E-20", "-1E+20").map(BigDecimal::new);
+
+            // Act
+            final List<BigDecimal> output = input
+                    .gather(Gatherers4j.runningSum().withMathContext(MathContext.DECIMAL32))
+                    .toList();
+
+            // Assert
+            assertThat(output)
+                    .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
+                    .containsExactly(
+                            new BigDecimal("1E+20"),
+                            new BigDecimal("1E+20"),
+                            new BigDecimal("1E-20")
+                    );
         }
 
         @Test

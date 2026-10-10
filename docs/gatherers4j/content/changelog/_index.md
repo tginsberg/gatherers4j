@@ -8,6 +8,9 @@ no_list: true
 ## v0.15.0
 [Released 2026-??-??](https://github.com/tginsberg/gatherers4j/releases/tag/v0.15.0)
 + Internal refactoring: the BigDecimal-based moving and running gatherers (sum, product, simple average, exponential average, median, geometric mean, standard deviation) now share `BigDecimalMovingStatGatherer` and `BigDecimalRunningStatGatherer`, replacing the individual per-gatherer classes.
++ Behavior change: the BigDecimal gatherers now round each input to the `MathContext` as it arrives, and sums, means, and standard deviations then accumulate exactly instead of rounding at every step. Results can differ from v0.14.0 in the final digits. Other numeric changes:
+  + `exponentialMovingAverageWithAlpha()`, `exponentialMovingAverageWithPeriod()`, and their `By` variants now round at every step. Previously they never rounded, so results gained digits with every element and long streams became progressively slower.
+  + Sample standard deviation (`Dataset.Sample`) now emits nothing for the first element, where `runningSampleStandardDeviation()` emitted `0`.
 + `treatNullAsOne()` and `withMathContext()` are now available on all of the BigDecimal gatherers.
 + Rename `simpleMovingAverage()`, `simpleMovingAverageBy()`, `simpleRunningAverage()`, and `simpleRunningAverageBy()` to `movingMean()`, `movingMeanBy()`, `runningMean()`, and `runningMeanBy()`. 
 + Replace `runningPopulationStandardDeviation()`, `runningPopulationStandardDeviationBy()`, `runningSampleStandardDeviation()`, and `runningSampleStandardDeviationBy()` with `runningStandardDeviation(Dataset)` and `runningStandardDeviationBy(Dataset, Function)`. 
@@ -15,7 +18,8 @@ no_list: true
 + Fix bug in `sampleFixedSize()` where elements were not sampled with equal probability. The first `sampleSize` elements were chosen too rarely and later elements too often. 
 + Implement `sampleFixedSize(int, RandomGenerator)` and `samplePercentage(double, RandomGenerator)` so callers can specify the source of randomness.
 + `samplePercentage()` now rejects `NaN`, which was previously accepted and silently emitted nothing.
-+ Implement `movingHarmoincMean()`, `movingHarmonicMeanBy()`, `runningHarmonicMean()`, and `runningHarmonicMeanBy()`.
++ Implement `movingHarmonicMean()`, `movingHarmonicMeanBy()`, `runningHarmonicMean()`, and `runningHarmonicMeanBy()`.
++ Implement `movingRootMeanSquare()`, `movingRootMeanSquareBy()`, `runningRootMeanSquare()`, and `runningRootMeanSquareBy()`.
 + Implement `movingVariance()`, `movingVarianceBy()`, `runningVariance()`, and `runningVarianceBy()`
 
 ## v0.14.0

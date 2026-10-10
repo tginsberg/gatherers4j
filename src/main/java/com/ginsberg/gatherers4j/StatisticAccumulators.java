@@ -267,7 +267,7 @@ class StatisticAccumulators {
 
         @Override
         public BigDecimal value(final MathContext mc) {
-            return state.sum();
+            return state.sum().round(mc);
         }
     }
 
