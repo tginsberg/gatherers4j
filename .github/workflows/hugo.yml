@@ -30,7 +30,7 @@ jobs:
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
         with:
-          hugo-version: 0.143.1
+          hugo-version: 0.166.0
           extended: true
 
       - name: Setup Pages
@@ -47,6 +47,10 @@ jobs:
       - name: Build
         run: |
           npm ci
+          # Hugo runs `sass --embedded`; npm may link the pure-JS `sass` package over sass-embedded's bin
+          chmod +x node_modules/sass-embedded/dist/bin/sass.js
+          ln -sf ../sass-embedded/dist/bin/sass.js node_modules/.bin/sass
+          export PATH="$PWD/node_modules/.bin:$PATH"
           . ./set_project_version.sh
           hugo --gc --minify --logLevel debug --baseURL "${{ steps.pages.outputs.base_url }}/"
 
