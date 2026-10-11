@@ -16,11 +16,13 @@
 
 package com.ginsberg.gatherers4j;
 
+import com.ginsberg.gatherers4j.dto.StatisticalSummary;
 import com.ginsberg.gatherers4j.enums.Dataset;
 import com.ginsberg.gatherers4j.util.MathUtils;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -216,6 +218,52 @@ class StatisticAccumulators {
         }
     }
 
+    final static class StatisticalSummaryAccumulator implements StatisticAccumulator<StatisticalSummary> {
+        private final Moments moments = new Moments();
+        private final Extremes extremes;
+
+        StatisticalSummaryAccumulator(final boolean windowed) {
+            this.extremes = new Extremes(windowed);
+        }
+
+        @Override
+        public void add(final BigDecimal value, final MathContext mc) {
+            final BigDecimal rounded = value.round(mc);
+            moments.add(rounded);
+            extremes.add(rounded);
+        }
+
+        @Override
+        public void evict(final BigDecimal oldest, final MathContext mc) {
+            final BigDecimal rounded = oldest.round(mc);
+            moments.evict(rounded);
+            extremes.evict(rounded);
+        }
+
+        @Override
+        public boolean isReady() {
+            return moments.count() > 0;
+        }
+
+        @Override
+        public StatisticalSummary value(final MathContext mc) {
+            final BigDecimal populationVariance = moments.populationVariance(mc);
+            final BigDecimal sampleVariance = moments.count() > 1 ? moments.sampleVariance(mc) : null;
+
+            return new StatisticalSummary(
+                    moments.count(),
+                    moments.sum().round(mc),
+                    moments.mean(mc),
+                    extremes.min(),
+                    extremes.max(),
+                    populationVariance,
+                    populationVariance.sqrt(mc),
+                    sampleVariance,
+                    sampleVariance == null ? null : sampleVariance.sqrt(mc)
+            );
+        }
+    }
+
     final static class StdDevAccumulator implements StatisticAccumulator<BigDecimal> {
         private final Moments state = new Moments();
         private final Dataset mode;
@@ -329,6 +377,48 @@ class StatisticAccumulators {
         }
     }
 
+    private final static class Extremes {
+        private final ArrayDeque<BigDecimal> maximums = new ArrayDeque<>();
+        private final ArrayDeque<BigDecimal> minimums = new ArrayDeque<>();
+        private final boolean windowed;
+
+        Extremes(final boolean windowed) {
+            this.windowed = windowed;
+        }
+
+        void add(final BigDecimal roundedValue) {
+            while (!minimums.isEmpty() && minimums.getLast().compareTo(roundedValue) > 0) {
+                minimums.removeLast();
+            }
+            if (windowed || minimums.isEmpty()) {
+                minimums.addLast(roundedValue);
+            }
+            while (!maximums.isEmpty() && maximums.getLast().compareTo(roundedValue) < 0) {
+                maximums.removeLast();
+            }
+            if (windowed || maximums.isEmpty()) {
+                maximums.addLast(roundedValue);
+            }
+        }
+
+        void evict(final BigDecimal roundedValue) {
+            if (minimums.getFirst().compareTo(roundedValue) == 0) {
+                minimums.removeFirst();
+            }
+            if (maximums.getFirst().compareTo(roundedValue) == 0) {
+                maximums.removeFirst();
+            }
+        }
+
+        BigDecimal max() {
+            return maximums.getFirst();
+        }
+
+        BigDecimal min() {
+            return minimums.getFirst();
+        }
+    }
+
     private final static class Moments {
         private final CountSum countSum = new CountSum();
         private BigDecimal sumOfSquares = BigDecimal.ZERO;
@@ -345,6 +435,10 @@ class StatisticAccumulators {
 
         long count() {
             return countSum.count();
+        }
+
+        BigDecimal mean(final MathContext mc) {
+            return countSum.mean(mc);
         }
 
         BigDecimal sum() {
