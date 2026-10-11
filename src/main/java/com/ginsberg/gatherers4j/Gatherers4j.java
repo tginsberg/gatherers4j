@@ -885,6 +885,97 @@ public abstract class Gatherers4j {
         );
     }
 
+    /// Create a Stream that represents the linearly weighted moving mean of a `Stream<BigDecimal>` looking
+    /// back `windowSize` number of elements. The oldest element in the window has weight 1, and each element after
+    /// it has a weight one higher, so the newest element has the highest weight, `windowSize`. This is the same as
+    /// calling [#movingWeightedMean(List)] with the weights 1 through `windowSize`. While the window is not yet full,
+    /// the newest weights are used.
+    ///
+    /// @param windowSize The number of elements to average, must be greater than 1.
+    /// @return A non-null `BigDecimalMovingStatGatherer`
+    public static BigDecimalMovingStatGatherer<@Nullable BigDecimal, BigDecimal> movingWeightedMean(final int windowSize) {
+        return new BigDecimalMovingStatGatherer<>(
+                windowSize,
+                Function.identity(),
+                () -> new StatisticAccumulators.WeightedMeanAccumulator(windowSize)
+        );
+    }
+
+    /// Create a Stream that represents the weighted moving mean of a `Stream<BigDecimal>` using the given `weights`.
+    /// The window size is the number of weights. The result is the sum of each element multiplied by its weight,
+    /// divided by the sum of the weights, so the weights do not need to add up to 1.
+    ///
+    /// Weights are ordered from oldest to newest: the first weight applies to the oldest element in the window and
+    /// the last weight applies to the newest. While the window is not yet full, the newest weights are used.
+    ///
+    /// Weights of zero are allowed, but if the newest weights used for a partial window sum to zero, the mean is
+    /// undefined and nothing is emitted for that element. For example, weights `[1, 1, 0]` emit nothing for the
+    /// first element. A list whose weights all sum to zero is rejected.
+    ///
+    /// @param weights One weight per element in the window, oldest to newest. Must contain at least 2 non-null,
+    ///                non-negative values that do not sum to zero.
+    /// @return A non-null `BigDecimalMovingStatGatherer`
+    public static BigDecimalMovingStatGatherer<@Nullable BigDecimal, BigDecimal> movingWeightedMean(final List<BigDecimal> weights) {
+        final List<BigDecimal> validWeights = StatisticAccumulators.CustomWeightedMeanAccumulator.validatedWeights(weights);
+        return new BigDecimalMovingStatGatherer<>(
+                validWeights.size(),
+                Function.identity(),
+                () -> new StatisticAccumulators.CustomWeightedMeanAccumulator(validWeights)
+        );
+    }
+
+    /// Create a Stream that represents the linearly weighted moving mean of `BigDecimal` objects mapped from a
+    /// `Stream<INPUT>` via a `mappingFunction` and looking back `windowSize` number of elements. The oldest element
+    /// in the window has weight 1, and each element after it has a weight one higher, so the newest element has the
+    /// highest weight, `windowSize`. This is the same as calling [#movingWeightedMeanBy(List, Function)] with the
+    /// weights 1 through `windowSize`. While the window is not yet full, the newest weights are used.
+    ///
+    /// @param windowSize      The number of elements to average, must be greater than 1.
+    /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
+    ///                        in the weighted moving mean calculation
+    /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
+    /// @return A non-null `BigDecimalMovingStatGatherer`
+    public static <INPUT extends @Nullable Object> BigDecimalMovingStatGatherer<INPUT, BigDecimal> movingWeightedMeanBy(
+            final int windowSize,
+            final Function<INPUT, BigDecimal> mappingFunction
+    ) {
+        return new BigDecimalMovingStatGatherer<>(
+                windowSize,
+                mappingFunction,
+                () -> new StatisticAccumulators.WeightedMeanAccumulator(windowSize)
+        );
+    }
+
+    /// Create a Stream that represents the weighted moving mean of `BigDecimal` objects mapped from a
+    /// `Stream<INPUT>` via a `mappingFunction`, using the given `weights`. The window size is the number of weights.
+    /// The result is the sum of each element multiplied by its weight, divided by the sum of the weights, so the
+    /// weights do not need to add up to 1.
+    ///
+    /// Weights are ordered from oldest to newest: the first weight applies to the oldest element in the window and
+    /// the last weight applies to the newest. While the window is not yet full, the newest weights are used.
+    ///
+    /// Weights of zero are allowed, but if the newest weights used for a partial window sum to zero, the mean is
+    /// undefined and nothing is emitted for that element. For example, weights `[1, 1, 0]` emit nothing for the
+    /// first element. A list whose weights all sum to zero is rejected.
+    ///
+    /// @param weights         One weight per element in the window, oldest to newest. Must contain at least 2
+    ///                        non-null, non-negative values that do not sum to zero.
+    /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
+    ///                        in the weighted moving mean calculation
+    /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
+    /// @return A non-null `BigDecimalMovingStatGatherer`
+    public static <INPUT extends @Nullable Object> BigDecimalMovingStatGatherer<INPUT, BigDecimal> movingWeightedMeanBy(
+            final List<BigDecimal> weights,
+            final Function<INPUT, BigDecimal> mappingFunction
+    ) {
+        final List<BigDecimal> validWeights = StatisticAccumulators.CustomWeightedMeanAccumulator.validatedWeights(weights);
+        return new BigDecimalMovingStatGatherer<>(
+                validWeights.size(),
+                mappingFunction,
+                () -> new StatisticAccumulators.CustomWeightedMeanAccumulator(validWeights)
+        );
+    }
+
     /// Emit elements in the input stream ordered by frequency in the direction specified. Elements are emitted wrapped
     /// in `WithCount<INPUT>` objects that carry the element and the number of occurrences.
     ///
