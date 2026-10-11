@@ -52,8 +52,8 @@ Stream
 
 // [
 //   BigDecimal("1.0"),
-//   BigDecimal("1.90"),
-//   BigDecimal("8.40")
+//   BigDecimal("1.9"),
+//   BigDecimal("8.4")
 // ]
 ```
 
@@ -73,7 +73,7 @@ Stream
 
 // [
 //   WithOriginal[original=NamedValue[name=first, value=1.0], calculated=1.0],
-//   WithOriginal[original=NamedValue[name=second, value=2.0], calculated=1.90],
-//   WithOriginal[original=NamedValue[name=third, value=10.0], calculated=8.40]
+//   WithOriginal[original=NamedValue[name=second, value=2.0], calculated=1.9],
+//   WithOriginal[original=NamedValue[name=third, value=10.0], calculated=8.4]
 // ]
 ```

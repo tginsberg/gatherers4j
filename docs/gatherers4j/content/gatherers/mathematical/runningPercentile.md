@@ -44,10 +44,10 @@ Stream
 
 // [
 //   BigDecimal("1.0")
-//   BigDecimal("1.90")
-//   BigDecimal("8.40")
-//   BigDecimal("7.60")
-//   BigDecimal("8.00")
+//   BigDecimal("1.9")
+//   BigDecimal("8.4")
+//   BigDecimal("7.6")
+//   BigDecimal("8.0")
 // ]
 ```
 
@@ -61,8 +61,8 @@ Stream
 
 // [
 //   BigDecimal("10.0")
-//   BigDecimal("9.20")
-//   BigDecimal("8.40")
+//   BigDecimal("9.2")
+//   BigDecimal("8.4")
 // ]
 ```
 
@@ -76,9 +76,9 @@ Stream
 
 // [
 //   BigDecimal("0")
-//   BigDecimal("0.0")
-//   BigDecimal("8.00")
-//   BigDecimal("7.60")
+//   BigDecimal("0")
+//   BigDecimal("8.0")
+//   BigDecimal("7.6")
 // ]
 ```
 
@@ -92,8 +92,8 @@ Stream
 
 // [
 //   BigDecimal("3.5")
-//   BigDecimal("3.50")
-//   BigDecimal("8.70")
+//   BigDecimal("3.5")
+//   BigDecimal("8.7")
 //   BigDecimal("8.05")
 // ]
 ```
@@ -129,8 +129,8 @@ Stream
 
 // [
 //   WithOriginal[original=1.0, calculated=1.0]
-//   WithOriginal[original=2.0, calculated=1.90]
-//   WithOriginal[original=10.0, calculated=8.40]
-//   WithOriginal[original=2.0, calculated=7.60]
+//   WithOriginal[original=2.0, calculated=1.9]
+//   WithOriginal[original=10.0, calculated=8.4]
+//   WithOriginal[original=2.0, calculated=7.6]
 // ]
 ```

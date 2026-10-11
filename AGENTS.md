@@ -142,9 +142,12 @@ To add a statistic:
 Numeric rules. The regression tests in `BigDecimalVarianceGathererTest`, `BigDecimalStandardDeviationGathererTest` and
 `BigDecimalExponentialMovingAverageGathererTest` guard these. Don't "simplify" them:
 
-- **Additive statistics** (sum, mean, harmonic mean, RMS, variance) round each input to the `MathContext` once, when it
-  enters. After that they accumulate exactly, with no `MathContext` on add or subtract, so evicting a value from a
-  moving window reverses its addition exactly.
+- **Additive statistics** (sum, mean, harmonic mean, RMS, variance, weighted mean) round each input to the
+  `MathContext` once, when it enters. After that they accumulate exactly, with no `MathContext` on add or subtract, so
+  evicting a value from a moving window reverses its addition exactly. Two of them round a derived term instead of the
+  input: harmonic mean accumulates `1/x` rounded to the `MathContext` (a reciprocal usually has no exact decimal form),
+  and RMS accumulates `x²` rounded to the `MathContext`. Eviction rounds the departing term the same way, so it still
+  reverses the addition exactly.
 - **`Moments` squares values exactly.** Variance is `(n*sumSq - sum*sum) / (n*n)`, or `/ (n*(n-1))` for a sample.
   Rounding happens only in that final divide. Rounding any earlier gives negative variance for inputs such as
   `1.000000000000001, 1.000000000000002, 1.000000000000003`.

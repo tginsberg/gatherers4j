@@ -833,6 +833,28 @@ class BigDecimalWeightedMeanGathererTest {
             assertThatIllegalArgumentException().isThrownBy(() ->
                     Gatherers4j.movingWeightedMeanBy((List<BigDecimal>) null, Function.<BigDecimal>identity())
             ).withMessage("Weights must not be null");
+            assertThatIllegalArgumentException().isThrownBy(() ->
+                    Gatherers4j.movingWeightedMean((BigDecimal[]) null)
+            ).withMessage("Weights must not be null");
+        }
+
+        @Test
+        void varargsWeightsMatchListWeights() {
+            // Arrange
+            final List<BigDecimal> input = decimals("10", "20", "30", "40", "50").toList();
+
+            // Act
+            final List<BigDecimal> fromVarargs = input.stream()
+                    .gather(Gatherers4j.movingWeightedMean(new BigDecimal("1"), new BigDecimal("1"), new BigDecimal("2")))
+                    .toList();
+            final List<BigDecimal> fromList = input.stream()
+                    .gather(Gatherers4j.movingWeightedMean(weights("1", "1", "2")))
+                    .toList();
+
+            // Assert
+            assertThat(fromVarargs)
+                    .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
+                    .containsExactlyElementsOf(fromList);
         }
 
         @ParameterizedTest(name = "{0}")
@@ -847,6 +869,9 @@ class BigDecimalWeightedMeanGathererTest {
             ).withMessage(message);
             assertThatIllegalArgumentException().isThrownBy(() ->
                     Gatherers4j.movingWeightedMeanBy(invalid, Function.<BigDecimal>identity())
+            ).withMessage(message);
+            assertThatIllegalArgumentException().isThrownBy(() ->
+                    Gatherers4j.movingWeightedMean(invalid.toArray(BigDecimal[]::new))
             ).withMessage(message);
         }
 

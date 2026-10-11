@@ -133,7 +133,19 @@ class StatisticAccumulators {
     }
 
     final static class GeometricMeanAccumulator implements StatisticAccumulator<BigDecimal> {
-        private final Product state = new Product();
+        private final Product state;
+
+        private GeometricMeanAccumulator(final boolean moving) {
+            this.state = new Product(moving);
+        }
+
+        static GeometricMeanAccumulator moving() {
+            return new GeometricMeanAccumulator(true);
+        }
+
+        static GeometricMeanAccumulator running() {
+            return new GeometricMeanAccumulator(false);
+        }
 
         @Override
         public void add(final BigDecimal value, final MathContext mc) {
@@ -244,7 +256,19 @@ class StatisticAccumulators {
     }
 
     final static class ProductAccumulator implements StatisticAccumulator<BigDecimal> {
-        private final Product state = new Product();
+        private final Product state;
+
+        private ProductAccumulator(final boolean moving) {
+            this.state = new Product(moving);
+        }
+
+        static ProductAccumulator moving() {
+            return new ProductAccumulator(true);
+        }
+
+        static ProductAccumulator running() {
+            return new ProductAccumulator(false);
+        }
 
         @Override
         public void add(final BigDecimal value, final MathContext mc) {
@@ -591,12 +615,22 @@ class StatisticAccumulators {
     }
 
     private static class Product {
+        // Holds the window's values in a moving window only, so a running product keeps constant memory.
+        private final ArrayDeque<BigDecimal> window = new ArrayDeque<>();
+        private final boolean moving;
         private long count = 0;
         private long zeroCount = 0;
         private BigDecimal product = BigDecimal.ONE;
 
+        Product(final boolean moving) {
+            this.moving = moving;
+        }
+
         void add(final BigDecimal value, final MathContext mathContext) {
             count++;
+            if (moving) {
+                window.addLast(value);
+            }
             if (value.compareTo(BigDecimal.ZERO) == 0) {
                 zeroCount++;
             } else {
@@ -608,12 +642,19 @@ class StatisticAccumulators {
             return count;
         }
 
+        // Dividing the departing value out would round, and that error would build up over the whole stream.
+        // Rebuilding the product from the values still in the window keeps the error bounded by the window size.
         void evict(final BigDecimal value, final MathContext mathContext) {
             count--;
+            window.removeFirst();
             if (value.compareTo(BigDecimal.ZERO) == 0) {
                 zeroCount--;
-            } else {
-                product = product.divide(value, mathContext);
+            }
+            product = BigDecimal.ONE;
+            for (final BigDecimal remaining : window) {
+                if (remaining.compareTo(BigDecimal.ZERO) != 0) {
+                    product = product.multiply(remaining, mathContext);
+                }
             }
         }
 
@@ -648,7 +689,14 @@ class StatisticAccumulators {
                 return low;
             }
             final BigDecimal high = sorted.get(lowerRank.intValueExact() + 1);
-            return low.add(high.subtract(low).multiply(weight)).round(mc);
+            final BigDecimal interpolated = low.add(high.subtract(low).multiply(weight)).round(mc);
+            // Multiplying by the weight adds trailing zeros (1.0 + 1.0 * 0.5 = 1.50) that say nothing about the
+            // data. Drop them, but keep at least as many decimal places as the two values had (1.10, 1.10 -> 1.10).
+            // Only zeros are removed, so the value is unchanged and still fits the MathContext.
+            final int dataScale = Math.max(low.scale(), high.scale());
+            final int strippedScale = interpolated.stripTrailingZeros().scale();
+            final int scale = Math.min(interpolated.scale(), Math.max(strippedScale, dataScale));
+            return interpolated.setScale(scale, RoundingMode.UNNECESSARY);
         }
 
         private int insertionPoint(final BigDecimal value) {

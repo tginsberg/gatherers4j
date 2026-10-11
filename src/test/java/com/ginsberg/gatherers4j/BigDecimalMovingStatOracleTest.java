@@ -186,20 +186,17 @@ class BigDecimalMovingStatOracleTest {
     }
 
     // ---------------------------------------------------------------------------------------------------------
-    // Statistics that round at every step. Their eviction (a division) can't exactly undo the multiplication, so
-    // the oracle uses the exact product of the rounded window values and the tolerance covers the rounding the
-    // gatherer has accumulated.
+    // Statistics that round at every step. The gatherer multiplies the rounded window values together, rounding
+    // each multiply, so the oracle uses the exact product of the rounded window values and the tolerance covers
+    // that rounding.
     //
-    // Tolerance. Every multiply or divide in the gatherer rounds to `precision` digits, so it adds a relative
-    // error of at most 0.5 * 10^(1 - precision), and the standard deviation of one such error is below
-    // 0.3 * 10^(1 - precision). These errors are independent and unbiased for the default HALF_EVEN rounding, so
-    // after k operations the accumulated relative error is a random walk of about 0.3 * 10^(1 - precision) * sqrt(k)
-    // with a hard ceiling that is linear in k. The gatherer has done roughly 2 operations per element seen (one
-    // multiply on entry, one divide on exit) and the oracle's own window is covered by the same count, so
-    // k = 2 * seen + window. The tolerance is 3 * 10^(1 - precision) * sqrt(k), about ten standard deviations:
-    // wide enough that rounding noise never trips it, narrow enough to catch a bug that adds an error of even one
-    // or two ulps per operation. We deliberately do not use the linear ceiling. At precision 5 over 3,000
-    // elements it is a relative error of 30%, which would hide any real defect.
+    // Tolerance. Every multiply rounds to `precision` digits, so it adds a relative error of at most
+    // 0.5 * 10^(1 - precision), and the standard deviation of one such error is below 0.3 * 10^(1 - precision).
+    // These errors are independent and unbiased for the default HALF_EVEN rounding, so after k multiplies the
+    // relative error is a random walk of about 0.3 * 10^(1 - precision) * sqrt(k). The product of a window is
+    // rebuilt from its values rather than by dividing the departing value out, so k is the number of values in the
+    // window, however long the stream. The tolerance is 3 * 10^(1 - precision) * sqrt(k), about ten standard
+    // deviations. It does not grow with the stream, so error that accumulates across evictions fails the test.
     // ---------------------------------------------------------------------------------------------------------
 
     @ParameterizedTest(name = "{0}")
@@ -443,7 +440,10 @@ class BigDecimalMovingStatOracleTest {
     }
 
     private static boolean sameNullable(final @Nullable BigDecimal actual, final @Nullable BigDecimal expected) {
-        return actual == null || expected == null ? actual == expected : actual.compareTo(expected) == 0;
+        if (actual == null || expected == null) {
+            return actual == null && expected == null;
+        }
+        return actual.compareTo(expected) == 0;
     }
 
     private static double productTolerance(final Position position) {
@@ -466,11 +466,20 @@ class BigDecimalMovingStatOracleTest {
     // Types
     // ---------------------------------------------------------------------------------------------------------
 
-    enum Profile {WIDE, NEAR_ONE, PRECISION_EDGE}
+    enum Profile {
+        WIDE(0), NEAR_ONE(1), PRECISION_EDGE(2);
+
+        // Part of each case's seed, fixed here so reordering the constants doesn't change the generated inputs.
+        private final int seedOffset;
+
+        Profile(final int seedOffset) {
+            this.seedOffset = seedOffset;
+        }
+    }
 
     record Case(int window, MathContext mc, Profile profile) {
         long seed() {
-            return BASE_SEED + 1_000L * window + 10L * mc.getPrecision() + profile.ordinal();
+            return BASE_SEED + 1_000L * window + 10L * mc.getPrecision() + profile.seedOffset;
         }
 
         @Override
@@ -487,9 +496,9 @@ class BigDecimalMovingStatOracleTest {
 
     /// Where the comparison is in the stream. `seen` non-null elements have entered the gatherer.
     private record Position(int seen, int count, int windowSize, MathContext mc) {
-        // One multiply when each element enters, one divide when it leaves, and a full window recomputed.
+        // One rounded multiply per value in the window.
         double operations() {
-            return 2.0 * seen + windowSize;
+            return count;
         }
     }
 

@@ -91,11 +91,11 @@ Stream
     .toList();
 
 // [
-//   BigDecimal("0"), 
-//   BigDecimal("0"), 
-//   BigDecimal("0"), 
+//   BigDecimal("0"),
+//   BigDecimal("0"),
+//   BigDecimal("0"),
 //   BigDecimal("0.55"),
-//   BigDecimal("1.1") 
+//   BigDecimal("1.1")
 // ]
 ```
 
@@ -119,9 +119,9 @@ Stream
 // [
 //   BigDecimal("2"),
 //   BigDecimal("2"),
-//   BigDecimal("2"), 
-//   BigDecimal("6.05"), 
-//   BigDecimal("10.1") 
+//   BigDecimal("2"),
+//   BigDecimal("6.05"),
+//   BigDecimal("10.1")
 // ]
 ```
 
@@ -168,8 +168,8 @@ Stream
     .toList();
 
 // [ 
-//   WithOriginal[original=NamedValue[name=first, value=1.0], calculated=1.0], 
-//   WithOriginal[original=NamedValue[name=second, value=2.0], calculated=1.5], 
+//   WithOriginal[original=NamedValue[name=first, value=1.0], calculated=1.0],
+//   WithOriginal[original=NamedValue[name=second, value=2.0], calculated=1.5],
 //   WithOriginal[original=NamedValue[name=third, value=10.0], calculated=2.0]
 // ]
 ```

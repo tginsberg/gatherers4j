@@ -71,8 +71,8 @@ Stream
 // [ 
 //   BigDecimal("0"),
 //   BigDecimal("0"),
-//   BigDecimal("0"), 
-//   BigDecimal("1.0") 
+//   BigDecimal("0"),
+//   BigDecimal("1.0")
 // ]
 ```
 
@@ -85,9 +85,9 @@ Stream
     .toList();
 
 // [  
-//   BigDecimal("3.5"),  
-//   BigDecimal("3.5"),  
-//   BigDecimal("3.5"), 
+//   BigDecimal("3.5"),
+//   BigDecimal("3.5"),
+//   BigDecimal("3.5"),
 //   BigDecimal("2.75")
 // ]
 ```
@@ -105,10 +105,10 @@ Stream
     .toList();
 
 // [ 
-//   BigDecimal("1.1"), 
-//   BigDecimal("1.7"), 
-//   BigDecimal("2.3"), 
-//   BigDecimal("2.4") 
+//   BigDecimal("1.1"),
+//   BigDecimal("1.7"),
+//   BigDecimal("2.3"),
+//   BigDecimal("2.4")
 // ]
 ```
 
@@ -122,9 +122,9 @@ Stream
     .toList();
 
 // [ 
-//   WithOriginal[original=1.0, calculated=1.0], 
-//   WithOriginal[original=2.0, calculated=1.5], 
-//   WithOriginal[original=10.0, calculated=2.0], 
+//   WithOriginal[original=1.0, calculated=1.0],
+//   WithOriginal[original=2.0, calculated=1.5],
+//   WithOriginal[original=10.0, calculated=2.0],
 //   WithOriginal[original=2.0, calculated=2.0]
 // ]
 ```

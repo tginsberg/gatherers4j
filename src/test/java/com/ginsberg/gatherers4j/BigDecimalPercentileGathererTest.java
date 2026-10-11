@@ -21,6 +21,7 @@ import com.ginsberg.gatherers4j.util.TestValueHolder;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.math.BigDecimal;
@@ -332,6 +333,39 @@ class BigDecimalPercentileGathererTest {
             assertThatIllegalArgumentException().isThrownBy(() ->
                     Gatherers4j.movingPercentile(50, size)
             );
+        }
+    }
+
+    @Nested
+    class InterpolatedScale {
+
+        @ParameterizedTest(name = "P{2} of {0} and {1} is {3}")
+        @CsvSource({
+                "1.0,  2.0,  50, 1.5",
+                "3.5,  3.5,  50, 3.5",
+                "0,    0,    50, 0",
+                "1.10, 1.10, 50, 1.10",
+                "100,  200,  50, 150",
+                "1.0,  2.0,  90, 1.9",
+                "10.0, 2.42, 50, 6.21",
+                "1,    2,    25, 1.25"
+        })
+        void interpolationAddsNoTrailingZeros(
+                final String first,
+                final String second,
+                final double percentile,
+                final String expected
+        ) {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.of(first, second).map(BigDecimal::new);
+
+            // Act
+            final List<BigDecimal> output = input
+                    .gather(Gatherers4j.runningPercentile(percentile))
+                    .toList();
+
+            // Assert
+            assertThat(output.getLast()).hasToString(expected);
         }
     }
 

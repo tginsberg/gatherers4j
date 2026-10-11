@@ -271,5 +271,35 @@ class BigDecimalGeometricMeanGathererTest {
             assertThat(output).hasSize(1);
             assertThat(output.getFirst()).isEqualByComparingTo("2.0");
         }
+
+        @Test
+        void geometricRunningAverageWithProductAboveDoubleRange() {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.generate(() -> new BigDecimal("100")).limit(200);
+
+            // Act
+            final List<BigDecimal> output = input
+                    .gather(Gatherers4j.runningGeometricMean())
+                    .toList();
+
+            // Assert
+            assertThat(output).hasSize(200);
+            assertThat(output.getLast()).isEqualByComparingTo("100");
+        }
+
+        @Test
+        void geometricRunningAverageWithProductBelowDoubleRange() {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.generate(() -> new BigDecimal("0.001")).limit(200);
+
+            // Act
+            final List<BigDecimal> output = input
+                    .gather(Gatherers4j.runningGeometricMean())
+                    .toList();
+
+            // Assert
+            assertThat(output).hasSize(200);
+            assertThat(output.getLast()).isEqualByComparingTo("0.001");
+        }
     }
 }

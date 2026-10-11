@@ -126,10 +126,10 @@ Stream
     .toList();
 
 // [
-//   BigDecimal("1.111")
+//   BigDecimal("1.11")
 //   BigDecimal("1.66")
-//   BigDecimal("2.222")
-//   BigDecimal("2.444")
+//   BigDecimal("2.22")
+//   BigDecimal("2.44")
 // ]
 ```
 

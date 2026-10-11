@@ -28,6 +28,9 @@ for all calculations is {{< jdklink linkName="MathContext.DECIMAL64" package="ja
 `movingWeightedMean(List<BigDecimal> weights)`
 * `weights` - One weight per element in the window, **ordered from oldest to newest**. The window size is the number of weights, which must be at least 2. Weights may not be null or negative, and must not sum to zero. They do not need to sum to 1, because the result is always divided by the sum of the weights.
 
+`movingWeightedMean(BigDecimal... weights)`
+* `weights` - The same as the `List` form, passed as separate arguments: `movingWeightedMean(new BigDecimal("0.2"), new BigDecimal("0.3"), new BigDecimal("0.5"))`.
+
 **Custom weights are ordered oldest to newest**
 
 The first weight applies to the oldest element in the window, and the last weight applies to the newest. If you have weights in "newest first" order, reverse them before passing them in. A reversed list is accepted without complaint and gives you the opposite weighting, so it is worth double-checking (see [the example below](#reversing-the-weights-reverses-the-weighting)).

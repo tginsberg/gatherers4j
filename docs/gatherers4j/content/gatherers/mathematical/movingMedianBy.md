@@ -179,7 +179,7 @@ Stream
     .toList();
 
 // [
-//   BigDecimal("1.111")
+//   BigDecimal("1.1")
 //   BigDecimal("1.6")
 //   BigDecimal("6.1")
 //   BigDecimal("15")

@@ -29,6 +29,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.math.BigDecimal;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -464,7 +465,7 @@ public abstract class Gatherers4j {
         return new BigDecimalMovingStatGatherer<>(
                 windowSize,
                 Function.identity(),
-                StatisticAccumulators.GeometricMeanAccumulator::new
+                StatisticAccumulators.GeometricMeanAccumulator::moving
         );
     }
 
@@ -483,7 +484,7 @@ public abstract class Gatherers4j {
         return new BigDecimalMovingStatGatherer<>(
                 windowSize,
                 mappingFunction,
-                StatisticAccumulators.GeometricMeanAccumulator::new
+                StatisticAccumulators.GeometricMeanAccumulator::moving
         );
     }
 
@@ -685,7 +686,7 @@ public abstract class Gatherers4j {
     public static BigDecimalMovingStatGatherer<@Nullable BigDecimal, BigDecimal> movingProduct(final int windowSize) {
         return new BigDecimalMovingStatGatherer<>(
                 windowSize, Function.identity(),
-                StatisticAccumulators.ProductAccumulator::new
+                StatisticAccumulators.ProductAccumulator::moving
         );
     }
 
@@ -704,7 +705,7 @@ public abstract class Gatherers4j {
         return new BigDecimalMovingStatGatherer<>(
                 windowSize,
                 mappingFunction,
-                StatisticAccumulators.ProductAccumulator::new
+                StatisticAccumulators.ProductAccumulator::moving
         );
     }
 
@@ -924,6 +925,18 @@ public abstract class Gatherers4j {
         );
     }
 
+    /// Create a Stream that represents the weighted moving mean of a `Stream<BigDecimal>` using the given `weights`.
+    /// This is the same as calling [#movingWeightedMean(List)] with the `weights` as a list; see that method for how
+    /// the weights are applied.
+    ///
+    /// @param weights One weight per element in the window, oldest to newest. Must contain at least 2 non-null,
+    ///                non-negative values that do not sum to zero.
+    /// @return A non-null `BigDecimalMovingStatGatherer`
+    public static BigDecimalMovingStatGatherer<@Nullable BigDecimal, BigDecimal> movingWeightedMean(final BigDecimal... weights) {
+        mustNotBeNull(weights, "Weights must not be null");
+        return movingWeightedMean(Arrays.asList(weights));
+    }
+
     /// Create a Stream that represents the linearly weighted moving mean of `BigDecimal` objects mapped from a
     /// `Stream<INPUT>` via a `mappingFunction` and looking back `windowSize` number of elements. The oldest element
     /// in the window has weight 1, and each element after it has a weight one higher, so the newest element has the
@@ -1044,7 +1057,7 @@ public abstract class Gatherers4j {
     public static BigDecimalRunningStatGatherer<@Nullable BigDecimal, BigDecimal> runningGeometricMean() {
         return new BigDecimalRunningStatGatherer<>(
                 Function.identity(),
-                StatisticAccumulators.GeometricMeanAccumulator::new
+                StatisticAccumulators.GeometricMeanAccumulator::running
         );
     }
 
@@ -1060,7 +1073,7 @@ public abstract class Gatherers4j {
     ) {
         return new BigDecimalRunningStatGatherer<>(
                 mappingFunction,
-                StatisticAccumulators.GeometricMeanAccumulator::new
+                StatisticAccumulators.GeometricMeanAccumulator::running
         );
     }
 
@@ -1214,7 +1227,7 @@ public abstract class Gatherers4j {
     ///
     /// @return A non-null `BigDecimalRunningStatGatherer`
     public static BigDecimalRunningStatGatherer<@Nullable BigDecimal, BigDecimal> runningProduct() {
-        return new BigDecimalRunningStatGatherer<>(Function.identity(), StatisticAccumulators.ProductAccumulator::new);
+        return new BigDecimalRunningStatGatherer<>(Function.identity(), StatisticAccumulators.ProductAccumulator::running);
     }
 
     /// Create a `Stream<BigDecimal>` that represents the running product of `BigDecimal` objects mapped
@@ -1227,7 +1240,7 @@ public abstract class Gatherers4j {
     public static <INPUT extends @Nullable Object> BigDecimalRunningStatGatherer<INPUT, BigDecimal> runningProductBy(
             final Function<INPUT, BigDecimal> mappingFunction
     ) {
-        return new BigDecimalRunningStatGatherer<>(mappingFunction, StatisticAccumulators.ProductAccumulator::new);
+        return new BigDecimalRunningStatGatherer<>(mappingFunction, StatisticAccumulators.ProductAccumulator::running);
     }
 
     /// Create a `Stream<BigDecimal>` that represents the running root mean square of a `Stream<BigDecimal>`.
