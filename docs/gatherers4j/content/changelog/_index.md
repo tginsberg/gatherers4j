@@ -22,6 +22,7 @@ no_list: true
 + Implement `movingRootMeanSquare()`, `movingRootMeanSquareBy()`, `runningRootMeanSquare()`, and `runningRootMeanSquareBy()`.
 + Implement `movingVariance()`, `movingVarianceBy()`, `runningVariance()`, and `runningVarianceBy()`
 + Implement `movingStatistics()`, `movingStatisticsBy()`, `runningStatistics()`, and `runningStatisticsBy()`, which emit a `StatisticalSummary` record (count, sum, mean, min, max, and population and sample variance and standard deviation) for each element.
++ Implement `movingPercentile()`, `movingPercentileBy()`, `runningPercentile()`, and `runningPercentileBy()`.
 
 ## v0.14.0
 [Released 2026-05-17](https://github.com/tginsberg/gatherers4j/releases/tag/v0.14.0)

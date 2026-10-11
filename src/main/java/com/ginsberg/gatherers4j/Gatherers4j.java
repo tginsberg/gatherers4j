@@ -586,7 +586,7 @@ public abstract class Gatherers4j {
         return new BigDecimalMovingStatGatherer<>(
                 windowSize,
                 Function.identity(),
-                () -> new StatisticAccumulators.PercentileAccumulator(50.0)
+                () -> new StatisticAccumulators.PercentileAccumulator(StatisticAccumulators.PercentileAccumulator.MEDIAN)
         );
     }
 
@@ -608,7 +608,7 @@ public abstract class Gatherers4j {
         return new BigDecimalMovingStatGatherer<>(
                 windowSize,
                 mappingFunction,
-                () -> new StatisticAccumulators.PercentileAccumulator(50.0)
+                () -> new StatisticAccumulators.PercentileAccumulator(StatisticAccumulators.PercentileAccumulator.MEDIAN)
         );
     }
 
@@ -633,6 +633,48 @@ public abstract class Gatherers4j {
             final Comparator<INPUT> comparator
     ) {
         return MinMaxGatherer.movingUsingComparator(windowSize, true, comparator);
+    }
+
+    /// Create a Stream that represents the moving `percentile` of a `Stream<BigDecimal>` looking
+    /// back `windowSize` number of elements. Values between ranks are linearly interpolated (R-7, as in
+    /// Excel's `PERCENTILE.INC`).
+    ///
+    /// @param percentile The percentile to calculate, between 0 and 100, inclusive.
+    /// @param windowSize The trailing number of elements to calculate the percentile over, must be greater than 1.
+    /// @return A non-null `BigDecimalMovingStatGatherer`
+    public static BigDecimalMovingStatGatherer<@Nullable BigDecimal, BigDecimal> movingPercentile(
+            final double percentile,
+            final int windowSize
+    ) {
+        final BigDecimal validPercentile = StatisticAccumulators.PercentileAccumulator.percentileOf(percentile);
+        return new BigDecimalMovingStatGatherer<>(
+                windowSize,
+                Function.identity(),
+                () -> new StatisticAccumulators.PercentileAccumulator(validPercentile)
+        );
+    }
+
+    /// Create a Stream that represents the moving `percentile` of `BigDecimal` objects mapped from a
+    /// `Stream<INPUT>` via a `mappingFunction` and looking back `windowSize` number of elements. Values between
+    /// ranks are linearly interpolated (R-7, as in Excel's `PERCENTILE.INC`).
+    ///
+    /// @param percentile      The percentile to calculate, between 0 and 100, inclusive.
+    /// @param windowSize      The trailing number of elements to calculate the percentile over, must be greater than 1.
+    /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
+    ///                        in the moving percentile calculation
+    /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
+    /// @return A non-null `BigDecimalMovingStatGatherer`
+    public static <INPUT extends @Nullable Object> BigDecimalMovingStatGatherer<INPUT, BigDecimal> movingPercentileBy(
+            final double percentile,
+            final int windowSize,
+            final Function<INPUT, BigDecimal> mappingFunction
+    ) {
+        final BigDecimal validPercentile = StatisticAccumulators.PercentileAccumulator.percentileOf(percentile);
+        return new BigDecimalMovingStatGatherer<>(
+                windowSize,
+                mappingFunction,
+                () -> new StatisticAccumulators.PercentileAccumulator(validPercentile)
+        );
     }
 
     /// Create a Stream that represents the moving product of a `Stream<BigDecimal>` looking
@@ -1002,7 +1044,7 @@ public abstract class Gatherers4j {
     public static BigDecimalRunningStatGatherer<@Nullable BigDecimal, BigDecimal> runningMedian() {
         return new BigDecimalRunningStatGatherer<>(
                 Function.identity(),
-                () -> new StatisticAccumulators.PercentileAccumulator(50.0)
+                () -> new StatisticAccumulators.PercentileAccumulator(StatisticAccumulators.PercentileAccumulator.MEDIAN)
         );
     }
 
@@ -1018,7 +1060,7 @@ public abstract class Gatherers4j {
     ) {
         return new BigDecimalRunningStatGatherer<>(
                 mappingFunction,
-                () -> new StatisticAccumulators.PercentileAccumulator(50.0)
+                () -> new StatisticAccumulators.PercentileAccumulator(StatisticAccumulators.PercentileAccumulator.MEDIAN)
         );
     }
 
@@ -1039,6 +1081,42 @@ public abstract class Gatherers4j {
             final Comparator<INPUT> comparator
     ) {
         return MinMaxGatherer.runningUsingComparator(true, comparator);
+    }
+
+    /// Create a `Stream<BigDecimal>` that represents the running `percentile` of a `Stream<BigDecimal>`. Values
+    /// between ranks are linearly interpolated (R-7, as in Excel's `PERCENTILE.INC`). Every value seen is retained,
+    /// so memory grows with the length of the stream.
+    ///
+    /// @param percentile The percentile to calculate, between 0 and 100, inclusive.
+    /// @return A non-null `BigDecimalRunningStatGatherer`
+    public static BigDecimalRunningStatGatherer<@Nullable BigDecimal, BigDecimal> runningPercentile(
+            final double percentile
+    ) {
+        final BigDecimal validPercentile = StatisticAccumulators.PercentileAccumulator.percentileOf(percentile);
+        return new BigDecimalRunningStatGatherer<>(
+                Function.identity(),
+                () -> new StatisticAccumulators.PercentileAccumulator(validPercentile)
+        );
+    }
+
+    /// Create a `Stream<BigDecimal>` that represents the running `percentile` of `BigDecimal` objects mapped
+    /// from a `Stream<INPUT>` via a `mappingFunction`. Values between ranks are linearly interpolated (R-7, as in
+    /// Excel's `PERCENTILE.INC`). Every value seen is retained, so memory grows with the length of the stream.
+    ///
+    /// @param percentile      The percentile to calculate, between 0 and 100, inclusive.
+    /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
+    ///                        in the percentile calculation
+    /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
+    /// @return A non-null `BigDecimalRunningStatGatherer`
+    public static <INPUT extends @Nullable Object> BigDecimalRunningStatGatherer<INPUT, BigDecimal> runningPercentileBy(
+            final double percentile,
+            final Function<INPUT, BigDecimal> mappingFunction
+    ) {
+        final BigDecimal validPercentile = StatisticAccumulators.PercentileAccumulator.percentileOf(percentile);
+        return new BigDecimalRunningStatGatherer<>(
+                mappingFunction,
+                () -> new StatisticAccumulators.PercentileAccumulator(validPercentile)
+        );
     }
 
     /// Create a `Stream<BigDecimal>` that represents the running product of a `Stream<BigDecimal>`.
