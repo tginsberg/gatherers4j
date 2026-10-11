@@ -228,8 +228,8 @@ tasks {
     javadoc {
         (options as CoreJavadocOptions).apply {
             addStringOption("source", rootProject.java.toolchain.languageVersion.get().toString())
-            addBooleanOption("-enable-preview", true)
-            addStringOption("Xdoclint:none", "-quiet") // TODO: Remove this when we've documented things
+            // Every check except missing comments, which the public internals (State classes, overrides) don't have
+            addStringOption("Xdoclint:all,-missing", "-quiet")
         }
     }
     publish {

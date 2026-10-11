@@ -1,24 +1,14 @@
 # AGENTS.md
 
-Instructions for AI agents working on Gatherers4j. Every rule here was checked against the code. When this file and
-the code disagree, the code wins. Fix this file in the same change.
+Instructions for AI agents working on Gatherers4j. When this file and the code disagree, the code wins. Fix this file in
+the same change.
 
 ## Project
 
-Gatherers4j is a Java library of custom [Stream Gatherers](https://openjdk.org/jeps/485) (JEP 485), published to Maven
-Central as `com.ginsberg:gatherers4j`. JSpecify is its only runtime dependency.
-
-- **Java:** Java 25 with no preview features. Language features that are final in Java 25 are fine, for example
-  Markdown doc comments (`///`) and statements before `super(...)`. CI also builds on Java 27.
-- **Build and tests:** Gradle with the Kotlin DSL, JUnit Jupiter and AssertJ.
-- **Static analysis:** ErrorProne and NullAway. NullAway findings are compile errors in main code.
-- **Mutation testing:** Pitest.
-- **Docs:** a Hugo/Docsy site in `docs/gatherers4j/`.
-
-The library is pre-1.0 and has shipped breaking changes in minor releases. Treat any new public method as permanent
-anyway: removing it later is another breaking change.
-
-## Commands
+A Java library of custom [Stream Gatherers](https://openjdk.org/jeps/485), published as `com.ginsberg:gatherers4j`.
+JSpecify is its only runtime dependency. Java 25, no preview features (CI also builds on 27). Gradle Kotlin DSL, JUnit
+Jupiter, AssertJ, ErrorProne and NullAway (errors in main code, disabled in tests), Pitest, and a Hugo/Docsy site in
+`docs/gatherers4j/`.
 
 | Task | Command |
 |---|---|
@@ -32,207 +22,137 @@ anyway: removing it later is another breaking change.
 ## Layout
 
 ```
-src/main/java/module-info.java       exports com.ginsberg.gatherers4j, .dto, .enums
 src/main/java/com/ginsberg/gatherers4j/
     Gatherers4j.java                 the facade: every public factory method lives here
     *Gatherer.java, *Gatherers.java  implementations (a *Gatherers file holds several small ones)
-    *StatGatherer*.java,
-    StatisticAccumulator*.java       the BigDecimal statistics engine (see below)
-    dto/                             public output records: Pair, WithCount, WithIndex, WithOriginal
-    enums/                           public options: Dataset, Frequency, Order, Rotate, Size
-    util/                            internal, not exported: GathererUtils, CircularBuffer, MathUtils
+    dto/, enums/                     exported, so public API
+    util/                            not exported: GathererUtils, CircularBuffer, MathUtils
 src/test/java/com/ginsberg/gatherers4j/
     test/, util/                     shared test helpers
-src/jmh/java/com/ginsberg/gatherers4j/bench/   JMH benchmarks
-docs/gatherers4j/content/gatherers/<category>/ one docs page per public factory method
 ```
 
-## Before adding public API
+## Public API
 
-New public API is the maintainer's decision. Propose it first unless you were asked to build it. A candidate must pass
-the [guiding principles](docs/gatherers4j/content/guiding-principles/_index.md):
+New public API is the maintainer's decision. Propose it first unless you were asked to build it. It must pass the
+[guiding principles](docs/gatherers4j/content/guiding-principles/_index.md): not doable with `map`, `filter` or a
+collector without enclosing outside state, not an alias, and named by convention (imperative verbs, `...By()` for
+mapped or comparator variants, `ensure...()` for validation, `...Indexed()` for index-aware variants).
 
-- It can't be done with `map`, `filter`, or a collector unless outside state is enclosed.
-- It isn't an alias.
-- It follows the naming convention: `...By()` for mapped or comparator variants, `ensure...()` for validation,
-  `...Indexed()` for index-aware variants, and imperative verbs.
+The library is pre-1.0 and has shipped breaking changes in minor releases. Treat a new public method as permanent
+anyway.
 
 ## Library code
 
 ### The facade
 
-- Users create every gatherer through a `public static` method on `Gatherers4j` and never call a constructor.
-  Gatherer constructors are package-private.
-- Return `Gatherer<INPUT, ?, OUTPUT>`, unless the gatherer has fluent options. In that case return the concrete type
-  (for example `ZipWithGatherer` or `BigDecimalMovingStatGatherer`) so the options can be called. Any type a factory
-  method returns must be `public`.
-- A gatherer that takes a second source gets four overloads: `Iterable`, `Iterator`, `Stream` and varargs. See
+- Users create every gatherer through a `public static` method on `Gatherers4j`. Gatherer constructors are
+  package-private.
+- Return `Gatherer<INPUT, ?, OUTPUT>`, or the concrete `public` type when the gatherer has fluent options (for example
+  `ZipWithGatherer`).
+- A gatherer that takes a second source gets four overloads: `Iterable`, `Iterator`, `Stream` and varargs, as in
   `crossWith`, `interleaveWith` and `zipWith`.
-- A mapping function or `Comparator` is the last parameter, as in `movingSumBy(windowSize, fn)` and
-  `movingStandardDeviationBy(dataset, windowSize, fn)`.
-- Keep the facade methods in alphabetical order.
-- Give every factory method a Markdown doc comment (`///`) with an `@param` for each parameter and each type
-  parameter, and an `@return` ("A non-null `Gatherer`"). The build turns doclint off, so nothing will flag a missing
-  tag.
+- A mapping function or `Comparator` is the last parameter: `movingStandardDeviationBy(dataset, windowSize, fn)`.
+- Keep facade methods in alphabetical order.
+- Every factory method gets a Markdown doc comment (`///`) with an `@param` for each parameter and type parameter and
+  an `@return` ("A non-null `Gatherer`"). Doclint runs with `all,-missing`, so nothing flags a missing comment or tag.
 
 ### Implementing a gatherer
 
-- **State:** put per-stream mutable state in a nested `static class State` and create it from `initializer()`. A
+- **State:** per-stream mutable state goes in a nested `static class State` created by `initializer()`, because a
   gatherer instance can be reused across streams. The only exception is a single-use second source (`Iterator` or
   `Stream`), which `InterleavingGatherer` and `ZipWithGatherer` keep in a field.
-- **Fluent options:** they set configuration fields and return `this`.
-- **Integrator:** use `Integrator.ofGreedy(...)` unless the gatherer decides on its own to stop early, as `takeUntil`
-  does. Return the result of `downstream.push(...)` or `!downstream.isRejecting()`.
-- **Pushing many elements:** push collections, streams and iterators with `GathererUtils.pushAll`, which stops as
-  soon as the downstream rejects.
-- **Finisher:** implement `finisher()` only when there is something to emit after the input ends.
+- **Integrator:** use `Integrator.ofGreedy(...)` unless the gatherer can stop early on its own, as `takeUntil` does.
+  Return the result of `downstream.push(...)` or `!downstream.isRejecting()`.
+- **Pushing many elements:** use `GathererUtils.pushAll`, which stops as soon as the downstream rejects.
 - **Combiner:** implement `combiner()` only when the gatherer emits nothing until its finisher and its state merges
   exactly, as in `FrequencyGatherer` and `UniquelyOccurringGatherer`. A gatherer that emits per element can't have a
-  correct combiner. Leave the default, which runs the gatherer sequentially even in a parallel stream.
-- **Argument validation:** validate in the constructor or the factory method, never in the integrator.
-  - For null arguments, use `GathererUtils.mustNotBeNull(arg, "Predicate must not be null")`, which throws
-    `IllegalArgumentException`. Don't use `Objects.requireNonNull`.
-  - For other invalid values, throw `IllegalArgumentException` with a message that names the parameter and the rule
-    it broke, for example "Window size must be greater than 1".
+  correct combiner, so leave the default.
+- **Argument validation:** in the constructor or factory method, never in the integrator. Null arguments use
+  `GathererUtils.mustNotBeNull(arg, "Predicate must not be null")`, not `Objects.requireNonNull`. Other invalid values
+  throw `IllegalArgumentException` naming the parameter and the rule: "Window size must be greater than 1".
 - **Windows:** use `util.CircularBuffer` for fixed-size trailing windows.
-- **New types:** reuse the existing `dto` records and `enums` before adding new ones. In a public signature, prefer an
-  enum over a boolean flag. Anything new in `dto` or `enums` is public API.
+- **New types:** reuse the existing `dto` records and `enums` first. Prefer an enum to a boolean flag in a public
+  signature.
 
-### Nullness
+### Nullness and style
 
-- Every package is `@NullMarked`, so types are non-null unless annotated with JSpecify's `@Nullable`.
-- Gatherers accept null stream elements. Declare element type parameters as `INPUT extends @Nullable Object`.
-- NullAway is disabled for test code.
-
-### Style
-
-- Every source file starts with the Apache 2.0 license header used in the existing files, with the current year.
-- Use `final` on parameters and on local variables that aren't reassigned.
-- Name type parameters in full (`INPUT`, `OUTPUT`, `MAPPED`, `SECOND`) rather than `T` or `R`.
-- Keep methods and fields in alphabetical order unless another grouping is clearly easier to read.
+- Every package is `@NullMarked`. Gatherers accept null stream elements, so declare element type parameters as
+  `INPUT extends @Nullable Object`.
+- Every source file starts with the Apache 2.0 license header from the existing files, with the current year.
+- `final` on parameters and on locals that aren't reassigned.
+- Type parameters are full words (`INPUT`, `OUTPUT`, `MAPPED`, `SECOND`), not `T` or `R`.
+- Methods and fields in alphabetical order unless another grouping clearly reads better.
 
 ## BigDecimal statistics engine
 
-Every running and moving BigDecimal statistic runs on one engine. That covers sum, product, mean, geometric mean,
-harmonic mean, RMS, median, variance, standard deviation and EMA.
+Every running and moving BigDecimal statistic (sum, product, the means, RMS, median, percentile, variance, standard
+deviation, EMA, statistical summary) runs on one engine:
 
-- `BigDecimalRunningStatGatherer` and `BigDecimalMovingStatGatherer` are the public types the facade returns. Both
-  extend the package-private `AbstractBigDecimalStatGatherer`. Together they handle:
-  - the mapping function
-  - null replacement (`treatNullAs*`)
-  - `withMathContext` (default `DECIMAL64`)
-  - `withOriginal()`
-  - for the moving type, the `CircularBuffer` window and `excludePartialValues()`
-- Each statistic is a package-private `StatisticAccumulator<OUTPUT>` in `StatisticAccumulators`, with the methods
-  `add`, `evict` (moving form only), `isReady` and `value`. The accumulators share four internal building blocks:
-  `CountSum`, `Moments`, `Product` and `SortedWindow`.
+- `BigDecimalRunningStatGatherer` and `BigDecimalMovingStatGatherer` are the public types the facade returns. With
+  their package-private base `AbstractBigDecimalStatGatherer`, they own the mapping function, `treatNullAs*`,
+  `withMathContext` (default `DECIMAL64`), `withOriginal()`, and for the moving type the window and
+  `excludePartialValues()`.
+- Each statistic is a `StatisticAccumulator` in `StatisticAccumulators` (`add`, `evict` for the moving form, `isReady`,
+  `value`), built on the private blocks `CountSum`, `Extremes`, `Moments`, `Product` and `SortedWindow`.
 
-To add a statistic:
+To add a statistic, add an accumulator (implement `evict` if it should have a moving form), then facade methods: an
+identity form over `@Nullable BigDecimal` passing `Function.identity()` and a `...By` form, each running, moving or
+both. A population/sample choice is a `Dataset` parameter, not a separate method. Don't write a new `Gatherer` class.
 
-1. Add an accumulator to `StatisticAccumulators`, built on an existing building block where one fits. Implement
-   `evict` if the statistic should have a moving form.
-2. Add facade methods:
-   - an identity form over `@Nullable BigDecimal` that passes `Function.identity()`
-   - a `...By` form that takes `Function<INPUT, BigDecimal>`
-   - each of these as a running form, a moving form, or both
-
-   A population/sample choice is a `Dataset` parameter, not a separate method.
-3. Don't write a new `Gatherer` class.
-
-Numeric rules. The regression tests in `BigDecimalVarianceGathererTest`, `BigDecimalStandardDeviationGathererTest` and
-`BigDecimalExponentialMovingAverageGathererTest` guard these. Don't "simplify" them:
+Numeric rules. `BigDecimalVarianceGathererTest`, `BigDecimalStandardDeviationGathererTest`,
+`BigDecimalExponentialMovingAverageGathererTest` and `BigDecimalMovingStatOracleTest` guard these. Don't "simplify"
+them:
 
 - **Additive statistics** (sum, mean, harmonic mean, RMS, variance, weighted mean) round each input to the
-  `MathContext` once, when it enters. After that they accumulate exactly, with no `MathContext` on add or subtract, so
-  evicting a value from a moving window reverses its addition exactly. Two of them round a derived term instead of the
-  input: harmonic mean accumulates `1/x` rounded to the `MathContext` (a reciprocal usually has no exact decimal form),
-  and RMS accumulates `x²` rounded to the `MathContext`. Eviction rounds the departing term the same way, so it still
-  reverses the addition exactly.
-- **`Moments` squares values exactly.** Variance is `(n*sumSq - sum*sum) / (n*n)`, or `/ (n*(n-1))` for a sample.
-  Rounding happens only in that final divide. Rounding any earlier gives negative variance for inputs such as
-  `1.000000000000001, 1.000000000000002, 1.000000000000003`.
-- **Product, geometric mean and EMA** round at every step, because exact accumulation would add digits with every
-  element.
-- **Output:** `value()` never returns more digits than the `MathContext` allows. Sum keeps its total exact and rounds
-  it only on the way out.
-- **Nulls:** a null that is still null after mapping and null replacement is skipped. It emits nothing and doesn't
-  move the window.
-- **`Dataset.Sample`:** statistics emit nothing until they have seen two values.
-- **No `combiner()`:** these statistics emit per element, so they can't have a correct one (see "Combiner" above).
+  `MathContext` once, on entry, then add and subtract exactly so eviction reverses an addition exactly. Harmonic mean
+  rounds `1/x` and RMS rounds `x²` instead of the input, and eviction rounds the departing term the same way.
+- **`Moments` squares exactly.** Variance is `(n*sumSq - sum*sum) / (n*n)`, or `/ (n*(n-1))` for a sample, rounded
+  only in that divide. Rounding earlier gives negative variance for `1.000000000000001, 1.000000000000002,
+  1.000000000000003`.
+- **Product, geometric mean and EMA** round at every step, because exact accumulation grows digits without bound.
+- **Moving product never divides.** Dividing out a departing value rounds, and the error builds over the stream.
+  `Product` evicts with two stacks (amortized O(1)) so each result is built only from values in the window.
+- **Output:** `value()` never returns more digits than the `MathContext` allows. Sum rounds its exact total only on
+  the way out.
+- **Nulls** still null after mapping and replacement are skipped: no output, no window movement.
+- **Undefined results emit nothing; invalid input throws.** `Dataset.Sample` before two values, weights summing to
+  zero in a partial window, and harmonic-mean reciprocals cancelling to zero emit nothing and continue. Unusable input,
+  such as `0` for harmonic mean, throws. Never emit a placeholder.
+- **`withMathContext`** rejects precision 0 (`MathContext.UNLIMITED`); divides and square roots need a finite one.
+- **Interpolation scale:** median and percentile drop trailing zeros that interpolation adds, but keep at least as
+  many decimal places as the two values they interpolate between.
 
 ## Tests
 
-- **Location and naming:** write one test class per gatherer in `src/test/java/com/ginsberg/gatherers4j/`, named
-  `[Name]GathererTest` (or `[Name]GatherersTest` when the source file holds several gatherers).
-- **Structure:** mark the Arrange, Act and Assert steps with comments. Use `@Nested` classes to group modes or
-  overloads.
-- **Required coverage:**
-  - an empty stream
-  - a single element
-  - null elements
-  - every null argument, asserting the exact message:
-    `assertThatIllegalArgumentException().isThrownBy(...).withMessage("...")`
-  - invalid numeric arguments, using `@ParameterizedTest` with `@ValueSource`
-  - each fluent option
-- **Parallel streams:** if the gatherer implements `combiner()`, test it with `@ParallelAndSequentialTest(values = {...})`
-  from the `test` package. That annotation runs the test method once with a sequential stream and once with a
-  parallel one.
-- **Comparing `BigDecimal`:** compare with `.usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)`. For
-  records that hold `BigDecimal` values, such as `WithOriginal`, use
-  `.usingRecursiveFieldByFieldElementComparator(TestUtils.BIG_DECIMAL_RECURSIVE_COMPARISON)`.
-- **Pitest:** run `./gradlew pitest` after adding a gatherer. A surviving mutant usually means an edge case has no
-  test.
+- One class per gatherer, `[Name]GathererTest` (or `[Name]GatherersTest` for a multi-gatherer source file). Mark
+  Arrange, Act and Assert with comments. Group modes or overloads with `@Nested`.
+- Cover: an empty stream, a single element, null elements, each fluent option, every null argument with its exact
+  message (`assertThatIllegalArgumentException().isThrownBy(...).withMessage("...")`), and invalid numeric arguments
+  with `@ParameterizedTest` and `@ValueSource`.
+- A gatherer with a `combiner()` is tested with `@ParallelAndSequentialTest(values = {...})` from the `test` package.
+- Compare `BigDecimal` with `.usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)`, and records holding
+  them with `.usingRecursiveFieldByFieldElementComparator(TestUtils.BIG_DECIMAL_RECURSIVE_COMPARISON)`.
+- Run `./gradlew pitest` after adding a gatherer. A surviving mutant usually means an untested edge case.
 
 ## Documentation
 
-Every public factory method needs all three of these in the same change:
+Every public factory method needs, in the same change:
 
-1. **A docs page** at `docs/gatherers4j/content/gatherers/<directory>/<methodName>.md`. Each `By` variant gets its own
-   page.
+1. **A docs page** at `docs/gatherers4j/content/gatherers/<category-directory>/<methodName>.md`, one per `By` variant.
+   Copy the front matter and section layout from a page in the same directory: `### Implementation Notes`,
+   `**Signature(s)**`, an `**Additional Methods**` table for fluent options, then `### Examples` with one `####` per
+   example and the output in a trailing `// [...]` comment. Link JDK types with the `jdklink` shortcode.
+2. **A README row** in the matching category table, alphabetical, linking to
+   `https://tginsberg.github.io/gatherers4j/gatherers/<category-directory>/<methodname, lowercased>/`.
+3. **A changelog bullet** under the unreleased version in `docs/gatherers4j/content/changelog/_index.md`. Call out
+   every rename, removal and behavior change. The root `CHANGELOG.md` only points there.
 
-   | Directory | `category:` value |
-   |---|---|
-   | `sequence-operations` | `Sequence Operations` |
-   | `filtering-and-selection` | `Filtering and Selection` |
-   | `grouping-and-windowing` | `Grouping and Windowing` |
-   | `validation-and-constraints` | `Validation and Constraints` |
-   | `mathematical` | `"Mathematical Operations"` |
+Add a JMH benchmark only when a performance decision depends on it.
 
-   ```markdown
-   ---
-   title: "methodName()"
-   linkTitle: "methodName()"
-   show_in_table: true
-   category: Filtering and Selection
-   description: One sentence.
-   ---
-   ```
+## Versions, branches and files
 
-   The body has these sections, in order:
-   - `### Implementation Notes`
-   - `**Signature**` (or `**Signatures**`) listing the parameters
-   - an `**Additional Methods**` table, if there are fluent options
-   - `### Examples`, with one `####` heading per example and the output in a trailing `// [...]` comment
-
-   Link JDK types with the `{{< jdklink linkName="..." package="java.base/..." >}}` shortcode. Start from an existing
-   page in the same directory.
-2. **A README row** in the matching category table. Keep the table alphabetical, and link to
-   `https://tginsberg.github.io/gatherers4j/gatherers/<directory>/<methodname, lowercased>/`.
-3. **A changelog bullet** under the unreleased version in `docs/gatherers4j/content/changelog/_index.md`, for example
-   "+ Implement `name()` ...". Call out every rename, removal and behavior change. The root `CHANGELOG.md` only points
-   to that page.
-
-Add a JMH benchmark under `src/jmh/java/com/ginsberg/gatherers4j/bench/` only when a performance decision depends on
-it.
-
-## Versions and branches
-
-- **`VERSION.txt`** holds the version, `X.Y.Z-SNAPSHOT` during development. On `main` and `release/*` the build
-  publishes that string verbatim. On any other branch it publishes `<last branch path segment>-SNAPSHOT`.
-- **Branches:** work for a release goes on `release/X.Y.Z`. Feature branches merge into it, and it merges to `main`
-  when the release ships.
-
-## Working tree
-
-`.gitattributes` checks out every text file with LF line endings, whatever `core.autocrlf` says, except `*.bat`, which
-gets CRLF. Write new files with LF. Don't rewrite files whose content hasn't changed.
+- `VERSION.txt` holds `X.Y.Z-SNAPSHOT` during development. `main` and `release/*` publish it verbatim. Other branches
+  publish `<last branch path segment>-SNAPSHOT`.
+- Release work goes on `release/X.Y.Z`. Feature branches merge into it, and it merges to `main` when the release ships.
+- `.gitattributes` forces LF on every text file except `*.bat` (CRLF). Write new files with LF, and don't rewrite files
+  whose content hasn't changed.
