@@ -6,7 +6,7 @@ no_list: true
 ---
 
 ## v0.15.0
-[Released 2026-??-??](https://github.com/tginsberg/gatherers4j/releases/tag/v0.15.0)
+[Released 2026-10-11](https://github.com/tginsberg/gatherers4j/releases/tag/v0.15.0)
 + Breaking change: the BigDecimal-based moving and running gatherers (sum, product, simple average, exponential average, median, geometric mean, standard deviation) now return `BigDecimalMovingStatGatherer` or `BigDecimalRunningStatGatherer`. The public classes they used to return are removed: `BigDecimalGatherer`, `BigDecimalExponentialMovingAverageGatherer`, `BigDecimalGeometricMeanGatherer`, `BigDecimalMedianGatherer`, `BigDecimalMovingGeometricMeanGatherer`, `BigDecimalMovingProductGatherer`, `BigDecimalMovingSumGatherer`, `BigDecimalProductGatherer`, `BigDecimalSimpleAverageGatherer`, `BigDecimalSimpleMovingAverageGatherer`, `BigDecimalStandardDeviationGatherer`, and `BigDecimalSumGatherer`. Code that only calls the factory methods on `Gatherers4j` is unaffected, but code that names these types (for example in a variable declaration) must change.
 + Breaking change: remove the public `SamplePercentageGatherers.poisson()`. Use `Gatherers4j.samplePercentage()` instead.
 + Behavior change: the BigDecimal gatherers now round each input to the `MathContext` as it arrives, and sums, means, and standard deviations then accumulate exactly instead of rounding at every step. Results can differ from v0.14.0 in the final digits. Other numeric changes:
