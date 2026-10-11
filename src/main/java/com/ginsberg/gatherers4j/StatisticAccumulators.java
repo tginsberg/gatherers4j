@@ -22,6 +22,7 @@ import com.ginsberg.gatherers4j.util.MathUtils;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -140,13 +141,13 @@ class StatisticAccumulators {
 
     final static class PercentileAccumulator implements StatisticAccumulator<BigDecimal> {
         private final SortedWindow state = new SortedWindow();
-        private final double percentile;
+        private final BigDecimal percentile;
 
         PercentileAccumulator(final double percentile) {
-            if (percentile < 0 || percentile > 100) {
+            if (Double.isNaN(percentile) || percentile < 0 || percentile > 100) {
                 throw new IllegalArgumentException("Percentile must be between 0 and 100, inclusive");
             }
-            this.percentile = percentile;
+            this.percentile = BigDecimal.valueOf(percentile);
         }
 
         @Override
@@ -515,19 +516,16 @@ class StatisticAccumulators {
         }
 
         // R-7 / PERCENTILE.INC, p in [0, 100]
-        BigDecimal percentile(final double p, final MathContext mc) {
-            final int n = sorted.size();
-            final double h = (n - 1) * (p / 100.0);
-            final int lower = (int) Math.floor(h);
-            final int upper = (int) Math.ceil(h);
-
-            if (lower == upper) {
-                return sorted.get(lower);
+        BigDecimal percentile(final BigDecimal p, final MathContext mc) {
+            final BigDecimal rank = BigDecimal.valueOf(sorted.size() - 1).multiply(p).movePointLeft(2);
+            final BigDecimal lowerRank = rank.setScale(0, RoundingMode.FLOOR);
+            final BigDecimal weight = rank.subtract(lowerRank).stripTrailingZeros();
+            final BigDecimal low = sorted.get(lowerRank.intValueExact());
+            if (weight.signum() == 0) {
+                return low;
             }
-            final BigDecimal weight = BigDecimal.valueOf(h - lower);
-            final BigDecimal low = sorted.get(lower);
-            final BigDecimal high = sorted.get(upper);
-            return low.add(high.subtract(low).multiply(weight, mc), mc);
+            final BigDecimal high = sorted.get(lowerRank.intValueExact() + 1);
+            return low.add(high.subtract(low).multiply(weight)).round(mc);
         }
 
         private int insertionPoint(final BigDecimal value) {

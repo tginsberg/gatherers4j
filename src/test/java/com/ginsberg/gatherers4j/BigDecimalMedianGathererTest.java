@@ -222,6 +222,22 @@ class BigDecimalMedianGathererTest {
         }
 
         @Test
+        void roundsInterpolationOnce() {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.of("1E-20", "9.999999999999999").map(BigDecimal::new);
+
+            // Act
+            final List<BigDecimal> output = input
+                    .gather(Gatherers4j.movingMedian(2).excludePartialValues())
+                    .toList();
+
+            // Assert
+            assertThat(output)
+                    .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
+                    .containsExactly(new BigDecimal("5"));
+        }
+
+        @Test
         void treatNullAsZero() {
             // Arrange
             final Stream<BigDecimal> input = Stream.of(
@@ -362,6 +378,25 @@ class BigDecimalMedianGathererTest {
                             new WithOriginal<>(new BigDecimal("2"), new BigDecimal("1.5")),
                             new WithOriginal<>(new BigDecimal("3"), new BigDecimal("2")),
                             new WithOriginal<>(new BigDecimal("4"), new BigDecimal("2.5"))
+                    );
+        }
+
+        @Test
+        void roundsInterpolationOnce() {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.of("1E-20", "9.999999999999999").map(BigDecimal::new);
+
+            // Act
+            final List<BigDecimal> output = input
+                    .gather(Gatherers4j.runningMedian())
+                    .toList();
+
+            // Assert
+            assertThat(output)
+                    .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
+                    .containsExactly(
+                            new BigDecimal("1E-20"),
+                            new BigDecimal("5")
                     );
         }
 
