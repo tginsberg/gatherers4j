@@ -15,7 +15,7 @@ For example, if the window holds `10`, `20`, and `30` (oldest to newest), the we
 
 Because newer values count for more, the weighted mean reacts to changes faster than `movingMeanBy()`. Unlike the exponential moving average (see [`exponentialMovingAverageWithAlphaBy()`](/gatherers4j/gatherers/mathematical/exponentialmovingaveragewithalphaby/)), where old values fade but never fully disappear, a value in a weighted moving mean stops counting completely as soon as it leaves the window.
 
-Until the window is full, the same rule is applied to the values seen so far: with two values in the window, the weights are 1 and 2.
+Until the window is full, the newest weights are used, as with custom weights below: with a `windowSize` of 3 and two values in the window, the weights are 2 and 3 (the newest two of 1, 2, 3), so the window `10`, `20` gives `(10 * 2 + 20 * 3) / 5 = 16`, and the very first value gets a weight of 3 on its own.
 
 By default, nulls are ignored and play no part in calculations, see `treatNullAs()` and `treatNullAsZero()` below for ways to change this behavior. The default `MathContext`
 for all calculations is {{< jdklink linkName="MathContext.DECIMAL64" package="java.base/java/math/MathContext.html#DECIMAL64" >}}, but this can be overridden (see `withMathContext()`, below). Each input is rounded to the `MathContext` once, when it arrives, and the weighted sum is otherwise calculated exactly. Only the final division is rounded.
@@ -39,7 +39,7 @@ The first weight applies to the oldest element in the window, and the last weigh
 List.of(new BigDecimal("0.2"), new BigDecimal("0.3"), new BigDecimal("0.5"))
 ```
 
-While the window is not yet full, the **newest** weights are used and the result is divided by their sum. With weights `[1, 1, 2]` and only two values seen so far, the weights `[1, 2]` are used. This means that `movingWeightedMeanBy(3, fn)` and `movingWeightedMeanBy(List.of(1, 2, 3), fn)` give the same results once the window is full, but not while it is filling.
+While the window is not yet full, the **newest** weights are used and the result is divided by their sum. With weights `[1, 1, 2]` and only two values seen so far, the weights `[1, 2]` are used. This is the same rule `movingWeightedMeanBy(int windowSize, fn)` follows, so `movingWeightedMeanBy(3, fn)` gives exactly the same results as `movingWeightedMeanBy(List.of(1, 2, 3), fn)`, including while the window is filling.
 
 Weights of zero are allowed. For example, `[1, 1, 0]` means "the average of the previous two values, excluding the current one". While the window is filling, only the newest weights are used, and if those happen to sum to zero the mean is undefined (0 divided by 0), so nothing is emitted for that element. With `[1, 1, 0]`, the first element emits nothing, because the only weight in use is the `0`. A list whose weights all sum to zero is rejected when the method is called.
 
@@ -94,7 +94,7 @@ Stream
 
 // [
 //   BigDecimal("10")
-//   BigDecimal("16.66666666666667")
+//   BigDecimal("16")
 //   BigDecimal("23.33333333333333")
 //   BigDecimal("33.33333333333333")
 // ]
@@ -196,7 +196,7 @@ Stream
 
 // [
 //   BigDecimal("30")
-//   BigDecimal("50")
+//   BigDecimal("48")
 // ]
 ```
 
@@ -266,7 +266,7 @@ Stream
 
 // [
 //   BigDecimal("10")
-//   BigDecimal("16.6")
+//   BigDecimal("16")
 //   BigDecimal("23.3")
 //   BigDecimal("33.3")
 // ]
@@ -289,7 +289,7 @@ Stream
 
 // [
 //   WithOriginal[original=NamedValue[name=first, value=10], calculated=10]
-//   WithOriginal[original=NamedValue[name=second, value=20], calculated=16.66666666666667]
+//   WithOriginal[original=NamedValue[name=second, value=20], calculated=16]
 //   WithOriginal[original=NamedValue[name=third, value=30], calculated=23.33333333333333]
 //   WithOriginal[original=NamedValue[name=fourth, value=40], calculated=33.33333333333333]
 // ]

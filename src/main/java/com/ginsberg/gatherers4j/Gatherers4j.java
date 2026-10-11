@@ -887,8 +887,9 @@ public abstract class Gatherers4j {
 
     /// Create a Stream that represents the linearly weighted moving mean of a `Stream<BigDecimal>` looking
     /// back `windowSize` number of elements. The oldest element in the window has weight 1, and each element after
-    /// it has a weight one higher, so the newest element has the highest weight. While the window is not yet full,
-    /// the same rule applies to the elements seen so far.
+    /// it has a weight one higher, so the newest element has the highest weight, `windowSize`. This is the same as
+    /// calling [#movingWeightedMean(List)] with the weights 1 through `windowSize`. While the window is not yet full,
+    /// the newest weights are used.
     ///
     /// @param windowSize The number of elements to average, must be greater than 1.
     /// @return A non-null `BigDecimalMovingStatGatherer`
@@ -896,7 +897,7 @@ public abstract class Gatherers4j {
         return new BigDecimalMovingStatGatherer<>(
                 windowSize,
                 Function.identity(),
-                StatisticAccumulators.WeightedMeanAccumulator::new
+                () -> new StatisticAccumulators.WeightedMeanAccumulator(windowSize)
         );
     }
 
@@ -926,7 +927,8 @@ public abstract class Gatherers4j {
     /// Create a Stream that represents the linearly weighted moving mean of `BigDecimal` objects mapped from a
     /// `Stream<INPUT>` via a `mappingFunction` and looking back `windowSize` number of elements. The oldest element
     /// in the window has weight 1, and each element after it has a weight one higher, so the newest element has the
-    /// highest weight. While the window is not yet full, the same rule applies to the elements seen so far.
+    /// highest weight, `windowSize`. This is the same as calling [#movingWeightedMeanBy(List, Function)] with the
+    /// weights 1 through `windowSize`. While the window is not yet full, the newest weights are used.
     ///
     /// @param windowSize      The number of elements to average, must be greater than 1.
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
@@ -940,7 +942,7 @@ public abstract class Gatherers4j {
         return new BigDecimalMovingStatGatherer<>(
                 windowSize,
                 mappingFunction,
-                StatisticAccumulators.WeightedMeanAccumulator::new
+                () -> new StatisticAccumulators.WeightedMeanAccumulator(windowSize)
         );
     }
 

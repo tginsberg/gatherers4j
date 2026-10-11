@@ -87,15 +87,15 @@ class BigDecimalWeightedMeanGathererTest {
             final List<BigDecimal> output = input.gather(Gatherers4j.movingWeightedMean(3)).toList();
 
             // Assert
-            // [10]         -> 10
-            // [10, 20]     -> (10*1 + 20*2) / 3 = 50/3
+            // [10]         -> 10 (weight 3, the newest weight of 1..3)
+            // [10, 20]     -> (10*2 + 20*3) / 5 = 16
             // [10, 20, 30] -> (10*1 + 20*2 + 30*3) / 6 = 140/6
             // [20, 30, 40] -> (20*1 + 30*2 + 40*3) / 6 = 200/6
             assertThat(output)
                     .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                     .containsExactly(
                             new BigDecimal("10"),
-                            new BigDecimal("16.66666666666667"),
+                            new BigDecimal("16"),
                             new BigDecimal("23.33333333333333"),
                             new BigDecimal("33.33333333333333")
                     );
@@ -154,7 +154,7 @@ class BigDecimalWeightedMeanGathererTest {
                     .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                     .containsExactly(
                             new BigDecimal("10"),
-                            new BigDecimal("16.66666666666667"),
+                            new BigDecimal("16"),
                             new BigDecimal("23.33333333333333")
                     );
         }
@@ -170,12 +170,12 @@ class BigDecimalWeightedMeanGathererTest {
                     .toList();
 
             // Assert
-            // [0] -> 0, [0, 30] -> 60/3 = 20, [0, 30, 60] -> (0 + 60 + 180) / 6 = 40
+            // [0] -> 0, [0, 30] -> (0*2 + 30*3) / 5 = 18, [0, 30, 60] -> (0 + 60 + 180) / 6 = 40
             assertThat(output)
                     .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                     .containsExactly(
                             new BigDecimal("0"),
-                            new BigDecimal("20"),
+                            new BigDecimal("18"),
                             new BigDecimal("40")
                     );
         }
@@ -298,7 +298,7 @@ class BigDecimalWeightedMeanGathererTest {
                     .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                     .containsExactly(
                             new BigDecimal("10"),
-                            new BigDecimal("16.7"),
+                            new BigDecimal("16"),
                             new BigDecimal("23.3"),
                             new BigDecimal("33.3")
                     );
@@ -354,7 +354,7 @@ class BigDecimalWeightedMeanGathererTest {
                     .usingRecursiveFieldByFieldElementComparator(BIG_DECIMAL_RECURSIVE_COMPARISON)
                     .containsExactly(
                             new BigDecimal("10"),
-                            new BigDecimal("16.66666666666667"),
+                            new BigDecimal("16"),
                             new BigDecimal("23.33333333333333"),
                             new BigDecimal("33.33333333333333")
                     );
@@ -427,11 +427,12 @@ class BigDecimalWeightedMeanGathererTest {
                 final List<BigDecimal> window = input.subList(Math.max(0, i + 1 - windowSize), i + 1);
                 final int k = window.size();
                 BigDecimal weighted = BigDecimal.ZERO;
+                // k values use the newest k of the weights 1..windowSize
                 for (int j = 0; j < k; j++) {
-                    weighted = weighted.add(window.get(j).multiply(BigDecimal.valueOf(j + 1)));
+                    weighted = weighted.add(window.get(j).multiply(BigDecimal.valueOf(windowSize - k + 1 + j)));
                 }
                 final BigDecimal expected = weighted.divide(
-                        BigDecimal.valueOf(k * (k + 1) / 2), MathContext.DECIMAL64
+                        BigDecimal.valueOf(k * (2 * windowSize - k + 1) / 2), MathContext.DECIMAL64
                 );
                 assertThat(output.get(i)).as("index %d", i).isEqualByComparingTo(expected);
             }
@@ -439,7 +440,7 @@ class BigDecimalWeightedMeanGathererTest {
 
         @ParameterizedTest(name = "windowSize of {0}")
         @ValueSource(ints = {2, 3, 5, 10})
-        void sameAsCustomWeightsOfOneThroughNOnFullWindows(final int windowSize) {
+        void sameAsCustomWeightsOfOneThroughN(final int windowSize) {
             // Arrange
             final Random random = new Random(7L);
             final List<BigDecimal> input = IntStream.range(0, 500)
@@ -451,15 +452,41 @@ class BigDecimalWeightedMeanGathererTest {
 
             // Act
             final List<BigDecimal> linear = input.stream()
-                    .gather(Gatherers4j.movingWeightedMean(windowSize).excludePartialValues())
+                    .gather(Gatherers4j.movingWeightedMean(windowSize))
                     .toList();
             final List<BigDecimal> custom = input.stream()
-                    .gather(Gatherers4j.movingWeightedMean(oneThroughN).excludePartialValues())
+                    .gather(Gatherers4j.movingWeightedMean(oneThroughN))
                     .toList();
 
             // Assert
-            // Partial windows differ by design: the linear form uses weights 1..k for k values, while custom
-            // weights use the newest k weights, which for 1..n are n-k+1..n.
+            // Includes partial windows: k values use the newest k of the weights 1..n
+            assertThat(linear).isNotEmpty();
+            assertThat(custom)
+                    .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
+                    .containsExactlyElementsOf(linear);
+        }
+
+        @ParameterizedTest(name = "windowSize of {0}")
+        @ValueSource(ints = {2, 3, 5, 10})
+        void byFormSameAsCustomWeightsOfOneThroughN(final int windowSize) {
+            // Arrange
+            final Random random = new Random(11L);
+            final List<TestValueHolder> input = IntStream.range(0, 500)
+                    .mapToObj(i -> new TestValueHolder(i, i % 13 == 0 ? null : BigDecimal.valueOf(random.nextInt(100_000), 3)))
+                    .toList();
+            final List<BigDecimal> oneThroughN = IntStream.rangeClosed(1, windowSize)
+                    .mapToObj(BigDecimal::valueOf)
+                    .toList();
+
+            // Act
+            final List<BigDecimal> linear = input.stream()
+                    .gather(Gatherers4j.movingWeightedMeanBy(windowSize, TestValueHolder::value))
+                    .toList();
+            final List<BigDecimal> custom = input.stream()
+                    .gather(Gatherers4j.movingWeightedMeanBy(oneThroughN, TestValueHolder::value))
+                    .toList();
+
+            // Assert
             assertThat(linear).isNotEmpty();
             assertThat(custom)
                     .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)

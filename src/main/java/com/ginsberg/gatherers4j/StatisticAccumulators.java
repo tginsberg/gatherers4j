@@ -423,28 +423,38 @@ class StatisticAccumulators {
         }
     }
 
-    /// Linearly weighted moving mean: the oldest value in the window has weight 1 and the newest has weight k,
-    /// where k is the number of values in the window. Keeps the window sum and weighted sum, so each step is O(1).
+    /// Linearly weighted moving mean over a window of size n. The weights are 1 through n from oldest to newest,
+    /// and a partial window of k values uses the newest k weights, (n-k+1) through n. This gives the same results as
+    /// [CustomWeightedMeanAccumulator] with the weights 1 through n. Keeps the window sum and the weighted sum, so
+    /// each step is O(1).
     ///
-    /// The integrator evicts the oldest value of a full window before adding the new value. After the eviction,
-    /// every remaining weight drops by one, which is the same as subtracting the window sum from the weighted sum.
+    /// The integrator evicts the oldest value of a full window before adding the new value. A full window's oldest
+    /// value has weight 1, so evicting it removes exactly its value from the weighted sum. Adding a value lowers the
+    /// weight of every existing value by one, which is the same as subtracting the window sum, and gives the new
+    /// value weight n.
     final static class WeightedMeanAccumulator implements StatisticAccumulator<BigDecimal> {
+        private final BigDecimal windowSize;
         private long count = 0;
         private BigDecimal sum = BigDecimal.ZERO;
         private BigDecimal weightedSum = BigDecimal.ZERO;
 
+        WeightedMeanAccumulator(final int windowSize) {
+            this.windowSize = BigDecimal.valueOf(windowSize);
+        }
+
         @Override
         public void add(final BigDecimal value, final MathContext mc) {
             final BigDecimal rounded = value.round(mc);
-            count++;
-            weightedSum = weightedSum.add(rounded.multiply(BigDecimal.valueOf(count)));
+            weightedSum = weightedSum.subtract(sum).add(rounded.multiply(windowSize));
             sum = sum.add(rounded);
+            count++;
         }
 
         @Override
         public void evict(final BigDecimal oldest, final MathContext mc) {
-            weightedSum = weightedSum.subtract(sum);
-            sum = sum.subtract(oldest.round(mc));
+            final BigDecimal rounded = oldest.round(mc);
+            weightedSum = weightedSum.subtract(rounded);
+            sum = sum.subtract(rounded);
             count--;
         }
 
@@ -455,7 +465,12 @@ class StatisticAccumulators {
 
         @Override
         public BigDecimal value(final MathContext mc) {
-            return weightedSum.divide(BigDecimal.valueOf(count * (count + 1) / 2), mc);
+            // The newest `count` weights of 1..n sum to count * (2n - count + 1) / 2
+            final BigDecimal k = BigDecimal.valueOf(count);
+            final BigDecimal weightTotal = k
+                    .multiply(windowSize.multiply(BigDecimal.TWO).subtract(k).add(BigDecimal.ONE))
+                    .divide(BigDecimal.TWO);
+            return weightedSum.divide(weightTotal, mc);
         }
     }
 
