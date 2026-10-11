@@ -17,6 +17,7 @@
 package com.ginsberg.gatherers4j;
 
 import com.ginsberg.gatherers4j.dto.Pair;
+import com.ginsberg.gatherers4j.dto.StatisticalSummary;
 import com.ginsberg.gatherers4j.dto.WithCount;
 import com.ginsberg.gatherers4j.dto.WithIndex;
 import com.ginsberg.gatherers4j.enums.Dataset;
@@ -737,6 +738,40 @@ public abstract class Gatherers4j {
         );
     }
 
+    /// Create a Stream of `StatisticalSummary` objects describing a `Stream<BigDecimal>`, looking back
+    /// `windowSize` number of elements. The sample variance and sample standard deviation are `null` until
+    /// the window holds at least two values.
+    ///
+    /// @param windowSize The trailing number of elements to summarize, must be greater than 1.
+    /// @return A non-null `BigDecimalMovingStatGatherer`
+    public static BigDecimalMovingStatGatherer<@Nullable BigDecimal, StatisticalSummary> movingStatistics(final int windowSize) {
+        return new BigDecimalMovingStatGatherer<>(
+                windowSize,
+                Function.identity(),
+                () -> new StatisticAccumulators.StatisticalSummaryAccumulator(true)
+        );
+    }
+
+    /// Create a Stream of `StatisticalSummary` objects describing `BigDecimal` objects mapped from a
+    /// `Stream<INPUT>` via a `mappingFunction`, looking back `windowSize` number of elements. The sample variance
+    /// and sample standard deviation are `null` until the window holds at least two values.
+    ///
+    /// @param windowSize      The trailing number of elements to summarize, must be greater than 1.
+    /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be
+    ///                        summarized
+    /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
+    /// @return A non-null `BigDecimalMovingStatGatherer`
+    public static <INPUT extends @Nullable Object> BigDecimalMovingStatGatherer<INPUT, StatisticalSummary> movingStatisticsBy(
+            final int windowSize,
+            final Function<INPUT, BigDecimal> mappingFunction
+    ) {
+        return new BigDecimalMovingStatGatherer<>(
+                windowSize,
+                mappingFunction,
+                () -> new StatisticAccumulators.StatisticalSummaryAccumulator(true)
+        );
+    }
+
     /// Create a Stream that represents the moving sum of a `Stream<BigDecimal>` looking
     /// back `windowSize` number of elements.
     ///
@@ -1082,6 +1117,34 @@ public abstract class Gatherers4j {
         return new BigDecimalRunningStatGatherer<>(
                 mappingFunction,
                 () -> new StatisticAccumulators.StdDevAccumulator(dataset)
+        );
+    }
+
+    /// Create a Stream of `StatisticalSummary` objects describing a `Stream<BigDecimal>` so far. The sample
+    /// variance and sample standard deviation are `null` until at least two values have been seen.
+    ///
+    /// @return A non-null `BigDecimalRunningStatGatherer`
+    public static BigDecimalRunningStatGatherer<@Nullable BigDecimal, StatisticalSummary> runningStatistics() {
+        return new BigDecimalRunningStatGatherer<>(
+                Function.identity(),
+                () -> new StatisticAccumulators.StatisticalSummaryAccumulator(false)
+        );
+    }
+
+    /// Create a Stream of `StatisticalSummary` objects describing `BigDecimal` objects mapped from a
+    /// `Stream<INPUT>` via a `mappingFunction` so far. The sample variance and sample standard deviation are
+    /// `null` until at least two values have been seen.
+    ///
+    /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be
+    ///                        summarized
+    /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
+    /// @return A non-null `BigDecimalRunningStatGatherer`
+    public static <INPUT extends @Nullable Object> BigDecimalRunningStatGatherer<INPUT, StatisticalSummary> runningStatisticsBy(
+            final Function<INPUT, BigDecimal> mappingFunction
+    ) {
+        return new BigDecimalRunningStatGatherer<>(
+                mappingFunction,
+                () -> new StatisticAccumulators.StatisticalSummaryAccumulator(false)
         );
     }
 
