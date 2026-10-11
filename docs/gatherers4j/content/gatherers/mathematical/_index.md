@@ -9,8 +9,8 @@ Functions performing calculations over the stream.
 
 Major themes are:
 
-* Moving and running product, sum, and simple average
-* Running population and sample standard deviation
+* Moving and running product, sum, and mean
+* Moving and running population and sample standard deviation
 * Variations for working with `Stream<BigDecimal>` or mapping input elements to `BigDecimal`
 
 {{< functiontable >}}

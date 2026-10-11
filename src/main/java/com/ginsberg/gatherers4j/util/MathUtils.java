@@ -52,30 +52,29 @@ public abstract class MathUtils {
             throw new ArithmeticException("Even root of negative value is not real");
         }
         final BigDecimal abs = negative ? value.negate() : value;
-        // Initial guess: scale based on double approximation
-        BigDecimal x = new BigDecimal(Math.pow(abs.doubleValue(), 1.0 / n), mc);
-        if (x.signum() == 0) {
-            x = BigDecimal.ONE; // fallback
-        }
+        // Initial guess from the decimal exponent rather than abs.doubleValue(), which is infinite or zero
+        // outside double range. With abs = m * 10^e and m in [1, 10), log10(root) = (log10(m) + e) / n.
+        final int exponent = abs.precision() - abs.scale() - 1;
+        final double rootExponent = (Math.log10(abs.movePointLeft(exponent).doubleValue()) + exponent) / n;
+        final double wholeExponent = Math.floor(rootExponent);
+        BigDecimal x = new BigDecimal(Math.pow(10, rootExponent - wholeExponent))
+                .scaleByPowerOfTen((int) wholeExponent);
         final BigDecimal nBD = new BigDecimal(n);
         final int precision = mc.getPrecision() > 0 ? mc.getPrecision() : Math.max(abs.precision(), 34);
         final MathContext work = new MathContext(precision + 5, mc.getRoundingMode());
         final BigDecimal eps = BigDecimal.ONE.movePointLeft(precision);
 
         // Newton iteration: x_{k+1} = ((n-1)*x_k + A / x_k^{n-1}) / n
+        // Every iterate stays positive, and convergence is relative to x so tiny and huge roots both converge.
         for (int iter = 0; iter < 1_000; iter++) {
-            BigDecimal xPow = pow(x, n - 1, work);
-            if (xPow.signum() == 0) {
-                x = BigDecimal.ONE;
-                xPow = BigDecimal.ONE;
-            }
+            final BigDecimal xPow = pow(x, n - 1, work);
             final BigDecimal numerator = xPow.multiply(x, work)
                     .multiply(nBD.subtract(BigDecimal.ONE), work)
                     .add(abs, work);
             final BigDecimal xNext = numerator.divide(nBD.multiply(xPow, work), work);
             final BigDecimal delta = xNext.subtract(x, work).abs();
             x = xNext;
-            if (delta.compareTo(eps) <= 0) {
+            if (delta.compareTo(x.multiply(eps, work)) <= 0) {
                 break;
             }
         }

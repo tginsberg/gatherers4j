@@ -67,14 +67,14 @@ public class FrequencyGatherer<INPUT extends @Nullable Object>
             var counts = inputState.counts
                     .entrySet()
                     .stream()
-                    .map(it -> new WithCount<INPUT>(it.getKey(), it.getValue()))
+                    .map(it -> new WithCount<>(it.getKey(), it.getValue()))
                     .sorted(comparator());
             pushAll(counts, downstream);
         };
     }
 
     private Comparator<WithCount<INPUT>> comparator() {
-        Comparator<WithCount<INPUT>> comparator = Comparator.comparing(WithCount::count);
+        Comparator<WithCount<INPUT>> comparator = Comparator.comparingLong(WithCount::count);
         if (order == Frequency.Descending) {
             return comparator.reversed();
         } else {

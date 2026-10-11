@@ -23,6 +23,7 @@ for all calculations is {{< jdklink linkName="MathContext.DECIMAL64" package="ja
 |--------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `treatNullAsZero()`                        | When encountering a `null` value in a stream, treat it as `BigDecimal.ZERO` instead. [See example.](#treating-null-as-zero)                                                                                                                                                                                          |
 | `treatNullAs(BigDecimal replacement)`      | When encountering a `null` value in a stream, treat it as the given `replacement` value instead. [See example.](#replacing-null-with-another-bigdecimal)                                                                                                                                                             |
+| `treatNullAsOne()`                         | When encountering a `null` value in a stream, treat it as `BigDecimal.ONE` instead.                                                                                                                                                                                                                                  |
 | `withMathContext(MathContext mathContext)` | Replace the `MathContext` used for all mathematical operations performed by this gatherer. [See example.](#specifying-a-new-mathcontext)                                                                                                                                                                             |
 | `withOriginal()`                           | Include the original input value from the stream in addition to the calculated value in a [`WithOriginal`](https://github.com/tginsberg/gatherers4j/blob/main/src/main/java/com/ginsberg/gatherers4j/dto/WithOriginal.java) record. [See example.](#emitting-a-record-containing-the-original-and-calculated-values) |
 
@@ -90,11 +91,11 @@ Stream
     .toList();
 
 // [
-//   BigDecimal("0"), 
-//   BigDecimal("0"), 
-//   BigDecimal("0"), 
+//   BigDecimal("0"),
+//   BigDecimal("0"),
+//   BigDecimal("0"),
 //   BigDecimal("0.55"),
-//   BigDecimal("1.1") 
+//   BigDecimal("1.1")
 // ]
 ```
 
@@ -118,9 +119,9 @@ Stream
 // [
 //   BigDecimal("2"),
 //   BigDecimal("2"),
-//   BigDecimal("2"), 
-//   BigDecimal("6.05"), 
-//   BigDecimal("10.1") 
+//   BigDecimal("2"),
+//   BigDecimal("6.05"),
+//   BigDecimal("10.1")
 // ]
 ```
 
@@ -167,8 +168,8 @@ Stream
     .toList();
 
 // [ 
-//   WithOriginal[original=NamedValue[name=first, value=1.0], calculated=1.0], 
-//   WithOriginal[original=NamedValue[name=second, value=2.0], calculated=1.5], 
+//   WithOriginal[original=NamedValue[name=first, value=1.0], calculated=1.0],
+//   WithOriginal[original=NamedValue[name=second, value=2.0], calculated=1.5],
 //   WithOriginal[original=NamedValue[name=third, value=10.0], calculated=2.0]
 // ]
 ```

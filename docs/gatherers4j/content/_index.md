@@ -6,20 +6,20 @@ type: "docs"
 weight: 20
 description: A library of useful custom intermediate stream operations for Java.
 cascade:
-- _target:
+- target:
     path: "/blog/**"
   type: "blog"
   # set to false to include a blog section in the section nav along with docs
   toc_root: true
-- _target:
+- target:
     path: "/**"
     kind: "page"
   type: "docs"
-- _target:
+- target:
     path: "/**"
     kind: "section"
   type: "docs"
-- _target:
+- target:
     path: "/**"
     kind: "section"
   type: "home"

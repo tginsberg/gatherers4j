@@ -11,7 +11,8 @@ description: Shuffle the input stream into a random order.
 
 This implementation reads the entire stream before emitting any results, making it inappropriate for infinite streams. There
 are two versions of this Gatherer, one that uses the platform default `RandomGenerator` and one that allows the caller to 
-specify a `RandomGenerator`.
+specify a `RandomGenerator`. Most `RandomGenerator` implementations are not thread-safe, so a single instance of this Gatherer
+should not be used from multiple threads at the same time.
 
 **Signatures**
 

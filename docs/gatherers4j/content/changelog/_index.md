@@ -5,6 +5,32 @@ weight: 90
 no_list: true
 ---
 
+## v0.15.0
+[Released 2026-10-11](https://github.com/tginsberg/gatherers4j/releases/tag/v0.15.0)
++ Breaking change: the BigDecimal-based moving and running gatherers (sum, product, simple average, exponential average, median, geometric mean, standard deviation) now return `BigDecimalMovingStatGatherer` or `BigDecimalRunningStatGatherer`. The public classes they used to return are removed: `BigDecimalGatherer`, `BigDecimalExponentialMovingAverageGatherer`, `BigDecimalGeometricMeanGatherer`, `BigDecimalMedianGatherer`, `BigDecimalMovingGeometricMeanGatherer`, `BigDecimalMovingProductGatherer`, `BigDecimalMovingSumGatherer`, `BigDecimalProductGatherer`, `BigDecimalSimpleAverageGatherer`, `BigDecimalSimpleMovingAverageGatherer`, `BigDecimalStandardDeviationGatherer`, and `BigDecimalSumGatherer`. Code that only calls the factory methods on `Gatherers4j` is unaffected, but code that names these types (for example in a variable declaration) must change.
++ Breaking change: remove the public `SamplePercentageGatherers.poisson()`. Use `Gatherers4j.samplePercentage()` instead.
++ Behavior change: the BigDecimal gatherers now round each input to the `MathContext` as it arrives, and sums, means, and standard deviations then accumulate exactly instead of rounding at every step. Results can differ from v0.14.0 in the final digits. Other numeric changes:
+  + `exponentialMovingAverageWithAlpha()`, `exponentialMovingAverageWithPeriod()`, and their `By` variants now round at every step. Previously they never rounded, so results gained digits with every element and long streams became progressively slower.
+  + Sample standard deviation (`Dataset.Sample`) now emits nothing for the first element, where `runningSampleStandardDeviation()` emitted `0`.
++ `treatNullAsOne()` and `withMathContext()` are now available on all of the BigDecimal gatherers.
++ Rename `simpleMovingAverage()`, `simpleMovingAverageBy()`, `simpleRunningAverage()`, and `simpleRunningAverageBy()` to `movingMean()`, `movingMeanBy()`, `runningMean()`, and `runningMeanBy()`. 
++ Replace `runningPopulationStandardDeviation()`, `runningPopulationStandardDeviationBy()`, `runningSampleStandardDeviation()`, and `runningSampleStandardDeviationBy()` with `runningStandardDeviation(Dataset)` and `runningStandardDeviationBy(Dataset, Function)`. 
++ Implement `movingStandardDeviation(Dataset, int)` and `movingStandardDeviationBy(Dataset, int, Function)`.
++ Fix bug in `sampleFixedSize()` where elements were not sampled with equal probability. The first `sampleSize` elements were chosen too rarely and later elements too often. 
++ Implement `sampleFixedSize(int, RandomGenerator)` and `samplePercentage(double, RandomGenerator)` so callers can specify the source of randomness.
++ `samplePercentage()` now rejects `NaN`, which was previously accepted and silently emitted nothing.
++ `exponentialMovingAverageWithAlpha()` and `exponentialMovingAverageWithAlphaBy()` now reject `NaN` when called, instead of failing with `NumberFormatException` when the stream runs.
++ `withMathContext()` on the BigDecimal gatherers now rejects a `MathContext` with a precision of 0, such as `MathContext.UNLIMITED`, which made most statistics throw `ArithmeticException` when the stream ran.
++ Implement `movingHarmonicMean()`, `movingHarmonicMeanBy()`, `runningHarmonicMean()`, and `runningHarmonicMeanBy()`.
++ Implement `movingRootMeanSquare()`, `movingRootMeanSquareBy()`, `runningRootMeanSquare()`, and `runningRootMeanSquareBy()`.
++ Implement `movingVariance()`, `movingVarianceBy()`, `runningVariance()`, and `runningVarianceBy()`
++ Implement `movingStatistics()`, `movingStatisticsBy()`, `runningStatistics()`, and `runningStatisticsBy()`, which emit a `StatisticalSummary` record (count, sum, mean, min, max, and population and sample variance and standard deviation) for each element.
++ Implement `movingPercentile()`, `movingPercentileBy()`, `runningPercentile()`, and `runningPercentileBy()`.
++ Implement `movingWeightedMean()` and `movingWeightedMeanBy()`, the weighted moving average. Weights run linearly from 1 (oldest) to the window size (newest) by default, or can be supplied as a `List<BigDecimal>` (or `BigDecimal...` for `movingWeightedMean()`) ordered oldest to newest.
++ Fix `movingProduct()`, `movingProductBy()`, `movingGeometricMean()`, and `movingGeometricMeanBy()` accumulating rounding error over long streams. Values leaving the window are no longer divided out of the product, and each step still takes constant time.
++ Fix `movingMin()`, `movingMinBy()`, `movingMax()`, and `movingMaxBy()` slowing down in proportion to the window size on steadily rising or falling input, and evicting the wrong values after about 2.1 billion elements.
++ Fix `movingGeometricMean()`, `runningGeometricMean()`, and their `By` variants throwing `NumberFormatException` or returning wrong results when the product of the values is outside the range of a `double` (above about 1E+308 or below about 1E-308).
+
 ## v0.14.0
 [Released 2026-05-17](https://github.com/tginsberg/gatherers4j/releases/tag/v0.14.0)
 

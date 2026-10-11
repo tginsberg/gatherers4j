@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           submodules: true
           fetch-depth: 0
@@ -30,28 +30,32 @@ jobs:
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
         with:
-          hugo-version: 0.143.1
+          hugo-version: 0.166.0
           extended: true
 
       - name: Setup Pages
         id: pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'npm'
           cache-dependency-path: '**/package-lock.json'
 
       - name: Build
         run: |
           npm ci
+          # Hugo runs `sass --embedded`; npm may link the pure-JS `sass` package over sass-embedded's bin
+          chmod +x node_modules/sass-embedded/dist/bin/sass.js
+          ln -sf ../sass-embedded/dist/bin/sass.js node_modules/.bin/sass
+          export PATH="$PWD/node_modules/.bin:$PATH"
           . ./set_project_version.sh
           hugo --gc --minify --logLevel debug --baseURL "${{ steps.pages.outputs.base_url }}/"
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: ./docs/gatherers4j/public
 
@@ -64,4 +68,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

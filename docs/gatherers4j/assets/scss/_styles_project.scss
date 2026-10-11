@@ -18,3 +18,8 @@
 [data-bs-theme="dark"] .light-img {
   display: none;
 }
+
+// Light navbar (follows the color mode) with a brand green strip underneath.
+.td-navbar {
+  --td-navbar-border-bottom: 4px solid #2f9e44;
+}

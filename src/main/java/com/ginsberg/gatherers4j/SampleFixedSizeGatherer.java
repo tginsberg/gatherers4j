@@ -31,17 +31,19 @@ public class SampleFixedSizeGatherer<INPUT extends @Nullable Object>
         implements Gatherer<INPUT, SampleFixedSizeGatherer.State<INPUT>, INPUT> {
 
     private final int sampleSize;
+    private final Supplier<RandomGenerator> randomGeneratorSupplier;
 
-    SampleFixedSizeGatherer(final int sampleSize) {
+    SampleFixedSizeGatherer(final int sampleSize, final Supplier<RandomGenerator> randomGeneratorSupplier) {
         if (sampleSize < 1) {
             throw new IllegalArgumentException("sampleSize must be at least 1");
         }
         this.sampleSize = sampleSize;
+        this.randomGeneratorSupplier = randomGeneratorSupplier;
     }
 
     @Override
     public Supplier<State<INPUT>> initializer() {
-        return () -> new State<>(sampleSize);
+        return () -> new State<>(sampleSize, randomGeneratorSupplier.get());
     }
 
     @Override
@@ -59,19 +61,20 @@ public class SampleFixedSizeGatherer<INPUT extends @Nullable Object>
 
     public static class State<INPUT extends @Nullable Object> {
         private final List<INPUT> elements = new ArrayList<>();
-        private final RandomGenerator random = RandomGenerator.getDefault();
         private final int sampleSize;
         private int index = 0;
+        private final RandomGenerator randomGenerator;
 
-        State(final int sampleSize) {
+        State(final int sampleSize, final RandomGenerator randomGenerator) {
             this.sampleSize = sampleSize;
+            this.randomGenerator = randomGenerator;
         }
 
         void take(final @Nullable INPUT element) {
             if (index < sampleSize) {
                 elements.add(element);
             } else {
-                int n = random.nextInt(0, index);
+                final int n = randomGenerator.nextInt(0, index + 1);
                 if (n < sampleSize) {
                     // Not replacing element at n because we want to keep iteration order.
                     elements.remove(n);

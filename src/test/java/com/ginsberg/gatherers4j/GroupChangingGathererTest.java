@@ -485,7 +485,7 @@ class GroupChangingGathererTest {
 
                 // Act
                 final List<List<String>> output = input
-                        .gather(new GroupChangingGatherer<>(Order.Ascending, Comparator.comparing(String::length)))
+                        .gather(new GroupChangingGatherer<>(Order.Ascending, Comparator.comparingInt(String::length)))
                         .toList();
 
                 // Assert

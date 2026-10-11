@@ -82,6 +82,24 @@ class MathUtilsTest {
         }
 
         @Test
+        void rootOfValueAboveDoubleRange() {
+            assertThat(MathUtils.nthRoot(new BigDecimal("2E+400"), 2))
+                    .isEqualByComparingTo("1.414213562373095E+200");
+        }
+
+        @Test
+        void rootOfValueBelowDoubleRange() {
+            assertThat(MathUtils.nthRoot(new BigDecimal("2E-400"), 2))
+                    .isEqualByComparingTo("1.414213562373095E-200");
+        }
+
+        @Test
+        void highRootOfLargeValue() {
+            assertThat(MathUtils.nthRoot(new BigDecimal("1E+5000"), 1000))
+                    .isEqualByComparingTo("1E+5");
+        }
+
+        @Test
         void largeNthRoot() {
             final long n = (long) Integer.MAX_VALUE + 1;
             assertThat(MathUtils.nthRoot(BigDecimal.ONE, n))
@@ -92,7 +110,8 @@ class MathUtilsTest {
         @ValueSource(ints = {-1, 0 } )
         void invalidRoots(int root) {
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> MathUtils.nthRoot(BigDecimal.ONE, root));
+                    .isThrownBy(() -> MathUtils.nthRoot(BigDecimal.ONE, root))
+                    .withMessage("n must be > 0");
         }
 
         @SuppressWarnings("DataFlowIssue")

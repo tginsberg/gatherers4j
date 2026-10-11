@@ -19,12 +19,15 @@ package com.ginsberg.gatherers4j;
 import com.ginsberg.gatherers4j.dto.WithOriginal;
 import com.ginsberg.gatherers4j.util.TestValueHolder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.function.Function;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import static com.ginsberg.gatherers4j.util.TestUtils.BIG_DECIMAL_RECURSIVE_COMPARISON;
@@ -43,10 +46,13 @@ class BigDecimalExponentialMovingAverageGathererTest {
     }
 
     @ParameterizedTest
-    @ValueSource(doubles = {-Double.MAX_VALUE, -Double.MIN_VALUE, 1.0, Double.MAX_VALUE})
+    @ValueSource(doubles = {-Double.MAX_VALUE, -Double.MIN_VALUE, 0.0, 1.0, Double.MAX_VALUE, Double.NaN})
     void alphaMustNotBeOutOfRange(final double value) {
         assertThatIllegalArgumentException().isThrownBy(() ->
                 Gatherers4j.exponentialMovingAverageWithAlpha(value)
+        );
+        assertThatIllegalArgumentException().isThrownBy(() ->
+                Gatherers4j.exponentialMovingAverageWithAlphaBy(value, Function.<BigDecimal>identity())
         );
     }
 
@@ -270,4 +276,16 @@ class BigDecimalExponentialMovingAverageGathererTest {
                 );
     }
 
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void longStreamDoesNotAccumulateDigits() {
+        // Act
+        final List<BigDecimal> output = Stream.iterate(BigDecimal.ONE, it -> it.add(new BigDecimal("0.1")))
+                .limit(10_000)
+                .gather(Gatherers4j.exponentialMovingAverageWithPeriod(10))
+                .toList();
+
+        // Assert
+        assertThat(output).hasSize(10_000);
+    }
 }

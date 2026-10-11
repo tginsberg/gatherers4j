@@ -25,6 +25,7 @@ for all calculations is {{< jdklink linkName="MathContext.DECIMAL64" package="ja
 | `excludePartialValues()`                   | When calculating the moving median, and the full size of the window has not yet been reached, the gatherer should suppress emitting values until the lookback window is full. [See example.](#excluding-partial-values)                                                                                              |
 | `treatNullAsZero()`                        | When encountering a `null` value in a stream, treat it as `BigDecimal.ZERO` instead. [See example.](#treating-null-as-zero)                                                                                                                                                                                          |
 | `treatNullAs(BigDecimal replacement)`      | When encountering a `null` value in a stream, treat it as the given `replacement` value instead. [See example.](#replacing-null-with-another-bigdecimal)                                                                                                                                                             |
+| `treatNullAsOne()`                         | When encountering a `null` value in a stream, treat it as `BigDecimal.ONE` instead.                                                                                                                                                                                                                                  |
 | `withMathContext(MathContext mathContext)` | Replace the `MathContext` used for all mathematical operations performed by this gatherer. [See example.](#specifying-a-new-mathcontext)                                                                                                                                                                             |
 | `withOriginal()`                           | Include the original input value from the stream in addition to the calculated value in a [`WithOriginal`](https://github.com/tginsberg/gatherers4j/blob/main/src/main/java/com/ginsberg/gatherers4j/dto/WithOriginal.java) record. [See example.](#emitting-a-record-containing-the-original-and-calculated-values) |
 
@@ -125,10 +126,10 @@ Stream
     .toList();
 
 // [
-//   BigDecimal("1.111")
+//   BigDecimal("1.11")
 //   BigDecimal("1.66")
-//   BigDecimal("2.222")
-//   BigDecimal("2.444")
+//   BigDecimal("2.22")
+//   BigDecimal("2.44")
 // ]
 ```
 

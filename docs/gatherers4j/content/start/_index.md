@@ -23,7 +23,7 @@ Add the following dependency to `pom.xml`:
 Add the following dependency to `build.gradle` or `build.gradle.kts`:
 
 ```groovy
-implementation('com.ginsberg:gatherers4j:{{< env "PROJECT_VERSION" >}}')
+implementation("com.ginsberg:gatherers4j:{{< env "PROJECT_VERSION" >}}")
 ```
 
 ### Example Usage
