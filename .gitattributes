@@ -1,1 +1,2 @@
-docs/gatherers4j/start.sh text eol=lf
+* text=auto eol=lf
+*.bat text eol=crlf

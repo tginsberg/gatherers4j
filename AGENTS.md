@@ -231,5 +231,5 @@ it.
 
 ## Working tree
 
-The working tree may be checked out with CRLF line endings (`core.autocrlf`). Keep each file's existing line endings,
-and don't rewrite files whose content hasn't changed. Script-based edits are where this usually goes wrong.
+`.gitattributes` checks out every text file with LF line endings, whatever `core.autocrlf` says, except `*.bat`, which
+gets CRLF. Write new files with LF. Don't rewrite files whose content hasn't changed.
