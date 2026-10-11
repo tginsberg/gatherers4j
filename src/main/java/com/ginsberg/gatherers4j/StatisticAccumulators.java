@@ -32,6 +32,71 @@ import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
 
 class StatisticAccumulators {
 
+    final static class CustomWeightedMeanAccumulator implements StatisticAccumulator<BigDecimal> {
+        private final List<BigDecimal> weights;
+        private final BigDecimal[] weightSumFrom;
+        private final ArrayDeque<BigDecimal> window = new ArrayDeque<>();
+
+        /// @param validWeights Weights, oldest to newest, already checked by [#validatedWeights(List)]
+        CustomWeightedMeanAccumulator(final List<BigDecimal> validWeights) {
+            this.weights = validWeights;
+            // weightSumFrom[i] is the sum of weights[i..n-1], the divisor when the window holds n-i values.
+            this.weightSumFrom = new BigDecimal[validWeights.size()];
+            BigDecimal running = BigDecimal.ZERO;
+            for (int i = validWeights.size() - 1; i >= 0; i--) {
+                running = running.add(validWeights.get(i));
+                weightSumFrom[i] = running;
+            }
+        }
+
+        /// Validate the weights, and return an immutable copy of them.
+        static List<BigDecimal> validatedWeights(final List<BigDecimal> weights) {
+            mustNotBeNull(weights, "Weights must not be null");
+            if (weights.size() < 2) {
+                throw new IllegalArgumentException("Weights must contain at least 2 values");
+            }
+            BigDecimal sum = BigDecimal.ZERO;
+            for (final BigDecimal weight : weights) {
+                mustNotBeNull(weight, "Weights must not contain null");
+                if (weight.signum() < 0) {
+                    throw new IllegalArgumentException("Weights must not be negative");
+                }
+                sum = sum.add(weight);
+            }
+            if (sum.signum() == 0) {
+                throw new IllegalArgumentException("Weights must not sum to zero");
+            }
+            return List.copyOf(weights);
+        }
+
+        @Override
+        public void add(final BigDecimal value, final MathContext mc) {
+            window.addLast(value.round(mc));
+        }
+
+        @Override
+        public void evict(final BigDecimal oldest, final MathContext mc) {
+            window.removeFirst();
+        }
+
+        @Override
+        public boolean isReady() {
+            // A partial window uses the newest weights, which sum to zero if they are all zero.
+            return !window.isEmpty() && weightSumFrom[weights.size() - window.size()].signum() != 0;
+        }
+
+        @Override
+        public BigDecimal value(final MathContext mc) {
+            final int offset = weights.size() - window.size();
+            BigDecimal weighted = BigDecimal.ZERO;
+            int i = offset;
+            for (final BigDecimal value : window) {
+                weighted = weighted.add(value.multiply(weights.get(i++)));
+            }
+            return weighted.divide(weightSumFrom[offset], mc);
+        }
+    }
+
     final static class EmaAccumulator implements StatisticAccumulator<BigDecimal> {
         private final BigDecimal alpha;
         private final BigDecimal oneMinusAlpha;
@@ -355,6 +420,42 @@ class StatisticAccumulators {
             return mode == Dataset.Population
                     ? state.populationVariance(mc)
                     : state.sampleVariance(mc);
+        }
+    }
+
+    /// Linearly weighted moving mean: the oldest value in the window has weight 1 and the newest has weight k,
+    /// where k is the number of values in the window. Keeps the window sum and weighted sum, so each step is O(1).
+    ///
+    /// The integrator evicts the oldest value of a full window before adding the new value. After the eviction,
+    /// every remaining weight drops by one, which is the same as subtracting the window sum from the weighted sum.
+    final static class WeightedMeanAccumulator implements StatisticAccumulator<BigDecimal> {
+        private long count = 0;
+        private BigDecimal sum = BigDecimal.ZERO;
+        private BigDecimal weightedSum = BigDecimal.ZERO;
+
+        @Override
+        public void add(final BigDecimal value, final MathContext mc) {
+            final BigDecimal rounded = value.round(mc);
+            count++;
+            weightedSum = weightedSum.add(rounded.multiply(BigDecimal.valueOf(count)));
+            sum = sum.add(rounded);
+        }
+
+        @Override
+        public void evict(final BigDecimal oldest, final MathContext mc) {
+            weightedSum = weightedSum.subtract(sum);
+            sum = sum.subtract(oldest.round(mc));
+            count--;
+        }
+
+        @Override
+        public boolean isReady() {
+            return count > 0;
+        }
+
+        @Override
+        public BigDecimal value(final MathContext mc) {
+            return weightedSum.divide(BigDecimal.valueOf(count * (count + 1) / 2), mc);
         }
     }
 
