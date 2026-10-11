@@ -19,9 +19,8 @@ package com.ginsberg.gatherers4j;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-import java.util.ArrayList;
+import java.util.ArrayDeque;
 import java.util.Comparator;
-import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Gatherer;
 
@@ -135,13 +134,13 @@ public class MinMaxGatherer<INPUT extends @Nullable Object>
     }
 
     public static class MovingState<INPUT extends @Nullable Object> extends State<INPUT> {
-        private record IndexValue<INPUT extends @Nullable Object>(int index, INPUT value) {
+        private record IndexValue<INPUT extends @Nullable Object>(long index, INPUT value) {
         }
 
-        private final List<IndexValue<INPUT>> queue = new ArrayList<>();
+        private final ArrayDeque<IndexValue<INPUT>> queue = new ArrayDeque<>();
         private final int windowSize;
         private final boolean excludePartialValues;
-        private int seen;
+        private long seen;
 
         public MovingState(final int windowSize, final Comparator<INPUT> comparator, final boolean excludePartialValues) {
             super(comparator);

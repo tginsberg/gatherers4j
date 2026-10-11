@@ -65,6 +65,13 @@ class BigDecimalMeanGathererTest {
         }
 
         @Test
+        void mathContextMustHavePrecision() {
+            assertThatIllegalArgumentException().isThrownBy(() ->
+                    Gatherers4j.movingMean(2).withMathContext(MathContext.UNLIMITED)
+            ).withMessage("MathContext precision must be greater than 0");
+        }
+
+        @Test
         void mathContextChange() {
             // Arrange
             final Stream<BigDecimal> input = Stream.of(
@@ -315,6 +322,13 @@ class BigDecimalMeanGathererTest {
             assertThatIllegalArgumentException().isThrownBy(() ->
                     Gatherers4j.runningMean().withMathContext(null)
             );
+        }
+
+        @Test
+        void mathContextMustHavePrecision() {
+            assertThatIllegalArgumentException().isThrownBy(() ->
+                    Gatherers4j.runningMean().withMathContext(MathContext.UNLIMITED)
+            ).withMessage("MathContext precision must be greater than 0");
         }
 
         @Test

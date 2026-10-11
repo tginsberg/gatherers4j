@@ -21,10 +21,22 @@ import org.jspecify.annotations.Nullable;
 
 import java.math.BigDecimal;
 
-public record StatGathererState<OUTPUT extends @Nullable Object>(
-        StatisticAccumulator<OUTPUT> accumulator,
-        @Nullable CircularBuffer<BigDecimal> window
-) {
+/// Per-stream state of the BigDecimal statistics gatherers. This type is public only because it appears in the
+/// signatures of the public gatherer types. It has no public members.
+///
+/// @param <OUTPUT> Type of the statistic the gatherer emits
+public final class StatGathererState<OUTPUT extends @Nullable Object> {
+
+    private final StatisticAccumulator<OUTPUT> accumulator;
+    private final @Nullable CircularBuffer<BigDecimal> window;
+
+    private StatGathererState(
+            final StatisticAccumulator<OUTPUT> accumulator,
+            final @Nullable CircularBuffer<BigDecimal> window
+    ) {
+        this.accumulator = accumulator;
+        this.window = window;
+    }
 
     static <OUTPUT extends @Nullable Object> StatGathererState<OUTPUT> ofRunning(
             final StatisticAccumulator<OUTPUT> accumulator
@@ -37,5 +49,13 @@ public record StatGathererState<OUTPUT extends @Nullable Object>(
             final CircularBuffer<BigDecimal> window
     ) {
         return new StatGathererState<>(accumulator, window);
+    }
+
+    StatisticAccumulator<OUTPUT> accumulator() {
+        return accumulator;
+    }
+
+    @Nullable CircularBuffer<BigDecimal> window() {
+        return window;
     }
 }

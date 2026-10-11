@@ -20,21 +20,42 @@ import com.ginsberg.gatherers4j.dto.WithOriginal;
 import com.ginsberg.gatherers4j.util.TestValueHolder;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.List;
 import java.util.stream.Stream;
 
 import static com.ginsberg.gatherers4j.util.TestUtils.BIG_DECIMAL_RECURSIVE_COMPARISON;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.within;
 
 class BigDecimalProductGathererTest {
 
     @Nested
     class Moving {
+
+        @Test
+        @Timeout(10)
+        void largeWindowEvictsInConstantTime() {
+            // Arrange
+            // Rebuilding a 50,000 value window on every eviction would take billions of multiplications.
+            final Stream<BigDecimal> input = Stream.generate(() -> new BigDecimal("1.000001")).limit(100_000);
+
+            // Act
+            final List<BigDecimal> output = input
+                    .gather(Gatherers4j.movingProduct(50_000))
+                    .toList();
+
+            // Assert
+            assertThat(output).hasSize(100_000);
+            assertThat(output.getLast())
+                    .isCloseTo(new BigDecimal("1.000001").pow(50_000, MathContext.DECIMAL64), within(new BigDecimal("1E-10")));
+        }
 
         @Test
         void ignoresNulls() {

@@ -12,7 +12,7 @@ This implementation is suitable for mapping an arbitrary `Stream<INPUT>` to `Big
 By default, nulls are ignored and play no part in calculations, see `treatNullAs()` and `treatNullAsOne()` below for ways to change this behavior. The default `MathContext`
 for all calculations is {{< jdklink linkName="MathContext.DECIMAL64" package="java.base/java/math/MathContext.html#DECIMAL64" >}}, but this can be overridden (see `withMathContext()`, below).
 
-A `0` anywhere in the lookback window is undefined for a harmonic mean and will throw an `ArithmeticException`.
+A `0` anywhere in the lookback window is undefined for a harmonic mean and will throw an `ArithmeticException`. If the reciprocals of the values cancel out to zero instead, for example `1` and `-1`, the harmonic mean is undefined and nothing is emitted for that element.
 
 **Signatures**
 

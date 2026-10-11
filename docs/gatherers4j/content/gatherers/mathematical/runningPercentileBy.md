@@ -12,7 +12,7 @@ This implementation is suitable for mapping an arbitrary `Stream<INPUT>` to `Big
 By default, nulls are ignored and play no part in calculations, see `treatNullAs()` and `treatNullAsZero()` below for ways to change this behavior. The default `MathContext`
 for all calculations is {{< jdklink linkName="MathContext.DECIMAL64" package="java.base/java/math/MathContext.html#DECIMAL64" >}}, but this can be overridden (see `withMathContext()`, below).
 
-Each emitted value is the percentile of every element seen so far, so the last value emitted is the percentile of the whole stream. Values that fall between two ranks are linearly interpolated (the R-7 method, as used by Excel's `PERCENTILE.INC` and NumPy's default). The `percentile` is converted to `BigDecimal` from its decimal representation, so `99.9` is exactly `99.9`. The rank and interpolation are calculated exactly, and only the result is rounded to the `MathContext`.
+Each emitted value is the percentile of every element seen so far, so the last value emitted is the percentile of the whole stream. Values that fall between two ranks are linearly interpolated (the R-7 method, NumPy's default). The `percentile` is converted to `BigDecimal` from its decimal representation, so `99.9` is exactly `99.9`. The rank and interpolation are calculated exactly, and only the result is rounded to the `MathContext`.
 
 Every value seen is retained in sorted order, so memory use grows with the length of the stream. For long or unbounded streams, consider [`movingPercentileBy()`](/gatherers4j/gatherers/mathematical/movingpercentileby/) instead.
 

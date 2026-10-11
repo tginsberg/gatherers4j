@@ -150,6 +150,24 @@ class BigDecimalHarmonicMeanGathererTest {
         }
 
         @Test
+        void cancellingValuesEmitNothing() {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.of("2", "-2", "4").map(BigDecimal::new);
+
+            // Act
+            final List<BigDecimal> output = input
+                    .gather(Gatherers4j.movingHarmonicMean(2))
+                    .toList();
+
+            // Assert
+            // [2, -2]: 1/2 + 1/-2 = 0, so the harmonic mean is undefined and nothing is emitted.
+            // [-2, 4]: 2 / (-1/2 + 1/4) = 2 / -0.25 = -8
+            assertThat(output)
+                    .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
+                    .containsExactly(new BigDecimal("2"), new BigDecimal("-8"));
+        }
+
+        @Test
         void zeroInWindowIsUndefined() {
             // Arrange
             final Stream<BigDecimal> input = Stream.of(BigDecimal.ONE, BigDecimal.ZERO);
@@ -414,6 +432,24 @@ class BigDecimalHarmonicMeanGathererTest {
             assertThat(output)
                     .map(WithOriginal::original)
                     .containsExactlyInAnyOrderElementsOf(input);
+        }
+
+        @Test
+        void cancellingValuesEmitNothing() {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.of("1", "-1", "2").map(BigDecimal::new);
+
+            // Act
+            final List<BigDecimal> output = input
+                    .gather(Gatherers4j.runningHarmonicMean())
+                    .toList();
+
+            // Assert
+            // [1, -1]: 1/1 + 1/-1 = 0, so the harmonic mean is undefined and nothing is emitted.
+            // [1, -1, 2]: 3 / (1 - 1 + 1/2) = 6
+            assertThat(output)
+                    .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
+                    .containsExactly(new BigDecimal("1"), new BigDecimal("6"));
         }
 
         @Test

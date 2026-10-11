@@ -25,7 +25,7 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
@@ -103,10 +103,8 @@ class StatisticAccumulators {
         private boolean first = true;
         private BigDecimal ema = BigDecimal.ZERO;
 
+        // Expects an alpha already validated by the facade
         EmaAccumulator(final double alpha) {
-            if (alpha <= 0 || alpha >= 1.0) {
-                throw new IllegalArgumentException("alpha must be between 0.0 and 1.0, exclusive, got " + alpha);
-            }
             this.alpha = BigDecimal.valueOf(alpha);
             this.oneMinusAlpha = BigDecimal.ONE.subtract(this.alpha);
         }
@@ -164,7 +162,7 @@ class StatisticAccumulators {
 
         @Override
         public BigDecimal value(final MathContext mc) {
-            return MathUtils.nthRoot(state.product(), state.count(), mc);
+            return MathUtils.nthRoot(state.product(mc), state.count(), mc);
         }
     }
 
@@ -181,9 +179,10 @@ class StatisticAccumulators {
             state.evict(BigDecimal.ONE.divide(oldest, mc));
         }
 
+        // Reciprocals of mixed-sign values can cancel to zero, which leaves the harmonic mean undefined
         @Override
         public boolean isReady() {
-            return state.count() > 0;
+            return state.sum.signum() != 0;
         }
 
         @Override
@@ -287,7 +286,7 @@ class StatisticAccumulators {
 
         @Override
         public BigDecimal value(final MathContext mc) {
-            return state.product();
+            return state.product(mc);
         }
     }
 
@@ -615,12 +614,12 @@ class StatisticAccumulators {
     }
 
     private static class Product {
-        // Holds the window's values in a moving window only, so a running product keeps constant memory.
-        private final ArrayDeque<BigDecimal> window = new ArrayDeque<>();
+        private final ArrayDeque<BigDecimal> back = new ArrayDeque<>();
+        private final ArrayDeque<BigDecimal> front = new ArrayDeque<>();
         private final boolean moving;
+        private BigDecimal backProduct = BigDecimal.ONE;
         private long count = 0;
         private long zeroCount = 0;
-        private BigDecimal product = BigDecimal.ONE;
 
         Product(final boolean moving) {
             this.moving = moving;
@@ -629,12 +628,12 @@ class StatisticAccumulators {
         void add(final BigDecimal value, final MathContext mathContext) {
             count++;
             if (moving) {
-                window.addLast(value);
+                back.addLast(value);
             }
-            if (value.compareTo(BigDecimal.ZERO) == 0) {
+            if (value.signum() == 0) {
                 zeroCount++;
             } else {
-                product = product.multiply(value, mathContext);
+                backProduct = backProduct.multiply(value, mathContext);
             }
         }
 
@@ -642,37 +641,47 @@ class StatisticAccumulators {
             return count;
         }
 
-        // Dividing the departing value out would round, and that error would build up over the whole stream.
-        // Rebuilding the product from the values still in the window keeps the error bounded by the window size.
         void evict(final BigDecimal value, final MathContext mathContext) {
             count--;
-            window.removeFirst();
-            if (value.compareTo(BigDecimal.ZERO) == 0) {
+            if (value.signum() == 0) {
                 zeroCount--;
             }
-            product = BigDecimal.ONE;
-            for (final BigDecimal remaining : window) {
-                if (remaining.compareTo(BigDecimal.ZERO) != 0) {
-                    product = product.multiply(remaining, mathContext);
+            if (front.isEmpty()) {
+                BigDecimal suffixProduct = BigDecimal.ONE;
+                final Iterator<BigDecimal> newestFirst = back.descendingIterator();
+                while (newestFirst.hasNext()) {
+                    final BigDecimal next = newestFirst.next();
+                    if (next.signum() != 0) {
+                        suffixProduct = suffixProduct.multiply(next, mathContext);
+                    }
+                    front.push(suffixProduct);
                 }
+                back.clear();
+                backProduct = BigDecimal.ONE;
             }
+            front.pop();
         }
 
-        BigDecimal product() {
-            return zeroCount > 0 ? BigDecimal.ZERO : product;
+        BigDecimal product(final MathContext mathContext) {
+            if (zeroCount > 0) {
+                return BigDecimal.ZERO;
+            }
+            return front.isEmpty() ? backProduct : front.getFirst().multiply(backProduct, mathContext);
         }
     }
 
+    // Values that are equal by compareTo but differ in scale (1.0, 1.00) are kept in arrival order. The window always
+    // evicts its oldest value, which is then the first of its equal run, so the representation that leaves is the one
+    // that arrived first.
     private static final class SortedWindow {
         private final List<BigDecimal> sorted = new ArrayList<>();
 
         void add(final BigDecimal value) {
-            sorted.add(insertionPoint(value), value);
+            sorted.add(firstIndexAfter(value), value);
         }
 
         void evict(final BigDecimal value) {
-            final int index = Collections.binarySearch(sorted, value);
-            sorted.remove(index);
+            sorted.remove(firstIndexOf(value));
         }
 
         int size() {
@@ -699,9 +708,34 @@ class StatisticAccumulators {
             return interpolated.setScale(scale, RoundingMode.UNNECESSARY);
         }
 
-        private int insertionPoint(final BigDecimal value) {
-            final int i = Collections.binarySearch(sorted, value);
-            return i >= 0 ? i : -(i + 1);
+        // Index of the first element greater than value
+        private int firstIndexAfter(final BigDecimal value) {
+            int low = 0;
+            int high = sorted.size();
+            while (low < high) {
+                final int mid = (low + high) >>> 1;
+                if (sorted.get(mid).compareTo(value) <= 0) {
+                    low = mid + 1;
+                } else {
+                    high = mid;
+                }
+            }
+            return low;
+        }
+
+        // Index of the first element not less than value
+        private int firstIndexOf(final BigDecimal value) {
+            int low = 0;
+            int high = sorted.size();
+            while (low < high) {
+                final int mid = (low + high) >>> 1;
+                if (sorted.get(mid).compareTo(value) < 0) {
+                    low = mid + 1;
+                } else {
+                    high = mid;
+                }
+            }
+            return low;
         }
     }
 }

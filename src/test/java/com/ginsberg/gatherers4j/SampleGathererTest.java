@@ -26,7 +26,10 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.random.RandomGenerator;
 import java.util.stream.Collectors;
+import java.util.stream.Gatherer;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,6 +41,25 @@ class SampleGathererTest {
 
     @Nested
     class FixedSizeReservoirSampling {
+
+        @Test
+        void eachRunGetsItsOwnRandomGenerator() {
+            // Arrange
+            final AtomicInteger created = new AtomicInteger();
+            final SampleFixedSizeGatherer<Integer> gatherer = new SampleFixedSizeGatherer<>(2, () -> {
+                created.incrementAndGet();
+                return RandomGenerator.getDefault();
+            });
+
+            // Act
+            final List<Integer> first = Stream.of(1, 2, 3).gather(gatherer).toList();
+            final List<Integer> second = Stream.of(1, 2, 3).gather(gatherer).toList();
+
+            // Assert
+            assertThat(created).hasValue(2);
+            assertThat(first).hasSize(2);
+            assertThat(second).hasSize(2);
+        }
 
         @Test
         void sampleSizeOneOnTwoElementStreamShouldReturnBothEqually() {
@@ -153,6 +175,25 @@ class SampleGathererTest {
 
     @Nested
     class PercentageBernoulli {
+
+        @Test
+        void eachRunGetsItsOwnRandomGenerator() {
+            // Arrange
+            final AtomicInteger created = new AtomicInteger();
+            final Gatherer<Integer, ?, Integer> gatherer = SamplePercentageGatherers.bernoulli(0.5, () -> {
+                created.incrementAndGet();
+                return RandomGenerator.getDefault();
+            });
+
+            // Act
+            final List<Integer> first = Stream.of(1, 2, 3).gather(gatherer).toList();
+            final List<Integer> second = Stream.of(1, 2, 3).gather(gatherer).toList();
+
+            // Assert
+            assertThat(created).hasValue(2);
+            assertThat(first).isSubsetOf(1, 2, 3);
+            assertThat(second).isSubsetOf(1, 2, 3);
+        }
 
         @Test
         void inclusionProbability() {

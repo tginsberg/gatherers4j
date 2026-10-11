@@ -244,6 +244,21 @@ class BigDecimalPercentileGathererTest {
         }
 
         @Test
+        void evictsTheValueThatLeftTheWindow() {
+            // Arrange
+            final Stream<BigDecimal> input = Stream.of("1.0", "1.00", "3").map(BigDecimal::new);
+
+            // Act
+            final List<BigDecimal> output = input
+                    .gather(Gatherers4j.movingPercentile(0, 2))
+                    .toList();
+
+            // Assert
+            // 1.0 and 1.00 are equal by compareTo. When 1.0 leaves, the window is [1.00, 3], so its minimum is 1.00.
+            assertThat(output).extracting(BigDecimal::toString).containsExactly("1.0", "1.0", "1.00");
+        }
+
+        @Test
         void percentileOfOneHundredIsMaximum() {
             // Arrange
             final Stream<BigDecimal> input = Stream.of("5", "1", "3", "2").map(BigDecimal::new);

@@ -26,6 +26,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.function.Function;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
@@ -45,10 +46,13 @@ class BigDecimalExponentialMovingAverageGathererTest {
     }
 
     @ParameterizedTest
-    @ValueSource(doubles = {-Double.MAX_VALUE, -Double.MIN_VALUE, 1.0, Double.MAX_VALUE})
+    @ValueSource(doubles = {-Double.MAX_VALUE, -Double.MIN_VALUE, 0.0, 1.0, Double.MAX_VALUE, Double.NaN})
     void alphaMustNotBeOutOfRange(final double value) {
         assertThatIllegalArgumentException().isThrownBy(() ->
                 Gatherers4j.exponentialMovingAverageWithAlpha(value)
+        );
+        assertThatIllegalArgumentException().isThrownBy(() ->
+                Gatherers4j.exponentialMovingAverageWithAlphaBy(value, Function.<BigDecimal>identity())
         );
     }
 

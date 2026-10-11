@@ -19,6 +19,7 @@ package com.ginsberg.gatherers4j;
 import com.ginsberg.gatherers4j.dto.WithOriginal;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -305,6 +306,23 @@ class MinMaxGathererTest {
 
     @Nested
     class Min {
+
+        @Test
+        @Timeout(5)
+        void largeWindowEvictsInConstantTime() {
+            // Arrange
+            // Rising input keeps every value in the window's candidate queue, the worst case for eviction.
+            final Stream<Integer> input = IntStream.range(0, 600_000).boxed();
+
+            // Act
+            final List<Integer> output = input
+                    .gather(Gatherers4j.<Integer>movingMin(300_000))
+                    .toList();
+
+            // Assert
+            assertThat(output).hasSize(600_000);
+            assertThat(output.getLast()).isEqualTo(300_000);
+        }
         @Nested
         class Moving {
 

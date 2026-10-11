@@ -42,16 +42,26 @@ abstract class AbstractBigDecimalStatGatherer<INPUT extends @Nullable Object, OU
         this.accumulatorSupplier = accumulatorSupplier;
     }
 
+    // Every divide and square root in the engine needs a finite precision; UNLIMITED (precision 0) would throw
+    // ArithmeticException mid-stream for ordinary inputs such as the mean of 1, 1, and 2.
+    protected static MathContext validMathContext(final @Nullable MathContext mathContext) {
+        final MathContext checked = mustNotBeNull(mathContext, "MathContext must not be null");
+        if (checked.getPrecision() <= 0) {
+            throw new IllegalArgumentException("MathContext precision must be greater than 0");
+        }
+        return checked;
+    }
+
     protected @Nullable BigDecimal getMappedElement(final INPUT element) {
         if(element == null) {
             return nullReplacement;
         }
-        var mapped = mappingFunction.apply(element);
+        final @Nullable BigDecimal mapped = mappingFunction.apply(element);
         return mapped == null ? nullReplacement : mapped;
     }
 
     /// Include the original input value from the stream in addition to the calculated value.
-    public WithOriginalGatherer<INPUT, StatGathererState<OUTPUT>, OUTPUT> withOriginal() {
+    public WithOriginalGatherer<INPUT, ?, OUTPUT> withOriginal() {
         return new WithOriginalGatherer<>(this);
     }
 }

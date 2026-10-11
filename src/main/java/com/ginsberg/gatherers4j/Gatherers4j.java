@@ -219,7 +219,7 @@ public abstract class Gatherers4j {
     /// @param alpha The alpha value to use in the EMA calculation.
     /// @return A non-null `BigDecimalRunningStatGatherer`
     public static BigDecimalRunningStatGatherer<@Nullable BigDecimal, BigDecimal> exponentialMovingAverageWithAlpha(final double alpha) {
-        if (alpha <= 0 || alpha >= 1.0) {
+        if (!(alpha > 0 && alpha < 1.0)) {
             throw new IllegalArgumentException("alpha must be between 0.0 and 1.0, exclusive, got " + alpha);
         }
         return new BigDecimalRunningStatGatherer<>(
@@ -240,7 +240,7 @@ public abstract class Gatherers4j {
             final double alpha,
             final Function<INPUT, BigDecimal> mappingFunction
     ) {
-        if (alpha <= 0 || alpha >= 1.0) {
+        if (!(alpha > 0 && alpha < 1.0)) {
             throw new IllegalArgumentException("alpha must be between 0.0 and 1.0, exclusive, got " + alpha);
         }
         return new BigDecimalRunningStatGatherer<>(
@@ -325,6 +325,7 @@ public abstract class Gatherers4j {
     /// Filter the input stream so that it contains `Comparable` elements in the `order` specified. Anything not matching
     /// that order is removed as it is encountered.
     ///
+    /// @param order A non-null `Order`, the direction the elements must be in
     /// @param <INPUT> Type of elements in the input and output stream
     /// @return A non-null gatherer
     public static <INPUT extends Comparable<INPUT>> Gatherer<INPUT, ?, INPUT> filterOrdered(final Order order) {
@@ -334,6 +335,7 @@ public abstract class Gatherers4j {
     /// Filter the input stream so that it contains elements in the `order` specified as measured by the given `Comparator`.
     /// Anything not matching that order is removed as it is encountered.
     ///
+    /// @param order A non-null `Order`, the direction the elements must be in
     /// @param <INPUT> Type of elements in the input and output stream
     /// @param comparator A non-null `Comparator` to compare stream elements
     /// @return A non-null gatherer
@@ -380,6 +382,7 @@ public abstract class Gatherers4j {
     /// Turn a `Stream<Comparable>` into a `Stream<List<>>` where adjacent equal elements are in the same `List`
     /// and order is measured by the order imposed by the `Comparable`. The lists emitted to the output stream are unmodifiable.
     ///
+    /// @param order A non-null `Order`, the direction adjacent elements must be in to be grouped together
     /// @param <INPUT> Type of elements in the input stream, implementing `Comparable`
     /// @return A non-null `Gatherer`
     public static <INPUT extends @Nullable Comparable<INPUT>> Gatherer<INPUT, ?, List<INPUT>> groupOrdered(final Order order) {
@@ -389,6 +392,7 @@ public abstract class Gatherers4j {
     /// Turn a `Stream<INPUT>` into a `Stream<List<INPUT>>` where adjacent equal elements are in the same `List`
     /// and order is measured by the given `Comparator`. The lists emitted to the output stream are unmodifiable.
     ///
+    /// @param order A non-null `Order`, the direction adjacent elements must be in to be grouped together
     /// @param comparator A non-null function, the results of which are used to measure equality of consecutive elements.
     /// @param <INPUT>         Type of elements in the input stream
     /// @return A non-null `Gatherer`
@@ -491,6 +495,9 @@ public abstract class Gatherers4j {
     /// Create a Stream that represents the moving harmonic mean of a `Stream<BigDecimal>` looking
     /// back `windowSize` number of elements.
     ///
+    /// If the reciprocals of the values cancel out to zero (for example `1` and `-1`), the harmonic mean is undefined
+    /// and nothing is emitted for that element. A value of `0` throws an `ArithmeticException`.
+    ///
     /// @param windowSize The trailing number of elements to include in the harmonic mean, must be greater than 1.
     /// @return A non-null `BigDecimalMovingStatGatherer`
     public static BigDecimalMovingStatGatherer<@Nullable BigDecimal, BigDecimal> movingHarmonicMean(final int windowSize) {
@@ -503,6 +510,9 @@ public abstract class Gatherers4j {
 
     /// Create a Stream that represents the moving harmonic mean of `BigDecimal` objects mapped from a `Stream<INPUT>`
     /// via a `mappingFunction` and looking back `windowSize` number of elements.
+    ///
+    /// If the reciprocals of the values cancel out to zero (for example `1` and `-1`), the harmonic mean is undefined
+    /// and nothing is emitted for that element. A value of `0` throws an `ArithmeticException`.
     ///
     /// @param windowSize      The trailing number of elements to include in the harmonic mean, must be greater than 1.
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
@@ -581,9 +591,6 @@ public abstract class Gatherers4j {
     /// @param windowSize The trailing number of elements to calculate the median over, must be greater than 1.
     /// @return A non-null `BigDecimalMovingStatGatherer`
     public static BigDecimalMovingStatGatherer<@Nullable BigDecimal, BigDecimal> movingMedian(final int windowSize) {
-        if (windowSize <= 1) {
-            throw new IllegalArgumentException("windowSize must be greater than 1");
-        }
         return new BigDecimalMovingStatGatherer<>(
                 windowSize,
                 Function.identity(),
@@ -603,9 +610,6 @@ public abstract class Gatherers4j {
             final int windowSize,
             final Function<INPUT, BigDecimal> mappingFunction
     ) {
-        if (windowSize <= 1) {
-            throw new IllegalArgumentException("windowSize must be greater than 1");
-        }
         return new BigDecimalMovingStatGatherer<>(
                 windowSize,
                 mappingFunction,
@@ -637,8 +641,7 @@ public abstract class Gatherers4j {
     }
 
     /// Create a Stream that represents the moving `percentile` of a `Stream<BigDecimal>` looking
-    /// back `windowSize` number of elements. Values between ranks are linearly interpolated (R-7, as in
-    /// Excel's `PERCENTILE.INC`).
+    /// back `windowSize` number of elements. Values between ranks are linearly interpolated (R-7).
     ///
     /// @param percentile The percentile to calculate, between 0 and 100, inclusive.
     /// @param windowSize The trailing number of elements to calculate the percentile over, must be greater than 1.
@@ -657,7 +660,7 @@ public abstract class Gatherers4j {
 
     /// Create a Stream that represents the moving `percentile` of `BigDecimal` objects mapped from a
     /// `Stream<INPUT>` via a `mappingFunction` and looking back `windowSize` number of elements. Values between
-    /// ranks are linearly interpolated (R-7, as in Excel's `PERCENTILE.INC`).
+    /// ranks are linearly interpolated (R-7).
     ///
     /// @param percentile      The percentile to calculate, between 0 and 100, inclusive.
     /// @param windowSize      The trailing number of elements to calculate the percentile over, must be greater than 1.
@@ -995,6 +998,7 @@ public abstract class Gatherers4j {
     /// Note: This consumes the entire stream and holds it in memory, so it will not work on infinite
     /// streams and may cause memory pressure on very large streams.
     ///
+    /// @param order A non-null `Frequency`, whether the most or least frequent elements are emitted first
     /// @param <INPUT> Type of elements in the input stream
     /// @return A non-null `Gatherer`
     public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, WithCount<INPUT>> orderByFrequency(final Frequency order) {
@@ -1079,6 +1083,9 @@ public abstract class Gatherers4j {
 
     /// Create a Stream that is the running harmonic mean of `Stream<BigDecimal>`
     ///
+    /// If the reciprocals of the values cancel out to zero (for example `1` and `-1`), the harmonic mean is undefined
+    /// and nothing is emitted for that element. A value of `0` throws an `ArithmeticException`.
+    ///
     /// @return BigDecimalRunningStatGatherer
     public static BigDecimalRunningStatGatherer<@Nullable BigDecimal, BigDecimal> runningHarmonicMean() {
         return new BigDecimalRunningStatGatherer<>(
@@ -1090,15 +1097,18 @@ public abstract class Gatherers4j {
     /// Create a Stream that is the running harmonic mean of `BigDecimal` objects as mapped by
     /// the given function. This is useful when paired with the `withOriginal` function.
     ///
-    /// @param mapingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
+    /// If the reciprocals of the values cancel out to zero (for example `1` and `-1`), the harmonic mean is undefined
+    /// and nothing is emitted for that element. A value of `0` throws an `ArithmeticException`.
+    ///
+    /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the running harmonic mean calculation
-    /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mapingFunction`
+    /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalRunningStatGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalRunningStatGatherer<INPUT, BigDecimal> runningHarmonicMeanBy(
-            final Function<INPUT, BigDecimal> mapingFunction
+            final Function<INPUT, BigDecimal> mappingFunction
     ) {
         return new BigDecimalRunningStatGatherer<>(
-                mapingFunction,
+                mappingFunction,
                 StatisticAccumulators.HarmonicMeanAccumulator::new
         );
     }
@@ -1188,8 +1198,8 @@ public abstract class Gatherers4j {
     }
 
     /// Create a `Stream<BigDecimal>` that represents the running `percentile` of a `Stream<BigDecimal>`. Values
-    /// between ranks are linearly interpolated (R-7, as in Excel's `PERCENTILE.INC`). Every value seen is retained,
-    /// so memory grows with the length of the stream.
+    /// between ranks are linearly interpolated (R-7). Every value seen is retained, so memory grows with the length
+    /// of the stream.
     ///
     /// @param percentile The percentile to calculate, between 0 and 100, inclusive.
     /// @return A non-null `BigDecimalRunningStatGatherer`
@@ -1204,8 +1214,8 @@ public abstract class Gatherers4j {
     }
 
     /// Create a `Stream<BigDecimal>` that represents the running `percentile` of `BigDecimal` objects mapped
-    /// from a `Stream<INPUT>` via a `mappingFunction`. Values between ranks are linearly interpolated (R-7, as in
-    /// Excel's `PERCENTILE.INC`). Every value seen is retained, so memory grows with the length of the stream.
+    /// from a `Stream<INPUT>` via a `mappingFunction`. Values between ranks are linearly interpolated (R-7). Every
+    /// value seen is retained, so memory grows with the length of the stream.
     ///
     /// @param percentile      The percentile to calculate, between 0 and 100, inclusive.
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
@@ -1394,14 +1404,13 @@ public abstract class Gatherers4j {
     /// then all elements are emitted. Elements will be emitted in the order in which they are encountered.
     /// This implementation reads the entire stream before emitting any results making it inappropriate for infinite streams.
     ///
-    /// Note: The returned Gatherer uses a single `RandomGenerator` from `RandomGenerator.getDefault()`, which is not
-    /// guaranteed to be thread-safe. Do not use the returned Gatherer from multiple threads at the same time.
+    /// Each run of the returned Gatherer creates its own `RandomGenerator` via `RandomGenerator.getDefault()`.
     ///
     /// @param sampleSize Number of elements to sample.
     /// @param <INPUT> Type of elements in the input and output stream
     /// @return A non-null Gatherer
     public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> sampleFixedSize(final int sampleSize) {
-        return new SampleFixedSizeGatherer<>(sampleSize, RandomGenerator.getDefault());
+        return new SampleFixedSizeGatherer<>(sampleSize, RandomGenerator::getDefault);
     }
 
     /// Perform a fixed size sampling over the input stream. This method uses the Reservoir method internally, which
@@ -1420,7 +1429,8 @@ public abstract class Gatherers4j {
             final int sampleSize,
             final RandomGenerator randomGenerator
     ) {
-        return new SampleFixedSizeGatherer<>(sampleSize, randomGenerator);
+        mustNotBeNull(randomGenerator, "RandomGenerator must not be null");
+        return new SampleFixedSizeGatherer<>(sampleSize, () -> randomGenerator);
     }
 
     /// Perform a percentage-based sampling over the input stream. This method uses Bernoulli sampling internally
@@ -1428,14 +1438,13 @@ public abstract class Gatherers4j {
     /// to the downstream may not be strictly in line with the given `percentage`.
     /// Elements will be emitted in the order in which they are encountered.
     ///
-    /// Note: The returned Gatherer uses a single `RandomGenerator` from `RandomGenerator.getDefault()`, which is not
-    /// guaranteed to be thread-safe. Do not use the returned Gatherer from multiple threads at the same time.
+    /// Each run of the returned Gatherer creates its own `RandomGenerator` via `RandomGenerator.getDefault()`.
     ///
     /// @param percentage Percentage of elements that should be sampled, on average.
     /// @param <INPUT> Type of elements in the input and output stream
     /// @return A non-null Gatherer
     public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> samplePercentage(final double percentage) {
-        return SamplePercentageGatherers.bernoulli(percentage, RandomGenerator.getDefault());
+        return SamplePercentageGatherers.bernoulli(percentage, RandomGenerator::getDefault);
     }
 
     /// Perform a percentage-based sampling over the input stream. This method uses Bernoulli sampling internally
@@ -1454,7 +1463,8 @@ public abstract class Gatherers4j {
             final double percentage,
             final RandomGenerator randomGenerator
     ) {
-        return SamplePercentageGatherers.bernoulli(percentage, randomGenerator);
+        mustNotBeNull(randomGenerator, "RandomGenerator must not be null");
+        return SamplePercentageGatherers.bernoulli(percentage, () -> randomGenerator);
     }
 
     ///  Perform a scan over every element in the input stream along with its index

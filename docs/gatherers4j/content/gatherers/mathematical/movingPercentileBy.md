@@ -12,7 +12,7 @@ This implementation is suitable for mapping an arbitrary `Stream<INPUT>` to `Big
 By default, nulls are ignored and play no part in calculations, see `treatNullAs()` and `treatNullAsZero()` below for ways to change this behavior. The default `MathContext`
 for all calculations is {{< jdklink linkName="MathContext.DECIMAL64" package="java.base/java/math/MathContext.html#DECIMAL64" >}}, but this can be overridden (see `withMathContext()`, below).
 
-Values that fall between two ranks are linearly interpolated (the R-7 method, as used by Excel's `PERCENTILE.INC` and NumPy's default). The `percentile` is converted to `BigDecimal` from its decimal representation, so `99.9` is exactly `99.9`. The rank and interpolation are calculated exactly, and only the result is rounded to the `MathContext`.
+Values that fall between two ranks are linearly interpolated (the R-7 method, NumPy's default). The `percentile` is converted to `BigDecimal` from its decimal representation, so `99.9` is exactly `99.9`. The rank and interpolation are calculated exactly, and only the result is rounded to the `MathContext`.
 
 **Signatures**
 

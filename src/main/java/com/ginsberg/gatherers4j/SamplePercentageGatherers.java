@@ -18,23 +18,23 @@ package com.ginsberg.gatherers4j;
 
 import org.jspecify.annotations.Nullable;
 
+import java.util.function.Supplier;
 import java.util.random.RandomGenerator;
 import java.util.stream.Gatherer;
 
-import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
-
 public class SamplePercentageGatherers {
 
+    // The supplier is called once per stream, so a generator is never shared between runs unless the supplier shares it
     static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> bernoulli(
             final double percentage,
-            final RandomGenerator randomGenerator
+            final Supplier<RandomGenerator> randomGeneratorSupplier
     ) {
         if (!(percentage > 0.0 && percentage <= 1.0)) {
             throw new IllegalArgumentException("percentage must be greater than 0 and 1.0 or less");
         }
-        mustNotBeNull(randomGenerator, "RandomGenerator must not be null");
         return Gatherer.ofSequential(
-                Gatherer.Integrator.ofGreedy((_, element, downstream) -> {
+                randomGeneratorSupplier,
+                Gatherer.Integrator.ofGreedy((randomGenerator, element, downstream) -> {
                     if (randomGenerator.nextDouble() < percentage) {
                         return downstream.push(element);
                     }

@@ -24,8 +24,6 @@ import java.math.MathContext;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
-
 public final class BigDecimalMovingStatGatherer<INPUT extends @Nullable Object, OUTPUT extends @Nullable Object>
         extends AbstractBigDecimalStatGatherer<INPUT, OUTPUT> {
 
@@ -88,9 +86,9 @@ public final class BigDecimalMovingStatGatherer<INPUT extends @Nullable Object, 
 
     /// Replace the `MathContext` used for all mathematical operations in this gatherer.
     ///
-    /// @param mathContext A non-null `MathContext`
+    /// @param mathContext A non-null `MathContext` with a precision greater than 0
     public BigDecimalMovingStatGatherer<INPUT, OUTPUT> withMathContext(final MathContext mathContext) {
-        this.mathContext = mustNotBeNull(mathContext, "MathContext must not be null");
+        this.mathContext = validMathContext(mathContext);
         return this;
     }
 

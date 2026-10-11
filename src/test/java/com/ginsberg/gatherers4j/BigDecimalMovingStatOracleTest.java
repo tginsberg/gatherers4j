@@ -187,16 +187,16 @@ class BigDecimalMovingStatOracleTest {
 
     // ---------------------------------------------------------------------------------------------------------
     // Statistics that round at every step. The gatherer multiplies the rounded window values together, rounding
-    // each multiply, so the oracle uses the exact product of the rounded window values and the tolerance covers
-    // that rounding.
+    // each multiply, and never divides a value back out, so the oracle uses the exact product of the rounded window
+    // values and the tolerance covers that rounding.
     //
     // Tolerance. Every multiply rounds to `precision` digits, so it adds a relative error of at most
     // 0.5 * 10^(1 - precision), and the standard deviation of one such error is below 0.3 * 10^(1 - precision).
     // These errors are independent and unbiased for the default HALF_EVEN rounding, so after k multiplies the
-    // relative error is a random walk of about 0.3 * 10^(1 - precision) * sqrt(k). The product of a window is
-    // rebuilt from its values rather than by dividing the departing value out, so k is the number of values in the
-    // window, however long the stream. The tolerance is 3 * 10^(1 - precision) * sqrt(k), about ten standard
-    // deviations. It does not grow with the stream, so error that accumulates across evictions fails the test.
+    // relative error is a random walk of about 0.3 * 10^(1 - precision) * sqrt(k). Every product the gatherer
+    // reports is built from the values currently in the window, so k is about the number of values in the window,
+    // however long the stream. The tolerance is 3 * 10^(1 - precision) * sqrt(k), about ten standard deviations. It
+    // does not grow with the stream, so error that accumulates across evictions fails the test.
     // ---------------------------------------------------------------------------------------------------------
 
     @ParameterizedTest(name = "{0}")

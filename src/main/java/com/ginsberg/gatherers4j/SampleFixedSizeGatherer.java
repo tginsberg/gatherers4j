@@ -25,26 +25,25 @@ import java.util.function.Supplier;
 import java.util.random.RandomGenerator;
 import java.util.stream.Gatherer;
 
-import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
 import static com.ginsberg.gatherers4j.util.GathererUtils.pushAll;
 
 public class SampleFixedSizeGatherer<INPUT extends @Nullable Object>
         implements Gatherer<INPUT, SampleFixedSizeGatherer.State<INPUT>, INPUT> {
 
     private final int sampleSize;
-    private final RandomGenerator randomGenerator;
+    private final Supplier<RandomGenerator> randomGeneratorSupplier;
 
-    SampleFixedSizeGatherer(final int sampleSize, final RandomGenerator randomGenerator) {
+    SampleFixedSizeGatherer(final int sampleSize, final Supplier<RandomGenerator> randomGeneratorSupplier) {
         if (sampleSize < 1) {
             throw new IllegalArgumentException("sampleSize must be at least 1");
         }
         this.sampleSize = sampleSize;
-        this.randomGenerator = mustNotBeNull(randomGenerator, "RandomGenerator must not be null");
+        this.randomGeneratorSupplier = randomGeneratorSupplier;
     }
 
     @Override
     public Supplier<State<INPUT>> initializer() {
-        return () -> new State<>(sampleSize, randomGenerator);
+        return () -> new State<>(sampleSize, randomGeneratorSupplier.get());
     }
 
     @Override
@@ -75,7 +74,7 @@ public class SampleFixedSizeGatherer<INPUT extends @Nullable Object>
             if (index < sampleSize) {
                 elements.add(element);
             } else {
-                int n = randomGenerator.nextInt(0, index + 1);
+                final int n = randomGenerator.nextInt(0, index + 1);
                 if (n < sampleSize) {
                     // Not replacing element at n because we want to keep iteration order.
                     elements.remove(n);
