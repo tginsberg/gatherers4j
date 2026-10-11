@@ -140,14 +140,21 @@ class StatisticAccumulators {
     }
 
     final static class PercentileAccumulator implements StatisticAccumulator<BigDecimal> {
+        static final BigDecimal MEDIAN = BigDecimal.valueOf(50);
+
         private final SortedWindow state = new SortedWindow();
         private final BigDecimal percentile;
 
-        PercentileAccumulator(final double percentile) {
+        // Expects a percentile already validated by percentileOf
+        PercentileAccumulator(final BigDecimal percentile) {
+            this.percentile = percentile;
+        }
+
+        static BigDecimal percentileOf(final double percentile) {
             if (Double.isNaN(percentile) || percentile < 0 || percentile > 100) {
                 throw new IllegalArgumentException("Percentile must be between 0 and 100, inclusive");
             }
-            this.percentile = BigDecimal.valueOf(percentile);
+            return BigDecimal.valueOf(percentile);
         }
 
         @Override
