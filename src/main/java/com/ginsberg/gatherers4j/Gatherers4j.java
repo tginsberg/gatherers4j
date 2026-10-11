@@ -907,6 +907,10 @@ public abstract class Gatherers4j {
     /// Weights are ordered from oldest to newest: the first weight applies to the oldest element in the window and
     /// the last weight applies to the newest. While the window is not yet full, the newest weights are used.
     ///
+    /// Weights of zero are allowed, but if the newest weights used for a partial window sum to zero, the mean is
+    /// undefined and nothing is emitted for that element. For example, weights `[1, 1, 0]` emit nothing for the
+    /// first element. A list whose weights all sum to zero is rejected.
+    ///
     /// @param weights One weight per element in the window, oldest to newest. Must contain at least 2 non-null,
     ///                non-negative values that do not sum to zero.
     /// @return A non-null `BigDecimalMovingStatGatherer`
@@ -947,6 +951,10 @@ public abstract class Gatherers4j {
     ///
     /// Weights are ordered from oldest to newest: the first weight applies to the oldest element in the window and
     /// the last weight applies to the newest. While the window is not yet full, the newest weights are used.
+    ///
+    /// Weights of zero are allowed, but if the newest weights used for a partial window sum to zero, the mean is
+    /// undefined and nothing is emitted for that element. For example, weights `[1, 1, 0]` emit nothing for the
+    /// first element. A list whose weights all sum to zero is rejected.
     ///
     /// @param weights         One weight per element in the window, oldest to newest. Must contain at least 2
     ///                        non-null, non-negative values that do not sum to zero.

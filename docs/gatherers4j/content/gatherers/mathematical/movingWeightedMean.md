@@ -39,6 +39,20 @@ List.of(new BigDecimal("0.2"), new BigDecimal("0.3"), new BigDecimal("0.5"))
 
 While the window is not yet full, the **newest** weights are used and the result is divided by their sum. With weights `[1, 1, 2]` and only two values seen so far, the weights `[1, 2]` are used. This means that `movingWeightedMean(3)` and `movingWeightedMean(List.of(1, 2, 3))` give the same results once the window is full, but not while it is filling.
 
+Weights of zero are allowed. For example, `[1, 1, 0]` means "the average of the previous two values, excluding the current one". While the window is filling, only the newest weights are used, and if those happen to sum to zero the mean is undefined (0 divided by 0), so nothing is emitted for that element. With `[1, 1, 0]`, the first element emits nothing, because the only weight in use is the `0`. A list whose weights all sum to zero is rejected when the method is called.
+
+```java
+Stream
+    .of("10", "20", "30", "40")
+    .map(BigDecimal::new)
+    .gather(Gatherers4j.movingWeightedMean(List.of(
+        new BigDecimal("1"), new BigDecimal("1"), new BigDecimal("0")
+    )))
+    .toList();
+
+// [10, 15, 25]
+```
+
 **Additional Methods**
 
 | Method                                     | Purpose                                                                                                                                                                                                                                                                                                              |
