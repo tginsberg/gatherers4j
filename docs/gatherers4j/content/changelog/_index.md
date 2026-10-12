@@ -5,6 +5,9 @@ weight: 90
 no_list: true
 ---
 
+## v0.16.0
+[Released 2026-??-??](https://github.com/tginsberg/gatherers4j/releases/tag/v0.15.0)
+
 ## v0.15.0
 [Released 2026-10-11](https://github.com/tginsberg/gatherers4j/releases/tag/v0.15.0)
 + Breaking change: the BigDecimal-based moving and running gatherers (sum, product, simple average, exponential average, median, geometric mean, standard deviation) now return `BigDecimalMovingStatGatherer` or `BigDecimalRunningStatGatherer`. The public classes they used to return are removed: `BigDecimalGatherer`, `BigDecimalExponentialMovingAverageGatherer`, `BigDecimalGeometricMeanGatherer`, `BigDecimalMedianGatherer`, `BigDecimalMovingGeometricMeanGatherer`, `BigDecimalMovingProductGatherer`, `BigDecimalMovingSumGatherer`, `BigDecimalProductGatherer`, `BigDecimalSimpleAverageGatherer`, `BigDecimalSimpleMovingAverageGatherer`, `BigDecimalStandardDeviationGatherer`, and `BigDecimalSumGatherer`. Code that only calls the factory methods on `Gatherers4j` is unaffected, but code that names these types (for example in a variable declaration) must change.
