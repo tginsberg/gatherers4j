@@ -160,6 +160,19 @@ public abstract class Gatherers4j {
         return new DistinctGatherer<>(mappingFunction);
     }
 
+
+    /// Filter a stream such that it only contains distinct elements measured by the given `function`, returning
+    /// the latest element rather than the first.
+    ///
+    /// @param mappingFunction A non-null mapping function, the results of which will be used to check for distinct elements
+    /// @param <INPUT>         Type of elements in both the input and output streams
+    /// @return A non-null `Gatherer`
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> distinctLatestBy(
+            final Function<INPUT, @Nullable Object> mappingFunction
+    ) {
+        return new DistinctLatestGatherer<>(mappingFunction);
+    }
+
     /// Drop every nth element of the stream.
     ///
     /// @param count   The number of the elements to drop, must be at least 2
