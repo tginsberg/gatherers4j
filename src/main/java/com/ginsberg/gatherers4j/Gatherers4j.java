@@ -160,7 +160,6 @@ public abstract class Gatherers4j {
         return new DistinctGatherer<>(mappingFunction);
     }
 
-
     /// Filter a stream such that it only contains distinct elements measured by the given `function`, returning
     /// the latest element rather than the first.
     ///
@@ -170,7 +169,7 @@ public abstract class Gatherers4j {
     public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> distinctLatestBy(
             final Function<INPUT, @Nullable Object> mappingFunction
     ) {
-        return new DistinctLatestGatherer<>(mappingFunction);
+        return new DistinctKeyGatherer<>(mappingFunction, DistinctKeyGatherer.OnRepeat.KeepLatest);
     }
 
     /// Drop every nth element of the stream.
@@ -192,6 +191,28 @@ public abstract class Gatherers4j {
     /// @return A non-null `Gatherer`
     public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> dropLast(final int count) {
         return new DropLastGatherer<>(count);
+    }
+
+    /// Ensure that every element in the input stream is distinct, as measured by `Object.equals(Object)`, and fail
+    /// with an `IllegalStateException` as soon as one repeats. Nothing is emitted until the input stream ends.
+    ///
+    /// @param <INPUT> Type of elements in both the input and output streams
+    /// @return A non-null `EnsureDistinctGatherer`
+    public static <INPUT extends @Nullable Object> EnsureDistinctGatherer<INPUT> ensureDistinct() {
+        return new EnsureDistinctGatherer<>(Function.identity());
+    }
+
+    /// Ensure that every element in the input stream is distinct, as measured by the given `mappingFunction`, and
+    /// fail with an `IllegalStateException` as soon as a mapped value repeats. Nothing is emitted until the input
+    /// stream ends.
+    ///
+    /// @param mappingFunction A non-null mapping function, the results of which will be used to check for distinct elements
+    /// @param <INPUT>         Type of elements in both the input and output streams
+    /// @return A non-null `EnsureDistinctGatherer`
+    public static <INPUT extends @Nullable Object> EnsureDistinctGatherer<INPUT> ensureDistinctBy(
+            final Function<INPUT, @Nullable Object> mappingFunction
+    ) {
+        return new EnsureDistinctGatherer<>(mappingFunction);
     }
 
     /// Ensure that the `Comparable` elements in the input stream are in the given `Order`, and fail exceptionally if they are not.
@@ -1575,7 +1596,7 @@ public abstract class Gatherers4j {
     /// @param <INPUT> Type of elements in the input stream
     /// @return A non-null `Gatherer`
     public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> uniquelyOccurring() {
-        return new UniquelyOccurringGatherer<>(Function.identity());
+        return new DistinctKeyGatherer<>(Function.identity(), DistinctKeyGatherer.OnRepeat.RemoveAll);
     }
 
     /// Emit only those elements that occur in the input stream a single time, as identified by the given `mappingFunction`.
@@ -1587,7 +1608,7 @@ public abstract class Gatherers4j {
     public static <INPUT extends @Nullable Object, MAPPED extends @Nullable Object> Gatherer<INPUT, ?, INPUT> uniquelyOccurringBy(
             final Function<INPUT, MAPPED> mappingFunction
     ) {
-        return new UniquelyOccurringGatherer<>(mappingFunction);
+        return new DistinctKeyGatherer<>(mappingFunction, DistinctKeyGatherer.OnRepeat.RemoveAll);
     }
 
     /// Create windows over the elements of the input stream that are `windowSize` in length, sliding over `stepping` number of elements
