@@ -21,6 +21,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -108,6 +110,20 @@ class SizeGathererTest {
 
             // Assert
             assertThat(output).containsExactly("A", "B", "C");
+        }
+
+        @Test
+        void stopsReadingInputOnceOverTarget() {
+            // Arrange
+            final AtomicInteger pulled = new AtomicInteger();
+            final Stream<Integer> input = IntStream.rangeClosed(1, 1_000).boxed().peek(_ -> pulled.incrementAndGet());
+
+            // Act
+            final List<Integer> output = input.gather(Gatherers4j.<Integer>ensureSize(Size.Equals, 2).orElseEmpty()).toList();
+
+            // Assert
+            assertThat(output).isEmpty();
+            assertThat(pulled).hasValue(3);
         }
     }
 
@@ -218,6 +234,20 @@ class SizeGathererTest {
             // Assert
             assertThat(output).containsExactly("A");
         }
+
+        @Test
+        void stopsReadingInputAtTarget() {
+            // Arrange
+            final AtomicInteger pulled = new AtomicInteger();
+            final Stream<Integer> input = IntStream.rangeClosed(1, 1_000).boxed().peek(_ -> pulled.incrementAndGet());
+
+            // Act
+            final List<Integer> output = input.gather(Gatherers4j.<Integer>ensureSize(Size.LessThan, 2).orElseEmpty()).toList();
+
+            // Assert
+            assertThat(output).isEmpty();
+            assertThat(pulled).hasValue(2);
+        }
     }
 
 
@@ -244,6 +274,20 @@ class SizeGathererTest {
 
             // Assert
             assertThat(output).containsExactly("A", "B");
+        }
+
+        @Test
+        void stopsReadingInputOnceOverTarget() {
+            // Arrange
+            final AtomicInteger pulled = new AtomicInteger();
+            final Stream<Integer> input = IntStream.rangeClosed(1, 1_000).boxed().peek(_ -> pulled.incrementAndGet());
+
+            // Act
+            final List<Integer> output = input.gather(Gatherers4j.<Integer>ensureSize(Size.LessThanOrEqualTo, 2).orElseEmpty()).toList();
+
+            // Assert
+            assertThat(output).isEmpty();
+            assertThat(pulled).hasValue(3);
         }
 
         @Test

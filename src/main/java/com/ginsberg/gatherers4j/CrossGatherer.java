@@ -56,7 +56,9 @@ public class CrossGatherer {
         return Gatherer.of(
                 Gatherer.Integrator.ofGreedy((_, element, downstream) -> {
                     for (final CROSS cross : source) {
-                        downstream.push(new Pair<>(element, cross));
+                        if (!downstream.push(new Pair<>(element, cross))) {
+                            return false;
+                        }
                     }
                     return !downstream.isRejecting();
                 })

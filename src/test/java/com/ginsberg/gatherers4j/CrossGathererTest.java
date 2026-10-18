@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,20 @@
 
 package com.ginsberg.gatherers4j;
 
+import com.ginsberg.gatherers4j.dto.Pair;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
+
 import static com.ginsberg.gatherers4j.Gatherers4j.crossWith;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-
-import com.ginsberg.gatherers4j.dto.Pair;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.stream.Stream;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
 
 class CrossGathererTest {
 
@@ -96,6 +98,34 @@ class CrossGathererTest {
 
             // Assert
             assertThat(output).isEmpty();
+        }
+
+        @Test
+        void stopsReadingCrossIterableWhenDownstreamRejects() {
+            // Arrange
+            final Stream<String> input = Stream.of("A");
+            final AtomicInteger pulled = new AtomicInteger();
+            final Iterable<Integer> cross = () -> new Iterator<>() {
+                @Override
+                public boolean hasNext() {
+                    return pulled.get() < 1_000;
+                }
+
+                @Override
+                public Integer next() {
+                    return pulled.incrementAndGet();
+                }
+            };
+
+            // Act
+            final List<Pair<String, Integer>> output = input
+                    .gather(Gatherers4j.crossWith(cross))
+                    .limit(2)
+                    .toList();
+
+            // Assert
+            assertThat(output).containsExactly(new Pair<>("A", 1), new Pair<>("A", 2));
+            assertThat(pulled).hasValue(2);
         }
     }
 
