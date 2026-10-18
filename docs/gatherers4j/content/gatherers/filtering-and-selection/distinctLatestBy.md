@@ -5,6 +5,7 @@ show_in_table: true
 category: Filtering and Selection
 description: Filter a stream such that it only contains the latest of each distinct element as measured by the given `mappingFunction`.
 infinite_streams: distinct
+parallel: true
 ---
 
 

@@ -23,3 +23,82 @@
 .td-navbar {
   --td-navbar-border-bottom: 4px solid #2f9e44;
 }
+
+// Gatherer page markers (layouts/_td-content-after-header.html): a row of pills, each with a popover that shows on
+// hover or focus. The popover is positioned against the row rather than its pill, so it never runs off a narrow screen.
+.g4j-markers {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0 0 1.5rem;
+}
+
+.g4j-pill {
+  display: inline-block;
+  padding: 0.125rem 0.625rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.5;
+  border: 1px solid;
+  border-radius: 50rem;
+  cursor: help;
+
+  &:hover .g4j-pill-tip,
+  &:focus-within .g4j-pill-tip {
+    visibility: visible;
+    opacity: 1;
+  }
+}
+
+// Caveat: the stream must be finite
+.g4j-pill-warning {
+  color: var(--bs-warning-text-emphasis);
+  background-color: var(--bs-warning-bg-subtle);
+  border-color: var(--bs-warning-border-subtle);
+}
+
+// Caveat: works on an infinite stream, with a cost
+.g4j-pill-info {
+  color: var(--bs-secondary-text-emphasis);
+  background-color: var(--bs-secondary-bg-subtle);
+  border-color: var(--bs-secondary-border-subtle);
+}
+
+// Good news: brand green
+.g4j-pill-primary {
+  color: var(--bs-primary-text-emphasis);
+  background-color: var(--bs-primary-bg-subtle);
+  border-color: var(--bs-primary-border-subtle);
+}
+
+.g4j-pill-tip {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1070;
+  max-width: min(40rem, 100%);
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: var(--bs-body-color);
+  background-color: var(--bs-body-bg);
+  border: 1px solid var(--bs-border-color);
+  border-radius: var(--bs-border-radius);
+  box-shadow: var(--bs-box-shadow);
+  cursor: auto;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.15s, visibility 0.15s;
+
+  // Covers the gap above the popover, so the pointer can move from the pill into it without closing it
+  &::before {
+    content: "";
+    position: absolute;
+    top: -0.5rem;
+    right: 0;
+    left: 0;
+    height: 0.5rem;
+  }
+}

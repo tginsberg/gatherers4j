@@ -5,6 +5,7 @@ show_in_table: true
 category: Sequence Operations
 description: Cross every element of the input stream with every element of the given source, emitting them to the output stream as a `Pair<INPUT, CROSS>`.
 infinite_streams: finite-source
+parallel: true
 ---
 
 ### Implementation Notes

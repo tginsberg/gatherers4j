@@ -5,12 +5,13 @@ show_in_table: true
 category: Sequence Operations
 description: Emit elements in the input stream ordered by the specified frequency.
 infinite_streams: distinct
+parallel: true
 
 ---
 
 ### Implementation Notes
 
-Since this Gatherer is not order-dependent, it has a parallel-capable implementation. All results are wrapped in a [`WithCount`](https://github.com/tginsberg/gatherers4j/blob/main/src/main/java/com/ginsberg/gatherers4j/dto/WithCount.java) record.
+All results are wrapped in a [`WithCount`](https://github.com/tginsberg/gatherers4j/blob/main/src/main/java/com/ginsberg/gatherers4j/dto/WithCount.java) record.
 
 **Signature**
 

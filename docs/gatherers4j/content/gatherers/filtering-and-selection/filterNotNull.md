@@ -4,6 +4,7 @@ linkTitle: "filterNotNull()"
 show_in_table: true
 category: Filtering and Selection
 description: Remove null elements from a stream, narrowing the output type to non-null.
+parallel: true
 ---
 
 ### Implementation Notes

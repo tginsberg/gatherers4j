@@ -5,6 +5,7 @@ show_in_table: true
 category: Validation and Constraints
 description: Ensure that every element in the input stream is distinct, and fail exceptionally if one repeats.
 infinite_streams: ensure-distinct
+parallel: true
 ---
 
 ### Implementation Notes

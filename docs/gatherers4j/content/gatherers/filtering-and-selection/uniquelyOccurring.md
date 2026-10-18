@@ -5,6 +5,7 @@ show_in_table: true
 category: Filtering and Selection
 description: Emit only those elements that occur in the input stream a single time.
 infinite_streams: distinct
+parallel: true
 
 ---
 

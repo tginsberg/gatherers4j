@@ -4,6 +4,7 @@ linkTitle: "filterInstanceOf()"
 show_in_table: true
 category: Filtering and Selection
 description: Filter the elements in the stream to only include elements of the given types.
+parallel: true
 
 ---
 
