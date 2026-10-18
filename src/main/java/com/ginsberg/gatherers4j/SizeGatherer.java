@@ -96,7 +96,7 @@ public class SizeGatherer<INPUT extends @Nullable Object>
             } else {
                 state.failed = true;
             }
-            return !state.failed || !downstream.isRejecting();
+            return !state.failed && !downstream.isRejecting();
         };
     }
 
