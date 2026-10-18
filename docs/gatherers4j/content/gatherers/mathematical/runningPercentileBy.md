@@ -4,6 +4,7 @@ linkTitle: "runningPercentileBy()"
 show_in_table: true
 category: "Mathematical Operations"
 description: Calculate the running percentile of `BigDecimal` objects mapped from a `Stream<INPUT>` via a `mappingFunction`.
+infinite_streams: grows-with-length
 
 ---
 

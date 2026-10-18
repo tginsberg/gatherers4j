@@ -4,13 +4,13 @@ linkTitle: "reverse()"
 show_in_table: true
 category: Sequence Operations
 description: Reverse the order of the input stream.
+infinite_streams: holds-all
 
 ---
 
 ### Implementation Notes
 
-This implementation reads the entire stream before emitting any results, making it inappropriate for infinite streams.
-
+Emits the elements of the input stream in the opposite of the order in which they were encountered.
 
 **Signature**
 

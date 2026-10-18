@@ -4,13 +4,13 @@ linkTitle: "takeLast()"
 show_in_table: true
 category: Filtering and Selection
 description: Remove all but the last `count` elements from the stream.
+infinite_streams: emits-at-end
 ---
 
 
 ### Implementation Notes
 
-Holds at most `count` number of elements in memory before emitting them once the input stream is fully exhausted. This 
-Gatherer is not suitable for infinite streams. For a version that drops the last `count` elements, see [`dropLast()`](/gatherers4j/gatherers/filtering-and-selection/droplast/).
+Holds at most `count` number of elements in memory before emitting them once the input stream is fully exhausted. For a version that drops the last `count` elements, see [`dropLast()`](/gatherers4j/gatherers/filtering-and-selection/droplast/).
 
 **Signature**
 

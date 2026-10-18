@@ -4,6 +4,7 @@ linkTitle: "ensureSize()"
 show_in_table: true
 category: Validation and Constraints
 description: Ensure the input stream is the proper `length` as specified by `size`.
+infinite_streams: ensure-size
 ---
 
 ### Implementation Notes

@@ -4,12 +4,12 @@ linkTitle: "repeat()"
 show_in_table: true
 category: Sequence Operations
 description: Repeatedly emit the input stream to the output stream a given number of times.
+infinite_streams: holds-all
 
 ---
 
 ### Implementation Notes
 
-This implementation reads the entire stream before emitting any results, making it inappropriate for infinite streams.
 For a version of this Gatherer that repeats infinitely, see [`repeatInfinitely()`](/gatherers4j/gatherers/sequence-operations/repeatinfinitely/).
 
 **Signature**

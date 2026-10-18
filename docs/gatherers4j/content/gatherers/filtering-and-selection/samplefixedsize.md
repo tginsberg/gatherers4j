@@ -4,6 +4,7 @@ linkTitle: "sampleFixedSize()"
 show_in_table: true
 category: Filtering and Selection
 description: Perform a fixed-size sampling over the input stream.
+infinite_streams: emits-at-end
 
 ---
 
@@ -11,7 +12,6 @@ description: Perform a fixed-size sampling over the input stream.
 
 This uses the reservoir method internally and guarantees that for streams that are at least `sampleSize` in length, there
 will be exactly `sampleSize` elements in the output stream. Elements will be emitted in the order in which they are encountered.
-This implementation reads the entire stream before emitting any results, making it inappropriate for infinite streams.
 
 There are two versions of this Gatherer, one that uses the platform default `RandomGenerator` and one that allows the caller
 to specify a `RandomGenerator`. Specifying a `RandomGenerator` with a fixed seed makes the sample repeatable, which is useful
