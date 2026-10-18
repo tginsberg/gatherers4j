@@ -4,6 +4,7 @@ linkTitle: "runningPercentile()"
 show_in_table: true
 category: "Mathematical Operations"
 description: Calculate the running percentile of a `Stream<BigDecimal>`.
+infinite_streams: grows-with-length
 
 ---
 

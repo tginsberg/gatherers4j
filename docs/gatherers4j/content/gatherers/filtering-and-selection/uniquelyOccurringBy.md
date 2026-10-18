@@ -4,12 +4,12 @@ linkTitle: "uniquelyOccurringBy()"
 show_in_table: true
 category: Filtering and Selection
 description: Emit only those elements that occur in the input stream a single time, as measured by the given function.
+infinite_streams: distinct
 
 ---
 
 ### Implementation Notes
 
-The implementation does not emit anything until the full input stream has been exhausted, so it is not suitable for infinite streams. 
 Encounter order of uniquely occurring elements is preserved. 
 
 **Signature**

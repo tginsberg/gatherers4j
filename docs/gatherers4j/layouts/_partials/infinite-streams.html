@@ -1,0 +1,18 @@
+{{- /*
+Returns the infinite-stream marker (a map with level, title and text) for a page, or false when the page has none.
+
+A page opts in with the `infinite_streams` front matter parameter, whose value is a key in data/infinite_streams.yaml.
+Used by layouts/_td-content-after-header.html (HTML output) and layouts/all.md (Markdown output).
+
+@context {page} .
+*/ -}}
+{{- $marker := false -}}
+{{- with .Params.infinite_streams -}}
+  {{- $key := . -}}
+  {{- with index hugo.Data.infinite_streams $key -}}
+    {{- $marker = . -}}
+  {{- else -}}
+    {{- errorf "Unknown infinite_streams value %q in %s. Known values are in data/infinite_streams.yaml." $key $.Path -}}
+  {{- end -}}
+{{- end -}}
+{{- return $marker -}}

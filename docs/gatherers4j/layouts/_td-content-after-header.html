@@ -1,0 +1,7 @@
+{{- /* Overrides Docsy's empty hook. Shows the infinite-stream marker above the page content, if the page has one. */ -}}
+{{ with partial "infinite-streams.html" . -}}
+<div class="alert alert-{{ .level }}" role="note">
+  <div class="h5 alert-heading">{{ .title }}</div>
+  {{ .text | markdownify }}
+</div>
+{{ end -}}

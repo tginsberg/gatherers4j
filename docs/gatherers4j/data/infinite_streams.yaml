@@ -1,0 +1,95 @@
+# Wording for the "infinite streams" marker shown at the top of a gatherer's docs page.
+#
+# A page opts in with a front matter parameter naming one of the keys below:
+#
+#     infinite_streams: holds-all
+#
+# layouts/_td-content-after-header.html renders it for the HTML output and layouts/all.md for the Markdown output,
+# both through layouts/_partials/infinite-streams.html, so the two cannot drift apart. An unknown key fails the build.
+#
+# level: warning  The gatherer cannot be used on an infinite stream.
+#        info     The gatherer works on an infinite stream, with a caveat.
+# title: Plain text, no trailing period.
+# text:  Inline Markdown on a single line.
+
+holds-all:
+  level: warning
+  title: Finite streams only
+  text: >-
+    This gatherer keeps every element in memory and emits nothing until the stream ends. On an infinite stream it never
+    emits and eventually runs out of memory. To use it on an unbounded source, bound the stream first with `limit()`,
+    `takeWhile()`, or [`takeUntil()`](/gatherers4j/gatherers/filtering-and-selection/takeuntil/).
+
+emits-at-end:
+  level: warning
+  title: Finite streams only
+  text: >-
+    This gatherer emits nothing until the stream ends. On an infinite stream it never produces output and never
+    finishes. To use it on an unbounded source, bound the stream first with `limit()`, `takeWhile()`, or
+    [`takeUntil()`](/gatherers4j/gatherers/filtering-and-selection/takeuntil/).
+
+distinct:
+  level: warning
+  title: Finite streams only
+  text: >-
+    This gatherer emits nothing until the stream ends, and it remembers every distinct value it has seen. On an infinite
+    stream it never produces output, and memory grows with the number of distinct values. To use it on an unbounded
+    source, bound the stream first with `limit()`, `takeWhile()`, or
+    [`takeUntil()`](/gatherers4j/gatherers/filtering-and-selection/takeuntil/).
+
+ensure-ordered:
+  level: warning
+  title: Finite streams only
+  text: >-
+    This gatherer keeps every element in memory and emits nothing until the stream ends. An infinite stream that stays in
+    order never emits and eventually runs out of memory. An infinite stream that goes out of order fails with an
+    exception at the first out-of-order element.
+
+ensure-distinct:
+  level: warning
+  title: Finite streams only
+  text: >-
+    This gatherer emits nothing until the stream ends, and it remembers every distinct value it has seen. An infinite
+    stream with no repeats never emits, and memory grows with the number of distinct values. An infinite stream that
+    repeats stops at the first repeat and fails with an exception, or emits the `orElse()` replacement.
+
+ensure-size:
+  level: warning
+  title: Finite streams only
+  text: >-
+    With `GreaterThan` or `GreaterThanOrEqualTo`, this gatherer keeps every element in memory and emits nothing until
+    the stream ends, so on an infinite stream it never emits and eventually runs out of memory. With `Equals`,
+    `LessThan`, or `LessThanOrEqualTo`, it keeps at most `length` elements and stops reading as soon as the stream is
+    too long, so an infinite stream always fails, or emits the `orElse()` replacement.
+
+rotate:
+  level: warning
+  title: Finite streams only
+  text: >-
+    Rotating right keeps every element in memory and emits nothing until the stream ends. Rotating left keeps only the
+    first `distance` elements and emits the rest as they arrive, but the kept elements are emitted only when the stream
+    ends, so on an infinite stream they never appear.
+
+finite-source:
+  level: warning
+  title: The source must be finite
+  text: >-
+    The input stream may be infinite, but `source` may not, because every input element is paired with every element of
+    `source`. The one exception is an infinite `Iterable` when the downstream stops early, for example with `limit()`,
+    and then the output only ever pairs the first input element. The `Iterator` and `Stream` forms read all of `source`
+    into a list as soon as the gatherer is created.
+
+grows-with-length:
+  level: info
+  title: Memory grows with the stream
+  text: >-
+    This gatherer emits a result for every element, so it works on an infinite stream, but it keeps every value it has
+    seen. On an unbounded stream it eventually runs out of memory. For long or unbounded streams, use the matching
+    `moving` gatherer, which keeps only a window of values.
+
+grows-with-distinct:
+  level: info
+  title: Memory grows with distinct values
+  text: >-
+    This gatherer emits elements as they arrive, so it works on an infinite stream, but it remembers the mapped value of
+    every element it has emitted. If the stream keeps producing new distinct values, memory grows without bound.

@@ -4,6 +4,7 @@ linkTitle: "ensureOrderedBy()"
 show_in_table: true
 category: Validation and Constraints
 description: Ensure that the elements in the input stream are in the order specified, as measured by the given `Comparator`, and fail exceptionally if they are not.
+infinite_streams: ensure-ordered
 ---
 
 ### Implementation Notes

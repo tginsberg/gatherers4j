@@ -4,6 +4,7 @@ linkTitle: "distinctBy()"
 show_in_table: true
 category: Filtering and Selection
 description: Filter a stream such that it only contains distinct elements as measured by the given `mappingFunction`.
+infinite_streams: grows-with-distinct
 ---
 
 

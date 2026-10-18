@@ -4,6 +4,7 @@ linkTitle: "runningMedian()"
 show_in_table: true
 category: "Mathematical Operations"
 description: Calculate the running median of a `Stream<BigDecimal>`.
+infinite_streams: grows-with-length
 
 ---
 

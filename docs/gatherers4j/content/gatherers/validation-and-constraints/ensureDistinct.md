@@ -4,6 +4,7 @@ linkTitle: "ensureDistinct()"
 show_in_table: true
 category: Validation and Constraints
 description: Ensure that every element in the input stream is distinct, and fail exceptionally if one repeats.
+infinite_streams: ensure-distinct
 ---
 
 ### Implementation Notes
@@ -14,8 +15,7 @@ instead of failing, see [`distinctBy()`](/gatherers4j/gatherers/filtering-and-se
 
 This gatherer is all-or-nothing, meaning it will not emit any intermediate results to its downstream in the event that
 it detects a failure case. It stops reading the stream as soon as an element repeats, and fails with an
-`IllegalStateException` unless `orElse()` or `orElseEmpty()` supplies a replacement. This implementation reads the entire stream before emitting any results, making it inappropriate
-for infinite streams.
+`IllegalStateException` unless `orElse()` or `orElseEmpty()` supplies a replacement.
 
 **Signature**
 

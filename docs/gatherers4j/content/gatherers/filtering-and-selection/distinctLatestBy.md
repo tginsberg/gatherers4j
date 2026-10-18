@@ -4,6 +4,7 @@ linkTitle: "distinctLatestBy()"
 show_in_table: true
 category: Filtering and Selection
 description: Filter a stream such that it only contains the latest of each distinct element as measured by the given `mappingFunction`.
+infinite_streams: distinct
 ---
 
 
@@ -12,9 +13,6 @@ description: Filter a stream such that it only contains the latest of each disti
 This gatherer uses `Object::equals()` to measure equality of objects returned from the `mappingFunction`. When more
 than one element maps to the same value, the last one encountered is emitted. Each emitted element appears in the
 position where its mapped value was first encountered.
-
-This implementation reads the entire stream before emitting any results, making it inappropriate for infinite streams.
-It holds the latest element for every distinct mapped value in memory until the input stream ends.
 
 To keep the first instance of each distinct element instead, and emit it as soon as it is encountered, see
 [`distinctBy()`](/gatherers4j/gatherers/filtering-and-selection/distinctby/).
