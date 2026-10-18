@@ -1,7 +1,19 @@
-{{- /* Overrides Docsy's empty hook. Shows the infinite-stream marker above the page content, if the page has one. */ -}}
-{{ with partial "infinite-streams.html" . -}}
-<div class="alert alert-{{ .level }}" role="note">
-  <div class="h5 alert-heading">{{ .title }}</div>
-  {{ .text | markdownify }}
+{{- /*
+Overrides Docsy's empty hook. Shows the page's markers (infinite-stream first, then parallel) as a row of pills above
+the page content. Hovering over or focusing a pill (a tap, on touch screens) shows its text in a popover under the
+row. CSS only, styled by .g4j-markers in assets/scss/_styles_project.scss.
+*/ -}}
+{{- $markers := slice -}}
+{{- range slice (partial "infinite-streams.html" .) (partial "parallel.html" .) -}}
+  {{- with . }}{{ $markers = $markers | append . }}{{ end -}}
+{{- end -}}
+{{ with $markers -}}
+<div class="g4j-markers">
+{{- range $i, $marker := . }}
+  <span class="g4j-pill g4j-pill-{{ $marker.level }}" tabindex="0" aria-describedby="g4j-pill-tip-{{ $i }}">
+    {{- $marker.title -}}
+    <span class="g4j-pill-tip" id="g4j-pill-tip-{{ $i }}" role="tooltip">{{ $marker.text | markdownify }}</span>
+  </span>
+{{- end }}
 </div>
 {{ end -}}

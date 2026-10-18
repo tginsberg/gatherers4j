@@ -1,0 +1,17 @@
+{{- /*
+Returns the parallel marker (a map with level, title and text) for a page, or false when the page has none.
+
+A page opts in with the boolean `parallel` front matter parameter. The wording is in data/parallel.yaml.
+Used by layouts/_td-content-after-header.html (HTML output) and layouts/all.md (Markdown output).
+
+@context {page} .
+*/ -}}
+{{- $marker := false -}}
+{{- with .Params.parallel -}}
+  {{- if eq . true -}}
+    {{- $marker = hugo.Data.parallel -}}
+  {{- else -}}
+    {{- errorf "Invalid parallel value %v in %s. Use true or leave it out." . $.Path -}}
+  {{- end -}}
+{{- end -}}
+{{- return $marker -}}

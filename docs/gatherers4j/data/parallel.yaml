@@ -1,0 +1,23 @@
+# Wording for the "runs in parallel" marker shown at the top of a gatherer's docs page.
+#
+# A page opts in with a boolean front matter parameter:
+#
+#     parallel: true
+#
+# Mark a gatherer only when its combiner() is not Gatherer.defaultCombiner(): it has its own combiner, or it is
+# stateless and built with Gatherer.of(Integrator). Every other gatherer runs its stage sequentially on a parallel
+# stream, so its page leaves the parameter out.
+#
+# layouts/_td-content-after-header.html renders it for the HTML output and layouts/all.md for the Markdown output,
+# both through layouts/_partials/parallel.html, so the two cannot drift apart. Any other truthy value, such as a
+# string, fails the build.
+#
+# level: primary  Pill color: primary is the brand green.
+# title: Plain text, no trailing period.
+# text:  Inline Markdown on a single line.
+
+level: primary
+title: Runs in parallel
+text: >-
+  On a parallel stream, this gatherer processes parts of the stream independently and at the same time. Other
+  gatherers still work on parallel streams, but their stage runs sequentially.

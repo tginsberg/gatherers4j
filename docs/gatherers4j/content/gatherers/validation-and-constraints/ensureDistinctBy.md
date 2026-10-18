@@ -5,6 +5,7 @@ show_in_table: true
 category: Validation and Constraints
 description: Ensure that every element in the input stream is distinct as measured by the given `mappingFunction`, and fail exceptionally if a mapped value repeats.
 infinite_streams: ensure-distinct
+parallel: true
 ---
 
 ### Implementation Notes

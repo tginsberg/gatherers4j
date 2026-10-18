@@ -10,6 +10,7 @@ no_list: true
 + Implement `ensureDistinct()` and `ensureDistinctBy()`, which fail with an `IllegalStateException` as soon as an element (or its mapped value) repeats. Like the other `ensure` gatherers, they emit nothing unless the whole stream passes, and like `ensureSize()` they support `orElse()` and `orElseEmpty()` to emit a replacement instead of failing.
 + Implement `distinctLatestBy()`, which emits the latest element for each distinct value of the mapping function, in the position where that value first appeared. Unlike `distinctBy()`, it emits nothing until the input stream ends.
 + Docs: More accurately call out when infinite streams are not supported.
++ Docs: Mark gatherers that can run in parallel.
 + Fix `ensureSize()` with `Size.Equals`, `Size.LessThan`, or `Size.LessThanOrEqualTo` reading the rest of the input stream after the size could no longer be met. It now stops reading at that point, so on an infinite stream it fails (or emits its `orElse()` replacement) instead of running forever.
 + Fix `crossWith()` crossing each input element with every element of its `source` even after the downstream stopped accepting, for example after `limit()`.
 
