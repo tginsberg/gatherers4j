@@ -20,6 +20,7 @@ import com.ginsberg.gatherers4j.enums.Order;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
@@ -414,6 +415,40 @@ class FilterChangingGathererTest {
                 // Assert
                 assertThat(output).containsExactly("A");
             }
+        }
+    }
+
+    @Nested
+    class Wildcards {
+
+        @Test
+        void broaderComparatorKeepsElementType() {
+            // Arrange
+            final Comparator<CharSequence> byLength = Comparator.comparingInt(CharSequence::length);
+
+            // Act
+            final List<String> output = Stream.of("A", "CCC", "BB")
+                    .gather(Gatherers4j.filterOrderedBy(Order.Ascending, byLength))
+                    .toList();
+
+            // Assert
+            assertThat(output).containsExactly("A", "CCC");
+        }
+
+        @Test
+        void comparableThroughSupertypeKeepsElementType() {
+            // Arrange
+            final Stream<LocalDate> input = Stream.of(
+                    LocalDate.of(2026, 1, 1),
+                    LocalDate.of(2026, 1, 3),
+                    LocalDate.of(2026, 1, 2)
+            );
+
+            // Act
+            final List<LocalDate> output = input.gather(Gatherers4j.filterOrdered(Order.Ascending)).toList();
+
+            // Assert
+            assertThat(output).containsExactly(LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 3));
         }
     }
 }

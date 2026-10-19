@@ -26,13 +26,13 @@ public class DedupeConsecutiveGatherer<INPUT extends @Nullable Object>
         implements Gatherer<INPUT, DedupeConsecutiveGatherer.State, INPUT> {
 
     @Nullable
-    private final Function<INPUT, @Nullable Object> mappingFunction;
+    private final Function<? super INPUT, ? extends @Nullable Object> mappingFunction;
 
     DedupeConsecutiveGatherer() {
         this.mappingFunction = null;
     }
 
-    DedupeConsecutiveGatherer(@Nullable final Function<INPUT, @Nullable Object> mappingFunction) {
+    DedupeConsecutiveGatherer(@Nullable final Function<? super INPUT, ? extends @Nullable Object> mappingFunction) {
         this.mappingFunction = mappingFunction;
     }
 

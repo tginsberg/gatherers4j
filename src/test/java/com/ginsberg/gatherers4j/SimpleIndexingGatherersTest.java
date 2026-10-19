@@ -22,6 +22,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -189,6 +192,48 @@ class SimpleIndexingGatherersTest {
                             new WithIndex<>(1, 2),
                             new WithIndex<>(2, 3)
                     );
+        }
+    }
+
+    @Nested
+    class Wildcards {
+
+        @Test
+        void filterIndexedBroaderPredicateKeepsElementType() {
+            // Arrange
+            final BiPredicate<Number, CharSequence> evenIndex = (index, _) -> index.longValue() % 2 == 0;
+
+            // Act
+            final List<String> output = Stream.of("A", "B", "C").gather(Gatherers4j.filterIndexed(evenIndex)).toList();
+
+            // Assert
+            assertThat(output).containsExactly("A", "C");
+        }
+
+        @Test
+        void mapIndexedBroaderFunctionKeepsOutputType() {
+            // Arrange
+            final BiFunction<Number, CharSequence, String> withIndex = (index, cs) -> cs + "" + index;
+
+            // Act
+            final List<String> output = Stream.of("A", "B").gather(Gatherers4j.mapIndexed(withIndex)).toList();
+
+            // Assert
+            assertThat(output).containsExactly("A0", "B1");
+        }
+
+        @Test
+        void peekIndexedBroaderConsumerKeepsElementType() {
+            // Arrange
+            final List<String> peeked = new ArrayList<>();
+            final BiConsumer<Number, CharSequence> recorder = (index, cs) -> peeked.add(cs + "" + index);
+
+            // Act
+            final List<String> output = Stream.of("A", "B").gather(Gatherers4j.peekIndexed(recorder)).toList();
+
+            // Assert
+            assertThat(output).containsExactly("A", "B");
+            assertThat(peeked).containsExactly("A0", "B1");
         }
     }
 }

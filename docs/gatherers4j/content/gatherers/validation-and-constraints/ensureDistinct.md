@@ -27,7 +27,7 @@ it detects a failure case. It stops reading the stream as soon as an element rep
 | Method             | Purpose                                                                                                                                                                                                  |
 |--------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `orElseEmpty()`    | When an element repeats, return an empty stream instead of throwing an exception. [See example.](#emit-an-empty-stream-when-elements-repeat)                                                    |
-| `orElse(supplier)` | When an element repeats, emit the elements returned from the given non-null `Supplier<Stream<INPUT>>` instead of throwing an exception. [See example.](#emit-replacement-stream-when-elements-repeat) |
+| `orElse(supplier)` | When an element repeats, emit the elements returned from the given non-null `Supplier<? extends Stream<? extends INPUT>>` instead of throwing an exception. [See example.](#emit-replacement-stream-when-elements-repeat) |
 
 ### Examples
 

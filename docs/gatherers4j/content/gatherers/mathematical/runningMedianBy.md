@@ -15,7 +15,7 @@ for all calculations is {{< jdklink linkName="MathContext.DECIMAL64" package="ja
 
 **Signatures**
 
-`runningMedianBy(Function<INPUT, BigDecimal> mappingFunction)`
+`runningMedianBy(Function<? super INPUT, ? extends BigDecimal> mappingFunction)`
 * `mappingFunction` - A non-null function to map stream `INPUT` elements into `BigDecimal` for calculation
 
 **Additional Methods**

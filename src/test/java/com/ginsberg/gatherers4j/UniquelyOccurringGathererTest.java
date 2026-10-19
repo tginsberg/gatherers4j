@@ -300,4 +300,20 @@ class UniquelyOccurringGathererTest {
         }
 
     }
+
+    @Nested
+    class Wildcards {
+
+        @Test
+        void broaderMappingFunctionKeepsElementType() {
+            // Arrange
+            final Function<CharSequence, Integer> length = CharSequence::length;
+
+            // Act
+            final List<String> output = Stream.of("A", "B", "CC").gather(Gatherers4j.uniquelyOccurringBy(length)).toList();
+
+            // Assert
+            assertThat(output).containsExactly("CC");
+        }
+    }
 }

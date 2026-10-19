@@ -29,9 +29,9 @@ import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
 public class DistinctGatherer<INPUT extends @Nullable Object>
         implements Gatherer<INPUT, DistinctGatherer.State, INPUT> {
 
-    private final Function<INPUT, @Nullable Object> mappingFunction;
+    private final Function<? super INPUT, ? extends @Nullable Object> mappingFunction;
 
-    DistinctGatherer(final Function<INPUT, @Nullable Object> mappingFunction) {
+    DistinctGatherer(final Function<? super INPUT, ? extends @Nullable Object> mappingFunction) {
         this.mappingFunction = mustNotBeNull(mappingFunction, "Mapping function must not be null");
     }
 

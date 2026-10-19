@@ -16,9 +16,11 @@
 
 package com.ginsberg.gatherers4j;
 
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static com.ginsberg.gatherers4j.Gatherers4j.takeUntil;
@@ -45,5 +47,21 @@ class TakeUntilGathererTest {
 
         // Assert
         assertThat(output).containsExactly("A", "BB", "CCC");
+    }
+
+    @Nested
+    class Wildcards {
+
+        @Test
+        void broaderPredicateKeepsElementType() {
+            // Arrange
+            final Predicate<CharSequence> isB = cs -> cs.toString().equals("B");
+
+            // Act
+            final List<String> output = Stream.of("A", "B", "C").gather(Gatherers4j.takeUntil(isB)).toList();
+
+            // Assert
+            assertThat(output).containsExactly("A", "B");
+        }
     }
 }

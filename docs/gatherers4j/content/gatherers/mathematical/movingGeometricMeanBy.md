@@ -15,7 +15,7 @@ for all calculations is {{< jdklink linkName="MathContext.DECIMAL64" package="ja
 
 **Signatures**
 
-`movingGeometricMeanBy(int windowSize, Function<INPUT, BigDecimal> mappingFunction)`
+`movingGeometricMeanBy(int windowSize, Function<? super INPUT, ? extends BigDecimal> mappingFunction)`
 * `windowSize` - How many trailing elements to calculate the geometric mean over
 * `mappingFunction` - A non-null function to map stream `INPUT` elements into `BigDecimal` for calculation
 

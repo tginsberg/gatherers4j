@@ -13,7 +13,7 @@ elements that implement `Comparable`, see [`filterOrdered()`](/gatherers4j/gathe
 
 **Signature**
 
-`filterOrderedBy(Order order, Comparator<INPUT> comparator)`
+`filterOrderedBy(Order order, Comparator<? super INPUT> comparator)`
 * `order` - A non-null Order in which to filter elements. Values are `Equal`, `Ascending`, `Descending`, `AscendingOrEqual`, and `DescendingOrEqual`
 * `comparator` - A non-null `Comparator` to compare stream elements
 

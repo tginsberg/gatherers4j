@@ -16,7 +16,7 @@ Values that fall between two ranks are linearly interpolated (the R-7 method, Nu
 
 **Signatures**
 
-`movingPercentileBy(double percentile, int windowSize, Function<INPUT, BigDecimal> mappingFunction)`
+`movingPercentileBy(double percentile, int windowSize, Function<? super INPUT, ? extends BigDecimal> mappingFunction)`
 * `percentile` - The percentile to calculate, between 0 and 100, inclusive
 * `windowSize` - How many trailing elements to calculate the percentile over, must be greater than 1
 * `mappingFunction` - A non-null function to map stream `INPUT` elements into `BigDecimal` for calculation

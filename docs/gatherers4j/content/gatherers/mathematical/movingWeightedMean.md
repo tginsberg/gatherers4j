@@ -25,7 +25,7 @@ for all calculations is {{< jdklink linkName="MathContext.DECIMAL64" package="ja
 `movingWeightedMean(int windowSize)`
 * `windowSize` - How many trailing elements to average over at any given point in the stream. Must be greater than 1. Weights run from 1 (oldest) to `windowSize` (newest).
 
-`movingWeightedMean(List<BigDecimal> weights)`
+`movingWeightedMean(List<? extends BigDecimal> weights)`
 * `weights` - One weight per element in the window, **ordered from oldest to newest**. The window size is the number of weights, which must be at least 2. Weights may not be null or negative, and must not sum to zero. They do not need to sum to 1, because the result is always divided by the sum of the weights.
 
 `movingWeightedMean(BigDecimal... weights)`

@@ -214,4 +214,46 @@ class InterleavingGathererTest {
 
     }
 
+    @Nested
+    class Wildcards {
+
+        @Test
+        void iterableOfSubtype() {
+            // Arrange
+            final Stream<CharSequence> input = Stream.of("A", "C");
+            final List<String> other = List.of("B", "D");
+
+            // Act
+            final List<CharSequence> output = input.gather(Gatherers4j.interleaveWith(other)).toList();
+
+            // Assert
+            assertThat(output).containsExactly("A", "B", "C", "D");
+        }
+
+        @Test
+        void iteratorOfSubtype() {
+            // Arrange
+            final Stream<CharSequence> input = Stream.of("A", "C");
+            final Iterator<String> other = List.of("B", "D").iterator();
+
+            // Act
+            final List<CharSequence> output = input.gather(Gatherers4j.interleaveWith(other)).toList();
+
+            // Assert
+            assertThat(output).containsExactly("A", "B", "C", "D");
+        }
+
+        @Test
+        void streamOfSubtype() {
+            // Arrange
+            final Stream<CharSequence> input = Stream.of("A", "C");
+            final Stream<String> other = Stream.of("B", "D");
+
+            // Act
+            final List<CharSequence> output = input.gather(Gatherers4j.interleaveWith(other)).toList();
+
+            // Assert
+            assertThat(output).containsExactly("A", "B", "C", "D");
+        }
+    }
 }

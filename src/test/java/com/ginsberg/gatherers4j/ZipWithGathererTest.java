@@ -17,10 +17,12 @@
 package com.ginsberg.gatherers4j;
 
 import com.ginsberg.gatherers4j.dto.Pair;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -268,5 +270,79 @@ class ZipWithGathererTest {
                         new Pair<>("B", 2),
                         new Pair<>("C", 3)
                 );
+    }
+
+    @Nested
+    class Wildcards {
+
+        @Test
+        void argumentWhenSourceLongerBroaderFunction() {
+            // Arrange
+            final Function<Object, Number> zero = _ -> 0;
+
+            // Act
+            final List<Pair<String, Number>> output = Stream.of("A", "B")
+                    .gather(Gatherers4j.<String, Number>zipWith(List.of(1)).argumentWhenSourceLonger(zero))
+                    .toList();
+
+            // Assert
+            assertThat(output).containsExactly(new Pair<>("A", 1), new Pair<>("B", 0));
+        }
+
+        @Test
+        void iterableOfSubtypeKeepsSecondType() {
+            // Arrange
+            final List<Integer> numbers = List.of(1, 2);
+
+            // Act
+            final List<Pair<String, Number>> output = Stream.of("A", "B")
+                    .gather(Gatherers4j.<String, Number>zipWith(numbers))
+                    .toList();
+
+            // Assert
+            assertThat(output).containsExactly(new Pair<>("A", 1), new Pair<>("B", 2));
+        }
+
+        @Test
+        void iteratorOfSubtypeKeepsSecondType() {
+            // Arrange
+            final Iterator<Integer> numbers = List.of(1, 2).iterator();
+
+            // Act
+            final List<Pair<String, Number>> output = Stream.of("A", "B")
+                    .gather(Gatherers4j.<String, Number>zipWith(numbers))
+                    .toList();
+
+            // Assert
+            assertThat(output).containsExactly(new Pair<>("A", 1), new Pair<>("B", 2));
+        }
+
+        @Test
+        void sourceWhenArgumentLongerBroaderFunction() {
+            // Arrange
+            final Function<Object, String> asString = String::valueOf;
+
+            // Act
+            final List<Pair<String, Number>> output = Stream.of("A")
+                    .gather(Gatherers4j.<String, Number>zipWith(List.of(1, 2)).sourceWhenArgumentLonger(asString))
+                    .toList();
+
+            // Assert
+            assertThat(output).containsExactly(new Pair<>("A", 1), new Pair<>("2", 2));
+        }
+
+        @Test
+        void streamOfSubtypeKeepsSecondType() {
+            // Arrange
+            final Stream<Integer> numbers = Stream.of(1, 2);
+
+            // Act
+            final List<Pair<String, Number>> output = Stream.of("A", "B")
+                    .gather(Gatherers4j.<String, Number>zipWith(numbers))
+                    .toList();
+
+            // Assert
+            assertThat(output).containsExactly(new Pair<>("A", 1), new Pair<>("B", 2));
+        }
     }
 }

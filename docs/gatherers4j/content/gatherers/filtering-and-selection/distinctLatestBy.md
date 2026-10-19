@@ -20,7 +20,7 @@ To keep the first instance of each distinct element instead, and emit it as soon
 
 **Signature**
 
-`distinctLatestBy(Function<INPUT, Object> mappingFunction)`
+`distinctLatestBy(Function<? super INPUT, ?> mappingFunction)`
 
 * `mappingFunction` - A non-null function to map `INPUT` types to an arbitrary `Object` to use for comparison
 

@@ -15,7 +15,7 @@ the JDK. For a folding version of this Gatherer, see [`foldIndexed()`](/gatherer
 
 **Signature**
 
-`scanIndexed(Supplier<OUTPUT> initialValue, IndexedAccumulatorFunction<OUTPUT, INPUT, OUTPUT> scanFunction)`
+`scanIndexed(Supplier<? extends OUTPUT> initialValue, IndexedAccumulatorFunction<? super OUTPUT, ? super INPUT, ? extends OUTPUT> scanFunction)`
 
 * `initialValue` - A non-null `Supplier` to provide the seed value for the scan (this implementation does not assume the first element is the seed)
 * `scanFunction` - [`IndexedAccumulatorFunction`](https://github.com/tginsberg/gatherers4j/blob/main/src/main/java/com/ginsberg/gatherers4j/IndexedAccumulatorFunction.java) is a variation on a `BiFunction` which injects the `int` index of each element. This function does the actual scan/accumulation work.

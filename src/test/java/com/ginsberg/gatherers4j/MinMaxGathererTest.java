@@ -23,6 +23,8 @@ import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -564,5 +566,105 @@ class MinMaxGathererTest {
             }
         }
 
+    }
+
+    @Nested
+    class Wildcards {
+        private static final Comparator<CharSequence> BY_LENGTH = Comparator.comparingInt(CharSequence::length);
+        private static final LocalDate JAN_1 = LocalDate.of(2026, 1, 1);
+        private static final LocalDate JAN_2 = LocalDate.of(2026, 1, 2);
+        private static final LocalDate JAN_3 = LocalDate.of(2026, 1, 3);
+
+        @Test
+        void movingMaxByBroaderComparatorKeepsElementType() {
+            // Act
+            final List<String> output = Stream.of("A", "BBB", "CC")
+                    .gather(Gatherers4j.movingMaxBy(2, BY_LENGTH))
+                    .toList();
+
+            // Assert
+            assertThat(output).containsExactly("A", "BBB", "BBB");
+        }
+
+        @Test
+        void movingMaxComparableThroughSupertypeKeepsElementType() {
+            // Arrange
+            final Stream<LocalDate> input = Stream.of(JAN_1, JAN_3, JAN_2);
+
+            // Act
+            final List<LocalDate> output = input.gather(Gatherers4j.movingMax(2)).toList();
+
+            // Assert
+            assertThat(output).containsExactly(JAN_1, JAN_3, JAN_3);
+        }
+
+        @Test
+        void movingMinByBroaderComparatorKeepsElementType() {
+            // Act
+            final List<String> output = Stream.of("BBB", "A", "CC")
+                    .gather(Gatherers4j.movingMinBy(2, BY_LENGTH))
+                    .toList();
+
+            // Assert
+            assertThat(output).containsExactly("BBB", "A", "A");
+        }
+
+        @Test
+        void movingMinComparableThroughSupertypeKeepsElementType() {
+            // Arrange
+            final Stream<LocalDate> input = Stream.of(JAN_1, JAN_3, JAN_2);
+
+            // Act
+            final List<LocalDate> output = input.gather(Gatherers4j.movingMin(2)).toList();
+
+            // Assert
+            assertThat(output).containsExactly(JAN_1, JAN_1, JAN_2);
+        }
+
+        @Test
+        void runningMaxByBroaderComparatorKeepsElementType() {
+            // Act
+            final List<String> output = Stream.of("A", "BBB", "CC")
+                    .gather(Gatherers4j.runningMaxBy(BY_LENGTH))
+                    .toList();
+
+            // Assert
+            assertThat(output).containsExactly("A", "BBB", "BBB");
+        }
+
+        @Test
+        void runningMaxComparableThroughSupertypeKeepsElementType() {
+            // Arrange
+            final Stream<LocalDate> input = Stream.of(JAN_1, JAN_3, JAN_2);
+
+            // Act
+            final List<LocalDate> output = input.gather(Gatherers4j.runningMax()).toList();
+
+            // Assert
+            assertThat(output).containsExactly(JAN_1, JAN_3, JAN_3);
+        }
+
+        @Test
+        void runningMinByBroaderComparatorKeepsElementType() {
+            // Act
+            final List<String> output = Stream.of("BBB", "A", "CC")
+                    .gather(Gatherers4j.runningMinBy(BY_LENGTH))
+                    .toList();
+
+            // Assert
+            assertThat(output).containsExactly("BBB", "A", "A");
+        }
+
+        @Test
+        void runningMinComparableThroughSupertypeKeepsElementType() {
+            // Arrange
+            final Stream<LocalDate> input = Stream.of(JAN_3, JAN_1, JAN_2);
+
+            // Act
+            final List<LocalDate> output = input.gather(Gatherers4j.runningMin()).toList();
+
+            // Assert
+            assertThat(output).containsExactly(JAN_3, JAN_1, JAN_1);
+        }
     }
 }

@@ -32,7 +32,7 @@ Every value is the same as the corresponding single-statistic gatherer would pro
 
 **Signatures**
 
-`runningStatisticsBy(Function<INPUT, BigDecimal> mappingFunction)`
+`runningStatisticsBy(Function<? super INPUT, ? extends BigDecimal> mappingFunction)`
 * `mappingFunction` - A non-null function to map stream `INPUT` elements into `BigDecimal` for calculation
 
 **Additional Methods**

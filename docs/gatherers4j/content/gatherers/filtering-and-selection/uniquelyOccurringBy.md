@@ -15,7 +15,7 @@ Encounter order of uniquely occurring elements is preserved.
 
 **Signature**
 
-`uniquelyOccurringBy(Function<INPUT, MAPPED> mappingFunction)`
+`uniquelyOccurringBy(Function<? super INPUT, ?> mappingFunction)`
 
 * `mappingFunction` - A non-null function to map `INPUT` types to an arbitrary `MAPPED` Object to use for comparison
 

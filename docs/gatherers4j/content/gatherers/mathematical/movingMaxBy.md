@@ -13,7 +13,7 @@ Nulls are ignored and play no part in calculations.
 
 **Signatures**
 
-`movingMaxBy(int windowSize, Comparator<INPUT> comparator)`
+`movingMaxBy(int windowSize, Comparator<? super INPUT> comparator)`
 * `windowSize` - How many trailing elements to calculate the maximum value from at any given point in the stream
 * `comparator` - A non-null `Comparator<INPUT>` to use for comparing elements
 

@@ -17,9 +17,11 @@
 package com.ginsberg.gatherers4j;
 
 import com.ginsberg.gatherers4j.test.ParallelAndSequentialTest;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static com.ginsberg.gatherers4j.test.ParallelAndSequentialTest.NULL;
@@ -104,5 +106,21 @@ class DistinctLatestGathererTest {
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> Gatherers4j.distinctLatestBy(null))
                 .withMessage("Mapping function must not be null");
+    }
+
+    @Nested
+    class Wildcards {
+
+        @Test
+        void broaderMappingFunctionKeepsElementType() {
+            // Arrange
+            final Function<CharSequence, Integer> length = CharSequence::length;
+
+            // Act
+            final List<String> output = Stream.of("A", "B", "CC").gather(Gatherers4j.distinctLatestBy(length)).toList();
+
+            // Assert
+            assertThat(output).containsExactly("B", "CC");
+        }
     }
 }

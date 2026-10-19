@@ -12,7 +12,7 @@ Nulls are ignored and play no part in calculations.
 
 **Signatures**
 
-`runningMinBy(Comparator<INPUT> comparator)`
+`runningMinBy(Comparator<? super INPUT> comparator)`
 * `comparator` - A non-null `Comparator<INPUT>` to use for comparing elements
 
 **Additional Methods**

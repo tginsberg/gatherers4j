@@ -13,7 +13,7 @@ By default, nulls are ignored and play no part in calculations, see `treatNullAs
 
 **Signatures**
 
-`exponentialMovingAverageWithAlphaBy(double alpha, Function<INPUT, BigDecimal> mappingFunction)`
+`exponentialMovingAverageWithAlphaBy(double alpha, Function<? super INPUT, ? extends BigDecimal> mappingFunction)`
 * `alpha` - The alpha value to use, which must be between 0 and 1, exclusive
 * `mappingFunction` - A non-null function to map stream `INPUT` elements into `BigDecimal` for calculation
 

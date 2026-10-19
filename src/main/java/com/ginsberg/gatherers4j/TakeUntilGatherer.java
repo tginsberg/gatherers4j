@@ -27,9 +27,9 @@ import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
 public class TakeUntilGatherer<INPUT extends @Nullable Object>
         implements Gatherer<INPUT, TakeUntilGatherer.State, INPUT> {
 
-    private final Predicate<INPUT> predicate;
+    private final Predicate<? super INPUT> predicate;
 
-    TakeUntilGatherer(final Predicate<INPUT> predicate) {
+    TakeUntilGatherer(final Predicate<? super INPUT> predicate) {
         this.predicate = mustNotBeNull(predicate, "Predicate must not be null");
     }
 

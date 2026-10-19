@@ -17,7 +17,7 @@ Use `Dataset.Population` when the elements are the entire dataset (the variance 
 
 **Signatures**
 
-`movingStandardDeviationBy(Dataset dataset, int windowSize, Function<INPUT, BigDecimal> mappingFunction)`
+`movingStandardDeviationBy(Dataset dataset, int windowSize, Function<? super INPUT, ? extends BigDecimal> mappingFunction)`
 * `dataset` - Either `Population` or `Sample`
 * `windowSize` - How many trailing elements to calculate the standard deviation over at any given point in the stream, must be greater than 1
 * `mappingFunction` - A non-null function to map stream `INPUT` elements into `BigDecimal` for calculation

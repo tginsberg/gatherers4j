@@ -19,7 +19,7 @@ Every value seen is retained in sorted order, so memory use grows with the lengt
 
 **Signatures**
 
-`runningPercentileBy(double percentile, Function<INPUT, BigDecimal> mappingFunction)`
+`runningPercentileBy(double percentile, Function<? super INPUT, ? extends BigDecimal> mappingFunction)`
 * `percentile` - The percentile to calculate, between 0 and 100, inclusive
 * `mappingFunction` - A non-null function to map stream `INPUT` elements into `BigDecimal` for calculation
 

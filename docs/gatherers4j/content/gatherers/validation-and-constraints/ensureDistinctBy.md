@@ -21,7 +21,7 @@ it detects a failure case. It stops reading the stream as soon as a mapped value
 
 **Signature**
 
-`ensureDistinctBy(Function<INPUT, Object> mappingFunction)`
+`ensureDistinctBy(Function<? super INPUT, ?> mappingFunction)`
 
 * `mappingFunction` - A non-null function to map `INPUT` types to an arbitrary `Object` to use for comparison
 
@@ -30,7 +30,7 @@ it detects a failure case. It stops reading the stream as soon as a mapped value
 | Method             | Purpose                                                                                                                                                                                                  |
 |--------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `orElseEmpty()`    | When a mapped value repeats, return an empty stream instead of throwing an exception. [See example.](#emit-an-empty-stream-when-elements-repeat)                                                    |
-| `orElse(supplier)` | When a mapped value repeats, emit the elements returned from the given non-null `Supplier<Stream<INPUT>>` instead of throwing an exception. [See example.](#emit-replacement-stream-when-elements-repeat) |
+| `orElse(supplier)` | When a mapped value repeats, emit the elements returned from the given non-null `Supplier<? extends Stream<? extends INPUT>>` instead of throwing an exception. [See example.](#emit-replacement-stream-when-elements-repeat) |
 
 ### Examples
 

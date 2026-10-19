@@ -22,11 +22,11 @@ for all calculations is {{< jdklink linkName="MathContext.DECIMAL64" package="ja
 
 **Signatures**
 
-`movingWeightedMeanBy(int windowSize, Function<INPUT, BigDecimal> mappingFunction)`
+`movingWeightedMeanBy(int windowSize, Function<? super INPUT, ? extends BigDecimal> mappingFunction)`
 * `windowSize` - How many trailing elements to average over at any given point in the stream. Must be greater than 1. Weights run from 1 (oldest) to `windowSize` (newest).
 * `mappingFunction` - A non-null function to map stream `INPUT` elements into `BigDecimal` for calculation
 
-`movingWeightedMeanBy(List<BigDecimal> weights, Function<INPUT, BigDecimal> mappingFunction)`
+`movingWeightedMeanBy(List<? extends BigDecimal> weights, Function<? super INPUT, ? extends BigDecimal> mappingFunction)`
 * `weights` - One weight per element in the window, **ordered from oldest to newest**. The window size is the number of weights, which must be at least 2. Weights may not be null or negative, and must not sum to zero. They do not need to sum to 1, because the result is always divided by the sum of the weights.
 * `mappingFunction` - A non-null function to map stream `INPUT` elements into `BigDecimal` for calculation
 

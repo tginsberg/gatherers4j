@@ -29,30 +29,30 @@ import java.util.stream.StreamSupport;
 
 import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
 
-public class CrossGatherer {
+class CrossGatherer {
 
-    public static <INPUT extends @Nullable Object, CROSS extends @Nullable Object> Gatherer<INPUT, ?, Pair<INPUT, CROSS>> of(final Iterator<CROSS> source) {
+    static <INPUT extends @Nullable Object, CROSS extends @Nullable Object> Gatherer<INPUT, ?, Pair<INPUT, CROSS>> of(final Iterator<? extends CROSS> source) {
         mustNotBeNull(source, "source iterator must not be null");
         return create(StreamSupport.stream(Spliterators.spliteratorUnknownSize(source, Spliterator.ORDERED), false).toList());
     }
 
-    public static <INPUT extends @Nullable Object, CROSS extends @Nullable Object> Gatherer<INPUT, ?, Pair<INPUT, CROSS>> of(final Iterable<CROSS> source) {
+    static <INPUT extends @Nullable Object, CROSS extends @Nullable Object> Gatherer<INPUT, ?, Pair<INPUT, CROSS>> of(final Iterable<? extends CROSS> source) {
         return create(mustNotBeNull(source, "source list must not be null"));
     }
 
-    public static <INPUT extends @Nullable Object, CROSS extends @Nullable Object> Gatherer<INPUT, ?, Pair<INPUT, CROSS>> of(final Stream<CROSS> source) {
+    static <INPUT extends @Nullable Object, CROSS extends @Nullable Object> Gatherer<INPUT, ?, Pair<INPUT, CROSS>> of(final Stream<? extends CROSS> source) {
         mustNotBeNull(source, "source stream must not be null");
         return create(source.toList());
     }
 
     @SafeVarargs
-    public static <INPUT extends @Nullable Object, CROSS extends @Nullable Object> Gatherer<INPUT, ?, Pair<INPUT, CROSS>> of(final CROSS... source) {
+    static <INPUT extends @Nullable Object, CROSS extends @Nullable Object> Gatherer<INPUT, ?, Pair<INPUT, CROSS>> of(final CROSS... source) {
         mustNotBeNull(source, "source must not be null");
         // Note: None of the other entry points enforce non-empty source, so this one won't either even though it is trivial to do so
         return create(Arrays.asList(source));
     }
 
-    private static <INPUT extends @Nullable Object, CROSS extends @Nullable Object> Gatherer<INPUT, ?, Pair<INPUT, CROSS>> create(final Iterable<CROSS> source) {
+    private static <INPUT extends @Nullable Object, CROSS extends @Nullable Object> Gatherer<INPUT, ?, Pair<INPUT, CROSS>> create(final Iterable<? extends CROSS> source) {
         return Gatherer.of(
                 Gatherer.Integrator.ofGreedy((_, element, downstream) -> {
                     for (final CROSS cross : source) {

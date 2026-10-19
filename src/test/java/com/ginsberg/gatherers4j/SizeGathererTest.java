@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -300,6 +301,24 @@ class SizeGathererTest {
 
             // Assert
             assertThat(output).containsExactly("A");
+        }
+    }
+
+    @Nested
+    class Wildcards {
+
+        @Test
+        void orElseSupplierOfSubtypeStream() {
+            // Arrange
+            final Supplier<Stream<String>> fallback = () -> Stream.of("X", "Y");
+
+            // Act
+            final List<CharSequence> output = Stream.of("A")
+                    .gather(Gatherers4j.<CharSequence>ensureSize(Size.Equals, 5).orElse(fallback))
+                    .toList();
+
+            // Assert
+            assertThat(output).containsExactly("X", "Y");
         }
     }
 }

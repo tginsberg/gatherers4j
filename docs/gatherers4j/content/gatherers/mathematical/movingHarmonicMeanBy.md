@@ -16,7 +16,7 @@ A `0` anywhere in the lookback window is undefined for a harmonic mean and will 
 
 **Signatures**
 
-`movingHarmonicMeanBy(int windowSize, Function<INPUT, BigDecimal> mappingFunction)`
+`movingHarmonicMeanBy(int windowSize, Function<? super INPUT, ? extends BigDecimal> mappingFunction)`
 * `windowSize` - How many trailing elements to calculate the harmonic mean over
 * `mappingFunction` - A non-null function to map stream `INPUT` elements into `BigDecimal` for calculation
 

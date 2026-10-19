@@ -29,13 +29,13 @@ import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
 public class MinMaxGatherer<INPUT extends @Nullable Object>
         implements Gatherer<INPUT, MinMaxGatherer.State<INPUT>, INPUT> {
 
-    private final Comparator<INPUT> comparator;
+    private final Comparator<? super INPUT> comparator;
     private final int windowSize;
     private boolean excludePartialValues;
 
     static <INPUT extends @Nullable Object> MinMaxGatherer<INPUT> runningUsingComparator(
             final boolean sortingMin,
-            final Comparator<INPUT> comparator
+            final Comparator<? super INPUT> comparator
     ) {
         return new MinMaxGatherer<>(sortingMin ? comparator : comparator.reversed());
     }
@@ -43,30 +43,30 @@ public class MinMaxGatherer<INPUT extends @Nullable Object>
     static <INPUT extends @Nullable Object> MinMaxGatherer<INPUT> movingUsingComparator(
             final int windowSize,
             final boolean sortingMin,
-            final Comparator<INPUT> comparator
+            final Comparator<? super INPUT> comparator
     ) {
         return new MinMaxGatherer<>(windowSize, sortingMin ? comparator : comparator.reversed());
     }
 
-    static <INPUT extends Comparable<INPUT>> MinMaxGatherer<INPUT> runningUsingComparable(
+    static <INPUT extends Comparable<? super INPUT>> MinMaxGatherer<INPUT> runningUsingComparable(
             final boolean sortingMin
     ) {
         return new MinMaxGatherer<>(sortingMin ? Comparable::compareTo : Comparator.reverseOrder());
     }
 
-    static <INPUT extends Comparable<INPUT>> MinMaxGatherer<INPUT> movingUsingComparable(
+    static <INPUT extends Comparable<? super INPUT>> MinMaxGatherer<INPUT> movingUsingComparable(
             final int windowSize,
             final boolean sortingMin
     ) {
         return new MinMaxGatherer<>(windowSize, sortingMin ? Comparable::compareTo : Comparator.reverseOrder());
     }
 
-    private MinMaxGatherer(final Comparator<INPUT> comparator) {
+    private MinMaxGatherer(final Comparator<? super INPUT> comparator) {
         this.windowSize = -1;
         this.comparator = mustNotBeNull(comparator, "Comparator must not be null");
     }
 
-    private MinMaxGatherer(final int windowSize, final Comparator<INPUT> comparator) {
+    private MinMaxGatherer(final int windowSize, final Comparator<? super INPUT> comparator) {
         if (windowSize < 2) {
             throw new IllegalArgumentException("windowSize must be greater than 1");
         }
@@ -104,9 +104,9 @@ public class MinMaxGatherer<INPUT extends @Nullable Object>
 
     public static class State<INPUT extends @Nullable Object> {
         @Nullable INPUT bestValue;
-        final Comparator<INPUT> comparator;
+        final Comparator<? super INPUT> comparator;
 
-        public State(final Comparator<INPUT> comparator) {
+        public State(final Comparator<? super INPUT> comparator) {
             this.comparator = comparator;
         }
 
@@ -142,7 +142,7 @@ public class MinMaxGatherer<INPUT extends @Nullable Object>
         private final boolean excludePartialValues;
         private long seen;
 
-        public MovingState(final int windowSize, final Comparator<INPUT> comparator, final boolean excludePartialValues) {
+        public MovingState(final int windowSize, final Comparator<? super INPUT> comparator, final boolean excludePartialValues) {
             super(comparator);
             this.windowSize = windowSize;
             this.excludePartialValues = excludePartialValues;

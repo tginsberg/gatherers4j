@@ -17,7 +17,7 @@ for all calculations is {{< jdklink linkName="MathContext.DECIMAL64" package="ja
 
 **Signatures**
 
-`runningMeanBy(Function<INPUT, BigDecimal> mappingFunction)`
+`runningMeanBy(Function<? super INPUT, ? extends BigDecimal> mappingFunction)`
 * `mappingFunction` - A non-null function to map stream `INPUT` elements into `BigDecimal` for calculation
 
 **Additional Methods**

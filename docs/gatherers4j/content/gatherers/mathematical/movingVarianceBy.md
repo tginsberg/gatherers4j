@@ -18,7 +18,7 @@ See also [`movingStandardDeviationBy()`](/gatherers4j/gatherers/mathematical/mov
 
 **Signatures**
 
-`movingVarianceBy(Dataset dataset, int windowSize, Function<INPUT, BigDecimal> mappingFunction)`
+`movingVarianceBy(Dataset dataset, int windowSize, Function<? super INPUT, ? extends BigDecimal> mappingFunction)`
 * `dataset` - Either `Population` or `Sample`
 * `windowSize` - How many trailing elements to calculate the variance over at any given point in the stream, must be greater than 1
 * `mappingFunction` - A non-null function to map stream `INPUT` elements into `BigDecimal` for calculation

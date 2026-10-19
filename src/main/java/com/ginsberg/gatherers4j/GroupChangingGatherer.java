@@ -33,16 +33,16 @@ public class GroupChangingGatherer<INPUT extends @Nullable Object>
         implements Gatherer<INPUT, GroupChangingGatherer.State<INPUT>, List<INPUT>> {
 
     private final Order operation;
-    private final Comparator<INPUT> comparator;
+    private final Comparator<? super INPUT> comparator;
 
     static <INPUT extends @Nullable Object> GroupChangingGatherer<INPUT> usingComparator(
             final Order operation,
-            final Comparator<INPUT> comparator
+            final Comparator<? super INPUT> comparator
     ) {
         return new GroupChangingGatherer<>(operation, comparator);
     }
 
-    static <INPUT extends Comparable<INPUT>> GroupChangingGatherer<INPUT> usingComparable(
+    static <INPUT extends Comparable<? super INPUT>> GroupChangingGatherer<INPUT> usingComparable(
             final Order operation
     ) {
         return new GroupChangingGatherer<>(operation, Comparable::compareTo);
@@ -50,7 +50,7 @@ public class GroupChangingGatherer<INPUT extends @Nullable Object>
 
     GroupChangingGatherer(
             final Order operation,
-            final Comparator<INPUT> comparator
+            final Comparator<? super INPUT> comparator
     ) {
         this.operation = mustNotBeNull(operation, "Operation must not be null");
         this.comparator = mustNotBeNull(comparator, "Comparator must not be null");

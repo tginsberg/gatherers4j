@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -127,6 +128,38 @@ public class AccumulatingGathererTest {
 
             // Assert
             assertThat(output).isEmpty();
+        }
+    }
+
+    @Nested
+    class Wildcards {
+
+        @Test
+        void foldIndexedNarrowerInitialValue() {
+            // Arrange
+            final Supplier<String> initialValue = () -> "";
+            final IndexedAccumulatorFunction<CharSequence, Object, CharSequence> append =
+                    (index, carry, next) -> carry + "" + next + index;
+
+            // Act
+            final List<CharSequence> output = Stream.of("A", "B").gather(Gatherers4j.foldIndexed(initialValue, append)).toList();
+
+            // Assert
+            assertThat(output).map(CharSequence::toString).containsExactly("A0B1");
+        }
+
+        @Test
+        void scanIndexedBroaderAccumulatorKeepsOutputType() {
+            // Arrange
+            final Supplier<String> initialValue = () -> "";
+            final IndexedAccumulatorFunction<CharSequence, Object, String> append =
+                    (index, carry, next) -> carry + "" + next + index;
+
+            // Act
+            final List<String> output = Stream.of("A", "B").gather(Gatherers4j.scanIndexed(initialValue, append)).toList();
+
+            // Assert
+            assertThat(output).containsExactly("A0", "A0B1");
         }
     }
 }

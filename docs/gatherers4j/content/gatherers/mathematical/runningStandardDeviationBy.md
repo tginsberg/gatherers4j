@@ -20,7 +20,7 @@ Use `Dataset.Population` when the elements are the entire dataset (the variance 
 
 **Signatures**
 
-`runningStandardDeviationBy(Dataset dataset, Function<INPUT, BigDecimal> mappingFunction)`
+`runningStandardDeviationBy(Dataset dataset, Function<? super INPUT, ? extends BigDecimal> mappingFunction)`
 * `dataset` - Either `Population` or `Sample`
 * `mappingFunction` - A non-null function to map stream `INPUT` elements into `BigDecimal` for calculation
 

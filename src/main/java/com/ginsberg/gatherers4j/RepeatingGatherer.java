@@ -26,17 +26,17 @@ import java.util.stream.Gatherer;
 
 import static com.ginsberg.gatherers4j.util.GathererUtils.pushAll;
 
-public class RepeatingGatherer<INPUT extends @Nullable Object>
+class RepeatingGatherer<INPUT extends @Nullable Object>
         implements Gatherer<INPUT, RepeatingGatherer.State<INPUT>, INPUT> {
 
     private static final int INFINITE = -1;
     private final int repeats;
 
-    public static <INPUT> RepeatingGatherer<INPUT> ofInfinite() {
+    static <INPUT> RepeatingGatherer<INPUT> ofInfinite() {
         return new RepeatingGatherer<>(INFINITE);
     }
 
-    public static <INPUT> RepeatingGatherer<INPUT> ofFinite(final int repeats) {
+    static <INPUT> RepeatingGatherer<INPUT> ofFinite(final int repeats) {
         if (repeats < 0) {
             throw new IllegalArgumentException("Number of repeats must not be negative");
         }

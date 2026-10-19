@@ -32,7 +32,7 @@ public final class BigDecimalMovingStatGatherer<INPUT extends @Nullable Object, 
 
     BigDecimalMovingStatGatherer(
             final int windowSize,
-            final Function<INPUT, @Nullable BigDecimal> mappingFunction,
+            final Function<? super INPUT, ? extends @Nullable BigDecimal> mappingFunction,
             final Supplier<StatisticAccumulator<OUTPUT>> statisticAccumulatorSupplier
     ) {
         if (windowSize <= 1) {

@@ -50,7 +50,7 @@ class StatisticAccumulators {
         }
 
         /// Validate the weights, and return an immutable copy of them.
-        static List<BigDecimal> validatedWeights(final List<BigDecimal> weights) {
+        static List<BigDecimal> validatedWeights(final List<? extends BigDecimal> weights) {
             mustNotBeNull(weights, "Weights must not be null");
             if (weights.size() < 2) {
                 throw new IllegalArgumentException("Weights must contain at least 2 values");
