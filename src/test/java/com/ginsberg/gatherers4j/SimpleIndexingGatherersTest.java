@@ -52,7 +52,7 @@ class SimpleIndexingGatherersTest {
         void filteringIncrementsIndex() {
             // Arrange
             final Stream<String> input = Stream.of("A", "B", "C", "D");
-            final List<Integer> indices = new ArrayList<>();
+            final List<Long> indices = new ArrayList<>();
 
             // Act
             final List<String> output = input
@@ -63,7 +63,7 @@ class SimpleIndexingGatherersTest {
                     )).toList();
 
             assertThat(output).containsExactly("A", "C");
-            assertThat(indices).containsExactly(0, 1, 2, 3);
+            assertThat(indices).containsExactly(0L, 1L, 2L, 3L);
         }
 
         @SuppressWarnings("DataFlowIssue")

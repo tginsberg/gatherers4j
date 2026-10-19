@@ -163,7 +163,7 @@ class SampleGathererTest {
                     .collect(Collectors.joining());
 
             // Assert
-            assertThat(output).isEqualTo("CDF");
+            assertThat(output).isEqualTo("CEG");
         }
 
         @SuppressWarnings("DataFlowIssue")

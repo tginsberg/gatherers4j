@@ -69,7 +69,7 @@ public class AccumulatingGatherer<INPUT extends @Nullable Object, OUTPUT extends
     public static class State<OUTPUT extends @Nullable Object> {
         @Nullable
         OUTPUT carriedValue;
-        int index;
+        long index;
 
         private State(@Nullable final OUTPUT initialValue) {
             carriedValue = initialValue;

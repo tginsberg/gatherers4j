@@ -36,7 +36,7 @@ Stream
     .gather(Gatherers4j.sampleFixedSize(2, new Random(123)))
     .toList();
 
-// ["A", "E"] 
+// ["B", "C"] 
 ```
 
 #### Get a fixed number of elements from the stream, randomly

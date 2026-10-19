@@ -62,7 +62,7 @@ public class SampleFixedSizeGatherer<INPUT extends @Nullable Object>
     public static class State<INPUT extends @Nullable Object> {
         private final List<INPUT> elements = new ArrayList<>();
         private final int sampleSize;
-        private int index = 0;
+        private long index = 0;
         private final RandomGenerator randomGenerator;
 
         State(final int sampleSize, final RandomGenerator randomGenerator) {
@@ -74,10 +74,10 @@ public class SampleFixedSizeGatherer<INPUT extends @Nullable Object>
             if (index < sampleSize) {
                 elements.add(element);
             } else {
-                final int n = randomGenerator.nextInt(0, index + 1);
+                final long n = randomGenerator.nextLong(0, index + 1);
                 if (n < sampleSize) {
                     // Not replacing element at n because we want to keep iteration order.
-                    elements.remove(n);
+                    elements.remove((int) n);
                     elements.add(element);
                 }
             }
