@@ -193,6 +193,28 @@ public abstract class Gatherers4j {
         return new DropLastGatherer<>(count);
     }
 
+    /// Ensure that every element in the input stream matches the given `predicate`, and fail with an
+    /// `IllegalStateException` as soon as one does not. Nothing is emitted until the input stream ends.
+    /// An empty stream passes.
+    ///
+    /// @param predicate A non-null `Predicate` that every element must match
+    /// @param <INPUT>   Type of elements in both the input and output streams
+    /// @return A non-null `EnsureMatchGatherer`
+    public static <INPUT extends @Nullable Object> EnsureMatchGatherer<INPUT> ensureAllMatch(final Predicate<? super INPUT> predicate) {
+        return new EnsureMatchGatherer<>(EnsureMatchGatherer.Mode.All, predicate);
+    }
+
+    /// Ensure that at least one element in the input stream matches the given `predicate`, and fail with an
+    /// `IllegalStateException` at the end of the stream if none does. Elements are held back until the first match,
+    /// then emitted along with the rest of the stream as it arrives. An empty stream fails.
+    ///
+    /// @param predicate A non-null `Predicate` that at least one element must match
+    /// @param <INPUT>   Type of elements in both the input and output streams
+    /// @return A non-null `EnsureMatchGatherer`
+    public static <INPUT extends @Nullable Object> EnsureMatchGatherer<INPUT> ensureAnyMatch(final Predicate<? super INPUT> predicate) {
+        return new EnsureMatchGatherer<>(EnsureMatchGatherer.Mode.Any, predicate);
+    }
+
     /// Ensure that every element in the input stream is distinct, as measured by `Object.equals(Object)`, and fail
     /// with an `IllegalStateException` as soon as one repeats. Nothing is emitted until the input stream ends.
     ///
@@ -213,6 +235,17 @@ public abstract class Gatherers4j {
             final Function<INPUT, @Nullable Object> mappingFunction
     ) {
         return new EnsureDistinctGatherer<>(mappingFunction);
+    }
+
+    /// Ensure that no element in the input stream matches the given `predicate`, and fail with an
+    /// `IllegalStateException` as soon as one does. Nothing is emitted until the input stream ends.
+    /// An empty stream passes.
+    ///
+    /// @param predicate A non-null `Predicate` that no element may match
+    /// @param <INPUT>   Type of elements in both the input and output streams
+    /// @return A non-null `EnsureMatchGatherer`
+    public static <INPUT extends @Nullable Object> EnsureMatchGatherer<INPUT> ensureNoneMatch(final Predicate<? super INPUT> predicate) {
+        return new EnsureMatchGatherer<>(EnsureMatchGatherer.Mode.None, predicate);
     }
 
     /// Ensure that the `Comparable` elements in the input stream are in the given `Order`, and fail exceptionally if they are not.

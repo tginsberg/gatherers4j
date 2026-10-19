@@ -53,6 +53,22 @@ ensure-distinct:
     stream with no repeats never emits, and memory grows with the number of distinct values. An infinite stream that
     repeats stops at the first repeat and fails with an exception, or emits the `orElse()` replacement.
 
+ensure-match:
+  level: warning
+  title: Finite streams only
+  text: >-
+    This gatherer keeps every element in memory and emits nothing until the stream ends. An infinite stream that
+    passes the check never emits and eventually runs out of memory. An infinite stream that fails the check stops at
+    the first failing element and fails with an exception, or emits the `orElse()` replacement.
+
+ensure-any-match:
+  level: info
+  title: Holds elements until the first match
+  text: >-
+    This gatherer holds elements in memory until one matches, then emits them and passes the rest of the stream
+    straight through, so it works on an infinite stream once a match arrives. An infinite stream with no match never
+    emits and eventually runs out of memory.
+
 ensure-size:
   level: warning
   title: Finite streams only
