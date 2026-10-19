@@ -323,12 +323,12 @@ public abstract class Gatherers4j {
     /// Filter a stream according to the given `predicate`, which takes both the item being examined,
     /// and its index.
     ///
-    /// @param predicate A non-null `BiPredicate<Integer,INPUT>` where the `Integer` is the zero-based index of the element
+    /// @param predicate A non-null `BiPredicate<Long,INPUT>` where the `Long` is the zero-based index of the element
     ///                  being filtered, and the `INPUT` is the element itself.
     /// @param <INPUT>   Type of elements in the input stream
     /// @return A non-null `Gatherer`
     public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> filterIndexed(
-            final BiPredicate<Integer, INPUT> predicate
+            final BiPredicate<Long, INPUT> predicate
     ) {
         return SimpleIndexingGatherers.filterIndexed(predicate);
     }
@@ -490,7 +490,7 @@ public abstract class Gatherers4j {
     /// @param mappingFunction A non-null function to map input to output, given an input and its index
     /// @return A non-null Gatherer
     public static <INPUT extends @Nullable Object, OUTPUT extends @Nullable Object> Gatherer<INPUT, ?, OUTPUT> mapIndexed(
-            final BiFunction<Integer, INPUT, OUTPUT> mappingFunction) {
+            final BiFunction<Long, INPUT, OUTPUT> mappingFunction) {
         return SimpleIndexingGatherers.mapIndexed(mappingFunction);
     }
 
@@ -1045,7 +1045,7 @@ public abstract class Gatherers4j {
     /// @param peekingConsumer A non-null consumer to peek at each element and its index
     /// @return A non-null Gatherer
     public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> peekIndexed(
-            final BiConsumer<Integer, INPUT> peekingConsumer) {
+            final BiConsumer<Long, INPUT> peekingConsumer) {
         return SimpleIndexingGatherers.peekIndexed(peekingConsumer);
     }
 

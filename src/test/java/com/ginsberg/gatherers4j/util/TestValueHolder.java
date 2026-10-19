@@ -18,5 +18,5 @@ package com.ginsberg.gatherers4j.util;
 
 import java.math.BigDecimal;
 
-public record TestValueHolder(int id, BigDecimal value) {
+public record TestValueHolder(long id, BigDecimal value) {
 }
