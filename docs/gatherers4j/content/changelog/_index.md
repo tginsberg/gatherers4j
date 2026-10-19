@@ -8,6 +8,7 @@ no_list: true
 ## v0.16.0
 [Released 2026-??-??](https://github.com/tginsberg/gatherers4j/releases/tag/v0.16.0)
 + Implement `ensureDistinct()` and `ensureDistinctBy()`, which fail with an `IllegalStateException` as soon as an element (or its mapped value) repeats. Like the other `ensure` gatherers, they emit nothing unless the whole stream passes, and like `ensureSize()` they support `orElse()` and `orElseEmpty()` to emit a replacement instead of failing.
++ Implement `ensureAllMatch()`, `ensureAnyMatch()`, and `ensureNoneMatch()`, the `ensure` counterparts of the JDK's `allMatch()`, `anyMatch()`, and `noneMatch()` terminal operations. 
 + Implement `distinctLatestBy()`, which emits the latest element for each distinct value of the mapping function, in the position where that value first appeared. Unlike `distinctBy()`, it emits nothing until the input stream ends.
 + Docs: More accurately call out when infinite streams are not supported.
 + Docs: Mark gatherers that can run in parallel.
