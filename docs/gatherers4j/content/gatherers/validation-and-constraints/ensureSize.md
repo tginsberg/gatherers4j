@@ -21,7 +21,7 @@ This gatherer is all-or-nothing, meaning it will not emit any intermediate resul
 | Method             | Purpose                                                                                                                                                                                                                                |
 |--------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `orElseEmpty()`    | When the input stream is the wrong size, return an empty stream instead of throwing an exception. [See example.](#emit-an-empty-stream-when-input-stream-size-is-not-correct)                                                          |
-| `orElse(supplier)` | When the input stream is the wrong size, emit the elements returned from the given non-null `Supplier<Stream<INPUT>>` instead of throwing an exception. [See example.](#emit-replacement-stream-when-input-stream-size-is-not-correct) |
+| `orElse(supplier)` | When the input stream is the wrong size, emit the elements returned from the given non-null `Supplier<? extends Stream<? extends INPUT>>` instead of throwing an exception. [See example.](#emit-replacement-stream-when-input-stream-size-is-not-correct) |
 
 ### Examples
 

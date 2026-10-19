@@ -330,4 +330,50 @@ class CrossGathererTest {
             assertThat(output).isEmpty();
         }
     }
+
+    @Nested
+    class Wildcards {
+
+        @Test
+        void iterableOfSubtypeKeepsCrossType() {
+            // Arrange
+            final List<Integer> numbers = List.of(1, 2);
+
+            // Act
+            final List<Pair<String, Number>> output = Stream.of("A")
+                    .gather(Gatherers4j.<String, Number>crossWith(numbers))
+                    .toList();
+
+            // Assert
+            assertThat(output).containsExactly(new Pair<>("A", 1), new Pair<>("A", 2));
+        }
+
+        @Test
+        void iteratorOfSubtypeKeepsCrossType() {
+            // Arrange
+            final Iterator<Integer> numbers = List.of(1, 2).iterator();
+
+            // Act
+            final List<Pair<String, Number>> output = Stream.of("A")
+                    .gather(Gatherers4j.<String, Number>crossWith(numbers))
+                    .toList();
+
+            // Assert
+            assertThat(output).containsExactly(new Pair<>("A", 1), new Pair<>("A", 2));
+        }
+
+        @Test
+        void streamOfSubtypeKeepsCrossType() {
+            // Arrange
+            final Stream<Integer> numbers = Stream.of(1, 2);
+
+            // Act
+            final List<Pair<String, Number>> output = Stream.of("A")
+                    .gather(Gatherers4j.<String, Number>crossWith(numbers))
+                    .toList();
+
+            // Assert
+            assertThat(output).containsExactly(new Pair<>("A", 1), new Pair<>("A", 2));
+        }
+    }
 }

@@ -15,7 +15,7 @@ for all calculations is {{< jdklink linkName="MathContext.DECIMAL64" package="ja
 
 **Signatures**
 
-`movingSumBy(int windowSize, Function<INPUT, BigDecimal> mappingFunction)`
+`movingSumBy(int windowSize, Function<? super INPUT, ? extends BigDecimal> mappingFunction)`
 * `windowSize` - How many trailing elements to calculate the sum from at any given point in the stream
 * `mappingFunction` - A non-null function to map stream `INPUT` elements into `BigDecimal` for calculation
 

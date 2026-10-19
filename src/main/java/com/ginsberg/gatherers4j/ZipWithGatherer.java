@@ -22,6 +22,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Gatherer;
@@ -31,22 +32,21 @@ import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
 
 public class ZipWithGatherer<FIRST extends @Nullable Object, SECOND extends @Nullable Object>
         implements Gatherer<FIRST, Void, Pair<FIRST, SECOND>> {
-    private final Spliterator<SECOND> otherSpliterator;
-    private @Nullable Function<SECOND, FIRST> sourceWhenArgumentLonger;
-    private @Nullable Function<FIRST, SECOND> argumentWhenSourceLonger;
+    private final Spliterator<? extends SECOND> otherSpliterator;
+    private @Nullable Function<? super SECOND, ? extends FIRST> sourceWhenArgumentLonger;
+    private @Nullable Function<? super FIRST, ? extends SECOND> argumentWhenSourceLonger;
 
-    ZipWithGatherer(final Iterable<SECOND> other) {
+    ZipWithGatherer(final Iterable<? extends SECOND> other) {
         mustNotBeNull(other, "Other iterable must not be null");
         otherSpliterator = other.spliterator();
     }
 
-    ZipWithGatherer(final Iterator<SECOND> other) {
+    ZipWithGatherer(final Iterator<? extends SECOND> other) {
         mustNotBeNull(other, "Other iterator must not be null");
-        final Iterable<SECOND> iterable = () -> other;
-        otherSpliterator = iterable.spliterator();
+        otherSpliterator = Spliterators.spliteratorUnknownSize(other, 0);
     }
 
-    ZipWithGatherer(final Stream<SECOND> other) {
+    ZipWithGatherer(final Stream<? extends SECOND> other) {
         mustNotBeNull(other, "Other stream must not be null");
         otherSpliterator = other.spliterator();
     }
@@ -67,7 +67,7 @@ public class ZipWithGatherer<FIRST extends @Nullable Object, SECOND extends @Nul
     ///
     /// @param mappingFunction A non-null function which takes a possibly null `<FIRST>`
     ///                        and emits a possibly null `<SECOND>`
-    public ZipWithGatherer<FIRST, SECOND> argumentWhenSourceLonger(final Function<FIRST, SECOND> mappingFunction) {
+    public ZipWithGatherer<FIRST, SECOND> argumentWhenSourceLonger(final Function<? super FIRST, ? extends SECOND> mappingFunction) {
         mustNotBeNull(mappingFunction, "Mapping function must not be null, use nullArgumentWhenSourceLonger() to insert nulls");
         argumentWhenSourceLonger = mappingFunction;
         return this;
@@ -83,7 +83,7 @@ public class ZipWithGatherer<FIRST extends @Nullable Object, SECOND extends @Nul
     ///
     /// @param mappingFunction A non-null function which takes a possibly null `<SECOND>`
     ///                        and emits a possibly null `<FIRST>`
-    public ZipWithGatherer<FIRST, SECOND> sourceWhenArgumentLonger(final Function<SECOND, FIRST> mappingFunction) {
+    public ZipWithGatherer<FIRST, SECOND> sourceWhenArgumentLonger(final Function<? super SECOND, ? extends FIRST> mappingFunction) {
         mustNotBeNull(mappingFunction, "Mapping function must not be null, use nullSourceWhenArgumentLonger() to insert nulls");
         sourceWhenArgumentLonger = mappingFunction;
         return this;

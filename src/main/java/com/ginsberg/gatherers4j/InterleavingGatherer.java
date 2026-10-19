@@ -21,6 +21,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.function.BiConsumer;
 import java.util.stream.Gatherer;
 import java.util.stream.Stream;
@@ -30,22 +31,21 @@ import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
 public class InterleavingGatherer<INPUT extends @Nullable Object>
         implements Gatherer<INPUT, Void, INPUT> {
 
-    private final Spliterator<INPUT> otherSpliterator;
+    private final Spliterator<? extends INPUT> otherSpliterator;
     private boolean appendArgumentIfLonger;
     private boolean appendSourceIfLonger;
 
-    InterleavingGatherer(final Iterable<INPUT> other) {
+    InterleavingGatherer(final Iterable<? extends INPUT> other) {
         mustNotBeNull(other, "Other iterable must not be null");
         otherSpliterator = other.spliterator();
     }
 
-    InterleavingGatherer(final Iterator<INPUT> other) {
+    InterleavingGatherer(final Iterator<? extends INPUT> other) {
         mustNotBeNull(other, "Other iterable must not be null");
-        final Iterable<INPUT> iterable = () -> other;
-        otherSpliterator = iterable.spliterator();
+        otherSpliterator = Spliterators.spliteratorUnknownSize(other, 0);
     }
 
-    InterleavingGatherer(final Stream<INPUT> other) {
+    InterleavingGatherer(final Stream<? extends INPUT> other) {
         mustNotBeNull(other, "Other stream must not be null");
         otherSpliterator = other.spliterator();
     }

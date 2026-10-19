@@ -26,6 +26,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static com.ginsberg.gatherers4j.util.TestUtils.BIG_DECIMAL_RECURSIVE_COMPARISON;
@@ -332,6 +333,50 @@ class BigDecimalSumGathererTest {
                             new WithOriginal<>(new BigDecimal("2"), new BigDecimal("3")),
                             new WithOriginal<>(new BigDecimal("3"), new BigDecimal("6"))
 
+                    );
+        }
+    }
+
+    @Nested
+    class Wildcards {
+
+        @Test
+        void movingBroaderMappingFunctionKeepsElementType() {
+            // Arrange
+            final Function<Number, BigDecimal> toBigDecimal = n -> BigDecimal.valueOf(n.longValue());
+
+            // Act
+            final List<WithOriginal<Integer, BigDecimal>> output = Stream.of(1, 2, 3)
+                    .gather(Gatherers4j.<Integer>movingSumBy(2, toBigDecimal).withOriginal())
+                    .toList();
+
+            // Assert
+            assertThat(output)
+                    .usingRecursiveFieldByFieldElementComparator(BIG_DECIMAL_RECURSIVE_COMPARISON)
+                    .containsExactly(
+                            new WithOriginal<>(1, new BigDecimal("1")),
+                            new WithOriginal<>(2, new BigDecimal("3")),
+                            new WithOriginal<>(3, new BigDecimal("5"))
+                    );
+        }
+
+        @Test
+        void runningBroaderMappingFunctionKeepsElementType() {
+            // Arrange
+            final Function<Number, BigDecimal> toBigDecimal = n -> BigDecimal.valueOf(n.longValue());
+
+            // Act
+            final List<WithOriginal<Integer, BigDecimal>> output = Stream.of(1, 2, 3)
+                    .gather(Gatherers4j.<Integer>runningSumBy(toBigDecimal).withOriginal())
+                    .toList();
+
+            // Assert
+            assertThat(output)
+                    .usingRecursiveFieldByFieldElementComparator(BIG_DECIMAL_RECURSIVE_COMPARISON)
+                    .containsExactly(
+                            new WithOriginal<>(1, new BigDecimal("1")),
+                            new WithOriginal<>(2, new BigDecimal("3")),
+                            new WithOriginal<>(3, new BigDecimal("6"))
                     );
         }
     }

@@ -14,7 +14,7 @@ from the JDK, which is exclusive (does not include the first matching element).
 
 **Signature**
 
-`takeUntil(Predicate<INPUT> predicate)`
+`takeUntil(Predicate<? super INPUT> predicate)`
 
 * `predicate` - A non-null predicate function which should return `true` when `takeUntil` should stop including elements from the input stream (inclusive).
 

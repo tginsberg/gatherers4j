@@ -52,6 +52,10 @@ anyway.
 - A gatherer that takes a second source gets four overloads: `Iterable`, `Iterator`, `Stream` and varargs, as in
   `crossWith`, `interleaveWith` and `zipWith`.
 - A mapping function or `Comparator` is the last parameter: `movingStandardDeviationBy(dataset, windowSize, fn)`.
+- Wildcards follow the JDK: `? super` for what a parameter consumes, `? extends` for what it produces
+  (`Predicate<? super INPUT>`, `Comparator<? super INPUT>`, `Function<? super INPUT, ? extends BigDecimal>`,
+  `Iterable<? extends SECOND>`, `Supplier<? extends Stream<? extends INPUT>>`), and `Comparable` bounds are
+  `INPUT extends Comparable<? super INPUT>`. Without them a caller passing a broader type gets its element type widened.
 - Keep facade methods in alphabetical order.
 - Every factory method gets a Markdown doc comment (`///`) with an `@param` for each parameter and type parameter and
   an `@return` ("A non-null `Gatherer`"). Doclint runs with `all,-missing`, so nothing flags a missing comment or tag.

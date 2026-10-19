@@ -34,7 +34,7 @@ public class SizeGatherer<INPUT extends @Nullable Object>
 
     private final long targetSize;
     private final Size operation;
-    private Supplier<Stream<INPUT>> orElse;
+    private Supplier<? extends Stream<? extends INPUT>> orElse;
 
     SizeGatherer(final Size operation, final long targetSize) {
         if (targetSize < 0) {
@@ -55,7 +55,7 @@ public class SizeGatherer<INPUT extends @Nullable Object>
     /// `source.gather(Gatherers4j.<String>ensureSizeExactly(2).orElse(() -> Stream.of("A", "B")))`
     ///
     /// @param orElse - A non-null `Supplier`, the results of which will be used instead of the input stream.
-    public SizeGatherer<INPUT> orElse(final Supplier<Stream<INPUT>> orElse) {
+    public SizeGatherer<INPUT> orElse(final Supplier<? extends Stream<? extends INPUT>> orElse) {
         this.orElse = mustNotBeNull(orElse, "The orElse function must not be null");
         return this;
     }

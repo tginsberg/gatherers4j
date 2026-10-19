@@ -20,9 +20,11 @@ import com.ginsberg.gatherers4j.enums.Order;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static com.ginsberg.gatherers4j.Gatherers4j.groupBy;
@@ -790,4 +792,78 @@ class GroupChangingGathererTest {
         }
     }
 
+    @Nested
+    class Wildcards {
+
+        @Test
+        void ensureOrderedByBroaderComparatorKeepsElementType() {
+            // Arrange
+            final Comparator<CharSequence> byLength = Comparator.comparingInt(CharSequence::length);
+
+            // Act
+            final List<String> output = Stream.of("A", "BB", "CCC")
+                    .gather(Gatherers4j.ensureOrderedBy(Order.Ascending, byLength))
+                    .toList();
+
+            // Assert
+            assertThat(output).containsExactly("A", "BB", "CCC");
+        }
+
+        @Test
+        void ensureOrderedComparableThroughSupertypeKeepsElementType() {
+            // Arrange
+            final Stream<LocalDate> input = Stream.of(LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 2));
+
+            // Act
+            final List<LocalDate> output = input.gather(Gatherers4j.ensureOrdered(Order.Ascending)).toList();
+
+            // Assert
+            assertThat(output).containsExactly(LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 2));
+        }
+
+        @Test
+        void groupByBroaderMappingFunctionKeepsElementType() {
+            // Arrange
+            final Function<CharSequence, Integer> length = CharSequence::length;
+
+            // Act
+            final List<List<String>> output = Stream.of("A", "B", "CC").gather(Gatherers4j.groupBy(length)).toList();
+
+            // Assert
+            assertThat(output).containsExactly(List.of("A", "B"), List.of("CC"));
+        }
+
+        @Test
+        void groupOrderedByBroaderComparatorKeepsElementType() {
+            // Arrange
+            final Comparator<CharSequence> byLength = Comparator.comparingInt(CharSequence::length);
+
+            // Act
+            final List<List<String>> output = Stream.of("A", "BB", "C")
+                    .gather(Gatherers4j.groupOrderedBy(Order.Ascending, byLength))
+                    .toList();
+
+            // Assert
+            assertThat(output).containsExactly(List.of("A", "BB"), List.of("C"));
+        }
+
+        @Test
+        void groupOrderedComparableThroughSupertypeKeepsElementType() {
+            // Arrange
+            final Stream<LocalDate> input = Stream.of(
+                    LocalDate.of(2026, 1, 1),
+                    LocalDate.of(2026, 1, 2),
+                    LocalDate.of(2026, 1, 1)
+            );
+
+            // Act
+            final List<List<LocalDate>> output = input.gather(Gatherers4j.groupOrdered(Order.Ascending)).toList();
+
+            // Assert
+            assertThat(output).containsExactly(
+                    List.of(LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 2)),
+                    List.of(LocalDate.of(2026, 1, 1))
+            );
+        }
+    }
 }

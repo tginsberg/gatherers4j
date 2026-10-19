@@ -27,7 +27,7 @@ public final class BigDecimalRunningStatGatherer<INPUT extends @Nullable Object,
         extends AbstractBigDecimalStatGatherer<INPUT, OUTPUT> {
 
     BigDecimalRunningStatGatherer
-            (final Function<INPUT, @Nullable BigDecimal> mappingFunction,
+            (final Function<? super INPUT, ? extends @Nullable BigDecimal> mappingFunction,
              final Supplier<StatisticAccumulator<OUTPUT>> statisticAccumulatorSupplier
             ) {
         super(mappingFunction, statisticAccumulatorSupplier);

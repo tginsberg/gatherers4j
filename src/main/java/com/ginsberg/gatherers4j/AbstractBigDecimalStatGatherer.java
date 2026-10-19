@@ -29,13 +29,13 @@ import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
 abstract class AbstractBigDecimalStatGatherer<INPUT extends @Nullable Object, OUTPUT extends @Nullable Object>
         implements Gatherer<INPUT, StatGathererState<OUTPUT>, OUTPUT> {
 
-    private final Function<INPUT, @Nullable BigDecimal> mappingFunction;
+    private final Function<? super INPUT, ? extends @Nullable BigDecimal> mappingFunction;
     protected final Supplier<StatisticAccumulator<OUTPUT>> accumulatorSupplier;
     protected MathContext mathContext = MathContext.DECIMAL64;
     protected @Nullable BigDecimal nullReplacement;
 
     AbstractBigDecimalStatGatherer(
-            final Function<INPUT, @Nullable BigDecimal> mappingFunction,
+            final Function<? super INPUT, ? extends @Nullable BigDecimal> mappingFunction,
             final Supplier<StatisticAccumulator<OUTPUT>> accumulatorSupplier
     ) {
         this.mappingFunction = mustNotBeNull(mappingFunction, "Mapping function must not be null");

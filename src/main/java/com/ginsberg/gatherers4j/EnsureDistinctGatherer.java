@@ -27,7 +27,7 @@ import static com.ginsberg.gatherers4j.util.GathererUtils.pushAll;
 
 public final class EnsureDistinctGatherer<INPUT extends @Nullable Object> extends DistinctKeyGatherer<INPUT> {
 
-    private Supplier<Stream<INPUT>> orElse = () -> {
+    private Supplier<? extends Stream<? extends INPUT>> orElse = () -> {
         throw new IllegalStateException("Elements are not distinct");
     };
 
@@ -44,7 +44,7 @@ public final class EnsureDistinctGatherer<INPUT extends @Nullable Object> extend
     ///
     /// @param orElse - A non-null `Supplier`, the results of which will be used instead of the input stream.
     /// @return This `EnsureDistinctGatherer`
-    public EnsureDistinctGatherer<INPUT> orElse(final Supplier<Stream<INPUT>> orElse) {
+    public EnsureDistinctGatherer<INPUT> orElse(final Supplier<? extends Stream<? extends INPUT>> orElse) {
         this.orElse = mustNotBeNull(orElse, "The orElse function must not be null");
         return this;
     }

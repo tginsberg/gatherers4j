@@ -16,7 +16,7 @@ For a version of `dedupeConsecutiveBy()` that measures equality via `Object::equ
 
 **Signature**
 
-`dedupeConsecutiveBy(Function<INPUT, Object> mappingFunction)`
+`dedupeConsecutiveBy(Function<? super INPUT, ?> mappingFunction)`
 
 * `mappingFunction` - A non-null `Function<INPUT, Object>` to compare elements of a `Stream<INPUT>`
 

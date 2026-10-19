@@ -28,12 +28,12 @@ public class AccumulatingGatherer<INPUT extends @Nullable Object, OUTPUT extends
         implements Gatherer<INPUT, AccumulatingGatherer.State<OUTPUT>, OUTPUT> {
 
     private final IndexedAccumulatorFunction<? super OUTPUT, ? super INPUT, ? extends OUTPUT> accumulatorFunction;
-    private final Supplier<OUTPUT> initialValue;
+    private final Supplier<? extends OUTPUT> initialValue;
     private final boolean running;
 
     AccumulatingGatherer(
             final boolean running,
-            final Supplier<OUTPUT> initialValue,
+            final Supplier<? extends OUTPUT> initialValue,
             final IndexedAccumulatorFunction<? super OUTPUT, ? super INPUT, ? extends OUTPUT> foldFunction
     ) {
         this.accumulatorFunction = mustNotBeNull(foldFunction, "Accumulator function must not be null");

@@ -32,7 +32,7 @@ Every value is the same as the corresponding single-statistic gatherer would pro
 
 **Signatures**
 
-`movingStatisticsBy(int windowSize, Function<INPUT, BigDecimal> mappingFunction)`
+`movingStatisticsBy(int windowSize, Function<? super INPUT, ? extends BigDecimal> mappingFunction)`
 * `windowSize` - How many trailing elements to summarize, must be greater than 1
 * `mappingFunction` - A non-null function to map stream `INPUT` elements into `BigDecimal` for calculation
 

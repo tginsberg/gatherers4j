@@ -12,7 +12,7 @@ Nulls are ignored and play no part in calculations.
 
 **Signatures**
 
-`runningMaxBy(Comparator<INPUT> comparator)`
+`runningMaxBy(Comparator<? super INPUT> comparator)`
 * `comparator` - A non-null `Comparator<INPUT>` to use for comparing elements
 
 **Additional Methods**

@@ -11,9 +11,9 @@ description: Peek at each element of the stream along with its zero-based index.
 
 **Signature**
 
-`peekIndexed(BiConsumer<Long, INPUT> peekingFunction)`
+`peekIndexed(BiConsumer<? super Long, ? super INPUT> peekingConsumer)`
 
-* `peekingFunction` - A non-null consumer to receive each element and its zero-based index.
+* `peekingConsumer` - A non-null consumer to receive each element and its zero-based index.
 
 ### Examples
 

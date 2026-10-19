@@ -17,9 +17,9 @@ this behavior are available, see "Additional Methods" below.
 
 Note there are several possible types for the `other` of zipped elements.
 
-1. `zipWith(Iterator<SECOND> other)`
-2. `zipWith(Iterable<SECOND> other)`
-3. `zipWith(Stream<SECOND> other)`
+1. `zipWith(Iterator<? extends SECOND> other)`
+2. `zipWith(Iterable<? extends SECOND> other)`
+3. `zipWith(Stream<? extends SECOND> other)`
 4. `zipWith(SECOND... other)`
 * `other` Must be non-null
 

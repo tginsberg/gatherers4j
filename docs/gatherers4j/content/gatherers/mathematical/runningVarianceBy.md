@@ -18,7 +18,7 @@ See also [`runningStandardDeviationBy()`](/gatherers4j/gatherers/mathematical/ru
 
 **Signatures**
 
-`runningVarianceBy(Dataset dataset, Function<INPUT, BigDecimal> mappingFunction)`
+`runningVarianceBy(Dataset dataset, Function<? super INPUT, ? extends BigDecimal> mappingFunction)`
 * `dataset` - Either `Population` or `Sample`
 * `mappingFunction` - A non-null function to map stream `INPUT` elements into `BigDecimal` for calculation
 

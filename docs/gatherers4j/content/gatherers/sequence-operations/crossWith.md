@@ -17,9 +17,9 @@ to have the `source` of elements be empty, the resulting output stream would be 
 
 Note there are several possible types for the `source` of crossing elements.
 
-1. `crossWith(Iterator<CROSS> source)`
-2. `crossWith(Iterable<CROSS> source)`
-3. `crossWith(Stream<CROSS> source)`
+1. `crossWith(Iterator<? extends CROSS> source)`
+2. `crossWith(Iterable<? extends CROSS> source)`
+3. `crossWith(Stream<? extends CROSS> source)`
 4. `crossWith(CROSS... source)`
 * `source` Must be non-null
 

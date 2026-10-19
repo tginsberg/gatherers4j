@@ -29,16 +29,16 @@ public class FilterChangingGatherer<INPUT extends @Nullable Object>
         implements Gatherer<INPUT, FilterChangingGatherer.State<INPUT>, INPUT> {
 
     private final Order operation;
-    private final Comparator<INPUT> comparator;
+    private final Comparator<? super INPUT> comparator;
 
     static <INPUT> FilterChangingGatherer<INPUT> usingComparator(
             final Order operation,
-            final Comparator<INPUT> comparator
+            final Comparator<? super INPUT> comparator
     ) {
         return new FilterChangingGatherer<>(operation, comparator);
     }
 
-    static <INPUT extends Comparable<INPUT>> FilterChangingGatherer<INPUT> usingComparable(
+    static <INPUT extends Comparable<? super INPUT>> FilterChangingGatherer<INPUT> usingComparable(
             final Order operation
     ) {
         return new FilterChangingGatherer<>(operation, Comparable::compareTo);
@@ -46,7 +46,7 @@ public class FilterChangingGatherer<INPUT extends @Nullable Object>
 
     FilterChangingGatherer(
             final Order operation,
-            final Comparator<INPUT> comparator
+            final Comparator<? super INPUT> comparator
     ) {
         this.operation = mustNotBeNull(operation, "Operation must not be null");
         this.comparator = mustNotBeNull(comparator, "Comparator must not be null");

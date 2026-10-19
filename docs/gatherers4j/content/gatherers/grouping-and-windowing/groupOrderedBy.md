@@ -13,7 +13,7 @@ The lists emitted from this Gatherer are unmodifiable.
 
 **Signature**
 
-`groupOrderedBy(Order order, Comparator<INPUT> comparator)`
+`groupOrderedBy(Order order, Comparator<? super INPUT> comparator)`
 * `order` - A non-null Order in which to group elements. Values are `Equal`, `Ascending`, `Descending`, `AscendingOrEqual`, and `DescendingOrEqual`
 * `comparator` - A non-null `Comparator` to compare stream elements
 
