@@ -31,7 +31,7 @@ public class FilterChangingGatherer<INPUT extends @Nullable Object>
     private final Order operation;
     private final Comparator<? super INPUT> comparator;
 
-    static <INPUT> FilterChangingGatherer<INPUT> usingComparator(
+    static <INPUT extends @Nullable Object> FilterChangingGatherer<INPUT> usingComparator(
             final Order operation,
             final Comparator<? super INPUT> comparator
     ) {

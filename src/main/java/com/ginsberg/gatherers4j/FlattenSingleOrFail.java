@@ -26,7 +26,7 @@ import java.util.stream.Gatherer;
 import static com.ginsberg.gatherers4j.util.GathererUtils.pushAll;
 
 /// Note: "Single" in this case means at most one. The naming of this more precisely seemed clumsy.
-class FlattenSingleOrFail<INPUT extends Collection<OUTPUT>, OUTPUT>
+class FlattenSingleOrFail<INPUT extends Collection<OUTPUT>, OUTPUT extends @Nullable Object>
         implements Gatherer<INPUT, FlattenSingleOrFail.State<INPUT>, OUTPUT> {
 
     private final String message;

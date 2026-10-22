@@ -19,7 +19,7 @@ package com.ginsberg.gatherers4j.dto;
 import org.jspecify.annotations.Nullable;
 
 public record Pair<FIRST extends @Nullable Object, SECOND extends @Nullable Object>(
-        @Nullable FIRST first,
-        @Nullable SECOND second
+        FIRST first,
+        SECOND second
 ) {
 }

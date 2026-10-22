@@ -481,6 +481,20 @@ class GroupChangingGathererTest {
             }
 
             @Test
+            void ensureOrderedNullElements() {
+                // Arrange
+                final Stream<String> input = Stream.of(null, "A", "B");
+
+                // Act
+                final List<String> output = input
+                        .gather(Gatherers4j.ensureOrderedBy(Order.Ascending, Comparator.nullsFirst(Comparator.naturalOrder())))
+                        .toList();
+
+                // Assert
+                assertThat(output).containsExactly(null, "A", "B");
+            }
+
+            @Test
             void returnedListUnmodifiable() {
                 // Arrange
                 final Stream<String> input = Stream.of("A", "B", "C");

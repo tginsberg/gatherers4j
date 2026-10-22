@@ -13,9 +13,9 @@ By default, nulls are ignored and play no part in calculations, see `treatNullAs
 
 **Signatures**
 
-`exponentialMovingAverageWithAlphaBy(double alpha, Function<? super INPUT, ? extends BigDecimal> mappingFunction)`
+`exponentialMovingAverageWithAlphaBy(double alpha, Function<? super INPUT, ? extends @Nullable BigDecimal> mappingFunction)`
 * `alpha` - The alpha value to use, which must be between 0 and 1, exclusive
-* `mappingFunction` - A non-null function to map stream `INPUT` elements into `BigDecimal` for calculation
+* `mappingFunction` - A non-null function to map stream `INPUT` elements into `BigDecimal` for calculation. It may return `null`, which is skipped unless `treatNullAs*()` replaces it.
 
 **Additional Methods**
 

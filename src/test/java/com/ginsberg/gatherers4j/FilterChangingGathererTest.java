@@ -235,6 +235,20 @@ class FilterChangingGathererTest {
                 );
             }
 
+            @Test
+            void nullElements() {
+                // Arrange
+                final Stream<String> input = Stream.of(null, "A", null, "B");
+
+                // Act
+                final List<String> output = input
+                        .gather(Gatherers4j.filterOrderedBy(Order.Ascending, Comparator.nullsFirst(Comparator.naturalOrder())))
+                        .toList();
+
+                // Assert
+                assertThat(output).containsExactly(null, "A", "B");
+            }
+
         }
 
         @Nested

@@ -14,9 +14,9 @@ for all calculations is {{< jdklink linkName="MathContext.DECIMAL64" package="ja
 
 **Signatures**
 
-`movingRootMeanSquareBy(int windowSize, Function<? super INPUT, ? extends BigDecimal> mappingFunction)`
+`movingRootMeanSquareBy(int windowSize, Function<? super INPUT, ? extends @Nullable BigDecimal> mappingFunction)`
 * `windowSize` - How many trailing elements to calculate the root mean square over
-* `mappingFunction` - A non-null function to map stream `INPUT` elements into `BigDecimal` for calculation
+* `mappingFunction` - A non-null function to map stream `INPUT` elements into `BigDecimal` for calculation. It may return `null`, which is skipped unless `treatNullAs*()` replaces it.
 
 **Additional Methods**
 

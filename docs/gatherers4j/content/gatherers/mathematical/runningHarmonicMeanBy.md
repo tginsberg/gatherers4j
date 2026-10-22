@@ -16,8 +16,8 @@ A `0` anywhere in the stream is undefined for a harmonic mean and will throw an 
 
 **Signatures**
 
-`runningHarmonicMeanBy(Function<? super INPUT, ? extends BigDecimal> mappingFunction)`
-* `mappingFunction` - A non-null function to map stream `INPUT` elements into `BigDecimal` for calculation
+`runningHarmonicMeanBy(Function<? super INPUT, ? extends @Nullable BigDecimal> mappingFunction)`
+* `mappingFunction` - A non-null function to map stream `INPUT` elements into `BigDecimal` for calculation. It may return `null`, which is skipped unless `treatNullAs*()` replaces it.
 
 **Additional Methods**
 

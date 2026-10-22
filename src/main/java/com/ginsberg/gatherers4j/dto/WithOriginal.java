@@ -19,7 +19,7 @@ package com.ginsberg.gatherers4j.dto;
 import org.jspecify.annotations.Nullable;
 
 public record WithOriginal<ORIGINAL extends @Nullable Object, CALCULATED extends @Nullable Object>(
-        @Nullable ORIGINAL original,
-        @Nullable CALCULATED calculated
+        ORIGINAL original,
+        CALCULATED calculated
 ) {
 }

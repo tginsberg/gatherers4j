@@ -18,9 +18,9 @@ See also [`uniquelyOccurring()`](/gatherers4j/gatherers/filtering-and-selection/
 
 **Signature**
 
-`distinctBy(Function<? super INPUT, ?> mappingFunction)`
+`distinctBy(Function<? super INPUT, ? extends @Nullable Object> mappingFunction)`
 
-* `mappingFunction` - A non-null function to map `INPUT` types to an arbitrary `Object` to use for comparison
+* `mappingFunction` - A non-null function to map `INPUT` types to an arbitrary `Object` to use for comparison. It may return `null`.
 
 ### Examples
 

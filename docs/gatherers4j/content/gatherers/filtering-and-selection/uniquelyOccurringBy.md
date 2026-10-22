@@ -15,9 +15,9 @@ Encounter order of uniquely occurring elements is preserved.
 
 **Signature**
 
-`uniquelyOccurringBy(Function<? super INPUT, ?> mappingFunction)`
+`uniquelyOccurringBy(Function<? super INPUT, ? extends @Nullable Object> mappingFunction)`
 
-* `mappingFunction` - A non-null function to map `INPUT` types to an arbitrary `MAPPED` Object to use for comparison
+* `mappingFunction` - A non-null function to map `INPUT` types to an arbitrary `Object` to use for comparison. It may return `null`.
 
 
 ### Examples

@@ -20,6 +20,6 @@ import org.jspecify.annotations.Nullable;
 
 public record WithIndex<TYPE extends @Nullable Object>(
         long index,
-        @Nullable TYPE value
+        TYPE value
 ) {
 }

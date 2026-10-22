@@ -96,9 +96,12 @@ public class ZipWithGatherer<FIRST extends @Nullable Object, SECOND extends @Nul
     ///
     /// `source.gather(Gatherers4j.<String, Integer>zipWith(right).nullArgumentWhenSourceLonger())`
     ///
-    public ZipWithGatherer<FIRST, SECOND> nullArgumentWhenSourceLonger() {
-        argumentWhenSourceLonger = _ -> null;
-        return this;
+    /// @return This gatherer, retyped so `SECOND` is nullable
+    public ZipWithGatherer<FIRST, @Nullable SECOND> nullArgumentWhenSourceLonger() {
+        // Same object; from here on it emits null for SECOND, so its type has to say so
+        @SuppressWarnings("NullAway") final ZipWithGatherer<FIRST, @Nullable SECOND> nullable = this;
+        nullable.argumentWhenSourceLonger = _ -> null;
+        return nullable;
     }
     
     /// When the source stream runs out of elements before the argument `Iterable`, `Iterator` or `Stream` does,
@@ -107,9 +110,13 @@ public class ZipWithGatherer<FIRST extends @Nullable Object, SECOND extends @Nul
     /// Note: You may need a type witness when using this:
     ///
     /// `source.gather(Gatherers4j.<String, Integer>zipWith(right).nullSourceWhenArgumentLonger())`
-    public ZipWithGatherer<FIRST, SECOND> nullSourceWhenArgumentLonger() {
-        sourceWhenArgumentLonger = _ -> null;
-        return this;
+    ///
+    /// @return This gatherer, retyped so `FIRST` is nullable
+    public ZipWithGatherer<@Nullable FIRST, SECOND> nullSourceWhenArgumentLonger() {
+        // Same object; from here on it emits null for FIRST, so its type has to say so
+        @SuppressWarnings("NullAway") final ZipWithGatherer<@Nullable FIRST, SECOND> nullable = this;
+        nullable.sourceWhenArgumentLonger = _ -> null;
+        return nullable;
     }
 
     @Override

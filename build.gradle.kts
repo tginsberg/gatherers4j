@@ -53,6 +53,11 @@ repositories {
     mavenCentral()
 }
 
+// Compile-only call sites that check the facade's nullness annotations the way a NullAway user would see them
+val nullnessUsage: SourceSet = sourceSets.create("nullnessUsage") {
+    compileClasspath += sourceSets.main.get().output + configurations.compileClasspath.get()
+}
+
 dependencies {
     api("org.jspecify:jspecify:1.0.1") {
         because("Annotating with JSpecify makes static analysis more accurate")
@@ -198,12 +203,17 @@ tasks {
         options.errorprone {
             check("NullAway", CheckSeverity.ERROR)
             option("NullAway:AnnotatedPackages", "com.ginsberg.gatherers4j")
+            option("NullAway:JSpecifyMode", "true")
         }
         if (name.lowercase().contains("test")) {
             options.errorprone {
                 disable("NullAway")
             }
         }
+    }
+
+    check {
+        dependsOn(nullnessUsage.classesTaskName)
     }
 
     jacoco {

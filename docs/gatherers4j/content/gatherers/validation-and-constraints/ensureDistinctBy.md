@@ -21,9 +21,9 @@ it detects a failure case. It stops reading the stream as soon as a mapped value
 
 **Signature**
 
-`ensureDistinctBy(Function<? super INPUT, ?> mappingFunction)`
+`ensureDistinctBy(Function<? super INPUT, ? extends @Nullable Object> mappingFunction)`
 
-* `mappingFunction` - A non-null function to map `INPUT` types to an arbitrary `Object` to use for comparison
+* `mappingFunction` - A non-null function to map `INPUT` types to an arbitrary `Object` to use for comparison. It may return `null`.
 
 **Additional Methods**
 
