@@ -17,8 +17,8 @@ For a version of `groupBy()` that measures equality with `Object::equals()`, see
 
 **Signature**
 
-`groupBy(Function<? super INPUT, ?> mappingFunction)`
-* `mappingFunction` - A non-null function to map `INPUT` types to an arbitrary `Object` to use for comparison
+`groupBy(Function<? super INPUT, ? extends @Nullable Object> mappingFunction)`
+* `mappingFunction` - A non-null function to map `INPUT` types to an arbitrary `Object` to use for comparison. It may return `null`.
 
 ### Examples
 

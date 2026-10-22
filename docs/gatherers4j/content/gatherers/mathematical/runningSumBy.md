@@ -14,8 +14,8 @@ for all calculations is {{< jdklink linkName="MathContext.DECIMAL64" package="ja
 
 **Signatures**
 
-`runningSumBy(Function<? super INPUT, ? extends BigDecimal> mappingFunction)`
-* `mappingFunction` - A non-null function to map stream `INPUT` elements into `BigDecimal` for calculation
+`runningSumBy(Function<? super INPUT, ? extends @Nullable BigDecimal> mappingFunction)`
+* `mappingFunction` - A non-null function to map stream `INPUT` elements into `BigDecimal` for calculation. It may return `null`, which is skipped unless `treatNullAs*()` replaces it.
 
 **Additional Methods**
 

@@ -20,9 +20,9 @@ To keep the first instance of each distinct element instead, and emit it as soon
 
 **Signature**
 
-`distinctLatestBy(Function<? super INPUT, ?> mappingFunction)`
+`distinctLatestBy(Function<? super INPUT, ? extends @Nullable Object> mappingFunction)`
 
-* `mappingFunction` - A non-null function to map `INPUT` types to an arbitrary `Object` to use for comparison
+* `mappingFunction` - A non-null function to map `INPUT` types to an arbitrary `Object` to use for comparison. It may return `null`.
 
 ### Examples
 

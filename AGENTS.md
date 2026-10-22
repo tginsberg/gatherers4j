@@ -82,6 +82,16 @@ anyway.
 
 - Every package is `@NullMarked`. Gatherers accept null stream elements, so declare element type parameters as
   `INPUT extends @Nullable Object`.
+- A function parameter's nullness matches what the gatherer does at runtime: its return is `@Nullable` when the
+  gatherer handles a null result (the BigDecimal engine skips it, key functions compare with `Objects.equals`), and
+  its input is `? super INPUT`, never `? super @Nullable INPUT`. Annotate only what fails on null as non-null.
+- Generic records in `dto` take their nullness from the type argument: `FIRST first`, not `@Nullable FIRST first`.
+  A gatherer that can put `null` into a component the caller declared non-null must say so in its return type, as
+  `zipWith(...).nullArgumentWhenSourceLonger()` does.
+- NullAway runs in JSpecify mode on main code.
+- `src/nullnessUsage` holds compile-only call sites checked by NullAway in JSpecify mode as part of `check`.
+  NullAway checks a method reference against its functional interface but not generic type arguments, so write the
+  call sites as method references.
 - Every source file starts with the Apache 2.0 license header from the existing files, with the current year.
 - `final` on parameters and on locals that aren't reassigned.
 - Type parameters are full words (`INPUT`, `OUTPUT`, `MAPPED`, `SECOND`), not `T` or `R`.

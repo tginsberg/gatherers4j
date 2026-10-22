@@ -19,7 +19,7 @@ package com.ginsberg.gatherers4j.dto;
 import org.jspecify.annotations.Nullable;
 
 public record WithCount<VALUE extends @Nullable Object>(
-        @Nullable VALUE value,
+        VALUE value,
         long count
 ) {
 }

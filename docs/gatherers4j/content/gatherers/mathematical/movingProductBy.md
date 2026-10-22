@@ -15,9 +15,9 @@ for all calculations is {{< jdklink linkName="MathContext.DECIMAL64" package="ja
 
 **Signatures**
 
-`movingProductBy(int windowSize, Function<? super INPUT, ? extends BigDecimal> mappingFunction)`
+`movingProductBy(int windowSize, Function<? super INPUT, ? extends @Nullable BigDecimal> mappingFunction)`
 * `windowSize` - How many trailing elements to calculate the product from at any given point in the stream
-* `mappingFunction` - A non-null function to map stream `INPUT` elements into `BigDecimal` for calculation
+* `mappingFunction` - A non-null function to map stream `INPUT` elements into `BigDecimal` for calculation. It may return `null`, which is skipped unless `treatNullAs*()` replaces it.
 
 **Additional Methods**
 

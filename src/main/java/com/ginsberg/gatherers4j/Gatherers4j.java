@@ -139,11 +139,11 @@ public abstract class Gatherers4j {
 
     /// Remove consecutive duplicates from a stream where duplication is measured by the given `function`.
     ///
-    /// @param mappingFunction A non-null function, the results of which will be used to check for consecutive duplication.
+    /// @param mappingFunction A non-null function, the results of which will be used to check for consecutive duplication. It may return `null`.
     /// @param <INPUT>         Type of elements in both the input and output streams
     /// @return A non-null `Gatherer`
     public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> dedupeConsecutiveBy(
-            final Function<? super INPUT, ?> mappingFunction
+            final Function<? super INPUT, ? extends @Nullable Object> mappingFunction
     ) {
         mustNotBeNull(mappingFunction, "Mapping function must not be null");
         return new DedupeConsecutiveGatherer<>(mappingFunction);
@@ -151,7 +151,7 @@ public abstract class Gatherers4j {
 
     /// Filter a stream such that it only contains distinct elements measured by the given `function`.
     ///
-    /// @param mappingFunction A non-null mapping function, the results of which will be used to check for distinct elements
+    /// @param mappingFunction A non-null mapping function, the results of which will be used to check for distinct elements. It may return `null`.
     /// @param <INPUT>         Type of elements in both the input and output streams
     /// @return A non-null `Gatherer`
     public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> distinctBy(
@@ -163,7 +163,7 @@ public abstract class Gatherers4j {
     /// Filter a stream such that it only contains distinct elements measured by the given `function`, returning
     /// the latest element rather than the first.
     ///
-    /// @param mappingFunction A non-null mapping function, the results of which will be used to check for distinct elements
+    /// @param mappingFunction A non-null mapping function, the results of which will be used to check for distinct elements. It may return `null`.
     /// @param <INPUT>         Type of elements in both the input and output streams
     /// @return A non-null `Gatherer`
     public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> distinctLatestBy(
@@ -228,7 +228,7 @@ public abstract class Gatherers4j {
     /// fail with an `IllegalStateException` as soon as a mapped value repeats. Nothing is emitted until the input
     /// stream ends.
     ///
-    /// @param mappingFunction A non-null mapping function, the results of which will be used to check for distinct elements
+    /// @param mappingFunction A non-null mapping function, the results of which will be used to check for distinct elements. It may return `null`.
     /// @param <INPUT>         Type of elements in both the input and output streams
     /// @return A non-null `EnsureDistinctGatherer`
     public static <INPUT extends @Nullable Object> EnsureDistinctGatherer<INPUT> ensureDistinctBy(
@@ -264,7 +264,7 @@ public abstract class Gatherers4j {
     /// @param order The non-null order the stream must be in.
     /// @param comparator The non-null comparator used to compare stream elements
     /// @return A non-null Gatherer
-    public static <INPUT> Gatherer<INPUT, ?, INPUT> ensureOrderedBy(final Order order, final Comparator<? super INPUT> comparator) {
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> ensureOrderedBy(final Order order, final Comparator<? super INPUT> comparator) {
         return GroupChangingGatherer.<INPUT>usingComparator(order, comparator)
                 .andThen(new FlattenSingleOrFail<>("Elements not in proper order: " + order.name()));
     }
@@ -301,11 +301,12 @@ public abstract class Gatherers4j {
     /// @param alpha The alpha value to use in the EMA calculation.
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the exponential average calculation
+    ///                        It may return `null`, which is skipped unless `treatNullAs*()` replaces it.
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalRunningStatGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalRunningStatGatherer<INPUT, BigDecimal> exponentialMovingAverageWithAlphaBy(
             final double alpha,
-            final Function<? super INPUT, ? extends BigDecimal> mappingFunction
+            final Function<? super INPUT, ? extends @Nullable BigDecimal> mappingFunction
     ) {
         if (!(alpha > 0 && alpha < 1.0)) {
             throw new IllegalArgumentException("alpha must be between 0.0 and 1.0, exclusive, got " + alpha);
@@ -337,11 +338,12 @@ public abstract class Gatherers4j {
     /// @param periods The number of periods to use in the EMA calculation.
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the exponential average calculation
+    ///                        It may return `null`, which is skipped unless `treatNullAs*()` replaces it.
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalRunningStatGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalRunningStatGatherer<INPUT, BigDecimal> exponentialMovingAverageWithPeriodBy(
             final int periods,
-            final Function<? super INPUT, ? extends BigDecimal> mappingFunction
+            final Function<? super INPUT, ? extends @Nullable BigDecimal> mappingFunction
     ) {
         if (periods <= 1) {
             throw new IllegalArgumentException("periods must be greater than 1");
@@ -406,7 +408,7 @@ public abstract class Gatherers4j {
     /// @param <INPUT> Type of elements in the input and output stream
     /// @param comparator A non-null `Comparator` to compare stream elements
     /// @return A non-null gatherer
-    public static <INPUT> Gatherer<INPUT, ?, INPUT> filterOrderedBy(final Order order, final Comparator<? super INPUT> comparator) {
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> filterOrderedBy(final Order order, final Comparator<? super INPUT> comparator) {
         return FilterChangingGatherer.usingComparator(order, comparator);
     }
 
@@ -436,11 +438,11 @@ public abstract class Gatherers4j {
     /// Turn a `Stream<INPUT>` into a `Stream<List<INPUT>>` where adjacent equal elements are in the same `List`
     /// and equality is measured by the given `mappingFunction`. The lists emitted to the output stream are unmodifiable.
     ///
-    /// @param mappingFunction A non-null function, the results of which are used to measure equality of consecutive elements.
+    /// @param mappingFunction A non-null function, the results of which are used to measure equality of consecutive elements. It may return `null`.
     /// @param <INPUT>         Type of elements in the input stream
     /// @return A non-null `GroupingByGatherer`
     public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, List<INPUT>> groupBy(
-            final Function<? super @Nullable INPUT, ? extends @Nullable Object> mappingFunction
+            final Function<? super INPUT, ? extends @Nullable Object> mappingFunction
     ) {
         mustNotBeNull(mappingFunction, "mappingFunction must not be null");
         return GroupChangingGatherer.usingComparator(Order.Equal, equalityOnlyComparator(mappingFunction));
@@ -546,11 +548,12 @@ public abstract class Gatherers4j {
     /// @param windowSize      The trailing number of elements to include in the geometric mean, must be greater than 1.
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the moving geometric mean calculation
+    ///                        It may return `null`, which is skipped unless `treatNullAs*()` replaces it.
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalMovingStatGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalMovingStatGatherer<INPUT, BigDecimal> movingGeometricMeanBy(
             final int windowSize,
-            final Function<? super INPUT, ? extends BigDecimal> mappingFunction
+            final Function<? super INPUT, ? extends @Nullable BigDecimal> mappingFunction
     ) {
         return new BigDecimalMovingStatGatherer<>(
                 windowSize,
@@ -584,11 +587,12 @@ public abstract class Gatherers4j {
     /// @param windowSize      The trailing number of elements to include in the harmonic mean, must be greater than 1.
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the moving harmonic mean calculation
+    ///                        It may return `null`, which is skipped unless `treatNullAs*()` replaces it.
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalMovingStatGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalMovingStatGatherer<INPUT, BigDecimal> movingHarmonicMeanBy(
             final int windowSize,
-            final Function<? super INPUT, ? extends BigDecimal> mappingFunction
+            final Function<? super INPUT, ? extends @Nullable BigDecimal> mappingFunction
     ) {
         return new BigDecimalMovingStatGatherer<>(
                 windowSize,
@@ -639,11 +643,12 @@ public abstract class Gatherers4j {
     /// @param windowSize      The number of elements to average, must be greater than 1.
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the moving average calculation
+    ///                        It may return `null`, which is skipped unless `treatNullAs*()` replaces it.
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalMovingStatGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalMovingStatGatherer<INPUT, BigDecimal> movingMeanBy(
             final int windowSize,
-            final Function<? super INPUT, ? extends BigDecimal> mappingFunction
+            final Function<? super INPUT, ? extends @Nullable BigDecimal> mappingFunction
     ) {
         return new BigDecimalMovingStatGatherer<>(
                 windowSize,
@@ -671,11 +676,12 @@ public abstract class Gatherers4j {
     /// @param windowSize      The trailing number of elements to calculate the median from. Must be greater than 1.
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the moving median calculation
+    ///                        It may return `null`, which is skipped unless `treatNullAs*()` replaces it.
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalMovingStatGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalMovingStatGatherer<INPUT, BigDecimal> movingMedianBy(
             final int windowSize,
-            final Function<? super INPUT, ? extends BigDecimal> mappingFunction
+            final Function<? super INPUT, ? extends @Nullable BigDecimal> mappingFunction
     ) {
         return new BigDecimalMovingStatGatherer<>(
                 windowSize,
@@ -733,12 +739,13 @@ public abstract class Gatherers4j {
     /// @param windowSize      The trailing number of elements to calculate the percentile over, must be greater than 1.
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the moving percentile calculation
+    ///                        It may return `null`, which is skipped unless `treatNullAs*()` replaces it.
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalMovingStatGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalMovingStatGatherer<INPUT, BigDecimal> movingPercentileBy(
             final double percentile,
             final int windowSize,
-            final Function<? super INPUT, ? extends BigDecimal> mappingFunction
+            final Function<? super INPUT, ? extends @Nullable BigDecimal> mappingFunction
     ) {
         final BigDecimal validPercentile = StatisticAccumulators.PercentileAccumulator.percentileOf(percentile);
         return new BigDecimalMovingStatGatherer<>(
@@ -766,11 +773,12 @@ public abstract class Gatherers4j {
     /// @param windowSize      The trailing number of elements to multiply, must be greater than 1.
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the moving product calculation
+    ///                        It may return `null`, which is skipped unless `treatNullAs*()` replaces it.
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalMovingStatGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalMovingStatGatherer<INPUT, BigDecimal> movingProductBy(
             final int windowSize,
-            final Function<? super INPUT, ? extends BigDecimal> mappingFunction
+            final Function<? super INPUT, ? extends @Nullable BigDecimal> mappingFunction
     ) {
         return new BigDecimalMovingStatGatherer<>(
                 windowSize,
@@ -798,11 +806,12 @@ public abstract class Gatherers4j {
     /// @param windowSize      The trailing number of elements to calculate the root mean square over, must be greater than 1.
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the moving root mean square calculation
+    ///                        It may return `null`, which is skipped unless `treatNullAs*()` replaces it.
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalMovingStatGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalMovingStatGatherer<INPUT, BigDecimal> movingRootMeanSquareBy(
             final int windowSize,
-            final Function<? super INPUT, ? extends BigDecimal> mappingFunction
+            final Function<? super INPUT, ? extends @Nullable BigDecimal> mappingFunction
     ) {
         return new BigDecimalMovingStatGatherer<>(
                 windowSize,
@@ -836,12 +845,13 @@ public abstract class Gatherers4j {
     /// @param windowSize      The trailing number of elements to calculate the standard deviation over, must be greater than 1.
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the moving standard deviation calculation
+    ///                        It may return `null`, which is skipped unless `treatNullAs*()` replaces it.
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalMovingStatGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalMovingStatGatherer<INPUT, BigDecimal> movingStandardDeviationBy(
             final Dataset dataset,
             final int windowSize,
-            final Function<? super INPUT, ? extends BigDecimal> mappingFunction
+            final Function<? super INPUT, ? extends @Nullable BigDecimal> mappingFunction
     ) {
         mustNotBeNull(dataset, "Dataset must not be null");
         return new BigDecimalMovingStatGatherer<>(
@@ -872,11 +882,12 @@ public abstract class Gatherers4j {
     /// @param windowSize      The trailing number of elements to summarize, must be greater than 1.
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be
     ///                        summarized
+    ///                        It may return `null`, which is skipped unless `treatNullAs*()` replaces it.
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalMovingStatGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalMovingStatGatherer<INPUT, StatisticalSummary> movingStatisticsBy(
             final int windowSize,
-            final Function<? super INPUT, ? extends BigDecimal> mappingFunction
+            final Function<? super INPUT, ? extends @Nullable BigDecimal> mappingFunction
     ) {
         return new BigDecimalMovingStatGatherer<>(
                 windowSize,
@@ -904,11 +915,12 @@ public abstract class Gatherers4j {
     /// @param windowSize      The trailing number of elements to multiply, must be greater than 1.
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the moving sum calculation
+    ///                        It may return `null`, which is skipped unless `treatNullAs*()` replaces it.
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalMovingStatGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalMovingStatGatherer<INPUT, BigDecimal> movingSumBy(
             final int windowSize,
-            final Function<? super INPUT, ? extends BigDecimal> mappingFunction
+            final Function<? super INPUT, ? extends @Nullable BigDecimal> mappingFunction
     ) {
         return new BigDecimalMovingStatGatherer<>(
                 windowSize, mappingFunction,
@@ -941,12 +953,13 @@ public abstract class Gatherers4j {
     /// @param windowSize      The trailing number of elements to calculate the variance over, must be greater than 1.
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the moving variance calculation
+    ///                        It may return `null`, which is skipped unless `treatNullAs*()` replaces it.
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalMovingStatGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalMovingStatGatherer<INPUT, BigDecimal> movingVarianceBy(
             final Dataset dataset,
             final int windowSize,
-            final Function<? super INPUT, ? extends BigDecimal> mappingFunction
+            final Function<? super INPUT, ? extends @Nullable BigDecimal> mappingFunction
     ) {
         mustNotBeNull(dataset, "Dataset must not be null");
         return new BigDecimalMovingStatGatherer<>(
@@ -1016,11 +1029,12 @@ public abstract class Gatherers4j {
     /// @param windowSize      The number of elements to average, must be greater than 1.
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the weighted moving mean calculation
+    ///                        It may return `null`, which is skipped unless `treatNullAs*()` replaces it.
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalMovingStatGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalMovingStatGatherer<INPUT, BigDecimal> movingWeightedMeanBy(
             final int windowSize,
-            final Function<? super INPUT, ? extends BigDecimal> mappingFunction
+            final Function<? super INPUT, ? extends @Nullable BigDecimal> mappingFunction
     ) {
         return new BigDecimalMovingStatGatherer<>(
                 windowSize,
@@ -1045,11 +1059,12 @@ public abstract class Gatherers4j {
     ///                        non-null, non-negative values that do not sum to zero.
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the weighted moving mean calculation
+    ///                        It may return `null`, which is skipped unless `treatNullAs*()` replaces it.
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalMovingStatGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalMovingStatGatherer<INPUT, BigDecimal> movingWeightedMeanBy(
             final List<? extends BigDecimal> weights,
-            final Function<? super INPUT, ? extends BigDecimal> mappingFunction
+            final Function<? super INPUT, ? extends @Nullable BigDecimal> mappingFunction
     ) {
         final List<BigDecimal> validWeights = StatisticAccumulators.CustomWeightedMeanAccumulator.validatedWeights(weights);
         return new BigDecimalMovingStatGatherer<>(
@@ -1137,10 +1152,11 @@ public abstract class Gatherers4j {
     ///
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the running geometric mean calculation
+    ///                        It may return `null`, which is skipped unless `treatNullAs*()` replaces it.
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalRunningStatGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalRunningStatGatherer<INPUT, BigDecimal> runningGeometricMeanBy(
-            final Function<? super INPUT, ? extends BigDecimal> mappingFunction
+            final Function<? super INPUT, ? extends @Nullable BigDecimal> mappingFunction
     ) {
         return new BigDecimalRunningStatGatherer<>(
                 mappingFunction,
@@ -1169,10 +1185,11 @@ public abstract class Gatherers4j {
     ///
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the running harmonic mean calculation
+    ///                        It may return `null`, which is skipped unless `treatNullAs*()` replaces it.
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalRunningStatGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalRunningStatGatherer<INPUT, BigDecimal> runningHarmonicMeanBy(
-            final Function<? super INPUT, ? extends BigDecimal> mappingFunction
+            final Function<? super INPUT, ? extends @Nullable BigDecimal> mappingFunction
     ) {
         return new BigDecimalRunningStatGatherer<>(
                 mappingFunction,
@@ -1211,10 +1228,11 @@ public abstract class Gatherers4j {
     ///
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the running mean calculation
+    ///                        It may return `null`, which is skipped unless `treatNullAs*()` replaces it.
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalRunningStatGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalRunningStatGatherer<INPUT, BigDecimal> runningMeanBy(
-            final Function<? super INPUT, ? extends BigDecimal> mappingFunction
+            final Function<? super INPUT, ? extends @Nullable BigDecimal> mappingFunction
     ) {
         return new BigDecimalRunningStatGatherer<>(mappingFunction, StatisticAccumulators.MeanAccumulator::new);
     }
@@ -1234,10 +1252,11 @@ public abstract class Gatherers4j {
     ///
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the median calculation
+    ///                        It may return `null`, which is skipped unless `treatNullAs*()` replaces it.
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalRunningStatGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalRunningStatGatherer<INPUT, BigDecimal> runningMedianBy(
-            final Function<? super INPUT, ? extends BigDecimal> mappingFunction
+            final Function<? super INPUT, ? extends @Nullable BigDecimal> mappingFunction
     ) {
         return new BigDecimalRunningStatGatherer<>(
                 mappingFunction,
@@ -1287,11 +1306,12 @@ public abstract class Gatherers4j {
     /// @param percentile      The percentile to calculate, between 0 and 100, inclusive.
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the percentile calculation
+    ///                        It may return `null`, which is skipped unless `treatNullAs*()` replaces it.
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalRunningStatGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalRunningStatGatherer<INPUT, BigDecimal> runningPercentileBy(
             final double percentile,
-            final Function<? super INPUT, ? extends BigDecimal> mappingFunction
+            final Function<? super INPUT, ? extends @Nullable BigDecimal> mappingFunction
     ) {
         final BigDecimal validPercentile = StatisticAccumulators.PercentileAccumulator.percentileOf(percentile);
         return new BigDecimalRunningStatGatherer<>(
@@ -1312,10 +1332,11 @@ public abstract class Gatherers4j {
     ///
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the product calculation
+    ///                        It may return `null`, which is skipped unless `treatNullAs*()` replaces it.
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalRunningStatGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalRunningStatGatherer<INPUT, BigDecimal> runningProductBy(
-            final Function<? super INPUT, ? extends BigDecimal> mappingFunction
+            final Function<? super INPUT, ? extends @Nullable BigDecimal> mappingFunction
     ) {
         return new BigDecimalRunningStatGatherer<>(mappingFunction, StatisticAccumulators.ProductAccumulator::running);
     }
@@ -1335,10 +1356,11 @@ public abstract class Gatherers4j {
     ///
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the running root mean square calculation
+    ///                        It may return `null`, which is skipped unless `treatNullAs*()` replaces it.
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalRunningStatGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalRunningStatGatherer<INPUT, BigDecimal> runningRootMeanSquareBy(
-            final Function<? super INPUT, ? extends BigDecimal> mappingFunction
+            final Function<? super INPUT, ? extends @Nullable BigDecimal> mappingFunction
     ) {
         return new BigDecimalRunningStatGatherer<>(
                 mappingFunction,
@@ -1366,11 +1388,12 @@ public abstract class Gatherers4j {
     /// @param dataset         Whether to treat the elements seen so far as a `Population` or a `Sample` of a larger population
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the standard deviation calculation
+    ///                        It may return `null`, which is skipped unless `treatNullAs*()` replaces it.
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalRunningStatGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalRunningStatGatherer<INPUT, BigDecimal> runningStandardDeviationBy(
             final Dataset dataset,
-            final Function<? super INPUT, ? extends BigDecimal> mappingFunction
+            final Function<? super INPUT, ? extends @Nullable BigDecimal> mappingFunction
     ) {
         mustNotBeNull(dataset, "Dataset must not be null");
         return new BigDecimalRunningStatGatherer<>(
@@ -1396,10 +1419,11 @@ public abstract class Gatherers4j {
     ///
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be
     ///                        summarized
+    ///                        It may return `null`, which is skipped unless `treatNullAs*()` replaces it.
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalRunningStatGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalRunningStatGatherer<INPUT, StatisticalSummary> runningStatisticsBy(
-            final Function<? super INPUT, ? extends BigDecimal> mappingFunction
+            final Function<? super INPUT, ? extends @Nullable BigDecimal> mappingFunction
     ) {
         return new BigDecimalRunningStatGatherer<>(
                 mappingFunction,
@@ -1422,10 +1446,11 @@ public abstract class Gatherers4j {
     ///
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the running sum calculation
+    ///                        It may return `null`, which is skipped unless `treatNullAs*()` replaces it.
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalRunningStatGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalRunningStatGatherer<INPUT, BigDecimal> runningSumBy(
-            final Function<? super INPUT, ? extends BigDecimal> mappingFunction
+            final Function<? super INPUT, ? extends @Nullable BigDecimal> mappingFunction
     ) {
         return new BigDecimalRunningStatGatherer<>(
                 mappingFunction,
@@ -1453,11 +1478,12 @@ public abstract class Gatherers4j {
     /// @param dataset         Whether to treat the elements seen so far as a `Population` or a `Sample` of a larger population
     /// @param mappingFunction A function to map `<INPUT>` objects to `BigDecimal`, the results of which will be used
     ///                        in the variance calculation
+    ///                        It may return `null`, which is skipped unless `treatNullAs*()` replaces it.
     /// @param <INPUT>         Type of elements in the input stream, to be remapped to `BigDecimal` by the `mappingFunction`
     /// @return A non-null `BigDecimalRunningStatGatherer`
     public static <INPUT extends @Nullable Object> BigDecimalRunningStatGatherer<INPUT, BigDecimal> runningVarianceBy(
             final Dataset dataset,
-            final Function<? super INPUT, ? extends BigDecimal> mappingFunction
+            final Function<? super INPUT, ? extends @Nullable BigDecimal> mappingFunction
     ) {
         mustNotBeNull(dataset, "Dataset must not be null");
         return new BigDecimalRunningStatGatherer<>(
@@ -1594,7 +1620,7 @@ public abstract class Gatherers4j {
     /// @param count   A non-negative integer, the number of elements to return
     /// @param <INPUT> Type of elements in the input stream
     /// @return A non-null `Gatherer`
-    public static <INPUT> Gatherer<INPUT, ?, INPUT> takeLast(final int count) {
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> takeLast(final int count) {
         return new LastGatherer<>(count);
     }
 
@@ -1635,7 +1661,7 @@ public abstract class Gatherers4j {
     /// Emit only those elements that occur in the input stream a single time, as identified by the given `mappingFunction`.
     ///
     /// @param <INPUT> Type of elements in the input stream
-    /// @param mappingFunction A non-null function, the results of which will be used to check for consecutive duplication.
+    /// @param mappingFunction A non-null function, the results of which will be used to check for consecutive duplication. It may return `null`.
     /// @return A non-null `Gatherer`
     public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> uniquelyOccurringBy(
             final Function<? super INPUT, ? extends @Nullable Object> mappingFunction

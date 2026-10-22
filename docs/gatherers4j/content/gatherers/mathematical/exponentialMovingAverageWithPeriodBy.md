@@ -13,9 +13,9 @@ By default, nulls are ignored and play no part in calculations, see `treatNullAs
 
 **Signatures**
 
-`exponentialMovingAverageWithPeriodBy(int periods, Function<? super INPUT, ? extends BigDecimal> mappingFunction)`
+`exponentialMovingAverageWithPeriodBy(int periods, Function<? super INPUT, ? extends @Nullable BigDecimal> mappingFunction)`
 * `periods` - The number of `periods` to average over, must be greater than 1.
-* `mappingFunction` - A non-null function to map stream `INPUT` elements into `BigDecimal` for calculation
+* `mappingFunction` - A non-null function to map stream `INPUT` elements into `BigDecimal` for calculation. It may return `null`, which is skipped unless `treatNullAs*()` replaces it.
 
 **Additional Methods**
 
