@@ -16,6 +16,7 @@
 
 package com.ginsberg.gatherers4j;
 
+import com.ginsberg.gatherers4j.util.GathererUtils;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -32,13 +33,15 @@ class RepeatingGatherer<INPUT extends @Nullable Object>
     private static final int INFINITE = -1;
     private final int repeats;
 
-    static <INPUT> RepeatingGatherer<INPUT> ofInfinite() {
+    static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> ofInfinite() {
         return new RepeatingGatherer<>(INFINITE);
     }
 
-    static <INPUT> RepeatingGatherer<INPUT> ofFinite(final int repeats) {
+    static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> ofFinite(final int repeats) {
         if (repeats < 0) {
             throw new IllegalArgumentException("Number of repeats must not be negative");
+        } else if (repeats == 0) {
+            return GathererUtils.emptyGatherer();
         }
         return new RepeatingGatherer<>(repeats);
     }
@@ -55,9 +58,7 @@ class RepeatingGatherer<INPUT extends @Nullable Object>
     @Override
     public Integrator<RepeatingGatherer.State<INPUT>, INPUT, INPUT> integrator() {
         return Integrator.ofGreedy((state, element, downstream) -> {
-            if(repeats != 0) {
-                state.theStream.add(element);
-            }
+            state.theStream.add(element);
             return !downstream.isRejecting();
         });
     }

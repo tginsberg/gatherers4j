@@ -186,11 +186,11 @@ public abstract class Gatherers4j {
 
     /// Keep all elements except the last `count` elements of the stream.
     ///
-    /// @param count   A positive number of elements to drop from the end of the stream
+    /// @param count   Number of elements to drop from the end of the stream, must not be negative. 0 emits every element
     /// @param <INPUT> Type of elements in both the input and output streams
     /// @return A non-null `Gatherer`
     public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> dropLast(final int count) {
-        return new DropLastGatherer<>(count);
+        return DropLastGatherer.of(count);
     }
 
     /// Ensure that every element in the input stream matches the given `predicate`, and fail with an
@@ -269,14 +269,14 @@ public abstract class Gatherers4j {
                 .andThen(new FlattenSingleOrFail<>("Elements not in proper order: " + order.name()));
     }
 
-    /// Ensure the input stream's meets the given `size` criteria, and emit all elements if so.
+    /// Ensure the input stream meets the given `size` criteria, and emit all elements if so.
     /// If not, throw an `IllegalStateException`.
     ///
     /// @param size The Size to measure the stream length against
     /// @param length    Number to compare stream length against
     /// @param <INPUT> Type of elements in both the input and output streams
     /// @return A non-null `SizeGatherer`
-    /// @throws IllegalStateException when the input stream is not exactly `size` elements long
+    /// @throws IllegalStateException when the length of the input stream does not satisfy `size` compared to `length`
     public static <INPUT extends @Nullable Object> SizeGatherer<INPUT> ensureSize(final Size size, final long length) {
         return new SizeGatherer<>(size, length);
     }
@@ -1101,7 +1101,7 @@ public abstract class Gatherers4j {
     /// Note: This implementation consumes the entire input stream into memory, so it must be used on finite streams.
     ///
     /// @param <INPUT> Type of elements in the input and output stream
-    /// @param repeats Number of repeats, must be greater than 1
+    /// @param repeats Number of times to emit the input stream, must not be negative. 0 emits nothing and stops reading the input
     /// @return A non-null `Gatherer`
     public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> repeat(final int repeats) {
         return RepeatingGatherer.ofFinite(repeats);
@@ -1499,11 +1499,11 @@ public abstract class Gatherers4j {
     ///
     /// Each run of the returned Gatherer creates its own `RandomGenerator` via `RandomGenerator.getDefault()`.
     ///
-    /// @param sampleSize Number of elements to sample.
+    /// @param sampleSize Number of elements to sample, must not be negative. 0 emits nothing and stops reading the input
     /// @param <INPUT> Type of elements in the input and output stream
     /// @return A non-null Gatherer
     public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> sampleFixedSize(final int sampleSize) {
-        return new SampleFixedSizeGatherer<>(sampleSize, RandomGenerator::getDefault);
+        return SampleFixedSizeGatherer.of(sampleSize, RandomGenerator::getDefault);
     }
 
     /// Perform a fixed size sampling over the input stream. This method uses the Reservoir method internally, which
@@ -1514,7 +1514,7 @@ public abstract class Gatherers4j {
     /// Note: The given `randomGenerator` is used by every run of the returned Gatherer. Most `RandomGenerator`
     /// implementations are not thread-safe, so do not use the returned Gatherer from multiple threads at the same time.
     ///
-    /// @param sampleSize Number of elements to sample.
+    /// @param sampleSize Number of elements to sample, must not be negative. 0 emits nothing and stops reading the input
     /// @param randomGenerator A non-null `RandomGenerator` to use as a random source for the sampling
     /// @param <INPUT> Type of elements in the input and output stream
     /// @return A non-null Gatherer
@@ -1523,7 +1523,7 @@ public abstract class Gatherers4j {
             final RandomGenerator randomGenerator
     ) {
         mustNotBeNull(randomGenerator, "RandomGenerator must not be null");
-        return new SampleFixedSizeGatherer<>(sampleSize, () -> randomGenerator);
+        return SampleFixedSizeGatherer.of(sampleSize, () -> randomGenerator);
     }
 
     /// Perform a percentage-based sampling over the input stream. This method uses Bernoulli sampling internally
@@ -1533,7 +1533,7 @@ public abstract class Gatherers4j {
     ///
     /// Each run of the returned Gatherer creates its own `RandomGenerator` via `RandomGenerator.getDefault()`.
     ///
-    /// @param percentage Percentage of elements that should be sampled, on average.
+    /// @param percentage Percentage of elements that should be sampled, on average, between 0.0 and 1.0 inclusive. 0.0 emits nothing and stops reading the input
     /// @param <INPUT> Type of elements in the input and output stream
     /// @return A non-null Gatherer
     public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> samplePercentage(final double percentage) {
@@ -1548,7 +1548,7 @@ public abstract class Gatherers4j {
     /// Note: The given `randomGenerator` is used by every run of the returned Gatherer. Most `RandomGenerator`
     /// implementations are not thread-safe, so do not use the returned Gatherer from multiple threads at the same time.
     ///
-    /// @param percentage Percentage of elements that should be sampled, on average.
+    /// @param percentage Percentage of elements that should be sampled, on average, between 0.0 and 1.0 inclusive. 0.0 emits nothing and stops reading the input
     /// @param randomGenerator A non-null `RandomGenerator` to use as a random source for the sampling
     /// @param <INPUT> Type of elements in the input and output stream
     /// @return A non-null Gatherer
@@ -1617,11 +1617,11 @@ public abstract class Gatherers4j {
 
     /// Emit the last `count` elements from the stream. If there are fewer than `count` elements they are all emitted.
     ///
-    /// @param count   A non-negative integer, the number of elements to return
+    /// @param count   Number of elements to return, must not be negative. 0 emits nothing and stops reading the input
     /// @param <INPUT> Type of elements in the input stream
     /// @return A non-null `Gatherer`
     public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> takeLast(final int count) {
-        return new LastGatherer<>(count);
+        return LastGatherer.of(count);
     }
 
     /// Take elements from the input stream until the `predicate` is met, including the first element that

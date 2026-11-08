@@ -12,11 +12,13 @@ description: Keep all elements except the last `count` elements of the stream.
 Holds at most `count` number of elements in memory before emitting them as it becomes clear that they are not in 
 the trailing `count` elements in the stream. For a version that takes the last `count` elements, see [`takeLast()`](/gatherers4j/gatherers/filtering-and-selection/takelast/).
 
+A `count` of 0 emits every element as it arrives, without holding any in memory.
+
 **Signature**
 
 `dropLast(int count)`
 
-* `count` - The positive number of elements to remove from the end of the input stream
+* `count` - The number of elements to remove from the end of the input stream, must not be negative
 
 ### Examples
 

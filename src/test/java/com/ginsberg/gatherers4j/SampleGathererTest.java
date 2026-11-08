@@ -21,6 +21,7 @@ import org.apache.commons.statistics.inference.BinomialTest;
 import org.apache.commons.statistics.inference.ChiSquareTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -46,7 +47,7 @@ class SampleGathererTest {
         void eachRunGetsItsOwnRandomGenerator() {
             // Arrange
             final AtomicInteger created = new AtomicInteger();
-            final SampleFixedSizeGatherer<Integer> gatherer = new SampleFixedSizeGatherer<>(2, () -> {
+            final Gatherer<Integer, ?, Integer> gatherer = SampleFixedSizeGatherer.of(2, () -> {
                 created.incrementAndGet();
                 return RandomGenerator.getDefault();
             });
@@ -116,12 +117,36 @@ class SampleGathererTest {
             }
         }
 
-        @ParameterizedTest(name = "sampleSize of {0}")
-        @ValueSource(ints = {-1, 0})
-        void sampleSizeMustBeAtLeast1(int size) {
+        @Test
+        void sampleSizeMustNotBeNegative() {
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> Gatherers4j.sampleFixedSize(size)
-            );
+                    .isThrownBy(() -> Gatherers4j.sampleFixedSize(-1))
+                    .withMessage("sampleSize must not be negative");
+        }
+
+        @Test
+        void zeroSampleSizeMeansEmptyStream() {
+            // Arrange
+            final Stream<String> input = Stream.of("A", "B", "C");
+
+            // Act
+            final List<String> output = input.gather(Gatherers4j.sampleFixedSize(0)).toList();
+
+            // Assert
+            assertThat(output).isEmpty();
+        }
+
+        @Test
+        @Timeout(5)
+        void zeroSampleSizeStopsReadingInfiniteStream() {
+            // Arrange
+            final Stream<Integer> input = Stream.iterate(0, i -> i + 1);
+
+            // Act
+            final List<Integer> output = input.gather(Gatherers4j.sampleFixedSize(0)).toList();
+
+            // Assert
+            assertThat(output).isEmpty();
         }
 
         @Test
@@ -232,13 +257,41 @@ class SampleGathererTest {
             assertThat(output).isEqualTo("CDG");
         }
 
-
         @ParameterizedTest(name = "samplePercentage of {0}")
-        @ValueSource(doubles = {0.0, 1.01, -0.1, Double.NaN})
+        @ValueSource(doubles = {1.01, -0.1, Double.NaN})
         void percentageMustBeInRange(final double percentage) {
             assertThatIllegalArgumentException()
                     .isThrownBy(() -> Gatherers4j.samplePercentage(percentage)
-            );
+            ).withMessage("percentage must be between 0.0 and 1.0, inclusive");
+        }
+
+        @Test
+        void zeroPercentEmitsEmpty() {
+            // Arrange
+            final Stream<String> input = Stream.of("A", "B", "C", "D", "E", "F", "G");
+
+            // Act
+            final List<String> output = input
+                    .gather(Gatherers4j.samplePercentage(0.0, new Random(42)))
+                    .toList();
+
+            // Assert
+            assertThat(output).isEmpty();
+        }
+
+        @Test
+        @Timeout(5)
+        void zeroPercentStopsReadingInfiniteStream() {
+            // Arrange
+            final Stream<Integer> input = Stream.iterate(0, i -> i + 1);
+
+            // Act
+            final List<Integer> output = input
+                    .gather(Gatherers4j.samplePercentage(0.0))
+                    .toList();
+
+            // Assert
+            assertThat(output).isEmpty();
         }
 
         @Test

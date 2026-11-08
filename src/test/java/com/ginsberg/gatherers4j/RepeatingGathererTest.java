@@ -17,6 +17,7 @@
 package com.ginsberg.gatherers4j;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -44,6 +45,20 @@ class RepeatingGathererTest {
             assertThat(output.get(i + 1)).isEqualTo("B");
             assertThat(output.get(i + 2)).isEqualTo("C");
         }
+    }
+
+    @Test
+    void zeroRepeats() {
+        // Arrange
+        final Stream<Integer> input = Stream.of(0, 1, 2, 3);
+
+        // Act
+        final List<Integer> output = input
+                .gather(Gatherers4j.repeat(0))
+                .toList();
+
+        // Assert
+        assertThat(output).isEmpty();
     }
 
     @Test
@@ -79,10 +94,25 @@ class RepeatingGathererTest {
 
     @ParameterizedTest(name = "With {0} repeats")
     @ValueSource(ints = {Integer.MIN_VALUE, -1})
-    void numberOfRepeatsMustBeNegative(int repeats) {
+    void numberOfRepeatsMustNotBeNegative(final int repeats) {
         assertThatIllegalArgumentException().isThrownBy(() ->
                 RepeatingGatherer.ofFinite(repeats)
-        );
+        ).withMessage("Number of repeats must not be negative");
+    }
+
+    @Test
+    @Timeout(5)
+    void zeroRepeatsStopsReadingInfiniteStream() {
+        // Arrange
+        final Stream<Integer> input = Stream.iterate(0, i -> i + 1);
+
+        // Act
+        final List<Integer> output = input
+                .gather(Gatherers4j.repeat(0))
+                .toList();
+
+        // Assert
+        assertThat(output).isEmpty();
     }
 
 

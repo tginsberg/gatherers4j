@@ -11,7 +11,8 @@ description: Perform a percentage-based sampling over the input stream.
 
 This uses Bernoulli sampling internally, meaning each element is kept independently with a probability of `percentage`.
 This means the `percentage` given is an approximation and will be more accurate over longer streams. Elements will be
-emitted in the order in which they are encountered.
+emitted in the order in which they are encountered. A `percentage` of 0.0 emits nothing and stops reading the input
+stream immediately.
 
 There are two versions of this Gatherer, one that uses the platform default `RandomGenerator` and one that allows the caller
 to specify a `RandomGenerator`. Specifying a `RandomGenerator` with a fixed seed makes the sample repeatable, which is useful
@@ -23,7 +24,7 @@ used from multiple threads at the same time.
 1. `samplePercentage(double percentage)`
 2. `samplePercentage(double percentage, RandomGenerator randomGenerator)`
 
-* `percentage` - Percentage of elements to sample, as a fraction (`0.4` samples 40% of elements). Must be greater than 0.0 and no more than 1.0.
+* `percentage` - Percentage of elements to sample, as a fraction (`0.4` samples 40% of elements). Must be between 0.0 and 1.0, inclusive.
 * `randomGenerator` - _(Optional)_ A {{< jdklink linkName="RandomGenerator" package="java.base/java/util/random/RandomGenerator.html" >}} to use as the source of randomness.
 
 ### Examples

@@ -16,7 +16,7 @@ of this gatherer that keeps every n{{< sup "th" >}} element instead of dropping 
 
 `dropEveryNth(int count)`
 
-* `count` - The periodic number of the elements to keep, must be at least 2
+* `count` - The periodic number of the elements to drop, must be at least 2
 
 ### Examples
 

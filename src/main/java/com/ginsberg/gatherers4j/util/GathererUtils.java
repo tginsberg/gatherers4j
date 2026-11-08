@@ -77,4 +77,17 @@ abstract public class GathererUtils {
         }
     }
 
+    // Emit nothing and stop consuming the upstream
+    public static <T extends @Nullable Object> Gatherer<T, ?, T> emptyGatherer() {
+        return Gatherer.of(
+                (_, _, _) -> false
+        );
+    }
+
+    // Pass all elements through
+    public static <T extends @Nullable Object> Gatherer<T, ?, T> passthroughGatherer() {
+        return Gatherer.of(
+                Gatherer.Integrator.ofGreedy((_, element, downstream) -> downstream.push(element))
+        );
+    }
 }

@@ -53,7 +53,8 @@ repositories {
     mavenCentral()
 }
 
-// Compile-only call sites that check the facade's nullness annotations the way a NullAway user would see them
+// Compile-only call sites that check the facade's nullness annotations the way a NullAway user would see them.
+// Not part of the test source set, because tests run without NullAway. Keep "test" out of the name for the same reason.
 val nullnessUsage: SourceSet = sourceSets.create("nullnessUsage") {
     compileClasspath += sourceSets.main.get().output + configurations.compileClasspath.get()
 }
