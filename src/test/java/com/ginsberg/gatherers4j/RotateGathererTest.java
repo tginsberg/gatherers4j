@@ -46,6 +46,23 @@ class RotateGathererTest {
     @Nested
     class RotateLeft {
 
+        private static Stream<Arguments> rotateLeftArguments() {
+            return Stream.of(
+                    Arguments.arguments(1, List.of("B", "C", "D", "E", "A")),
+                    Arguments.arguments(2, List.of("C", "D", "E", "A", "B")),
+                    Arguments.arguments(3, List.of("D", "E", "A", "B", "C")),
+                    Arguments.arguments(4, List.of("E", "A", "B", "C", "D")),
+                    Arguments.arguments(5, List.of("A", "B", "C", "D", "E")),
+                    Arguments.arguments(6, List.of("B", "C", "D", "E", "A")),
+                    Arguments.arguments(-1, List.of("E", "A", "B", "C", "D")),
+                    Arguments.arguments(-2, List.of("D", "E", "A", "B", "C")),
+                    Arguments.arguments(-3, List.of("C", "D", "E", "A", "B")),
+                    Arguments.arguments(-4, List.of("B", "C", "D", "E", "A")),
+                    Arguments.arguments(-5, List.of("A", "B", "C", "D", "E")),
+                    Arguments.arguments(-6, List.of("E", "A", "B", "C", "D"))
+            );
+        }
+
         @Test
         void rotateEmpty() {
             // Arrange
@@ -75,21 +92,18 @@ class RotateGathererTest {
             assertThat(output).isEqualTo(expected);
         }
 
-        private static Stream<Arguments> rotateLeftArguments() {
-            return Stream.of(
-                    Arguments.arguments(1, List.of("B", "C", "D", "E", "A")),
-                    Arguments.arguments(2, List.of("C", "D", "E", "A", "B")),
-                    Arguments.arguments(3, List.of("D", "E", "A", "B", "C")),
-                    Arguments.arguments(4, List.of("E", "A", "B", "C", "D")),
-                    Arguments.arguments(5, List.of("A", "B", "C", "D", "E")),
-                    Arguments.arguments(6, List.of("B", "C", "D", "E", "A")),
-                    Arguments.arguments(-1, List.of("E", "A", "B", "C", "D")),
-                    Arguments.arguments(-2, List.of("D", "E", "A", "B", "C")),
-                    Arguments.arguments(-3, List.of("C", "D", "E", "A", "B")),
-                    Arguments.arguments(-4, List.of("B", "C", "D", "E", "A")),
-                    Arguments.arguments(-5, List.of("A", "B", "C", "D", "E")),
-                    Arguments.arguments(-6, List.of("E", "A", "B", "C", "D"))
-            );
+        @Test
+        void rotateLeftByMinValue() {
+            // Arrange
+            final Stream<String> input = Stream.of("A", "B", "C", "D", "E");
+
+            // Act
+            final List<String> output = input
+                    .gather(Gatherers4j.rotate(Rotate.Left, Integer.MIN_VALUE))
+                    .toList();
+
+            // Assert
+            assertThat(output).containsExactly("C", "D", "E", "A", "B");
         }
 
         @Test
@@ -156,6 +170,20 @@ class RotateGathererTest {
         }
 
         @Test
+        void rotateRightByMinValue() {
+            // Arrange
+            final Stream<String> input = Stream.of("A", "B", "C", "D", "E");
+
+            // Act
+            final List<String> output = input
+                    .gather(Gatherers4j.rotate(Rotate.Right, Integer.MIN_VALUE))
+                    .toList();
+
+            // Assert
+            assertThat(output).containsExactly("D", "E", "A", "B", "C");
+        }
+
+        @Test
         void rotateZero() {
             // Arrange
             final List<String> input = List.of("A", "B", "C", "D", "E");
@@ -169,5 +197,4 @@ class RotateGathererTest {
             assertThat(output).isEqualTo(input);
         }
     }
-
 }

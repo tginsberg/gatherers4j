@@ -12,11 +12,13 @@ infinite_streams: emits-at-end
 
 Holds at most `count` number of elements in memory before emitting them once the input stream is fully exhausted. For a version that drops the last `count` elements, see [`dropLast()`](/gatherers4j/gatherers/filtering-and-selection/droplast/).
 
+A `count` of 0 emits nothing and stops reading the input stream immediately, so it works on infinite streams.
+
 **Signature**
 
 `takeLast(int count)`
 
-* `count` - The positive number of elements to keep at the end of the input stream
+* `count` - The number of elements to keep at the end of the input stream, must not be negative
 
 ### Examples
 

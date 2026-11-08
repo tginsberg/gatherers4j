@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package com.ginsberg.gatherers4j;
 
 import com.ginsberg.gatherers4j.util.CircularBuffer;
+import com.ginsberg.gatherers4j.util.GathererUtils;
 import org.jspecify.annotations.Nullable;
 
 import java.util.function.Supplier;
@@ -26,10 +27,17 @@ public class DropLastGatherer<INPUT extends @Nullable Object> implements Gathere
 
     private final int count;
 
-    DropLastGatherer(final int count) {
-        if (count <= 0) {
-            throw new IllegalArgumentException("DropLast count must be positive");
+    static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> of(final int count) {
+        if (count < 0) {
+            throw new IllegalArgumentException("DropLast count must not be negative");
+        } else if (count == 0) {
+            return GathererUtils.passthroughGatherer();
+        } else {
+            return new DropLastGatherer<>(count);
         }
+    }
+
+    private DropLastGatherer(final int count) {
         this.count = count;
     }
 

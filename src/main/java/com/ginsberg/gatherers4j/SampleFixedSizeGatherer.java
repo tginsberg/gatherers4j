@@ -16,6 +16,7 @@
 
 package com.ginsberg.gatherers4j;
 
+import com.ginsberg.gatherers4j.util.GathererUtils;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -33,10 +34,20 @@ public class SampleFixedSizeGatherer<INPUT extends @Nullable Object>
     private final int sampleSize;
     private final Supplier<RandomGenerator> randomGeneratorSupplier;
 
-    SampleFixedSizeGatherer(final int sampleSize, final Supplier<RandomGenerator> randomGeneratorSupplier) {
-        if (sampleSize < 1) {
-            throw new IllegalArgumentException("sampleSize must be at least 1");
+    static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> of(
+            final int sampleSize,
+            final Supplier<RandomGenerator> randomGeneratorSupplier
+    ) {
+        if (sampleSize < 0) {
+            throw new IllegalArgumentException("sampleSize must not be negative");
+        } else if (sampleSize == 0) {
+            return GathererUtils.emptyGatherer();
+        } else {
+            return new SampleFixedSizeGatherer<>(sampleSize, randomGeneratorSupplier);
         }
+    }
+
+    private SampleFixedSizeGatherer(final int sampleSize, final Supplier<RandomGenerator> randomGeneratorSupplier) {
         this.sampleSize = sampleSize;
         this.randomGeneratorSupplier = randomGeneratorSupplier;
     }

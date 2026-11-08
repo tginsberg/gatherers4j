@@ -16,6 +16,7 @@
 
 package com.ginsberg.gatherers4j;
 
+import com.ginsberg.gatherers4j.util.GathererUtils;
 import org.jspecify.annotations.Nullable;
 
 import java.util.function.Supplier;
@@ -29,8 +30,11 @@ public class SamplePercentageGatherers {
             final double percentage,
             final Supplier<RandomGenerator> randomGeneratorSupplier
     ) {
-        if (!(percentage > 0.0 && percentage <= 1.0)) {
-            throw new IllegalArgumentException("percentage must be greater than 0 and 1.0 or less");
+        if (!(percentage >= 0.0 && percentage <= 1.0)) {
+            throw new IllegalArgumentException("percentage must be between 0.0 and 1.0, inclusive");
+        }
+        if (percentage == 0.0) {
+            return GathererUtils.emptyGatherer();
         }
         return Gatherer.ofSequential(
                 randomGeneratorSupplier,

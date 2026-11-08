@@ -13,6 +13,8 @@ no_list: true
 + Docs: More accurately call out when infinite streams are not supported.
 + Docs: Mark gatherers that can run in parallel.
 + Fix `ensureSize()` with `Size.Equals`, `Size.LessThan`, or `Size.LessThanOrEqualTo` reading the rest of the input stream after the size could no longer be met. It now stops reading at that point, so on an infinite stream it fails (or emits its `orElse()` replacement) instead of running forever.
++ A count of 0 is now valid wherever it has an obvious meaning, so a computed count no longer needs a special case.
++ Fix `rotate()` with a distance of `Integer.MIN_VALUE`.
 + Fix `crossWith()` crossing each input element with every element of its `source` even after the downstream stopped accepting, for example after `limit()`.
 + **Breaking:** Indexed gatherers count with a `long` instead of an `int`, so the index no longer wraps to a negative number after 2,147,483,647 elements. `WithIndex.index()` returns a `long`; `filterIndexed()`, `mapIndexed()` and `peekIndexed()` take functions whose index is a `Long`; and `IndexedAccumulatorFunction.apply()` (used by `foldIndexed()` and `scanIndexed()`) takes a `long`. Lambdas that don't declare the index type still compile; code that uses the index as an `int`, such as `list.get(index)`, needs `Math.toIntExact()` or a cast. This also fixes `takeEveryNth()` and `dropEveryNth()` selecting the wrong elements past that point.
 + Many changes to wildcards to make life easier

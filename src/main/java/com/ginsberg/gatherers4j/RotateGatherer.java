@@ -29,11 +29,11 @@ public class RotateGatherer<INPUT extends @Nullable Object>
         implements Gatherer<INPUT, RotateGatherer.State<INPUT>, INPUT> {
 
     private final Rotate direction;
-    private final int distance;
+    private final long distance;
 
     RotateGatherer(final Rotate direction, final int distance) {
         if (distance < 0) {
-            this.distance = -distance;
+            this.distance = -(long)distance;
             this.direction = direction.flip();
         } else {
             this.direction = direction;
@@ -67,7 +67,7 @@ public class RotateGatherer<INPUT extends @Nullable Object>
             if (size == 0) {
                 return;
             }
-            final int rotateDistance = distance % size;
+            final int rotateDistance = (int)(distance % size);
             for (int i = 0; i < size; i++) {
                 if (direction == Rotate.Left) {
                     downstream.push(inputState.fullStream.get((i + rotateDistance) % size));

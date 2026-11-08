@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,10 +27,10 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 class DropLastGathererTest {
 
     @Test
-    void countMustBePositive() {
+    void countMustNotBeNegative() {
         assertThatIllegalArgumentException()
-            .isThrownBy(() -> Gatherers4j.dropLast(0))
-            .withMessage("DropLast count must be positive");
+            .isThrownBy(() -> Gatherers4j.dropLast(-1))
+            .withMessage("DropLast count must not be negative");
     }
 
     @Test
@@ -43,6 +43,18 @@ class DropLastGathererTest {
 
         // Assert
         assertThat(output).containsExactly("A");
+    }
+
+    @Test
+    void dropLastZero() {
+        // Arrange
+        final Stream<String> input = Stream.of("A", "B", "C");
+
+        // Act
+        final List<String> output = input.gather(Gatherers4j.dropLast(0)).toList();
+
+        // Assert
+        assertThat(output).containsExactly("A", "B", "C");
     }
 
     @Test

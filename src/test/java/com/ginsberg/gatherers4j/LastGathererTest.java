@@ -17,6 +17,7 @@
 package com.ginsberg.gatherers4j;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -37,7 +38,7 @@ class LastGathererTest {
         final List<String> output = input
                 .gather(Gatherers4j.takeLast(last))
                 .toList();
-        
+
         // Assert
         assertThat(output).containsExactly("D", "E", "F");
     }
@@ -57,7 +58,6 @@ class LastGathererTest {
         assertThat(output).containsExactly("D", null, null);
     }
 
-
     @Test
     void lastElementsUnderflow() {
         // Arrange
@@ -74,14 +74,14 @@ class LastGathererTest {
     }
 
     @Test
-    void lastNegativeCount() {
-        // Arrange
-        final int last = -1;
+    void emptyInputStreamEmitsEmpty() {
+        // Arrange / Act
+        final List<Object> output = Stream.empty()
+                .gather(Gatherers4j.takeLast(1))
+                .toList();
 
-        // Act/Assert
-        assertThatIllegalArgumentException()
-                .isThrownBy(() -> Gatherers4j.takeLast(last)
-        );
+        // Assert
+        assertThat(output).isEmpty();
     }
 
     @Test
@@ -90,7 +90,7 @@ class LastGathererTest {
         final Stream<String> input = Stream.of("A", "B", "C", "D", "E", "F");
         final int last = 2;
 
-        // Act/Assert
+        // Act
         final List<String> output = input
                 .gather(Gatherers4j.takeLast(last))
                 .limit(1)
@@ -98,5 +98,42 @@ class LastGathererTest {
 
         // Assert
         assertThat(output).containsExactly("E");
+    }
+
+    @Test
+    void takeNegativeNumberOfElements() {
+        // Act/Assert
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> Gatherers4j.takeLast(-1))
+                .withMessage("Last count must not be negative");
+    }
+
+    @Test
+    void takeZero() {
+        // Arrange
+        final Stream<String> input = Stream.of("A", "B", "C", "D", "E", "F");
+
+        // Act
+        final List<String> output = input
+                .gather(Gatherers4j.takeLast(0))
+                .toList();
+
+        // Assert
+        assertThat(output).isEmpty();
+    }
+
+    @Test
+    @Timeout(5)
+    void takeZeroStopsReadingInfiniteStream() {
+        // Arrange
+        final Stream<Integer> input = Stream.iterate(0, i -> i + 1);
+
+        // Act
+        final List<Integer> output = input
+                .gather(Gatherers4j.takeLast(0))
+                .toList();
+
+        // Assert
+        assertThat(output).isEmpty();
     }
 }

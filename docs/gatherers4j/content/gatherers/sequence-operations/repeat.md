@@ -12,10 +12,13 @@ infinite_streams: holds-all
 
 For a version of this Gatherer that repeats infinitely, see [`repeatInfinitely()`](/gatherers4j/gatherers/sequence-operations/repeatinfinitely/).
 
+A `repeats` of 1 emits the input stream once. A `repeats` of 0 emits nothing and stops reading the input stream
+immediately, so it works on infinite streams.
+
 **Signature**
 
-`repeat(count)`
-* `count` - The number of times the input stream is emitted to the output stream
+`repeat(int repeats)`
+* `repeats` - The number of times the input stream is emitted to the output stream, must not be negative
 
 
 ### Examples
