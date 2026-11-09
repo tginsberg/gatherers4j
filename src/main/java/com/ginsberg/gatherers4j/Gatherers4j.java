@@ -518,6 +518,39 @@ public abstract class Gatherers4j {
         return new IntersperseGatherer<>(intersperseElement);
     }
 
+    /// Emit the `count` largest `Comparable` elements of the input stream, largest first. Elements that compare as
+    /// equal are emitted in encounter order, and when they tie for the last place the earliest is kept, so the result
+    /// matches `sorted(Comparator.reverseOrder()).limit(count)`. Null elements are ignored.
+    ///
+    /// Holds at most `count` elements and emits them once the input stream is exhausted, so it does not work on
+    /// infinite streams.
+    ///
+    /// @param count   Number of elements to emit, must not be negative.
+    /// @param <INPUT> Type of elements in the input and output stream; must implement `Comparable`
+    /// @return A non-null `Gatherer`
+    public static <INPUT extends @Nullable Comparable<? super INPUT>> Gatherer<INPUT, ?, INPUT> largest(final int count) {
+        return SmallestLargestGatherer.largest(count);
+    }
+
+    /// Emit the `count` largest elements of the input stream according to the given `Comparator`, largest first.
+    /// Elements that compare as equal are emitted in encounter order, and when they tie for the last place the
+    /// earliest is kept, so the result matches `sorted(comparator.reversed()).limit(count)`. Null elements are passed
+    /// to the `comparator`.
+    ///
+    /// Holds at most `count` elements and emits them once the input stream is exhausted, so it does not work on
+    /// infinite streams.
+    ///
+    /// @param count      Number of elements to emit, must not be negative.
+    /// @param comparator A non-null `Comparator` that orders the elements
+    /// @param <INPUT>    Type of elements in the input and output stream
+    /// @return A non-null `Gatherer`
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> largestBy(
+            final int count,
+            final Comparator<? super INPUT> comparator
+    ) {
+        return SmallestLargestGatherer.largestBy(count, comparator);
+    }
+
     /// Perform a mapping operation given the element being mapped and its zero-based index.
     ///
     /// @param <INPUT> The type of elements in the input stream
@@ -1601,6 +1634,39 @@ public abstract class Gatherers4j {
     /// @return A non-null `Gatherer`
     public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> shuffle(final RandomGenerator randomGenerator) {
         return new ShufflingGatherer<>(randomGenerator);
+    }
+
+    /// Emit the `count` smallest `Comparable` elements of the input stream, smallest first. Elements that compare as
+    /// equal are emitted in encounter order, and when they tie for the last place the earliest is kept, so the result
+    /// matches `sorted().limit(count)`. Null elements are ignored.
+    ///
+    /// Holds at most `count` elements and emits them once the input stream is exhausted, so it does not work on
+    /// infinite streams.
+    ///
+    /// @param count   Number of elements to emit, must not be negative.
+    /// @param <INPUT> Type of elements in the input and output stream; must implement `Comparable`
+    /// @return A non-null `Gatherer`
+    public static <INPUT extends @Nullable Comparable<? super INPUT>> Gatherer<INPUT, ?, INPUT> smallest(final int count) {
+        return SmallestLargestGatherer.smallest(count);
+    }
+
+    /// Emit the `count` smallest elements of the input stream according to the given `Comparator`, smallest first.
+    /// Elements that compare as equal are emitted in encounter order, and when they tie for the last place the
+    /// earliest is kept, so the result matches `sorted(comparator).limit(count)`. Null elements are passed
+    /// to the `comparator`.
+    ///
+    /// Holds at most `count` elements and emits them once the input stream is exhausted, so it does not work on
+    /// infinite streams.
+    ///
+    /// @param count      Number of elements to emit, must not be negative.
+    /// @param comparator A non-null `Comparator` that orders the elements
+    /// @param <INPUT>    Type of elements in the input and output stream
+    /// @return A non-null `Gatherer`
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> smallestBy(
+            final int count,
+            final Comparator<? super INPUT> comparator
+    ) {
+        return SmallestLargestGatherer.smallestBy(count, comparator);
     }
 
     /// Take every nth element of the stream.
