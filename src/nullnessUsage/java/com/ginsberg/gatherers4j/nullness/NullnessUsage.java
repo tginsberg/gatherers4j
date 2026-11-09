@@ -1,5 +1,5 @@
 /*
- * Copyright 2026 Todd Ginsberg
+ * Copyright 2024-2026 Todd Ginsberg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -97,6 +97,10 @@ final class NullnessUsage {
 
         strings.gather(Gatherers4j.ensureOrderedBy(Order.Ascending, comparator));
         strings.gather(Gatherers4j.filterOrderedBy(Order.Ascending, comparator));
+        strings.gather(Gatherers4j.largest(2));
+        strings.gather(Gatherers4j.largestBy(2, comparator));
+        strings.gather(Gatherers4j.smallest(2));
+        strings.gather(Gatherers4j.smallestBy(2, comparator));
         strings.gather(Gatherers4j.takeLast(2));
     }
 
