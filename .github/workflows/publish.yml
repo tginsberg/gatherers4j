@@ -2,31 +2,85 @@ name: Publish
 
 on: workflow_dispatch
 
+permissions: {}
+
 jobs:
+  # Builds, tests and stages unsigned artifacts. Holds no secrets, so nothing that runs here (Gradle, its plugins,
+  # the tests and all their dependencies) can read the signing key or the Central token.
   build:
     runs-on: ubuntu-latest
-    environment: maven-central
     permissions:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
-      - uses: gradle/actions/wrapper-validation@v6
+      - uses: gradle/actions/wrapper-validation@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
 
       - name: Set up JDK 25
-        uses: actions/setup-java@v6
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
         with:
           java-version: '25'
           distribution: 'corretto'
-          cache: 'gradle'
 
-      - name: Publish
-        run: ./gradlew clean build check publish jreleaserDeploy --no-daemon
+      - name: Build and stage
+        run: ./gradlew clean build publish --no-daemon
+
+      - name: Upload staged artifacts
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: staging-deploy
+          path: build/staging-deploy
+          if-no-files-found: error
+          retention-days: 1
+
+  # Signs and uploads what the build job staged. Runs no project code: the checkout only supplies jreleaser.yml,
+  # VERSION.txt and git metadata. Secrets come from the maven-central environment, which requires approval.
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: maven-central
+    permissions:
+      contents: read
+    env:
+      JRELEASER_VERSION: 1.26.0
+      JRELEASER_SHA256: e601850b1da17b36848953c4c45671b8108b25ba94ee8b35caf37cd656e40639
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          java-version: '25'
+          distribution: 'corretto'
+
+      - name: Download staged artifacts
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: staging-deploy
+          path: build/staging-deploy
+
+      - name: Download JReleaser
+        run: |
+          curl -fsSL -o "$RUNNER_TEMP/jreleaser.jar" \
+            "https://repo1.maven.org/maven2/org/jreleaser/jreleaser-tool-provider/$JRELEASER_VERSION/jreleaser-tool-provider-$JRELEASER_VERSION.jar"
+          echo "$JRELEASER_SHA256  $RUNNER_TEMP/jreleaser.jar" | sha256sum --check --strict
+
+      - name: Sign and deploy
+        run: |
+          # JReleaser needs a semver project version and only uses it to choose between the snapshot and release
+          # deployers. The artifacts themselves carry the publish version that build.gradle.kts computed.
+          export JRELEASER_PROJECT_VERSION="$(head -n1 VERSION.txt)"
+          java -jar "$RUNNER_TEMP/jreleaser.jar" deploy
         env:
-          JRELEASER_DEPLOY_MAVEN_MAVENCENTRAL_RELEASE_DEPLOY_TOKEN: ${{ secrets.OSSRH_TOKEN }}
+          JRELEASER_GPG_SECRET_KEY: ${{ secrets.SONATYPE_SIGNING_KEY }}
+          JRELEASER_GPG_PASSPHRASE: ${{ secrets.SONATYPE_SIGNING_PASSPHRASE }}
           JRELEASER_DEPLOY_MAVEN_MAVENCENTRAL_RELEASE_DEPLOY_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          JRELEASER_DEPLOY_MAVEN_NEXUS2_SNAPSHOT_DEPLOY_TOKEN: ${{ secrets.OSSRH_TOKEN }}
+          JRELEASER_DEPLOY_MAVEN_MAVENCENTRAL_RELEASE_DEPLOY_TOKEN: ${{ secrets.OSSRH_TOKEN }}
           JRELEASER_DEPLOY_MAVEN_NEXUS2_SNAPSHOT_DEPLOY_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          SONATYPE_SIGNING_KEY: ${{ secrets.SONATYPE_SIGNING_KEY }}
-          SONATYPE_SIGNING_PASSPHRASE: ${{ secrets.SONATYPE_SIGNING_PASSPHRASE }}
+          JRELEASER_DEPLOY_MAVEN_NEXUS2_SNAPSHOT_DEPLOY_TOKEN: ${{ secrets.OSSRH_TOKEN }}
