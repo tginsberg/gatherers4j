@@ -19,12 +19,12 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@v7.0.1
 
-      - uses: gradle/actions/wrapper-validation@v6
+      - uses: gradle/actions/wrapper-validation@v6.4.1
 
       - name: Set up JDK ${{ matrix.java-version }}
-        uses: actions/setup-java@v6
+        uses: actions/setup-java@v6.1.0
         with:
           java-version: ${{ matrix.java-version }}
           distribution: 'corretto'
@@ -40,7 +40,7 @@ jobs:
 
       - name: Upload JMH reports
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: jmh-reports-${{ matrix.java-version }}
           path: |
