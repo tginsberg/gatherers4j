@@ -23,11 +23,9 @@ plugins {
     id("info.solidsoft.pitest") version "1.19.0"
     id("jacoco")
     id("java-library")
-    id("org.jreleaser") version "1.26.0"
     id("maven-publish")
     id("me.champeau.jmh") version "0.7.3"
     id("net.ltgt.errorprone") version "5.1.1"
-    id("signing")
 }
 
 description = "An extra set of helpful Stream Gatherers for Java"
@@ -83,50 +81,6 @@ dependencies {
     }
     errorprone("com.uber.nullaway:nullaway:0.14.1") {
         because("It helps us find nullability issues, along with JSpecify")
-    }
-}
-
-jreleaser {
-    project {
-        name.set("gatherers4j")
-        authors.add("Todd Ginsberg")
-        license.set("Apache-2.0")
-
-        links {
-            homepage.set("https://github.com/tginsberg/gatherers4j")
-        }
-    }
-
-    signing {
-        active.set(org.jreleaser.model.Active.NEVER)
-    }
-
-    deploy {
-        maven {
-            mavenCentral {
-                create("release-deploy") {
-                    active.set(org.jreleaser.model.Active.RELEASE)
-                    url = "https://central.sonatype.com/api/v1/publisher"
-                    stagingRepository("build/staging-deploy")
-                    sign = false
-                    applyMavenCentralRules = true
-                }
-            }
-            nexus2 {
-                create("snapshot-deploy") {
-                    active.set(org.jreleaser.model.Active.SNAPSHOT)
-                    snapshotUrl = "https://central.sonatype.com/repository/maven-snapshots"
-                    url = "https://central.sonatype.com/repository/maven-snapshots"
-                    sign = false
-                    applyMavenCentralRules = true
-                    snapshotSupported = true
-                    closeRepository = false
-                    releaseRepository = false
-                    stagingRepository("build/staging-deploy")
-                }
-            }
-        }
-
     }
 }
 
@@ -189,14 +143,6 @@ publishing {
             url = uri(layout.buildDirectory.dir("staging-deploy").get().asFile)
         }
     }
-}
-
-signing {
-    useInMemoryPgpKeys(
-        System.getenv("SONATYPE_SIGNING_KEY"),
-        System.getenv("SONATYPE_SIGNING_PASSPHRASE")
-    )
-    sign(publishing.publications["gatherers4j"])
 }
 
 tasks {
