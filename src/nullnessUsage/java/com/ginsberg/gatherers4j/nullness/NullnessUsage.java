@@ -76,6 +76,14 @@ final class NullnessUsage {
         trades.gather(Gatherers4j.runningVarianceBy(Dataset.Sample, Trade::price));
     }
 
+    static void flatMapIndexedMayReturnNull(final Stream<String> strings) {
+        strings.gather(Gatherers4j.flatMapIndexed(NullnessUsage::expandOrNull));
+    }
+
+    private static @Nullable Stream<String> expandOrNull(final Long index, final String element) {
+        return index == 0 ? null : Stream.of(element);
+    }
+
     // Key functions compare keys with Objects.equals, so a null key is just another key.
     static void keyFunctionsMayReturnNull(final Stream<Trade> trades) {
         trades.gather(Gatherers4j.dedupeConsecutiveBy(Trade::desk));
