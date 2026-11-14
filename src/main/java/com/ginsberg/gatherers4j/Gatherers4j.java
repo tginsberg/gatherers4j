@@ -193,6 +193,20 @@ public abstract class Gatherers4j {
         return DropLastGatherer.of(count);
     }
 
+    /// Drop elements from the input stream while the `predicate` holds, then emit the first element that fails it
+    /// and every element after that. The `predicate` takes both the element and its zero-based index, and is not
+    /// called again once it has failed.
+    ///
+    /// @param predicate A non-null `BiPredicate<? super Long, ? super INPUT>` where the `Long` is the zero-based index
+    ///                  of the element being tested, and the `INPUT` is the element itself.
+    /// @param <INPUT>   Type of elements in both the input and output streams
+    /// @return A non-null `Gatherer`
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> dropWhileIndexed(
+            final BiPredicate<? super Long, ? super INPUT> predicate
+    ) {
+        return SimpleIndexingGatherers.dropWhileIndexed(predicate);
+    }
+
     /// Ensure that every element in the input stream matches the given `predicate`, and fail with an
     /// `IllegalStateException` as soon as one does not. Nothing is emitted until the input stream ends.
     /// An empty stream passes.
@@ -412,6 +426,21 @@ public abstract class Gatherers4j {
         return FilterChangingGatherer.usingComparator(order, comparator);
     }
 
+    /// Replace each element with the elements of the `Stream` that the `mappingFunction` returns for it and its
+    /// zero-based index. As with `Stream.flatMap()`, a `null` result is treated as an empty stream, and each
+    /// mapped stream is closed once its elements have been emitted.
+    ///
+    /// @param mappingFunction A non-null function that maps an element and its zero-based index to a `Stream` of
+    ///                        output elements. It may return `null`, which emits nothing for that element.
+    /// @param <INPUT>         Type of elements in the input stream
+    /// @param <OUTPUT>        Type of elements in the output stream
+    /// @return A non-null `Gatherer`
+    public static <INPUT extends @Nullable Object, OUTPUT extends @Nullable Object> Gatherer<INPUT, ?, OUTPUT> flatMapIndexed(
+            final BiFunction<? super Long, ? super INPUT, ? extends @Nullable Stream<? extends OUTPUT>> mappingFunction
+    ) {
+        return SimpleIndexingGatherers.flatMapIndexed(mappingFunction);
+    }
+
     ///  Perform a fold over every element in the input stream along with its index
     ///
     /// @param <INPUT>      Type of elements in the input stream
@@ -553,10 +582,10 @@ public abstract class Gatherers4j {
 
     /// Perform a mapping operation given the element being mapped and its zero-based index.
     ///
-    /// @param <INPUT> The type of elements in the input stream
-    /// @param <OUTPUT> The type of elements in the output stream
-    /// @param mappingFunction A non-null function to map input to output, given an input and its index
-    /// @return A non-null Gatherer
+    /// @param mappingFunction A non-null function to map input to output, given an input and its zero-based index
+    /// @param <INPUT>         Type of elements in the input stream
+    /// @param <OUTPUT>        Type of elements in the output stream
+    /// @return A non-null `Gatherer`
     public static <INPUT extends @Nullable Object, OUTPUT extends @Nullable Object> Gatherer<INPUT, ?, OUTPUT> mapIndexed(
             final BiFunction<? super Long, ? super INPUT, ? extends OUTPUT> mappingFunction) {
         return SimpleIndexingGatherers.mapIndexed(mappingFunction);
@@ -1124,7 +1153,7 @@ public abstract class Gatherers4j {
     ///
     /// @param <INPUT> The type of elements in the input stream
     /// @param peekingConsumer A non-null consumer to peek at each element and its index
-    /// @return A non-null Gatherer
+    /// @return A non-null `Gatherer`
     public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> peekIndexed(
             final BiConsumer<? super Long, ? super INPUT> peekingConsumer) {
         return SimpleIndexingGatherers.peekIndexed(peekingConsumer);
@@ -1700,6 +1729,19 @@ public abstract class Gatherers4j {
             final Predicate<? super INPUT> predicate
     ) {
         return new TakeUntilGatherer<>(predicate);
+    }
+
+    /// Take elements from the input stream while the `predicate` holds, and stop at the first element that fails
+    /// it, which is not emitted. The `predicate` takes both the element and its zero-based index.
+    ///
+    /// @param predicate A non-null `BiPredicate<? super Long, ? super INPUT>` where the `Long` is the zero-based index
+    ///                  of the element being tested, and the `INPUT` is the element itself.
+    /// @param <INPUT>   Type of elements in both the input and output streams
+    /// @return A non-null `Gatherer`
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> takeWhileIndexed(
+            final BiPredicate<? super Long, ? super INPUT> predicate
+    ) {
+        return SimpleIndexingGatherers.takeWhileIndexed(predicate);
     }
 
     /// Limit the number of elements in the stream to some number per period. When the limit is reached,

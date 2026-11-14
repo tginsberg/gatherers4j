@@ -23,13 +23,31 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.stream.Gatherer;
+import java.util.stream.Stream;
 
 import static com.ginsberg.gatherers4j.util.GathererUtils.mustNotBeNull;
+import static com.ginsberg.gatherers4j.util.GathererUtils.pushAll;
 
 public class SimpleIndexingGatherers {
 
+    static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> dropWhileIndexed(
+            final BiPredicate<? super Long, ? super INPUT> predicate
+    ) {
+        mustNotBeNull(predicate, "Predicate must not be null");
+        return Gatherer.ofSequential(
+                DropWhileState::new,
+                Gatherer.Integrator.ofGreedy((state, element, downstream) -> {
+                    if (state.dropping && predicate.test(state.index++, element)) {
+                        return !downstream.isRejecting();
+                    }
+                    state.dropping = false;
+                    return downstream.push(element);
+                })
+        );
+    }
+
     static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> filterIndexed(
-            final BiPredicate<? super Long, ? super @Nullable INPUT> predicate
+            final BiPredicate<? super Long, ? super INPUT> predicate
     ) {
         mustNotBeNull(predicate, "Predicate must not be null");
         return Gatherer.ofSequential(
@@ -43,8 +61,25 @@ public class SimpleIndexingGatherers {
         );
     }
 
+    static <INPUT extends @Nullable Object, OUTPUT extends @Nullable Object> Gatherer<INPUT, ?, OUTPUT> flatMapIndexed(
+            final BiFunction<? super Long, ? super INPUT, ? extends @Nullable Stream<? extends OUTPUT>> mappingFunction
+    ) {
+        mustNotBeNull(mappingFunction, "mappingFunction must not be null");
+        return Gatherer.ofSequential(
+                State::new,
+                Gatherer.Integrator.ofGreedy((state, element, downstream) -> {
+                    try (final Stream<? extends OUTPUT> mapped = mappingFunction.apply(state.index++, element)) {
+                        if (mapped != null) {
+                            pushAll(mapped, downstream);
+                        }
+                    }
+                    return !downstream.isRejecting();
+                })
+        );
+    }
+
     static <INPUT extends @Nullable Object, OUTPUT extends @Nullable Object> Gatherer<INPUT, ?, OUTPUT> mapIndexed(
-            final BiFunction<? super Long, ? super @Nullable INPUT, ? extends @Nullable OUTPUT> mappingFunction
+            final BiFunction<? super Long, ? super INPUT, ? extends @Nullable OUTPUT> mappingFunction
     ) {
         mustNotBeNull(mappingFunction, "mappingFunction must not be null");
         return Gatherer.ofSequential(
@@ -56,7 +91,7 @@ public class SimpleIndexingGatherers {
     }
 
     static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> peekIndexed(
-            final BiConsumer<? super Long, ? super @Nullable INPUT> peekingConsumer
+            final BiConsumer<? super Long, ? super INPUT> peekingConsumer
     ) {
         mustNotBeNull(peekingConsumer, "peekingConsumer must not be null");
         return Gatherer.ofSequential(
@@ -69,8 +104,23 @@ public class SimpleIndexingGatherers {
         );
     }
 
+    static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> takeWhileIndexed(
+            final BiPredicate<? super Long, ? super INPUT> predicate
+    ) {
+        mustNotBeNull(predicate, "Predicate must not be null");
+        return Gatherer.ofSequential(
+                State::new,
+                (state, element, downstream) ->
+                        predicate.test(state.index++, element) && downstream.push(element)
+        );
+    }
+
     static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, WithIndex<INPUT>> withIndex() {
         return mapIndexed(WithIndex::new);
+    }
+
+    private static class DropWhileState extends State {
+        boolean dropping = true;
     }
 
     private static class State {
