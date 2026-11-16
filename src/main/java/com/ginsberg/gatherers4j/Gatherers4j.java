@@ -193,6 +193,19 @@ public abstract class Gatherers4j {
         return DropLastGatherer.of(count);
     }
 
+    /// Drop the run of elements at the end of the stream that match the `predicate`, and keep everything before it.
+    /// Elements are emitted as they arrive, except for the current run of matching elements, which is held until
+    /// a non-matching element shows that it is not at the end.
+    ///
+    /// @param predicate A non-null `Predicate`, called once for each element in encounter order
+    /// @param <INPUT>   Type of elements in both the input and output streams
+    /// @return A non-null `Gatherer`
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> dropLastWhile(
+            final Predicate<? super INPUT> predicate
+    ) {
+        return LastWhileGatherers.dropLastWhile(predicate);
+    }
+
     /// Drop elements from the input stream while the `predicate` holds, then emit the first element that fails it
     /// and every element after that. The `predicate` takes both the element and its zero-based index, and is not
     /// called again once it has failed.
@@ -1717,6 +1730,18 @@ public abstract class Gatherers4j {
     /// @return A non-null `Gatherer`
     public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> takeLast(final int count) {
         return LastGatherer.of(count);
+    }
+
+    /// Keep only the run of elements at the end of the stream that match the `predicate`, emitted in their original
+    /// order once the input stream ends. Only the current run of matching elements is held in memory.
+    ///
+    /// @param predicate A non-null `Predicate`, called once for each element
+    /// @param <INPUT>   Type of elements in both the input and output streams
+    /// @return A non-null `Gatherer`
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> takeLastWhile(
+            final Predicate<? super INPUT> predicate
+    ) {
+        return LastWhileGatherers.takeLastWhile(predicate);
     }
 
     /// Take elements from the input stream until the `predicate` is met, including the first element that
