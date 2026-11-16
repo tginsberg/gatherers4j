@@ -109,3 +109,11 @@ grows-with-distinct:
   text: >-
     This gatherer emits elements as they arrive, so it works on an infinite stream, but it remembers the mapped value of
     every element it has emitted. If the stream keeps producing new distinct values, memory grows without bound.
+
+holds-matching-run:
+  level: info
+  title: Holds the current run of matching elements
+  text: >-
+    This gatherer emits elements as they arrive, so it works on an infinite stream, but it holds each run of elements
+    that match the predicate until a non-matching element ends the run. A run that never ends is never emitted, and
+    memory grows with its length.

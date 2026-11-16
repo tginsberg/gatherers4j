@@ -30,6 +30,7 @@ import org.jspecify.annotations.Nullable;
 import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 // Each statement is a call that the library handles correctly at runtime, so its signature must accept it.
@@ -103,6 +104,7 @@ final class NullnessUsage {
     static void nullableStreams(final Stream<@Nullable String> strings) {
         final Comparator<@Nullable String> comparator = Comparator.nullsFirst(Comparator.naturalOrder());
 
+        strings.gather(Gatherers4j.dropLastWhile(Objects::isNull));
         strings.gather(Gatherers4j.ensureOrderedBy(Order.Ascending, comparator));
         strings.gather(Gatherers4j.filterOrderedBy(Order.Ascending, comparator));
         strings.gather(Gatherers4j.largest(2));
@@ -110,6 +112,7 @@ final class NullnessUsage {
         strings.gather(Gatherers4j.smallest(2));
         strings.gather(Gatherers4j.smallestBy(2, comparator));
         strings.gather(Gatherers4j.takeLast(2));
+        strings.gather(Gatherers4j.takeLastWhile(Objects::isNull));
     }
 
     // Record components are as nullable as their type arguments, so values from a stream without nulls need no check.
