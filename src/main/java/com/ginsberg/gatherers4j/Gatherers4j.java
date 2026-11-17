@@ -20,6 +20,7 @@ import com.ginsberg.gatherers4j.dto.Pair;
 import com.ginsberg.gatherers4j.dto.StatisticalSummary;
 import com.ginsberg.gatherers4j.dto.WithCount;
 import com.ginsberg.gatherers4j.dto.WithIndex;
+import com.ginsberg.gatherers4j.dto.WithRank;
 import com.ginsberg.gatherers4j.enums.Dataset;
 import com.ginsberg.gatherers4j.enums.Frequency;
 import com.ginsberg.gatherers4j.enums.Order;
@@ -147,6 +148,29 @@ public abstract class Gatherers4j {
     ) {
         mustNotBeNull(mappingFunction, "Mapping function must not be null");
         return new DedupeConsecutiveGatherer<>(mappingFunction);
+    }
+
+    /// Emit each element of an already sorted stream along with its dense rank, one-based, with no gaps after ties.
+    /// Adjacent elements that compare as equal share a rank, so `10, 20, 20, 30` is ranked `1, 2, 2, 3`.
+    /// The stream must already be sorted in either direction. Input that is not sorted is not detected, and
+    /// produces ranks that are not meaningful.
+    ///
+    /// @param <INPUT> Type of elements in the input stream, which must be comparable to itself
+    /// @return A non-null `Gatherer`
+    public static <INPUT extends Comparable<? super INPUT>> Gatherer<INPUT, ?, WithRank<INPUT>> denseRank() {
+        return RankGatherer.dense(Comparator.naturalOrder());
+    }
+
+    /// Emit each element of an already sorted stream along with its dense rank, one-based, with no gaps after ties.
+    /// Adjacent elements for which the `comparator` returns 0 share a rank, so `10, 20, 20, 30` is ranked `1, 2, 2, 3`.
+    /// The stream must already be sorted in either direction as measured by the `comparator`. Input that is not
+    /// sorted is not detected, and produces ranks that are not meaningful.
+    ///
+    /// @param comparator The non-null comparator used to decide whether two adjacent elements tie
+    /// @param <INPUT> Type of elements in the input stream
+    /// @return A non-null `Gatherer`
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, WithRank<INPUT>> denseRankBy(final Comparator<? super INPUT> comparator) {
+        return RankGatherer.dense(comparator);
     }
 
     /// Filter a stream such that it only contains distinct elements measured by the given `function`.
@@ -1170,6 +1194,31 @@ public abstract class Gatherers4j {
     public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, INPUT> peekIndexed(
             final BiConsumer<? super Long, ? super INPUT> peekingConsumer) {
         return SimpleIndexingGatherers.peekIndexed(peekingConsumer);
+    }
+
+    /// Emit each element of an already sorted stream along with its rank, one-based, with a gap after ties.
+    /// Adjacent elements that compare as equal share a rank, and the next rank skips by the size of the tie,
+    /// so `10, 20, 20, 30` is ranked `1, 2, 2, 4`.
+    /// The stream must already be sorted in either direction. Input that is not sorted is not detected, and
+    /// produces ranks that are not meaningful.
+    ///
+    /// @param <INPUT> Type of elements in the input stream, which must be comparable to itself
+    /// @return A non-null `Gatherer`
+    public static <INPUT extends Comparable<? super INPUT>> Gatherer<INPUT, ?, WithRank<INPUT>> rank() {
+        return RankGatherer.standard(Comparator.naturalOrder());
+    }
+
+    /// Emit each element of an already sorted stream along with its rank, one-based, with a gap after ties.
+    /// Adjacent elements for which the `comparator` returns 0 share a rank, and the next rank skips by the size
+    /// of the tie, so `10, 20, 20, 30` is ranked `1, 2, 2, 4`.
+    /// The stream must already be sorted in either direction as measured by the `comparator`. Input that is not
+    /// sorted is not detected, and produces ranks that are not meaningful.
+    ///
+    /// @param comparator The non-null comparator used to decide whether two adjacent elements tie
+    /// @param <INPUT> Type of elements in the input stream
+    /// @return A non-null `Gatherer`
+    public static <INPUT extends @Nullable Object> Gatherer<INPUT, ?, WithRank<INPUT>> rankBy(final Comparator<? super INPUT> comparator) {
+        return RankGatherer.standard(comparator);
     }
 
     /// Repeatedly emit the input stream to the output stream a given number of times.
