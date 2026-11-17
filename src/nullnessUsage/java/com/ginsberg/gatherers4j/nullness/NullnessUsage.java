@@ -22,6 +22,7 @@ import com.ginsberg.gatherers4j.dto.Pair;
 import com.ginsberg.gatherers4j.dto.WithCount;
 import com.ginsberg.gatherers4j.dto.WithIndex;
 import com.ginsberg.gatherers4j.dto.WithOriginal;
+import com.ginsberg.gatherers4j.dto.WithRank;
 import com.ginsberg.gatherers4j.enums.Dataset;
 import com.ginsberg.gatherers4j.enums.Frequency;
 import com.ginsberg.gatherers4j.enums.Order;
@@ -104,11 +105,13 @@ final class NullnessUsage {
     static void nullableStreams(final Stream<@Nullable String> strings) {
         final Comparator<@Nullable String> comparator = Comparator.nullsFirst(Comparator.naturalOrder());
 
+        strings.gather(Gatherers4j.denseRankBy(comparator));
         strings.gather(Gatherers4j.dropLastWhile(Objects::isNull));
         strings.gather(Gatherers4j.ensureOrderedBy(Order.Ascending, comparator));
         strings.gather(Gatherers4j.filterOrderedBy(Order.Ascending, comparator));
         strings.gather(Gatherers4j.largest(2));
         strings.gather(Gatherers4j.largestBy(2, comparator));
+        strings.gather(Gatherers4j.rankBy(comparator));
         strings.gather(Gatherers4j.smallest(2));
         strings.gather(Gatherers4j.smallestBy(2, comparator));
         strings.gather(Gatherers4j.takeLast(2));
@@ -120,12 +123,14 @@ final class NullnessUsage {
         final Pair<String, Integer> pair = strings.gather(Gatherers4j.zipWith(List.of(1))).toList().getFirst();
         final WithCount<String> withCount = Stream.of("A").gather(Gatherers4j.orderByFrequency(Frequency.Ascending)).toList().getFirst();
         final WithIndex<String> withIndex = Stream.of("A").gather(Gatherers4j.withIndex()).toList().getFirst();
+        final WithRank<String> withRank = Stream.of("A").gather(Gatherers4j.rank()).toList().getFirst();
         final WithOriginal<Trade, BigDecimal> withOriginal = trades.gather(Gatherers4j.runningSumBy(Trade::price).withOriginal()).toList().getFirst();
 
         pair.first().length();
         pair.second().intValue();
         withCount.value().length();
         withIndex.value().length();
+        withRank.value().length();
         withOriginal.original().id().length();
         withOriginal.calculated().signum();
     }

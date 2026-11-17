@@ -11,6 +11,7 @@ no_list: true
 + Implement `ensureAllMatch()`, `ensureAnyMatch()`, and `ensureNoneMatch()`, the `ensure` counterparts of the JDK's `allMatch()`, `anyMatch()`, and `noneMatch()` terminal operations. 
 + Implement `largest()`, `largestBy()`, `smallest()`, and `smallestBy()`, which emit the `n` largest or smallest elements of the stream.
 + Implement `takeLastWhile()` and `dropLastWhile()`.
++ Implement `rank()`, `rankBy()`, `denseRank()`, and `denseRankBy()`.
 + Implement `takeWhileIndexed()`, `dropWhileIndexed()`, and `flatMapIndexed()`, index-aware versions of the JDK's `takeWhile()`, `dropWhile()`, and `flatMap()`.
 + Implement `distinctLatestBy()`, which emits the latest element for each distinct value of the mapping function, in the position where that value first appeared. Unlike `distinctBy()`, it emits nothing until the input stream ends.
 + Docs: More accurately call out when infinite streams are not supported.
